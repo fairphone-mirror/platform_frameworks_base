@@ -87,5 +87,6 @@
         <item>Trying to run in background</item>
         <item>Trying to enable WLAN</item>
         <item>Trying to enable BT</item>
+        <item>Trying to get Superuser access</item>
     </string-array>
 </resources>
