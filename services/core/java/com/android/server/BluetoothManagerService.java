@@ -40,7 +40,6 @@ import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.UserInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.ContentObserver;
 import android.os.Binder;
 import android.os.Build;
@@ -67,8 +66,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 import java.util.Vector;
-import android.app.AppOpsManager;
-import android.os.SystemProperties;
 
 
 class BluetoothManagerService extends IBluetoothManager.Stub {
@@ -1913,17 +1910,17 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                 boolean isUp = (newState == BluetoothAdapter.STATE_ON);
                 sendBluetoothStateCallback(isUp);
                 sendBleStateChanged(prevState, newState);
-    
+
             } else if (newState == BluetoothAdapter.STATE_BLE_TURNING_ON ||
                     newState == BluetoothAdapter.STATE_BLE_TURNING_OFF ) {
                 sendBleStateChanged(prevState, newState);
                 isStandardBroadcast = false;
-    
+
             } else if (newState == BluetoothAdapter.STATE_TURNING_ON ||
                     newState == BluetoothAdapter.STATE_TURNING_OFF) {
                 sendBleStateChanged(prevState, newState);
             }
-    
+
             if (isStandardBroadcast) {
                 if (prevState == BluetoothAdapter.STATE_BLE_ON) {
                     // Show prevState of BLE_ON as OFF to standard users
