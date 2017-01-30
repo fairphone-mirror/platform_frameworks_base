@@ -45,6 +45,8 @@ import com.android.systemui.statusbar.phone.KeyguardIndicationTextView;
 import com.android.systemui.statusbar.phone.LockIcon;
 import com.android.systemui.statusbar.phone.StatusBarKeyguardViewManager;
 
+import com.fairphone.keyguard.BatteryStatusView;
+
 /**
  * Controls the indications and error messages shown on the Keyguard
  */
@@ -61,6 +63,8 @@ public class KeyguardIndicationController {
     private final KeyguardIndicationTextView mTextView;
     private final UserManager mUserManager;
     private final IBatteryStats mBatteryInfo;
+
+    private final BatteryStatusView mBatteryStatusView;
 
     private final int mSlowThreshold;
     private final int mFastThreshold;
@@ -87,6 +91,8 @@ public class KeyguardIndicationController {
         Resources res = context.getResources();
         mSlowThreshold = res.getInteger(R.integer.config_chargingSlowlyThreshold);
         mFastThreshold = res.getInteger(R.integer.config_chargingFastThreshold);
+
+        mBatteryStatusView = (BatteryStatusView) textView.getRootView().findViewById(R.id.battery_status_fp);
 
         mUserManager = context.getSystemService(UserManager.class);
         mBatteryInfo = IBatteryStats.Stub.asInterface(
@@ -169,17 +175,23 @@ public class KeyguardIndicationController {
                 mTextView.switchIndication(mTransientIndication);
                 mTextView.setTextColor(mTransientTextColor);
 
-            } else if (mPowerPluggedIn) {
+            } else if (mPowerPluggedIn && DEBUG_CHARGING_SPEED) {
                 String indication = computePowerIndication();
-                if (DEBUG_CHARGING_SPEED) {
-                    indication += ",  " + (mChargingWattage / 1000) + " mW";
-                }
+		indication += ",  " + (mChargingWattage / 1000) + " mW";
                 mTextView.switchIndication(indication);
                 mTextView.setTextColor(Color.WHITE);
 
             } else {
                 mTextView.switchIndication(mRestingIndication);
                 mTextView.setTextColor(Color.WHITE);
+            }
+
+            if (mPowerPluggedIn) {
+                /*
+                 * Refresh more often than after a battery event so that we
+                 * can also catch "system refresh", such as language change.
+                 */
+                mBatteryStatusView.setChargingIndication(computePowerIndication());
             }
         }
     }

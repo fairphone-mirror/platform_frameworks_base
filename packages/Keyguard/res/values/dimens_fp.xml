@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="widget_big_margin_start">24dp</dimen>
+    <dimen name="widget_any_magic_margin_start">29dp</dimen>
+
+    <dimen name="widget_medium_font_size_fp">28sp</dimen>
+
+    <!-- Battery icons are based in a square format. -->
+    <dimen name="battery_status_width_fp">32sp</dimen>
+    <dimen name="battery_status_height_fp">32sp</dimen>
+
+</resources>
