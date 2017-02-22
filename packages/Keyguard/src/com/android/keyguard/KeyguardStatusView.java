@@ -172,10 +172,9 @@ public class KeyguardStatusView extends GridLayout {
         if (info == null) {
             return "";
         }
-        String skeleton = DateFormat.is24HourFormat(context, ActivityManager.getCurrentUser())
-                ? "EHm"
-                : "Ehma";
-        String pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), skeleton);
+        String pattern = DateFormat.is24HourFormat(context, ActivityManager.getCurrentUser())
+                ? Patterns.alarmView24
+                : Patterns.alarmView12;
         return DateFormat.format(pattern, info.getTriggerTime()).toString();
     }
 
@@ -230,6 +229,8 @@ public class KeyguardStatusView extends GridLayout {
         static String dateView;
         static String clockView12;
         static String clockView24;
+        static String alarmView12;
+        static String alarmView24;
         static String cacheKey;
 
         static void update(Context context, boolean hasAlarm) {
@@ -238,6 +239,8 @@ public class KeyguardStatusView extends GridLayout {
             final String dateViewSkel = res.getString(R.string.abbrev_wday_month_day_no_year);
             final String clockView12Skel = res.getString(R.string.clock_12hr_format);
             final String clockView24Skel = res.getString(R.string.clock_24hr_format);
+            final String alarmView12Skel = res.getString(R.string.alarm_12hr_format);
+            final String alarmView24Skel = res.getString(R.string.alarm_24hr_format);
             final String key = locale.toString() + dateViewSkel + clockView12Skel + clockView24Skel;
             if (key.equals(cacheKey)) return;
             if (res.getBoolean(com.android.internal.R.bool.config_dateformat)) {
@@ -258,10 +261,14 @@ public class KeyguardStatusView extends GridLayout {
             }
 
             clockView24 = DateFormat.getBestDateTimePattern(locale, clockView24Skel);
+            alarmView12 = DateFormat.getBestDateTimePattern(locale, alarmView12Skel);
+            alarmView24 = DateFormat.getBestDateTimePattern(locale, alarmView24Skel);
 
             // Use fancy colon.
             clockView24 = clockView24.replace(':', '\uee01');
             clockView12 = clockView12.replace(':', '\uee01');
+            alarmView24 = alarmView24.replace(':', '\uee01');
+            alarmView12 = alarmView12.replace(':', '\uee01');
 
             cacheKey = key;
         }
