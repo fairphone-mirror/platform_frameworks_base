@@ -27,6 +27,7 @@ import android.content.res.XmlResourceParser;
 import android.util.IndentingPrintWriter;
 import android.util.Slog;
 import android.util.proto.ProtoOutputStream;
+import android.os.SystemProperties;
 
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
@@ -313,6 +314,9 @@ public class PowerProfile {
 
     private static final String TAG_MODEM = "modem";
 
+    private static final String PROPERTY_BATTERY_DESIGN_CAPACITY =
+            "ro.hardware.battery_design_capacity";
+
     private static final Object sLock = new Object();
 
     @VisibleForTesting
@@ -442,6 +446,18 @@ public class PowerProfile {
                 sPowerItemMap.put(key, (double) value);
             }
         }
+
+        /*
+         * There is no way to set the battery design capacity automatically here from what the
+         * kernel exposes in the sysfs. Several battery packs can be available for the device and
+         * they might have different capacities. So do not rely on the XML power profile and always
+         * use what the kernel exposes instead.
+         */
+        // Read the battery design capacity from system property, in microampere-hour
+        final int batteryDesignCapacityMicro = SystemProperties.getInt(
+            PROPERTY_BATTERY_DESIGN_CAPACITY, 0);
+        // capacity in power profile is in milliampere-hour
+        sPowerItemMap.put(POWER_BATTERY_CAPACITY, ((double) batteryDesignCapacityMicro) / 1000);
     }
 
     private CpuClusterKey[] mCpuClusters;
