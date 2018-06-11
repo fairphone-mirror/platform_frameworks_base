@@ -61,6 +61,7 @@ public abstract class Conference extends Conferenceable {
         public void onStatusHintsChanged(Conference conference, StatusHints statusHints) {}
         public void onExtrasChanged(Conference c, Bundle extras) {}
         public void onExtrasRemoved(Conference c, List<String> keys) {}
+        public void onConferenceMergeFailed(Conference conference) {}
     }
 
     private final Set<Listener> mListeners = new CopyOnWriteArraySet<>();
@@ -268,6 +269,14 @@ public abstract class Conference extends Conferenceable {
      * @param connection The connection to separate.
      */
     public void onSeparate(Connection connection) {}
+
+    /**
+     * Invoked when the conference adds a participant to the conference call.
+     *
+     * @param participant The participant to be added with conference call.
+     * @hide
+     */
+    public void onAddParticipant(String participant) {}
 
     /**
      * Notifies the {@link Conference} when the specified {@link Connection} should merged with the
@@ -792,6 +801,16 @@ public abstract class Conference extends Conferenceable {
         Bundle newExtras = new Bundle();
         newExtras.putString(key, value);
         putExtras(newExtras);
+    }
+
+    /**
+     * Update conference merge failure {@link Conference}.
+     * @hide
+     */
+    public final void updateMergeConferenceFailed() {
+        for (Listener l : mListeners) {
+            l.onConferenceMergeFailed(this);
+        }
     }
 
     /**

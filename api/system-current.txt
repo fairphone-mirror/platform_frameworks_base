@@ -26755,6 +26755,7 @@ package android.net.wifi {
     field public java.lang.String creatorName;
     field public int creatorUid;
     field public android.net.wifi.WifiEnterpriseConfig enterpriseConfig;
+    field public java.util.BitSet filsKeyMgmts;
     field public boolean hiddenSSID;
     field public java.lang.String lastUpdateName;
     field public int lastUpdateUid;
@@ -26778,6 +26779,12 @@ package android.net.wifi {
     field public static final int SHARED = 1; // 0x1
     field public static final java.lang.String[] strings;
     field public static final java.lang.String varName = "auth_alg";
+  }
+
+  public static class WifiConfiguration.Fils {
+    field public static final int FILS_SHA256 = 0; // 0x0
+    field public static final int FILS_SHA384 = 1; // 0x1
+    field public static final java.lang.String[] filsKeyStrings;
   }
 
   public static class WifiConfiguration.GroupCipher {

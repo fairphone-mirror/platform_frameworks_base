@@ -173,6 +173,7 @@ import com.android.server.DeviceIdleController;
 import com.android.server.EventLogTags;
 import com.android.server.LocalServices;
 import com.android.server.SystemConfig;
+import com.android.server.NetPluginDelegate;
 
 import libcore.io.IoUtils;
 
@@ -1179,12 +1180,14 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
             // permission above.
 
             maybeRefreshTrustedTime();
-            synchronized (mNetworkPoliciesSecondLock) {
-                ensureActiveMobilePolicyNL();
-                normalizePoliciesNL();
-                updateNetworkEnabledNL();
-                updateNetworkRulesNL();
-                updateNotificationsNL();
+            synchronized (mUidRulesFirstLock) {
+                synchronized (mNetworkPoliciesSecondLock) {
+                    ensureActiveMobilePolicyNL();
+                    normalizePoliciesNL();
+                    updateNetworkEnabledNL();
+                    updateNetworkRulesNL();
+                    updateNotificationsNL();
+                }
             }
         }
     };
@@ -3421,6 +3424,7 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
     private void setInterfaceQuota(String iface, long quotaBytes) {
         try {
             mNetworkManager.setInterfaceQuota(iface, quotaBytes);
+            NetPluginDelegate.setQuota(iface, quotaBytes);
         } catch (IllegalStateException e) {
             Log.wtf(TAG, "problem setting interface quota", e);
         } catch (RemoteException e) {

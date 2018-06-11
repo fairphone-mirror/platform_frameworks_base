@@ -286,7 +286,15 @@ public class NetworkControllerBaseTest extends SysuiTestCase {
                     iconArg.capture(),
                     ArgumentCaptor.forClass(Integer.class).capture(),
                     typeIconArg.capture(), dataInArg.capture(), dataOutArg.capture(),
-                    anyString(), anyString(), anyBoolean(), anyInt(), anyBoolean());
+                    ArgumentCaptor.forClass(Integer.class).capture(),
+                    ArgumentCaptor.forClass(Integer.class).capture(),
+                    ArgumentCaptor.forClass(Integer.class).capture(),
+                    ArgumentCaptor.forClass(Integer.class).capture(),
+                    ArgumentCaptor.forClass(String.class).capture(),
+                    ArgumentCaptor.forClass(String.class).capture(),
+                    ArgumentCaptor.forClass(Boolean.class).capture(),
+                    ArgumentCaptor.forClass(Integer.class).capture(),
+                    ArgumentCaptor.forClass(Boolean.class).capture());
         IconState iconState = iconArg.getValue();
         assertEquals("Visibility in, quick settings", visible, iconState.visible);
         assertEquals("Signal icon in, quick settings", icon, iconState.icon);
@@ -310,9 +318,8 @@ public class NetworkControllerBaseTest extends SysuiTestCase {
         Mockito.verify(mCallbackHandler, Mockito.atLeastOnce()).setMobileDataIndicators(
                 iconArg.capture(),
                 any(),
-                typeIconArg.capture(),
-                anyInt(), anyBoolean(), anyBoolean(), anyString(), anyString(), anyBoolean(),
-                anyInt(), eq(roaming));
+                anyInt(), anyInt(), anyBoolean(), anyBoolean(), anyInt(), anyInt(), anyInt(),
+                anyInt(), anyString(), anyString(), anyBoolean(), anyInt(), eq(roaming));
         IconState iconState = iconArg.getValue();
 
         assertEquals("Signal icon in status bar", icon, iconState.icon);
@@ -333,11 +340,18 @@ public class NetworkControllerBaseTest extends SysuiTestCase {
                 iconArg.capture(),
                 qsIconArg.capture(),
                 typeIconArg.capture(),
-                qsTypeIconArg.capture(),
-                dataInArg.capture(),
-                dataOutArg.capture(),
-                anyString(), anyString(), anyBoolean(), anyInt(), anyBoolean());
-
+                ArgumentCaptor.forClass(Integer.class).capture(),
+                ArgumentCaptor.forClass(Boolean.class).capture(),
+                ArgumentCaptor.forClass(Boolean.class).capture(),
+                ArgumentCaptor.forClass(Integer.class).capture(),
+                ArgumentCaptor.forClass(Integer.class).capture(),
+                ArgumentCaptor.forClass(Integer.class).capture(),
+                ArgumentCaptor.forClass(Integer.class).capture(),
+                ArgumentCaptor.forClass(String.class).capture(),
+                ArgumentCaptor.forClass(String.class).capture(),
+                ArgumentCaptor.forClass(Boolean.class).capture(),
+                ArgumentCaptor.forClass(Integer.class).capture(),
+				ArgumentCaptor.forClass(Boolean.class).capture());
         IconState iconState = iconArg.getValue();
 
         assertEquals("Data icon in status bar", typeIcon, (int) typeIconArg.getValue());

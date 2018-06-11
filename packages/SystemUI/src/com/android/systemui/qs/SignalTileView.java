@@ -19,9 +19,11 @@ package com.android.systemui.qs;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.android.systemui.R;
 import com.android.systemui.qs.QSTile.SignalState;
@@ -36,8 +38,10 @@ public final class SignalTileView extends QSIconView {
     private ImageView mOverlay;
     private ImageView mIn;
     private ImageView mOut;
+    private ImageView mRoaming;
 
     private int mWideOverlayIconStartPadding;
+    private int mIconLayoutHeight;
 
     public SignalTileView(Context context) {
         super(context);
@@ -63,7 +67,22 @@ public final class SignalTileView extends QSIconView {
         mSignal = new ImageView(mContext);
         mIconFrame.addView(mSignal);
         mOverlay = new ImageView(mContext);
-        mIconFrame.addView(mOverlay, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        mIconLayoutHeight = getContext().getResources().getDimensionPixelSize(
+                R.dimen.wide_type_icon_height_qs);
+
+        mRoaming = new ImageView(mContext);
+        mRoaming.setPivotX(0);
+        mRoaming.setPivotY(0);
+        mRoaming.setScaleX(0.4f);
+        mRoaming.setScaleY(0.4f);
+        mRoaming.setVisibility(View.GONE);
+        LinearLayout iconLayout = new LinearLayout(mContext);
+
+        iconLayout.addView(mOverlay, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        iconLayout.addView(mRoaming, LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+        mIconFrame.addView(iconLayout, LayoutParams.WRAP_CONTENT, mIconLayoutHeight);
+
         return mIconFrame;
     }
 
@@ -127,6 +146,13 @@ public final class SignalTileView extends QSIconView {
         final boolean shown = isShown();
         setVisibility(mIn, shown, s.activityIn);
         setVisibility(mOut, shown, s.activityOut);
+        if(mRoaming != null) {
+            TelephonyManager tm =
+                    (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+            mRoaming.setImageResource(R.drawable.stat_sys_roaming);
+            mRoaming.setVisibility(
+                    tm.isNetworkRoaming(s.subId) && s.isShowRoaming ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void setVisibility(View view, boolean shown, boolean visible) {

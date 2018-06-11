@@ -45,8 +45,10 @@ public interface NetworkController {
                 boolean activityIn, boolean activityOut, String description) {}
 
         default void setMobileDataIndicators(IconState statusIcon, IconState qsIcon, int statusType,
-                int qsType, boolean activityIn, boolean activityOut, String typeContentDescription,
-                String description, boolean isWide, int subId, boolean roaming) {}
+                int qsType, boolean activityIn, boolean activityOut, int dataActivityId,
+                int mobileActivityId, int stackedDataIcon, int stackedVoiceIcon,
+                String typeContentDescription, String description,
+                boolean isWide, int subId, boolean roaming) {}
         default void setSubs(List<SubscriptionInfo> subs) {}
         default void setNoSims(boolean show) {}
 
@@ -55,6 +57,15 @@ public interface NetworkController {
         default void setIsAirplaneMode(IconState icon) {}
 
         default void setMobileDataEnabled(boolean enabled) {}
+    }
+
+    public interface SignalCallbackExtended extends SignalCallback {
+        void setMobileDataIndicators(IconState statusIcon, IconState qsIcon, int statusType,
+                int qsType, boolean activityIn, boolean activityOut, int dataActivityId,
+                int mobileActivityId, int stackedDataIcon, int stackedVoiceIcon,
+                String typeContentDescription, String description, boolean isWide,
+                int subId, int dataNetworkTypeId, int embmsIconId,
+                boolean isMobileIms, boolean isImsOverWifi, boolean roaming);
     }
 
     public interface EmergencyListener {

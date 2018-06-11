@@ -126,6 +126,7 @@ LOCAL_SRC_FILES += \
 	core/java/android/bluetooth/IBluetoothGatt.aidl \
 	core/java/android/bluetooth/IBluetoothGattCallback.aidl \
 	core/java/android/bluetooth/IBluetoothGattServerCallback.aidl \
+	core/java/android/bluetooth/IBluetoothDun.aidl \
 	core/java/android/content/IClipboard.aidl \
 	core/java/android/content/IContentService.aidl \
 	core/java/android/content/IIntentReceiver.aidl \
@@ -329,6 +330,7 @@ LOCAL_SRC_FILES += \
 	core/java/com/android/internal/policy/IShortcutService.aidl \
 	core/java/com/android/internal/os/IDropBoxManagerService.aidl \
 	core/java/com/android/internal/os/IParcelFileDescriptorFactory.aidl \
+	core/java/com/android/internal/os/IRegionalizationService.aidl \
 	core/java/com/android/internal/os/IResultReceiver.aidl \
 	core/java/com/android/internal/statusbar/IStatusBar.aidl \
 	core/java/com/android/internal/statusbar/IStatusBarService.aidl \
@@ -465,6 +467,8 @@ LOCAL_SRC_FILES += \
 	packages/services/Proxy/com/android/net/IProxyPortListener.aidl \
 	core/java/android/service/quicksettings/IQSService.aidl \
 	core/java/android/service/quicksettings/IQSTileService.aidl \
+	telephony/java/com/android/internal/telephony/ISmsSecurityService.aidl \
+	telephony/java/com/android/internal/telephony/ISmsSecurityAgent.aidl \
 
 # The following are native binders that need to go with the native component
 # at system/update_engine/binder_bindings/. Use relative path to refer to them.

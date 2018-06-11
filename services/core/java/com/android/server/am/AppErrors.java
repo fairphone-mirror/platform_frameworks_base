@@ -47,7 +47,8 @@ import android.util.Log;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.util.TimeUtils;
-
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -72,7 +73,7 @@ class AppErrors {
 
     private final ActivityManagerService mService;
     private final Context mContext;
-
+    SimpleDateFormat mTraceDateFormat = new SimpleDateFormat("dd_MMM_HH_mm_ss.SSS");
     private ArraySet<String> mAppsNotReportingCrashes;
 
     /**
@@ -884,6 +885,24 @@ class AppErrors {
         synchronized (mService) {
             mService.mBatteryStatsService.noteProcessAnr(app.processName, app.uid);
 
+            boolean enableTraceRename = SystemProperties.getBoolean("persist.sys.enableTraceRename", false);
+            //Set the trace file name to app name + current date format to avoid overrinding trace file based on debug flag
+            if(enableTraceRename) {
+                String tracesPath = SystemProperties.get("dalvik.vm.stack-trace-file", null);
+                if (tracesPath != null && tracesPath.length() != 0) {
+                    File traceRenameFile = new File(tracesPath);
+                    String newTracesPath;
+                    int lpos = tracesPath.lastIndexOf (".");
+                    if (-1 != lpos)
+                        newTracesPath = tracesPath.substring (0, lpos) + "_" + app.processName + "_" + mTraceDateFormat.format(new Date()) + tracesPath.substring (lpos);
+                    else
+                        newTracesPath = tracesPath + "_" + app.processName;
+
+                    traceRenameFile.renameTo(new File(newTracesPath));
+                    SystemClock.sleep(1000);
+                }
+            }
+
             if (isSilentANR) {
                 app.kill("bg anr", true);
                 return;
@@ -894,6 +913,7 @@ class AppErrors {
                     activity != null ? activity.shortComponentName : null,
                     annotation != null ? "ANR " + annotation : "ANR",
                     info.toString());
+
 
             // Bring up the infamous App Not Responding dialog
             Message msg = Message.obtain();

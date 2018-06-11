@@ -620,9 +620,10 @@ public final class BluetoothDevice implements Parcelable {
         public void onBluetoothServiceUp(IBluetooth bluetoothService)
                 throws RemoteException {
             synchronized (BluetoothDevice.class) {
-                if (sService == null) {
-                    sService = bluetoothService;
+                if (sService != null) {
+                    Log.w(TAG, "sService is not NULL");
                 }
+                sService = bluetoothService;
             }
         }
 
@@ -1400,6 +1401,27 @@ public final class BluetoothDevice implements Parcelable {
      */
     public BluetoothSocket createL2capSocket(int channel) throws IOException {
         return new BluetoothSocket(BluetoothSocket.TYPE_L2CAP, -1, true, true, this, channel,
+                null);
+    }
+
+    /**
+     * Create an L2cap {@link BluetoothSocket} ready to start an insecure
+     * outgoing connection to this remote device on given channel.
+     * <p>The remote device will be not authenticated and communication on this
+     * socket will not be encrypted.
+     * <p>Use {@link BluetoothSocket#connect} to initiate the outgoing
+     * connection.
+     * <p>Valid L2CAP PSM channels are in range 1 to 2^16.
+     * <p>Requires {@link android.Manifest.permission#BLUETOOTH}
+     *
+     * @param channel L2cap PSM/channel to connect to
+     * @return a RFCOMM BluetoothServerSocket ready for an outgoing connection
+     * @throws IOException on error, for example Bluetooth not available, or
+     *                     insufficient permissions
+     * @hide
+     */
+    public BluetoothSocket createInsecureL2capSocket(int channel) throws IOException {
+        return new BluetoothSocket(BluetoothSocket.TYPE_L2CAP, -1, false, false, this, channel,
                 null);
     }
 

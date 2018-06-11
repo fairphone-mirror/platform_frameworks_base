@@ -149,6 +149,7 @@ public class WifiTracker {
         mFilter.addAction(WifiManager.CONFIGURED_NETWORKS_CHANGED_ACTION);
         mFilter.addAction(WifiManager.LINK_CONFIGURATION_CHANGED_ACTION);
         mFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        mFilter.addAction(WifiManager.ACTION_AUTH_PASSWORD_WRONG);
 
         mNetworkRequest = new NetworkRequest.Builder()
                 .clearCapabilities()
@@ -353,7 +354,7 @@ public class WifiTracker {
                         // If saved network not present in scan result then set its Rssi to MAX_VALUE
                         boolean apFound = false;
                         for (ScanResult result : results) {
-                            if (result.SSID.equals(accessPoint.getSsidStr())) {
+                            if (accessPoint.matches(result)) {
                                 apFound = true;
                                 break;
                             }
@@ -398,7 +399,7 @@ public class WifiTracker {
 
                     if (result.isPasspointNetwork()) {
                         WifiConfiguration config = mWifiManager.getMatchingWifiConfig(result);
-                        if (config != null) {
+                        if (config != null && config.SSID.equals(result.SSID)) {
                             accessPoint.update(config);
                         }
                     }
@@ -537,7 +538,11 @@ public class WifiTracker {
                 mWorkHandler.sendEmptyMessage(WorkHandler.MSG_UPDATE_ACCESS_POINTS);
                 mWorkHandler.obtainMessage(WorkHandler.MSG_UPDATE_NETWORK_INFO, info)
                         .sendToTarget();
+            } else if (WifiManager.ACTION_AUTH_PASSWORD_WRONG.equals(action)) {
+                Toast.makeText(context, R.string.wifi_auth_password_wrong,
+                             Toast.LENGTH_SHORT).show();
             }
+
         }
     };
 

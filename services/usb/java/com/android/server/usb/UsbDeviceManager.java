@@ -354,7 +354,6 @@ public class UsbDeviceManager {
                         SystemProperties.get(USB_STATE_PROPERTY));
                 mAdbEnabled = UsbManager.containsFunction(getDefaultFunctions(),
                         UsbManager.USB_FUNCTION_ADB);
-
                 /**
                  * Remove MTP from persistent config, to bring usb to a good state
                  * after fixes to b/31814300. This block can be removed after the update
@@ -364,8 +363,19 @@ public class UsbDeviceManager {
                     SystemProperties.set(USB_PERSISTENT_CONFIG_PROPERTY,
                             UsbManager.removeFunction(persisted, UsbManager.USB_FUNCTION_MTP));
                 }
+				
+				boolean usbDataUnlocked = false;
 
-                setEnabledFunctions(null, false, false);
+                if (mContext.getResources().getBoolean(
+                        com.android.internal.R.bool.config_usb_data_unlock)) {
+                    boolean mtpEnable = UsbManager.containsFunction(getDefaultFunctions(),
+                            UsbManager.USB_FUNCTION_MTP);
+                    boolean ptpEnable = UsbManager.containsFunction(getDefaultFunctions(),
+                            UsbManager.USB_FUNCTION_PTP);
+                    if (mtpEnable || ptpEnable) usbDataUnlocked = true;
+                }
+
+                setEnabledFunctions(null, false, usbDataUnlocked);
 
                 String state = FileUtils.readTextFile(new File(STATE_PATH), 0, null).trim();
                 updateState(state);
@@ -576,7 +586,11 @@ public class UsbDeviceManager {
         }
 
         private String applyAdbFunction(String functions) {
-            if (mAdbEnabled) {
+            //Not enable adb when it s charging mode
+            //Now take MTP and mUsbDataUnlocked false as charging mode
+            if (mAdbEnabled &&
+                !(UsbManager.containsFunction(functions, UsbManager.USB_FUNCTION_MTP)
+                && !mUsbDataUnlocked)) {
                 functions = UsbManager.addFunction(functions, UsbManager.USB_FUNCTION_ADB);
             } else {
                 functions = UsbManager.removeFunction(functions, UsbManager.USB_FUNCTION_ADB);

@@ -69,6 +69,7 @@ import android.util.Log;
 import android.util.Slog;
 import android.util.TimeUtils;
 import android.util.TypedValue;
+import android.util.BoostFramework;
 import android.view.Surface.OutOfResourcesException;
 import android.view.View.AttachInfo;
 import android.view.View.MeasureSpec;
@@ -407,6 +408,12 @@ public final class ViewRootImpl implements ViewParent,
     }
 
     private String mTag = TAG;
+    boolean mHaveMoveEvent = false;
+    boolean mIsPerfLockAcquired = false;
+    boolean mIsPreFlingBoostEnabled = false;
+    BoostFramework mPerf = null;
+    int mPreFlingBoostTimeOut = 0;
+    int mPreFlingBoostParamVal[];
 
     public ViewRootImpl(Context context, Display display) {
         mContext = context;
@@ -444,6 +451,14 @@ public final class ViewRootImpl implements ViewParent,
         mFallbackEventHandler = new PhoneFallbackEventHandler(context);
         mChoreographer = Choreographer.getInstance();
         mDisplayManager = (DisplayManager)context.getSystemService(Context.DISPLAY_SERVICE);
+        mIsPreFlingBoostEnabled = context.getResources().getBoolean(
+                com.android.internal.R.bool.config_enableCpuBoostForPreFling);
+        if (mIsPreFlingBoostEnabled) {
+            mPreFlingBoostTimeOut = context.getResources().getInteger(
+                    com.android.internal.R.integer.preflingboost_timeout_param);
+            mPreFlingBoostParamVal = context.getResources().getIntArray(
+                    com.android.internal.R.array.preflingboost_param_value);
+        }
         loadSystemProperties();
     }
 
@@ -2683,6 +2698,15 @@ public final class ViewRootImpl implements ViewParent,
         scrollToRectOrFocus(null, false);
 
         if (mAttachInfo.mViewScrollChanged) {
+            if (mIsPreFlingBoostEnabled && mHaveMoveEvent && !mIsPerfLockAcquired) {
+                mIsPerfLockAcquired = true;
+                if (mPerf == null) {
+                    mPerf = new BoostFramework();
+                }
+                if (mPerf != null) {
+                    mPerf.perfLockAcquire(mPreFlingBoostTimeOut, mPreFlingBoostParamVal);
+                }
+            }
             mAttachInfo.mViewScrollChanged = false;
             mAttachInfo.mTreeObserver.dispatchOnScrollChanged();
         }
@@ -3390,6 +3414,7 @@ public final class ViewRootImpl implements ViewParent,
     private final static int MSG_DISPATCH_WINDOW_SHOWN = 25;
     private final static int MSG_REQUEST_KEYBOARD_SHORTCUTS = 26;
     private final static int MSG_UPDATE_POINTER_ICON = 27;
+    private final static int MSG_HIGHTEXT_CONTRAST_CHANGED = 28;
 
     final class ViewRootHandler extends Handler {
         @Override
@@ -3439,6 +3464,8 @@ public final class ViewRootImpl implements ViewParent,
                     return "MSG_DISPATCH_WINDOW_SHOWN";
                 case MSG_UPDATE_POINTER_ICON:
                     return "MSG_UPDATE_POINTER_ICON";
+                case MSG_HIGHTEXT_CONTRAST_CHANGED:
+                    return "MSG_HIGHTEXT_CONTRAST_CHANGED";
             }
             return super.getMessageName(message);
         }
@@ -3696,6 +3723,9 @@ public final class ViewRootImpl implements ViewParent,
             case MSG_UPDATE_POINTER_ICON: {
                 MotionEvent event = (MotionEvent) msg.obj;
                 resetPointerIcon(event);
+            } break;
+            case MSG_HIGHTEXT_CONTRAST_CHANGED: {
+                handleHighTextContrastChange(msg.arg1 != 0);
             } break;
             }
         }
@@ -4436,6 +4466,13 @@ public final class ViewRootImpl implements ViewParent,
                             mCapturingView : mView;
             mAttachInfo.mHandlingPointerEvent = true;
             boolean handled = eventTarget.dispatchPointerEvent(event);
+            int action = event.getActionMasked();
+            if (action == MotionEvent.ACTION_MOVE) {
+                mHaveMoveEvent = true;
+            } else if (action == MotionEvent.ACTION_UP) {
+                mHaveMoveEvent = false;
+                mIsPerfLockAcquired = false;
+            }
             maybeUpdatePointerIcon(event);
             mAttachInfo.mHandlingPointerEvent = false;
             if (mAttachInfo.mUnbufferedDispatchRequested && !mUnbufferedInputDispatch) {
@@ -7309,19 +7346,27 @@ public final class ViewRootImpl implements ViewParent,
         }
     }
 
+    void handleHighTextContrastChange(boolean enabled) {
+        mAttachInfo.mHighContrastText = enabled;
+        // Destroy Displaylists so they can be recreated with high contrast recordings
+        destroyHardwareResources();
+        // Schedule redraw, which will rerecord + redraw all text
+        invalidate();
+    }
+
+    public void dispatchHighTextContrastChange(boolean enabled) {
+        Message msg = mHandler.obtainMessage(MSG_HIGHTEXT_CONTRAST_CHANGED);
+        msg.arg1 = enabled ? 1 : 0;
+        mHandler.sendMessage(msg);
+    }
+
     final class HighContrastTextManager implements HighTextContrastChangeListener {
         HighContrastTextManager() {
             mAttachInfo.mHighContrastText = mAccessibilityManager.isHighTextContrastEnabled();
         }
         @Override
         public void onHighTextContrastStateChanged(boolean enabled) {
-            mAttachInfo.mHighContrastText = enabled;
-
-            // Destroy Displaylists so they can be recreated with high contrast recordings
-            destroyHardwareResources();
-
-            // Schedule redraw, which will rerecord + redraw all text
-            invalidate();
+            dispatchHighTextContrastChange(enabled);
         }
     }
 

@@ -174,6 +174,27 @@ public class AudioService extends IAudioService.Stub {
     // the platform type affects volume and silent mode behavior
     private final int mPlatformType;
 
+    private static final ArrayList<MediaPlayerInfo> mMediaPlayers =
+                                        new ArrayList<MediaPlayerInfo>();
+
+    private class MediaPlayerInfo {
+        private String mPackageName;
+        private boolean mIsfocussed;
+        public MediaPlayerInfo(String packageName, boolean isfocussed) {
+            mPackageName = packageName;
+            mIsfocussed = isfocussed;
+        }
+        public boolean isFocussed() {
+            return mIsfocussed;
+        }
+        public void setFocus(boolean focus) {
+            mIsfocussed = focus;
+        }
+        public String getPackageName() {
+            return mPackageName;
+        }
+    }
+
     private boolean isPlatformVoice() {
         return mPlatformType == AudioSystem.PLATFORM_VOICE;
     }
@@ -430,6 +451,8 @@ public class AudioService extends IAudioService.Stub {
     }
 
     private final ArrayMap<String, DeviceListSpec> mConnectedDevices = new ArrayMap<>();
+
+    private String mA2dpConnectedDevice = ""; //Used for BT a2dp connection
 
     // Forced device usage for communications
     private int mForcedUseForComm;
@@ -690,6 +713,7 @@ public class AudioService extends IAudioService.Stub {
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
 
         intentFilter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
+        intentFilter.addAction(Intent.ACTION_SHUTDOWN);
         // TODO merge orientation and rotation
         mMonitorOrientation = SystemProperties.getBoolean("ro.audio.monitorOrientation", false);
         if (mMonitorOrientation) {
@@ -888,6 +912,106 @@ public class AudioService extends IAudioService.Stub {
                     Log.e(TAG, "Interrupted while waiting on volume handler.");
                 }
             }
+        }
+    }
+
+    /**
+     * @hide
+     */
+    public void addMediaPlayerAndUpdateRemoteController (String packageName) {
+        synchronized(mMediaPlayers) {
+            Log.v(TAG, "addMediaPlayerAndUpdateRemoteController: size of existing list: " +
+                    mMediaPlayers.size());
+            boolean playerToAdd = true;
+            if (mMediaPlayers.size() > 0) {
+                final Iterator<MediaPlayerInfo> rccIterator = mMediaPlayers.iterator();
+                while (rccIterator.hasNext()) {
+                    final MediaPlayerInfo player = rccIterator.next();
+                    if (packageName.equals(player.getPackageName())) {
+                        Log.e(TAG, "Player entry present, no need to add");
+                        playerToAdd = false;
+                        player.setFocus(true);
+                    } else {
+                        Log.e(TAG, "Player: " + player.getPackageName()+ "Lost Focus");
+                        player.setFocus(false);
+                    }
+                }
+            }
+            if (playerToAdd) {
+                Log.e(TAG, "Adding Player: " + packageName + " to available player list");
+                mMediaPlayers.add(new MediaPlayerInfo(packageName, true));
+            }
+            Intent intent = new Intent(AudioManager.RCC_CHANGED_ACTION);
+            intent.putExtra(AudioManager.EXTRA_CALLING_PACKAGE_NAME, packageName);
+            intent.putExtra(AudioManager.EXTRA_FOCUS_CHANGED_VALUE, true);
+            intent.putExtra(AudioManager.EXTRA_AVAILABLITY_CHANGED_VALUE, true);
+            sendBroadcastToAll(intent);
+            Log.v(TAG, "updating focussed RCC change to RCD: CallingPackageName:"
+                    + packageName);
+        }
+    }
+
+    /**
+     * @hide
+     */
+    public void updateRemoteControllerOnExistingMediaPlayers() {
+        synchronized(mMediaPlayers) {
+            Log.v(TAG, "updateRemoteControllerOnExistingMediaPlayers: size of Player list: " +
+                                                                mMediaPlayers.size());
+            if (mMediaPlayers.size() > 0) {
+                Log.v(TAG, "Inform RemoteController regarding existing RCC entry");
+                final Iterator<MediaPlayerInfo> rccIterator = mMediaPlayers.iterator();
+                while (rccIterator.hasNext()) {
+                    final MediaPlayerInfo player = rccIterator.next();
+                    Intent intent = new Intent(AudioManager.RCC_CHANGED_ACTION);
+                    intent.putExtra(AudioManager.EXTRA_CALLING_PACKAGE_NAME,
+                                                        player.getPackageName());
+                    intent.putExtra(AudioManager.EXTRA_FOCUS_CHANGED_VALUE,
+                                                        player.isFocussed());
+                    intent.putExtra(AudioManager.EXTRA_AVAILABLITY_CHANGED_VALUE, true);
+                    sendBroadcastToAll(intent);
+                    Log.v(TAG, "updating RCC change: CallingPackageName:" +
+                                                        player.getPackageName());
+                }
+            } else {
+                Log.e(TAG, "No RCC entry present to update");
+            }
+        }
+    }
+
+    /**
+     * @hide
+     */
+    public void removeMediaPlayerAndUpdateRemoteController (String packageName) {
+        synchronized(mMediaPlayers) {
+            Log.v(TAG, "removeMediaPlayerAndUpdateRemoteController: size of existing list: " +
+                                                                    mMediaPlayers.size());
+            boolean playerToRemove = false;
+            int index = -1;
+            if (mMediaPlayers.size() > 0) {
+                final Iterator<MediaPlayerInfo> rccIterator = mMediaPlayers.iterator();
+                while (rccIterator.hasNext()) {
+                    index++;
+                    final MediaPlayerInfo player = rccIterator.next();
+                    if (packageName.equals(player.getPackageName())) {
+                        Log.v(TAG, "Player entry present remove and update RemoteController");
+                        playerToRemove = true;
+                        break;
+                    } else {
+                        Log.v(TAG, "Player entry for " + player.getPackageName()+ " is not present");
+                    }
+                }
+            }
+            if (playerToRemove) {
+                Log.e(TAG, "Removing Player: " + packageName + " from index" + index);
+                mMediaPlayers.remove(index);
+            }
+            Intent intent = new Intent(AudioManager.RCC_CHANGED_ACTION);
+            intent.putExtra(AudioManager.EXTRA_CALLING_PACKAGE_NAME, packageName);
+            intent.putExtra(AudioManager.EXTRA_FOCUS_CHANGED_VALUE, false);
+            intent.putExtra(AudioManager.EXTRA_AVAILABLITY_CHANGED_VALUE, false);
+            sendBroadcastToAll(intent);
+            Log.v(TAG, "Updated List size: " + mMediaPlayers.size());
         }
     }
 
@@ -2691,6 +2815,13 @@ public class AudioService extends IAudioService.Stub {
     public void setBluetoothScoOnInt(boolean on) {
         if (on) {
             mForcedUseForComm = AudioSystem.FORCE_BT_SCO;
+            synchronized(mScoClients) {
+                if ((mBluetoothHeadset != null) &&
+                    (mBluetoothHeadset.getAudioState(mBluetoothHeadsetDevice)
+                                 != BluetoothHeadset.STATE_AUDIO_CONNECTED)) {
+                    return;
+                }
+            }
         } else if (mForcedUseForComm == AudioSystem.FORCE_BT_SCO) {
             mForcedUseForComm = AudioSystem.FORCE_NONE;
         }
@@ -3100,6 +3231,18 @@ public class AudioService extends IAudioService.Stub {
         boolean success =
             handleDeviceConnection(connected, outDevice, address, btDeviceName) &&
             handleDeviceConnection(connected, inDevice, address, btDeviceName);
+
+        /* When one BT headset is disconnected while there is SCO with another BT
+         * headset, ignore the BT headset disconncting/disconnected intents.
+         */
+        if ((state == BluetoothProfile.STATE_DISCONNECTED ||
+            state == BluetoothProfile.STATE_DISCONNECTING) &&
+            mBluetoothHeadset != null &&
+            mBluetoothHeadset.getAudioState(btDevice) == BluetoothHeadset.STATE_AUDIO_CONNECTED) {
+            Log.w(TAG, "SCO is there with another device, returning");
+            return;
+        }
+
         if (success) {
             synchronized (mScoClients) {
                 if (connected) {
@@ -3122,9 +3265,13 @@ public class AudioService extends IAudioService.Stub {
                 synchronized (mConnectedDevices) {
                     synchronized (mA2dpAvrcpLock) {
                         mA2dp = (BluetoothA2dp) proxy;
+                        //In Dual A2dp, we can have two devices connected
                         deviceList = mA2dp.getConnectedDevices();
-                        if (deviceList.size() > 0) {
-                            btDevice = deviceList.get(0);
+                        Log.d(TAG, "onServiceConnected: A2dp Service connected: " +
+                                deviceList.size());
+                        for (int i = 0; i < deviceList.size(); i++) {
+                            //Add the device in Connected list
+                            btDevice = deviceList.get(i);
                             int state = mA2dp.getConnectionState(btDevice);
                             int delay = checkSendBecomingNoisyIntent(
                                                 AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP,
@@ -3804,9 +3951,67 @@ public class AudioService extends IAudioService.Stub {
 
     public int setBluetoothA2dpDeviceConnectionState(BluetoothDevice device, int state, int profile)
     {
-        int delay;
+        int delay = 0;
         if (profile != BluetoothProfile.A2DP && profile != BluetoothProfile.A2DP_SINK) {
             throw new IllegalArgumentException("invalid profile " + profile);
+        }
+        /*check if device is valid or not and  state of the currnt device*/
+        if (device == null || state == BluetoothA2dp.STATE_CONNECTING) {
+            Log.d(TAG, "Device is invalid or still in connecting state");
+            return delay;
+        }
+        String key = makeDeviceListKey(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP,
+                                       device.getAddress());
+        DeviceListSpec deviceSpec = mConnectedDevices.get(key);
+        boolean isDeviceAdded = deviceSpec != null;
+        if (isDeviceAdded && (state == BluetoothA2dp.STATE_CONNECTED)) {
+            Log.d(TAG, "Device conn is updated again, ignore ");
+            return delay;
+        }
+        if (!isDeviceAdded && (state == BluetoothA2dp.STATE_CONNECTED)) {
+            /*add the device in the list*/
+            Log.d(TAG, "Add new connected device in the list: " + device);
+            boolean deviceexist = false;
+            synchronized (mConnectedDevices) {
+                for (int i = 0; i < mConnectedDevices.size(); i++) {
+                    DeviceListSpec devSpec = mConnectedDevices.valueAt(i);
+                    if (devSpec.mDeviceType == AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP) {
+                        Log.d(TAG, "Second device connected, add new device to list");
+                        mConnectedDevices.put(
+                        makeDeviceListKey(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP, device.getAddress()),
+                        new DeviceListSpec(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP, device.getName(),
+                                           device.getAddress()));
+                        deviceexist = true;
+                    }
+                }
+            }
+            if (deviceexist)
+                return delay;
+        } else if ((state == BluetoothA2dp.STATE_DISCONNECTED) ||
+            (state == BluetoothA2dp.STATE_DISCONNECTING)) {
+            Log.d(TAG, "Device is getting disconnected: " + device);
+            int BTdeviceList = 0;
+            synchronized (mConnectedDevices) {
+                for (int i = 0; i < mConnectedDevices.size(); i++) {
+                     DeviceListSpec devSpec = mConnectedDevices.valueAt(i);
+                     if (devSpec.mDeviceType == AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP) {
+                         BTdeviceList++;
+                     }
+                }
+            }
+            if (BTdeviceList > 1 && isDeviceAdded) {
+                Log.d(TAG, "Remove device from mConnectedDevices list ");
+                synchronized (mConnectedDevices) {
+                    mConnectedDevices.remove(
+                    makeDeviceListKey(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP, device.getAddress()));
+                }
+                Log.d(TAG, "Not all are disconnected ");
+                return delay;
+            }else if (!isDeviceAdded) {
+                Log.d(TAG,"Disconnect state updated again, device already removed");
+                Log.d(TAG, "Not all are disconnected ");
+                return delay;
+            }
         }
         synchronized (mConnectedDevices) {
             if (profile == BluetoothProfile.A2DP) {
@@ -4875,18 +5080,34 @@ public class AudioService extends IAudioService.Stub {
                                            btDevice.getAddress());
             DeviceListSpec deviceSpec = mConnectedDevices.get(key);
             boolean isConnected = deviceSpec != null;
+            int BTdeviceList = 0;
+            for (int i = 0; i < mConnectedDevices.size(); i++) {
+                 DeviceListSpec devSpec = mConnectedDevices.valueAt(i);
+                 if (devSpec.mDeviceType == AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP) {
+                     Log.w(TAG, "onSetA2dpSinkConnectionState Addr" + devSpec.mDeviceAddress);
+                     BTdeviceList++;
+                 }
+            }
 
+            Log.d(TAG, "onSetA2dpSinkConnectionState isConnected = "+isConnected+
+                        "state="+state+"device:"+address);
             if (isConnected && state != BluetoothProfile.STATE_CONNECTED) {
                 if (btDevice.isBluetoothDock()) {
                     if (state == BluetoothProfile.STATE_DISCONNECTED) {
                         // introduction of a delay for transient disconnections of docks when
                         // power is rapidly turned off/on, this message will be canceled if
                         // we reconnect the dock under a preset delay
-                        makeA2dpDeviceUnavailableLater(address, BTA2DP_DOCK_TIMEOUT_MILLIS);
+                        makeA2dpDeviceUnavailableLater(btDevice.getAddress(), BTA2DP_DOCK_TIMEOUT_MILLIS);
                         // the next time isConnected is evaluated, it will be false for the dock
                     }
+                } else if (BTdeviceList > 1) {
+                    Log.d(TAG,"onSetA2dpSinkConnectionState: Not all device are disconnected");
+                    mConnectedDevices.remove(
+                        makeDeviceListKey(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP, address));
+                    return;
                 } else {
-                    makeA2dpDeviceUnavailableNow(address);
+                    Log.d(TAG, "All devices are disconneted, update Policymanager ");
+                    makeA2dpDeviceUnavailableNow(btDevice.getAddress());
                 }
                 synchronized (mCurAudioRoutes) {
                     if (mCurAudioRoutes.bluetoothName != null) {
@@ -4896,21 +5117,24 @@ public class AudioService extends IAudioService.Stub {
                     }
                 }
             } else if (!isConnected && state == BluetoothProfile.STATE_CONNECTED) {
+                //This function is not implemented
+                mA2dpConnectedDevice = "BluetoothA2dp"; // Add this String
                 if (btDevice.isBluetoothDock()) {
                     // this could be a reconnection after a transient disconnection
                     cancelA2dpDeviceTimeout();
-                    mDockAddress = address;
+                    mDockAddress =  mA2dpConnectedDevice;
                 } else {
                     // this could be a connection of another A2DP device before the timeout of
                     // a dock: cancel the dock timeout, and make the dock unavailable now
                     if(hasScheduledA2dpDockTimeout()) {
                         cancelA2dpDeviceTimeout();
-                        makeA2dpDeviceUnavailableNow(mDockAddress);
+                        makeA2dpDeviceUnavailableNow(btDevice.getAddress());
                     }
                 }
-                makeA2dpDeviceAvailable(address, btDevice.getName());
+                makeA2dpDeviceAvailable(btDevice.getAddress(), btDevice.getName());
+                //Updated the Router for a2dp device
                 synchronized (mCurAudioRoutes) {
-                    String name = btDevice.getAliasName();
+                    String name = mA2dpConnectedDevice;
                     if (!TextUtils.equals(mCurAudioRoutes.bluetoothName, name)) {
                         mCurAudioRoutes.bluetoothName = name;
                         sendMsg(mAudioHandler, MSG_REPORT_NEW_ROUTES,
@@ -4927,6 +5151,7 @@ public class AudioService extends IAudioService.Stub {
             Log.d(TAG, "onSetA2dpSourceConnectionState btDevice="+btDevice+" state="+state);
         }
         if (btDevice == null) {
+            Log.d(TAG, "onSetA2dpSourceConnectionState device is null"); //gasati
             return;
         }
         String address = btDevice.getAddress();
@@ -5012,6 +5237,7 @@ public class AudioService extends IAudioService.Stub {
         int delay = 0;
         if ((state == 0) && ((device & mBecomingNoisyIntentDevices) != 0)) {
             int devices = 0;
+            Log.d(TAG, "checkSendBecomingNoisyIntent update the noise");
             for (int i = 0; i < mConnectedDevices.size(); i++) {
                 int dev = mConnectedDevices.valueAt(i).mDeviceType;
                 if (((dev & AudioSystem.DEVICE_BIT_IN) == 0)
@@ -5027,7 +5253,7 @@ public class AudioService extends IAudioService.Stub {
                         0,
                         null,
                         0);
-                delay = 1000;
+                delay = SystemProperties.getInt("audio.noisy.broadcast.delay", 700);
             }
         }
 
@@ -5261,7 +5487,7 @@ public class AudioService extends IAudioService.Stub {
                 state = intent.getIntExtra(BluetoothProfile.EXTRA_STATE,
                                                BluetoothProfile.STATE_DISCONNECTED);
                 BluetoothDevice btDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
+                Log.d(TAG, "Bt device " + btDevice.getAddress() + "disconnection intent received");
                 setBtScoDeviceConnectionState(btDevice, state);
             } else if (action.equals(BluetoothHeadset.ACTION_AUDIO_STATE_CHANGED)) {
                 boolean broadcast = false;
@@ -5368,6 +5594,8 @@ public class AudioService extends IAudioService.Stub {
                         state == BluetoothAdapter.STATE_TURNING_OFF) {
                     disconnectAllBluetoothProfiles();
                 }
+            } else if (action.equals(Intent.ACTION_SHUTDOWN)) {
+                AudioSystem.setParameters("dev_shutdown=true");
             }
         }
     } // end class AudioServiceBroadcastReceiver
@@ -5446,7 +5674,6 @@ public class AudioService extends IAudioService.Stub {
             }
         }
     }
-
 
     //==========================================================================================
     // Audio Focus

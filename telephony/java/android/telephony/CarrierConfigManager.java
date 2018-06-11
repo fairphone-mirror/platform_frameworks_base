@@ -338,6 +338,18 @@ public class CarrierConfigManager {
             "carrier_default_wfc_ims_roaming_enabled_bool";
 
     /**
+     * Carrier supports Cellular-preferred mode only, in home network:
+     *         true In home network, wifi calling mode preference is always
+     *              set to Cellular-preferred.
+     *         false Wifi calling mode preference set as per user preference or other
+     *               wifi calling mode related configs.
+     *
+     * @hide
+     */
+    public static final String KEY_CARRIER_WFC_ONLY_CELL_PREF_IN_HOME_NET_BOOL =
+            "carrier_wfc_only_cell_pref_in_home_net_bool";
+
+    /**
      * Flag indicating whether failed calls due to no service should prompt the user to enable
      * WIFI calling.  When {@code true}, if the user attempts to establish a call when there is no
      * service available, they are connected to WIFI, and WIFI calling is disabled, a different
@@ -741,6 +753,12 @@ public class CarrierConfigManager {
             "broadcast_emergency_call_state_changes_bool";
 
     /**
+     * Flag specifying whether CDMA call waiting and call forwarding are enabled
+     * @hide
+     */
+    public static final String KEY_CDMA_CW_CF_ENABLED_BOOL = "cdma_cw_cf_enabled_bool";
+
+    /**
      * Cell broadcast additional channels enbled by the carrier
      * @hide
      */
@@ -755,7 +773,6 @@ public class CarrierConfigManager {
       */
     public static final String KEY_STK_DISABLE_LAUNCH_BROWSER_BOOL =
             "stk_disable_launch_browser_bool";
-
 
     // These variables are used by the MMS service and exposed through another API, {@link
     // SmsManager}. The variable names and string values are copied from there.
@@ -895,6 +912,31 @@ public class CarrierConfigManager {
     public static final int CDMA_ROAMING_MODE_AFFILIATED = 1;
     /** @hide */
     public static final int CDMA_ROAMING_MODE_ANY = 2;
+
+     /**
+     * Key that determines if ACTIVATE_REJECT_GGSN is to be treated as a permanent error.
+     * @hide
+     */
+    public static final String KEY_REJECT_GGSN_PERM_FAILURE = "reject_ggsn_perm_failure";
+
+    /**
+     * Key that determines if PROTOCOL_ERRORS is  treated as permanent error.
+     * @hide
+     */
+    public static final String KEY_PROTOCOL_ERRORS_PERM_FAILURE = "protocol_errors_perm_failure";
+
+    /**
+     * Key that determines if anonymous users to be mapped to presentation restricted
+     * @hide
+     */
+    public static final String KEY_MAP_ANONYMOUS_TO_RESTRICTED_BOOL =
+            "carrier_map_anonymous_to_restricted";
+
+    /**
+     * Configuration to play sms ringtone during MO/MT call.
+     * @hide
+     */
+    public static final String KEY_CONFIG_SMS_RINGTONE_INCALL = "config_sms_ringtone_incall";
 
     /**
      * Report IMEI as device id even if it's a CDMA/LTE phone.
@@ -1105,6 +1147,7 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_CARRIER_WFC_SUPPORTS_WIFI_ONLY_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_DEFAULT_WFC_IMS_ENABLED_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_DEFAULT_WFC_IMS_ROAMING_ENABLED_BOOL, false);
+        sDefaults.putBoolean(KEY_CARRIER_WFC_ONLY_CELL_PREF_IN_HOME_NET_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_PROMOTE_WFC_ON_CALL_FAIL_BOOL, false);
         sDefaults.putInt(KEY_CARRIER_DEFAULT_WFC_IMS_MODE_INT, 2);
         sDefaults.putInt(KEY_CARRIER_DEFAULT_WFC_IMS_ROAMING_MODE_INT, 2);
@@ -1130,8 +1173,8 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_MDN_IS_ADDITIONAL_VOICEMAIL_NUMBER_BOOL, false);
         sDefaults.putBoolean(KEY_OPERATOR_SELECTION_EXPAND_BOOL, true);
         sDefaults.putBoolean(KEY_PREFER_2G_BOOL, true);
-        sDefaults.putBoolean(KEY_SHOW_APN_SETTING_CDMA_BOOL, false);
-        sDefaults.putBoolean(KEY_SHOW_CDMA_CHOICES_BOOL, false);
+        sDefaults.putBoolean(KEY_SHOW_APN_SETTING_CDMA_BOOL, true);
+        sDefaults.putBoolean(KEY_SHOW_CDMA_CHOICES_BOOL, true);
         sDefaults.putBoolean(KEY_SHOW_ONSCREEN_DIAL_BUTTON_BOOL, true);
         sDefaults.putBoolean(KEY_SIM_NETWORK_UNLOCK_ALLOW_DISMISS_BOOL, true);
         sDefaults.putBoolean(KEY_SUPPORT_PAUSE_IMS_VIDEO_CALLS_BOOL, false);
@@ -1140,7 +1183,7 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_USE_OTASP_FOR_PROVISIONING_BOOL, false);
         sDefaults.putBoolean(KEY_VOICEMAIL_NOTIFICATION_PERSISTENT_BOOL, false);
         sDefaults.putBoolean(KEY_VOICE_PRIVACY_DISABLE_UI_BOOL, false);
-        sDefaults.putBoolean(KEY_WORLD_PHONE_BOOL, false);
+        sDefaults.putBoolean(KEY_WORLD_PHONE_BOOL, true);
         sDefaults.putBoolean(KEY_REQUIRE_ENTITLEMENT_CHECKS_BOOL, true);
         sDefaults.putInt(KEY_VOLTE_REPLACEMENT_RAT_INT, 0);
         sDefaults.putString(KEY_DEFAULT_SIM_CALL_MANAGER_STRING, "");
@@ -1177,6 +1220,7 @@ public class CarrierConfigManager {
                 new String[]{"default", "mms", "dun", "supl"});
         sDefaults.putStringArray(KEY_CARRIER_METERED_ROAMING_APN_TYPES_STRINGS,
                 new String[]{"default", "mms", "dun", "supl"});
+        sDefaults.putBoolean(KEY_CDMA_CW_CF_ENABLED_BOOL, false);
 
         sDefaults.putStringArray(KEY_GSM_ROAMING_NETWORKS_STRING_ARRAY, null);
         sDefaults.putStringArray(KEY_GSM_NONROAMING_NETWORKS_STRING_ARRAY, null);
@@ -1201,6 +1245,8 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_CONFIG_WIFI_DISABLE_IN_ECBM, false);
         sDefaults.putBoolean(KEY_CARRIER_NAME_OVERRIDE_BOOL, false);
         sDefaults.putString(KEY_CARRIER_NAME_STRING, "");
+        sDefaults.putBoolean(KEY_REJECT_GGSN_PERM_FAILURE,true);
+        sDefaults.putBoolean(KEY_PROTOCOL_ERRORS_PERM_FAILURE,true);
 
         // MMS defaults
         sDefaults.putBoolean(KEY_MMS_ALIAS_ENABLED_BOOL, false);
@@ -1264,6 +1310,8 @@ public class CarrierConfigManager {
         sDefaults.putStringArray(FILTERED_CNAP_NAMES_STRING_ARRAY, null);
         sDefaults.putBoolean(KEY_EDITABLE_WFC_ROAMING_MODE_BOOL, false);
         sDefaults.putBoolean(KEY_STK_DISABLE_LAUNCH_BROWSER_BOOL, false);
+        sDefaults.putBoolean(KEY_MAP_ANONYMOUS_TO_RESTRICTED_BOOL, true);
+        sDefaults.putBoolean(KEY_CONFIG_SMS_RINGTONE_INCALL, true);
         sDefaults.putStringArray(KEY_CARRIER_WIFI_STRING_ARRAY, null);
         sDefaults.putInt(KEY_PREF_NETWORK_NOTIFICATION_DELAY_INT, -1);
         sDefaults.putBoolean(KEY_EDITABLE_TETHER_APN_BOOL, false);
