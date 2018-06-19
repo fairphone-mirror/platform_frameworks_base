@@ -7429,5 +7429,13 @@ message MetricsEvent {
     // ---- End Q Constants, all Q constants go above this line ----
     // Add new aosp constants above this line.
     // END OF AOSP CONSTANTS
+
+    // ------- Begin Fairphone Constants -----
+
+    // OPEN: Settings > Maintenance
+    // CATEGORY: SETTINGS
+    FP_MAINTENANCE = 1800;
+
+    // ---- End Fairphone Constants, all Fairphone constants go above this line ----
   }
 }
