@@ -17,13 +17,17 @@ package com.android.systemui.statusbar.connectivity;
 
 import static android.telephony.TelephonyManager.UNKNOWN_CARRIER_ID;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.NetworkCapabilities;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings.Global;
+import android.telephony.ims.ImsReasonInfo;
+import android.telephony.ims.stub.ImsRegistrationImplBase;
 import android.telephony.CellSignalStrength;
 import android.telephony.CellSignalStrengthCdma;
 import android.telephony.SignalStrength;
@@ -34,6 +38,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.android.ims.ImsManager;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settingslib.SignalIcon.MobileIconGroup;
 import com.android.settingslib.graph.SignalDrawable;
@@ -81,6 +86,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private final String[] mMobileStatusHistory = new String[STATUS_HISTORY_SIZE];
     // Where to copy the next state into.
     private int mMobileStatusHistoryIndex;
+
+    private ImsManager mImsManager;
+    private final boolean mShowVolteIcon;
 
     private final MobileStatusTracker.Callback mMobileCallback =
             new MobileStatusTracker.Callback() {
@@ -142,6 +150,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mNetworkNameDefault = getTextIfExists(
                 com.android.internal.R.string.lockscreen_carrier_default).toString();
 
+        mShowVolteIcon = context.getResources().getBoolean(R.bool.config_display_volte);
+
         mNetworkToIconLookup = mMobileMappingsProxy.mapIconSets(mConfig);
         mDefaultIcons = mMobileMappingsProxy.getDefaultIcons(mConfig);
 
@@ -151,6 +161,10 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mLastState.networkNameData = mCurrentState.networkNameData = networkName;
         mLastState.enabled = mCurrentState.enabled = hasMobileData;
         mLastState.iconGroup = mCurrentState.iconGroup = mDefaultIcons;
+
+        int phoneId = SubscriptionManager.getPhoneId(mSubscriptionInfo.getSubscriptionId());
+        mImsManager = ImsManager.getInstance(mContext, phoneId);
+
         mObserver = new ContentObserver(new Handler(receiverLooper)) {
             @Override
             public void onChange(boolean selfChange) {
@@ -202,6 +216,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mContext.getContentResolver().registerContentObserver(Global.getUriFor(
                 Global.MOBILE_DATA + mSubscriptionInfo.getSubscriptionId()),
                 true, mObserver);
+        mContext.registerReceiver(mVolteSwitchObserver,
+                new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
     }
 
     /**
@@ -210,6 +226,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     public void unregisterListener() {
         mMobileStatusTracker.setListening(false);
         mContext.getContentResolver().unregisterContentObserver(mObserver);
+        mContext.unregisterReceiver(mVolteSwitchObserver);
     }
 
     private void updateInflateSignalStrength() {
@@ -252,6 +269,17 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         return getCurrentIconId();
     }
 
+    private boolean isEnhanced4gLteModeSettingEnabled() {
+        return mImsManager.isEnhanced4gLteModeSettingEnabledByUser()
+                && mImsManager.isNonTtyOrTtyOnVolteEnabled();
+    }
+
+    private int getVolteResId() {
+        int resId = 0;
+        int voiceNetTye = getVoiceNetworkType();
+        return resId;
+    }
+
     @Override
     public void notifyListeners(SignalCallback callback) {
         // If the device is on carrier merged WiFi, we should let WifiSignalController to control
@@ -277,6 +305,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         final QsInfo qsInfo = getQsInfo(contentDescription, iconId);
         final SbInfo sbInfo = getSbInfo(contentDescription, iconId);
 
+        int volteIcon = mShowVolteIcon && isEnhanced4gLteModeSettingEnabled() ? getVolteResId() : 0;
         MobileDataIndicators mobileDataIndicators = new MobileDataIndicators(
                 sbInfo.icon,
                 qsInfo.icon,
@@ -284,6 +313,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 qsInfo.ratTypeIcon,
                 mCurrentState.hasActivityIn(),
                 mCurrentState.hasActivityOut(),
+                volteIcon,
                 dataContentDescription,
                 dataContentDescriptionHtml,
                 qsInfo.description,
@@ -543,6 +573,13 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         return !mPhone.isDataConnectionAllowed();
     }
 
+    private int getVoiceNetworkType() {
+        // TODO(b/214591923)
+        //return mServiceState != null ?
+        //        mServiceState.getVoiceNetworkType() : TelephonyManager.NETWORK_TYPE_UNKNOWN;
+        return TelephonyManager.NETWORK_TYPE_UNKNOWN;
+    }
+
     @VisibleForTesting
     void setActivity(int activity) {
         mCurrentState.activityIn = activity == TelephonyManager.DATA_ACTIVITY_INOUT
@@ -619,4 +656,11 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                     + " icon=" + icon;
         }
     }
+
+    private final BroadcastReceiver mVolteSwitchObserver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            Log.d(mTag, "action=" + intent.getAction());
+            notifyListeners();
+        }
+    };
 }

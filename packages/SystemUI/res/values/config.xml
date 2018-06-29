@@ -919,4 +919,8 @@
     "$packageName" part that will be replaced by the code with the package name of the target app.
     -->
     <string name="config_appStoreAppLinkTemplate" translatable="false"></string>
+
+    <!-- Custom -->
+    <!-- Whether to show VoLTE icon in the status bar -->
+    <bool name="config_display_volte">false</bool>
 </resources>
