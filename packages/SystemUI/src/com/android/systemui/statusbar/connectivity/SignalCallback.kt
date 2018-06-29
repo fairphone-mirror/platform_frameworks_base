@@ -146,6 +146,7 @@ data class MobileDataIndicators(
     @JvmField val qsType: Int,
     @JvmField val activityIn: Boolean,
     @JvmField val activityOut: Boolean,
+    @JvmField val volteIcon: Int,
     @JvmField val typeContentDescription: CharSequence?,
     @JvmField val typeContentDescriptionHtml: CharSequence?,
     @JvmField val qsDescription: CharSequence?,
@@ -161,6 +162,7 @@ data class MobileDataIndicators(
                 .append(",qsType=").append(qsType)
                 .append(",activityIn=").append(activityIn)
                 .append(",activityOut=").append(activityOut)
+                .append(",volteIcon=").append(volteIcon)
                 .append(",typeContentDescription=").append(typeContentDescription)
                 .append(",typeContentDescriptionHtml=").append(typeContentDescriptionHtml)
                 .append(",description=").append(qsDescription)

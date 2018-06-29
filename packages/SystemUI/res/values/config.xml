@@ -717,4 +717,8 @@
         <item>com.android.keyguard</item>
         <item>com.android.systemui</item>
     </string-array>
+
+    <!-- Custom -->
+    <!-- Whether to show VoLTE icon in the status bar -->
+    <bool name="config_display_volte">false</bool>
 </resources>
