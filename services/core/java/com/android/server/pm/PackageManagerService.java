@@ -21756,6 +21756,9 @@ public class PackageManagerService extends IPackageManager.Stub
         // disabled after already being started.
         CarrierAppUtils.disableCarrierAppsUntilPrivileged(mContext.getOpPackageName(), this,
                 mContext.getContentResolver(), UserHandle.USER_SYSTEM);
+        // And also disable any special carrier apps.
+        CarrierAppUtils.disableSpecialCarrierAppsUntilMatched(mContext, this,
+                UserHandle.USER_SYSTEM);
 
         disableSkuSpecificApps();
 
