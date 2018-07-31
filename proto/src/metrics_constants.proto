@@ -2256,6 +2256,10 @@ message MetricsEvent {
     // CATEGORY: SETTINGS
     FP_MAINTENANCE = 800;
 
+    // OPEN: Settings > Developer options -> Root access
+    // CATEGORY: SETTINGS
+    FP_SUPERUSER = 801;
+
     // ---- End Fairphone Constants, all Fairphone constants go above this line ----
   }
 }
