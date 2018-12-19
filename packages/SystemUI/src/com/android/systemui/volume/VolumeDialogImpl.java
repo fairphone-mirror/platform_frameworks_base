@@ -149,6 +149,8 @@ public class VolumeDialogImpl implements VolumeDialog {
     private State mState;
     private SafetyWarningDialog mSafetyWarning;
     private boolean mHovering = false;
+    // Volume panel placement that is currently in use.
+    private boolean mVolumePanelOnLeft = true;
 
     public VolumeDialogImpl(Context context) {
         mContext = new ContextThemeWrapper(context, com.android.systemui.R.style.qs_theme);
@@ -196,15 +198,19 @@ public class VolumeDialogImpl implements VolumeDialog {
         final WindowManager.LayoutParams lp = mWindow.getAttributes();
         lp.format = PixelFormat.TRANSLUCENT;
         lp.setTitle(VolumeDialogImpl.class.getSimpleName());
-        lp.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
         lp.windowAnimations = -1;
+        if (!mVolumePanelOnLeft) {
+            lp.gravity = Gravity.RIGHT | Gravity.CENTER_VERTICAL;
+        } else {
+            lp.gravity = Gravity.LEFT | Gravity.CENTER_VERTICAL;
+        }
         mWindow.setAttributes(lp);
         mWindow.setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         mDialog.setCanceledOnTouchOutside(true);
         mDialog.setContentView(R.layout.volume_dialog);
         mDialog.setOnShowListener(dialog -> {
-            if (!isLandscape()) mDialogView.setTranslationX(mDialogView.getWidth() / 2);
+            if (!isLandscape()) mDialogView.setTranslationX(getAnimatorX());
             mDialogView.setAlpha(0);
             mDialogView.animate()
                     .alpha(1)
@@ -268,6 +274,11 @@ public class VolumeDialogImpl implements VolumeDialog {
         initSettingsH();
     }
 
+    private float getAnimatorX() {
+        float x = mDialogView.getWidth() / 2;
+        return mVolumePanelOnLeft ? -x : x;
+    }
+
     protected ViewGroup getDialogView() {
         return mDialogView;
     }
@@ -310,7 +321,11 @@ public class VolumeDialogImpl implements VolumeDialog {
         if (D.BUG) Slog.d(TAG, "Adding row for stream " + stream);
         VolumeRow row = new VolumeRow();
         initRow(row, stream, iconRes, iconMuteRes, important, defaultStream);
-        mDialogRowsView.addView(row.view);
+        if (!mVolumePanelOnLeft) {
+            mDialogRowsView.addView(row.view, 0);
+        } else {
+            mDialogRowsView.addView(row.view);
+        }
         mRows.add(row);
     }
 
@@ -320,7 +335,11 @@ public class VolumeDialogImpl implements VolumeDialog {
             final VolumeRow row = mRows.get(i);
             initRow(row, row.stream, row.iconRes, row.iconMuteRes, row.important,
                     row.defaultStream);
-            mDialogRowsView.addView(row.view);
+            if (!mVolumePanelOnLeft) {
+                mDialogRowsView.addView(row.view, 0);
+            } else {
+                mDialogRowsView.addView(row.view);
+            }
             updateVolumeRowH(row);
         }
     }
@@ -575,7 +594,7 @@ public class VolumeDialogImpl implements VolumeDialog {
                     if (D.BUG) Log.d(TAG, "mDialog.dismiss()");
                     mDialog.dismiss();
                 }, 50));
-        if (!isLandscape()) animator.translationX(mDialogView.getWidth() / 2);
+        if (!isLandscape()) animator.translationX(getAnimatorX());
         animator.start();
 
         Events.writeEvent(mContext, Events.EVENT_DISMISS_DIALOG, reason);
