@@ -30,7 +30,10 @@ import android.view.View;
 import com.android.settingslib.Utils;
 import com.android.systemui.R;
 
+import android.util.Log;
+
 public class NavigationHandle extends View implements ButtonInterface {
+    private static final String TAG = NavigationHandle.class.getSimpleName();
 
     protected final Paint mPaint = new Paint();
     private @ColorInt final int mLightColor;
@@ -108,5 +111,11 @@ public class NavigationHandle extends View implements ButtonInterface {
 
     @Override
     public void setDelayTouchFeedback(boolean shouldDelay) {
+    }
+
+    @Override
+    public void setHaloImageDrawable(Drawable paramDrawable)
+    {
+        Log.d(TAG, "setHaloImageDrawable" );
     }
 }

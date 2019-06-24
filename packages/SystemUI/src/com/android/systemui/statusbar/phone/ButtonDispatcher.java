@@ -28,6 +28,8 @@ import com.android.systemui.statusbar.policy.KeyButtonDrawable;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 /**
  * Dispatches common view calls to multiple views.  This is used to handle
  * multiples of the same nav bar icon appearing.
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 public class ButtonDispatcher {
     private static final int FADE_DURATION_IN = 150;
     private static final int FADE_DURATION_OUT = 250;
+    private static final String TAG = "ButtonDispatcher";
 
     private final ArrayList<View> mViews = new ArrayList<>();
 
@@ -142,6 +145,17 @@ public class ButtonDispatcher {
         }
         if (mImageDrawable != null) {
             mImageDrawable.setCallback(mCurrentView);
+        }
+    }
+
+    public void setHaloImageDrawable(KeyButtonDrawable drawable)
+    {
+        Log.d(TAG, "setHaloImageDrawable" );
+        final int N = mViews.size();
+        for (int i = 0; i < N; i++) {
+            if (mViews.get(i) instanceof ButtonInterface) {
+                ((ButtonInterface) mViews.get(i)).setHaloImageDrawable(drawable);
+            }
         }
     }
 

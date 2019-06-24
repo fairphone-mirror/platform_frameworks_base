@@ -166,6 +166,15 @@
     <!-- Global Actions Menu -->
     <item type="id" name="global_actions_view" />
 
+    <item type="id" name="red"/>
+    <item type="id" name="blue"/>
+    <item type="id" name="green"/>
+    <item type="id" name="yellow"/>
+    <item type="id" name="white"/>
+    <item type="id" name="white_cutout"/>
+    <item type="id" name="home_button"/>
+    <item type="id" name="halo"/>
+
     <!-- NotificationPanelView -->
     <item type="id" name="notification_panel" />
 

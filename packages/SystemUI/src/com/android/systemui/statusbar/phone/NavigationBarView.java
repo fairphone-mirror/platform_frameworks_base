@@ -521,6 +521,12 @@ public class NavigationBarView extends FrameLayout implements
                 R.drawable.ic_sysbar_back_quick_step);
     }
 
+    public KeyButtonDrawable getHomeHaloDrawable() {
+        KeyButtonDrawable drawable = getDrawable(R.drawable.halo, false);
+        orientHomeButton(drawable);
+        return drawable;
+    }
+
     public KeyButtonDrawable getHomeDrawable() {
         final boolean quickStepEnabled = mOverviewProxyService.shouldShowSwipeUpUI();
         KeyButtonDrawable drawable = quickStepEnabled
@@ -660,6 +666,8 @@ public class NavigationBarView extends FrameLayout implements
             orientHomeButton(homeIcon);
         }
         getHomeButton().setImageDrawable(homeIcon);
+        Log.d(TAG, "updateNavButtonIcons setHaloImageDrawable" );
+        getHomeButton().setHaloImageDrawable(getHomeHaloDrawable());
         getBackButton().setImageDrawable(backIcon);
 
         updateRecentsIcon();

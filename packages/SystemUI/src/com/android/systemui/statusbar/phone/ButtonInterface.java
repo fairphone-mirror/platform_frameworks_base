@@ -30,4 +30,6 @@ public interface ButtonInterface {
     void setDarkIntensity(float intensity);
 
     void setDelayTouchFeedback(boolean shouldDelay);
+
+    void setHaloImageDrawable(@Nullable Drawable drawable);
 }

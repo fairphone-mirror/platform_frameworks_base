@@ -682,6 +682,14 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
+    <style name="DotStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:alpha">0.0</item>
+    </style>
+
     <!-- Controls styles -->
     <style name="Theme.ControlsManagement" parent="@android:style/Theme.DeviceDefault.NoActionBar">
         <item name="android:windowActivityTransitions">true</item>

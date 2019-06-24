@@ -63,6 +63,8 @@ import com.android.systemui.recents.OverviewProxyService;
 import com.android.systemui.shared.system.QuickStepContract;
 import com.android.systemui.statusbar.phone.ButtonInterface;
 
+import android.util.Log;
+
 public class KeyButtonView extends ImageView implements ButtonInterface {
     private static final String TAG = KeyButtonView.class.getSimpleName();
 
@@ -484,5 +486,11 @@ public class KeyButtonView extends ImageView implements ButtonInterface {
     @Override
     public void setVertical(boolean vertical) {
         mIsVertical = vertical;
+    }
+
+    @Override
+    public void setHaloImageDrawable(Drawable paramDrawable)
+    {
+        Log.d(TAG, "setHaloImageDrawable" );
     }
 }
