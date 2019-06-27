@@ -880,6 +880,7 @@ public class ApplicationsState {
 
         void handleRebuildList() {
             AppFilter filter;
+            AppFilter mSpecialFilter = FILTER_HIDDEN_UNINSTALLED;
             Comparator<AppEntry> comparator;
 
             if (!mResumed) {
@@ -905,6 +906,10 @@ public class ApplicationsState {
                 filter.init(mContext);
             }
 
+            if (mSpecialFilter != null) {
+                mSpecialFilter.init(mContext);
+            }
+
             final List<AppEntry> apps;
             synchronized (mEntriesMap) {
                 apps = new ArrayList<>(mAppEntries);
@@ -915,7 +920,9 @@ public class ApplicationsState {
                 Log.i(TAG, "Rebuilding...");
             }
             for (AppEntry entry : apps) {
-                if (entry != null && (filter == null || filter.filterApp(entry))) {
+                if (entry != null
+                        && (filter == null
+                                || (filter.filterApp(entry) && mSpecialFilter.filterApp(entry)))) {
                     synchronized (mEntriesMap) {
                         if (DEBUG_LOCKING) {
                             Log.v(TAG, "rebuild acquired lock");
@@ -1811,6 +1818,39 @@ public class ApplicationsState {
         }
 
     };
+
+    public static final AppFilter FILTER_HIDDEN_UNINSTALLED =
+            new AppFilter() {
+                private String[] mHidePackageNames;
+
+                @Override
+                public void init(Context context) {
+                    mHidePackageNames =
+                            context.getResources()
+                                    .getStringArray(
+                                            R.array.config_hideWhenUninstalled_packageNames);
+                }
+
+                @Override
+                public void init() {}
+
+                @Override
+                public boolean filterApp(AppEntry entry) {
+                    if (ArrayUtils.contains(mHidePackageNames, entry.info.packageName)) {
+                        boolean isInstalled =
+                                hasFlag(entry.info.flags, ApplicationInfo.FLAG_INSTALLED);
+                        Log.i(
+                                TAG,
+                                "Hidden uninstalled apk filter, pkg: "
+                                        + entry.info.packageName
+                                        + ", installed&shown: "
+                                        + isInstalled);
+                        return isInstalled;
+                    }
+
+                    return true;
+                }
+            };
 
     public static final AppFilter FILTER_THIRD_PARTY = new AppFilter() {
         @Override

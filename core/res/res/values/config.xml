@@ -3679,6 +3679,12 @@
     <!-- Intent key for package name values -->
     <string name="config_feedbackIntentNameKey" translatable="false"></string>
 
+    <!-- Special apps that need to be hidden when they are uninstalled -->
+    <string-array name="config_hideWhenUninstalled_packageNames">
+        <item>com.orange.update</item>
+        <item>com.orange.aura.oobe</item>
+    </string-array>
+
     <!-- The apps that need to be hidden when they are disabled -->
     <string-array name="config_hideWhenDisabled_packageNames"></string-array>
 
