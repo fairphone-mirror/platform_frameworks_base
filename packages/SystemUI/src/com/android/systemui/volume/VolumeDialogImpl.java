@@ -430,7 +430,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mDialog.setOnShowListener(dialog -> {
             mDialogView.getViewTreeObserver().addOnComputeInternalInsetsListener(this);
             if (!shouldSlideInVolumeTray()) {
-                mDialogView.setTranslationX(mDialogView.getWidth() / 2.0f);
+                mDialogView.setTranslationX(-mDialogView.getWidth() / 2.0f);
             }
             mDialogView.setAlpha(0);
             mDialogView.animate()
@@ -1381,7 +1381,7 @@ public class VolumeDialogImpl implements VolumeDialog,
 
                     hideRingerDrawer();
                 }, 50));
-        if (!shouldSlideInVolumeTray()) animator.translationX(mDialogView.getWidth() / 2.0f);
+        if (!shouldSlideInVolumeTray()) animator.translationX(-mDialogView.getWidth() / 2.0f);
         animator.setListener(getJankListener(getDialogView(), TYPE_DISMISS,
                 mDialogHideAnimationDurationMs)).start();
         checkODICaptionsTooltip(true);
