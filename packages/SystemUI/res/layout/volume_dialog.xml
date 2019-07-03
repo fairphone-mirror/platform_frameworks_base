@@ -19,8 +19,8 @@
     android:id="@+id/volume_dialog_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:gravity="right"
-    android:layout_gravity="right"
+    android:gravity="left"
+    android:layout_gravity="left"
     android:background="@android:color/transparent"
     android:theme="@style/qs_theme">
 
@@ -30,8 +30,8 @@
         android:minWidth="@dimen/volume_dialog_panel_width"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_gravity="right"
+        android:gravity="left"
+        android:layout_gravity="left"
         android:background="@android:color/transparent"
         android:paddingRight="@dimen/volume_dialog_panel_transparent_padding_right"
         android:paddingTop="@dimen/volume_dialog_panel_transparent_padding"
@@ -45,8 +45,8 @@
             android:layout_width="@dimen/volume_dialog_ringer_size"
             android:layout_height="@dimen/volume_dialog_ringer_size"
             android:layout_marginBottom="@dimen/volume_dialog_spacer"
-            android:gravity="right"
-            android:layout_gravity="right"
+            android:gravity="left"
+            android:layout_gravity="left"
             android:translationZ="@dimen/volume_dialog_elevation"
             android:clipToPadding="false"
             android:background="@drawable/rounded_bg_full">
@@ -74,8 +74,8 @@
             android:minWidth="@dimen/volume_dialog_panel_width"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:layout_gravity="right"
+            android:gravity="left"
+            android:layout_gravity="left"
             android:orientation="vertical"
             android:translationZ="@dimen/volume_dialog_elevation"
             android:clipChildren="false"
@@ -115,8 +115,8 @@
             android:layout_width="@dimen/volume_dialog_caption_size"
             android:layout_height="@dimen/volume_dialog_caption_size"
             android:layout_marginTop="@dimen/volume_dialog_spacer"
-            android:gravity="right"
-            android:layout_gravity="right"
+            android:gravity="left"
+            android:layout_gravity="left"
             android:clipToPadding="false"
             android:translationZ="@dimen/volume_dialog_elevation"
             android:background="@drawable/rounded_bg_full">
@@ -141,7 +141,7 @@
         android:layout="@layout/volume_tool_tip_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom | right"
+        android:layout_gravity="bottom | left"
         android:layout_marginRight="@dimen/volume_tool_tip_right_margin"
         android:layout_marginBottom="@dimen/volume_tool_tip_bottom_margin"/>
 
