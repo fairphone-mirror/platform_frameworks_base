@@ -261,6 +261,7 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mIn.setImageTintList(color);
         mOut.setImageTintList(color);
         mMobileType.setImageTintList(color);
+        mVolte.setImageTintList(color);
         mMobileRoaming.setImageTintList(color);
         mDotView.setDecorColor(tint);
         mDotView.setIconColor(tint, false);
@@ -282,6 +283,7 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mIn.setImageTintList(list);
         mOut.setImageTintList(list);
         mMobileType.setImageTintList(list);
+        mVolte.setImageTintList(list);
         mMobileRoaming.setImageTintList(list);
         mDotView.setDecorColor(color);
     }
