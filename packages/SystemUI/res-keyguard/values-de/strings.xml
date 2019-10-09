@@ -131,6 +131,10 @@
       <item quantity="other">Gib die PIN für die SIM-Karte ein. Du hast noch <xliff:g id="NUMBER_1">%d</xliff:g> Versuche.</item>
       <item quantity="one">Gib die PIN für die SIM-Karte ein. Du hast noch <xliff:g id="NUMBER_0">%d</xliff:g> Versuch, bevor das Gerät nur noch vom Mobilfunkanbieter entsperrt werden kann.</item>
     </plurals>
+    <plurals name="kg_password_default_pin_message_multi_sim">
+        <item quantity="one">Bitte SIM<xliff:g id="slotid">%d</xliff:g> PIN eingeben. Sie haben noch <xliff:g id="number">%d</xliff:g> Versuche.</item>
+        <item quantity="other">Bitte SIM<xliff:g id="slotid">%d</xliff:g> PIN eingeben. Sie haben noch <xliff:g id="number">%d</xliff:g> Versuch.</item>
+    </plurals>
     <plurals name="kg_password_default_puk_message" formatted="false" msgid="571308542462946935">
       <item quantity="other">Die SIM-Karte ist jetzt deaktiviert. Gib den PUK-Code ein, um fortzufahren. Du hast noch <xliff:g id="_NUMBER_1">%d</xliff:g> Versuche, bevor die SIM-Karte endgültig gesperrt wird. Weitere Informationen erhältst du von deinem Mobilfunkanbieter.</item>
       <item quantity="one">Die SIM-Karte ist jetzt deaktiviert. Gib den PUK-Code ein, um fortzufahren. Du hast noch <xliff:g id="_NUMBER_0">%d</xliff:g> Versuch, bevor die SIM-Karte endgültig gesperrt wird. Weitere Informationen erhältst du von deinem Mobilfunkanbieter.</item>
