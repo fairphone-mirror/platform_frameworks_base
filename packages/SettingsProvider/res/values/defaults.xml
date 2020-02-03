@@ -323,4 +323,7 @@
 
     <!-- Whether vibrate icon is shown in the status bar by default. -->
     <integer name="def_statusBarVibrateIconEnabled">0</integer>
+
+    <!-- Default for Settings.System.TIME_12_24 -->
+    <string name="def_time_format" translatable="false"></string>
 </resources>
