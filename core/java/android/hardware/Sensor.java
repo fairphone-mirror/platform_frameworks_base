@@ -898,10 +898,10 @@ public final class Sensor {
             3, // SENSOR_TYPE_GEOMAGNETIC_FIELD
             3, // SENSOR_TYPE_ORIENTATION
             3, // SENSOR_TYPE_GYROSCOPE
-            1, // SENSOR_TYPE_LIGHT
+            3, // SENSOR_TYPE_LIGHT
             1, // SENSOR_TYPE_PRESSURE
             1, // SENSOR_TYPE_TEMPERATURE
-            1, // SENSOR_TYPE_PROXIMITY
+            3, // SENSOR_TYPE_PROXIMITY
             3, // SENSOR_TYPE_GRAVITY
             3, // SENSOR_TYPE_LINEAR_ACCELERATION
             5, // SENSOR_TYPE_ROTATION_VECTOR
