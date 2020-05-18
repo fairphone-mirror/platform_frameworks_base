@@ -24,6 +24,7 @@ import android.database.ContentObserver;
 import android.net.NetworkCapabilities;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemProperties;
 import android.provider.Settings.Global;
 import android.telephony.Annotation;
 import android.telephony.CdmaEriInformation;
@@ -58,6 +59,8 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.FiveGServiceClient;
 import com.android.systemui.statusbar.policy.FiveGServiceClient.FiveGServiceState;
 import com.android.systemui.statusbar.policy.FiveGServiceClient.IFiveGStateListener;
+import com.android.systemui.power.PsensorListener;
+import com.android.systemui.power.GsensorListener;
 import com.android.systemui.statusbar.policy.NetworkController.IconState;
 import com.android.systemui.statusbar.policy.NetworkController.SignalCallback;
 import com.android.systemui.statusbar.policy.NetworkControllerImpl.Config;
@@ -70,6 +73,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executor;
+
+import java.io.*;
 
 import org.codeaurora.internal.NrConfigType;
 import org.codeaurora.internal.NrIconType;
@@ -84,6 +89,8 @@ public class MobileSignalController extends SignalController<
     @VisibleForTesting
     final PhoneStateListener mPhoneStateListener;
     // Save entire info for logging, we only use the id.
+    final PsensorListener mPsensorListener;
+    final GsensorListener mGsensorListener;
     final SubscriptionInfo mSubscriptionInfo;
 
     // @VisibleForDemoMode
@@ -116,6 +123,18 @@ public class MobileSignalController extends SignalController<
 
     private ImsManager mImsManager;
     private FeatureConnector<ImsManager> mFeatureConnector;
+    private final String mDefaultSarDetectMethod = "SW"; // NONE, HW, SW
+    private String mSarDetectMethod;
+    private int mSwSarDataActive = 0; // 0=off, 1=on
+    private int mSwSarCallState = 0; // 0=off, 1=on
+    private final int mDataKey = 4;
+    private final int mCallKey = 8;
+    private int mSarSensorDataActive = 0; // 0=off, 1=on
+    private int mSarSensorCallState = 0; // 0=off, 1=on
+    private final int mDataValueOff = 0;
+    private final int mDataValueOn = 1;
+    private final int mCallValueOff = 0;
+    private final int mCallValueOn = 1;
 
     // TODO: Reduce number of vars passed in, if we have the NetworkController, probably don't
     // need listener lists anymore.
@@ -133,6 +152,9 @@ public class MobileSignalController extends SignalController<
         mSubscriptionInfo = info;
         mFiveGStateListener = new FiveGStateListener();
         mFiveGState = new FiveGServiceState();
+        mPsensorListener = new PsensorListener(context);
+        mGsensorListener = new GsensorListener(context);
+        setSarDetectMethod();
         mPhoneStateListener = new MobilePhoneStateListener((new Handler(receiverLooper))::post);
         mNetworkNameSeparator = getTextIfExists(R.string.status_bar_network_name_separator)
                 .toString();
@@ -556,18 +578,33 @@ public class MobileSignalController extends SignalController<
                     statusIcon.contentDescription);
         }
         if (DEBUG) {
-            Log.d(mTag, "notifyListeners mConfig.alwaysShowNetworkTypeIcon="
-                    + mConfig.alwaysShowNetworkTypeIcon + "  getNetworkType:" + mTelephonyDisplayInfo.getNetworkType() +
-                    "/" + TelephonyManager.getNetworkTypeName(mTelephonyDisplayInfo.getNetworkType())
-                    + " voiceNetType=" + getVoiceNetworkType() + "/"
-                    + TelephonyManager.getNetworkTypeName(getVoiceNetworkType())
-                    + " showDataIcon=" + showDataIcon
-                    + " mConfig.alwaysShowDataRatIcon=" + mConfig.alwaysShowDataRatIcon
-                    + " icons.mDataType=" + icons.mDataType
-                    + " mConfig.showVolteIcon=" + mConfig.showVolteIcon
-                    + " isVolteSwitchOn=" + isVolteSwitchOn()
-                    + " volteIcon=" + volteIcon
-                    + " mConfig.showVowifiIcon=" + mConfig.showVowifiIcon);
+            Log.d(
+                    mTag,
+                    "notifyListeners mConfig.alwaysShowNetworkTypeIcon="
+                            + mConfig.alwaysShowNetworkTypeIcon
+                            + "  getNetworkType:"
+                            + mTelephonyDisplayInfo.getNetworkType()
+                            + "/"
+                            + TelephonyManager.getNetworkTypeName(
+                                    mTelephonyDisplayInfo.getNetworkType())
+                            + " voiceNetType="
+                            + getVoiceNetworkType()
+                            + "/"
+                            + TelephonyManager.getNetworkTypeName(getVoiceNetworkType())
+                            + " showDataIcon="
+                            + showDataIcon
+                            + " mConfig.alwaysShowDataRatIcon="
+                            + mConfig.alwaysShowDataRatIcon
+                            + " icons.mDataType="
+                            + icons.mDataType
+                            + " mConfig.showVolteIcon="
+                            + mConfig.showVolteIcon
+                            + " isVolteSwitchOn="
+                            + isVolteSwitchOn()
+                            + " volteIcon="
+                            + volteIcon
+                            + " mConfig.showVowifiIcon="
+                            + mConfig.showVowifiIcon);
         }
         callback.setMobileDataIndicators(statusIcon, qsIcon, typeIcon, qsTypeIcon,
                 activityIn, activityOut, volteIcon, dataContentDescription, dataContentDescriptionHtml,
@@ -1037,6 +1074,110 @@ public class MobileSignalController extends SignalController<
             if (DEBUG) {
                 Log.d(mTag, "onDataActivity: direction=" + direction);
             }
+
+            if (mSarDetectMethod.equals("SW")) {
+                switch (direction) {
+                    case TelephonyManager.DATA_ACTIVITY_IN:
+                    case TelephonyManager.DATA_ACTIVITY_OUT:
+                    case TelephonyManager.DATA_ACTIVITY_INOUT:
+                        if (mSwSarCallState != mCallValueOn) {
+                            enableSensorListener();
+                        }
+                        if (mSwSarDataActive != mDataValueOn) {
+                            setTransmitPower(mDataKey, mDataKey * mDataValueOn);
+                        }
+                        mSwSarDataActive = mDataValueOn;
+                        break;
+                    case TelephonyManager.DATA_ACTIVITY_NONE:
+                    case TelephonyManager.DATA_ACTIVITY_DORMANT:
+                        if (mSwSarCallState != mCallValueOn) {
+                            disableSensorListener();
+                        }
+                        if (mSwSarDataActive != mDataValueOff) {
+                            setTransmitPower(mDataKey, mDataKey * mDataValueOff);
+                        }
+                        mSwSarDataActive = mDataValueOff;
+                        break;
+                    default:
+                        break;
+                }
+            } else if (mSarDetectMethod.equals("HW")) {
+                int state_change = 0;
+                switch (direction) {
+                    case TelephonyManager.DATA_ACTIVITY_IN:
+                    case TelephonyManager.DATA_ACTIVITY_OUT:
+                    case TelephonyManager.DATA_ACTIVITY_INOUT:
+                        if (mSarSensorDataActive != mDataValueOn) {
+                            state_change = 1;
+                            Log.d(mTag, "[SAR_SENSOR] data_state_on");
+                        }
+                        mSarSensorDataActive = mDataValueOn;
+                        break;
+                    case TelephonyManager.DATA_ACTIVITY_NONE:
+                    case TelephonyManager.DATA_ACTIVITY_DORMANT:
+                        if (mSarSensorDataActive != mDataValueOff) {
+                            state_change = 1;
+                            Log.d(mTag, "[SAR_SENSOR] data_state_off");
+                        }
+                        mSarSensorDataActive = mDataValueOff;
+                        break;
+                    default:
+                        if (mSarSensorDataActive != mDataValueOff) {
+                            state_change = 1;
+                            Log.d(mTag, "[SAR_SENSOR] Unknown data state, set data_state_off.");
+                        }
+                        mSarSensorDataActive = mDataValueOff;
+                        break;
+                }
+                if (state_change == 1) {
+                    String data_state_on =
+                            "cat sys/devices/platform/soc/soc:sar_sensor/data_state_on";
+                    String data_state_off =
+                            "cat sys/devices/platform/soc/soc:sar_sensor/data_state_off";
+
+                    StringBuffer output = new StringBuffer();
+                    BufferedReader reader = null;
+
+                    try {
+                        Process process1 = null;
+                        if (mSarSensorDataActive == mDataValueOn) {
+                            process1 = Runtime.getRuntime().exec(data_state_on);
+                        } else {
+                            process1 = Runtime.getRuntime().exec(data_state_off);
+                        }
+
+                        try {
+                            process1.waitFor();
+                        } catch (InterruptedException ie) {
+                            ie.printStackTrace();
+                        }
+
+                        reader =
+                                new BufferedReader(
+                                        new InputStreamReader(process1.getInputStream()));
+
+                        String line = "";
+                        while ((line = reader.readLine()) != null) {
+                            output.append(line + "\n");
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (reader != null) {
+                                reader.close();
+                                reader = null;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Log.d(mTag, "[SAR_SENSOR] Driver interrupt status: " + output.toString());
+                }
+            }
+
             setActivity(direction);
         }
 
@@ -1070,6 +1211,100 @@ public class MobileSignalController extends SignalController<
             if (DEBUG) {
                 Log.d(mTag, "onCallStateChanged: state=" + state);
             }
+            if (mSarDetectMethod.equals("SW")) {
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                    case TelephonyManager.CALL_STATE_RINGING:
+                        if (mSwSarCallState != mCallValueOn) {
+                            enableSensorListener();
+                            setTransmitPower(mCallKey, mCallKey * mCallValueOn);
+                        }
+                        mSwSarCallState = mCallValueOn;
+                        break;
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        if (mSwSarCallState != mCallValueOff) {
+                            disableSensorListener();
+                            setTransmitPower(mCallKey, mCallKey * mCallValueOff);
+                        }
+                        mSwSarCallState = mCallValueOff;
+                        break;
+                    default:
+                        break;
+                }
+            } else if (mSarDetectMethod.equals("HW")) {
+                int state_change = 0;
+                switch (state) {
+                    case TelephonyManager.CALL_STATE_OFFHOOK:
+                    case TelephonyManager.CALL_STATE_RINGING:
+                        if (mSarSensorCallState != mCallValueOn) {
+                            state_change = 1;
+                            Log.d(mTag, "[SAR_SENSOR] call_state_on");
+                        }
+                        mSarSensorCallState = mCallValueOn;
+                        break;
+                    case TelephonyManager.CALL_STATE_IDLE:
+                        if (mSarSensorCallState != mCallValueOff) {
+                            state_change = 1;
+                            Log.d(mTag, "[SAR_SENSOR] call_state_off");
+                        }
+                        mSarSensorCallState = mCallValueOff;
+                        break;
+                    default:
+                        if (mSarSensorCallState != mCallValueOff) {
+                            state_change = 1;
+                            Log.d(mTag, "[SAR_SENSOR] Unknown data state, set call_state_off.");
+                        }
+                        mSarSensorCallState = mCallValueOff;
+                        break;
+                }
+                if (state_change == 1) {
+                    String call_state_on =
+                            "cat sys/devices/platform/soc/soc:sar_sensor/call_state_on";
+                    String call_state_off =
+                            "cat sys/devices/platform/soc/soc:sar_sensor/call_state_off";
+
+                    StringBuffer output = new StringBuffer();
+                    BufferedReader reader = null;
+
+                    try {
+                        Process process1 = null;
+                        if (mSarSensorCallState == mCallValueOn) {
+                            process1 = Runtime.getRuntime().exec(call_state_on);
+                        } else {
+                            process1 = Runtime.getRuntime().exec(call_state_off);
+                        }
+                        try {
+                            process1.waitFor();
+                        } catch (InterruptedException ie) {
+                            ie.printStackTrace();
+                        }
+
+                        reader =
+                                new BufferedReader(
+                                        new InputStreamReader(process1.getInputStream()));
+
+                        String line = "";
+                        while ((line = reader.readLine()) != null) {
+                            output.append(line + "\n");
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            if (reader != null) {
+                                reader.close();
+                                reader = null;
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Log.d(mTag, "[SAR_SENSOR] Driver interrupt status: " + output.toString());
+                }
+            }
+
             mCallState = state;
             updateTelephony();
         }
@@ -1233,6 +1468,55 @@ public class MobileSignalController extends SignalController<
                     && ((MobileState) o).videoCapable == videoCapable
                     && ((MobileState) o).mobileDataEnabled == mobileDataEnabled
                     && ((MobileState) o).roamingDataEnabled == roamingDataEnabled;
+        }
+    }
+
+    private void setSarDetectMethod() {
+        mSarDetectMethod = SystemProperties.get("persist.radio.backoff.method", "-1");
+        if (mSarDetectMethod.equals("NONE")
+                || mSarDetectMethod.equals("HW")
+                || mSarDetectMethod.equals("SW")) {
+            Log.d(
+                    mTag,
+                    "[SW_SAR/SAR_SENSOR] setSarDetectMethod mSarDetectMethod = "
+                            + mSarDetectMethod);
+        } else {
+            mSarDetectMethod = mDefaultSarDetectMethod;
+            Log.d(
+                    mTag,
+                    "[SW_SAR/SAR_SENSOR] setSarDetectMethod Undefined method, set to default"
+                        + " method, mSarDetectMethod = "
+                            + mSarDetectMethod);
+        }
+    }
+
+    private void enableSensorListener() {
+        if (!mPsensorListener.getActive()) {
+            mPsensorListener.Register();
+        }
+        if (!mGsensorListener.getActive()) {
+            mGsensorListener.Register();
+        }
+    }
+
+    private void disableSensorListener() {
+        if (mPsensorListener.getActive()) {
+            mPsensorListener.unRegister();
+        }
+        if (mGsensorListener.getActive()) {
+            mGsensorListener.unRegister();
+        }
+    }
+
+    private void setTransmitPower(int key, int value) {
+        if (mPhone != null) {
+            Log.d(
+                    mTag,
+                    "[SW_SAR] MobuileSignalController setTransmitPower key = "
+                            + key
+                            + ", value = "
+                            + value);
+            mPhone.setTransmitPower(key, value);
         }
     }
 }

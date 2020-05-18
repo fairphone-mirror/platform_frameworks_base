@@ -2315,4 +2315,6 @@ interface ITelephony {
      * Whether device can connect to 5G network when two SIMs are active.
      */
     boolean canConnectTo5GInDsdsMode();
+
+    void setTransmitPower(int key, int value);
 }

@@ -13564,4 +13564,19 @@ public class TelephonyManager {
             return true;
         }
     }
+
+    /** @hide */
+    public void setTransmitPower(int key, int value) {
+        Log.d(TAG, "[SW_SAR] Telephonymanager setTransmitPower");
+        try {
+            ITelephony telephony = getITelephony();
+            if (telephony != null) {
+                telephony.setTransmitPower(key, value);
+            }
+        } catch (RemoteException ex) {
+            Log.e(TAG, "[SW_SAR] error to get phone");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "[SW_SAR] error to get phone");
+        }
+    }
 }
