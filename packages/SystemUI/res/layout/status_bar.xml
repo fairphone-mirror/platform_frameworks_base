@@ -52,6 +52,7 @@
         <FrameLayout
             android:layout_height="match_parent"
             android:layout_width="0dp"
+            android:layout_marginLeft="5dp"
             android:layout_weight="1">
 
             <include layout="@layout/heads_up_status_bar_layout" />
@@ -69,7 +70,8 @@
                     android:id="@+id/operator_name"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout="@layout/operator_name" />
+                    android:layout="@layout/operator_name"
+                    android:layout_marginEnd="10dp"/>
 
                 <com.android.systemui.statusbar.policy.Clock
                     android:id="@+id/clock"

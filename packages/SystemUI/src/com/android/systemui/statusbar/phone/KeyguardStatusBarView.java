@@ -61,11 +61,14 @@ import com.android.systemui.statusbar.policy.UserSwitcherController;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
+import com.android.systemui.tuner.TunerService;
+import com.android.systemui.tuner.TunerService.Tunable;
 /**
  * The header group on Keyguard.
  */
 public class KeyguardStatusBarView extends RelativeLayout
-        implements BatteryStateChangeCallback, OnUserInfoChangedListener, ConfigurationListener {
+        implements BatteryStateChangeCallback, OnUserInfoChangedListener, ConfigurationListener,
+            Tunable {
 
     private static final int LAYOUT_NONE = 0;
     private static final int LAYOUT_CUTOUT = 1;
@@ -97,6 +100,8 @@ public class KeyguardStatusBarView extends RelativeLayout
     private ViewGroup mStatusIconArea;
     private int mLayoutState = LAYOUT_NONE;
 
+    private static final String KEY_SHOW_OPERATOR_NAME = "show_operator_name";
+
     /**
      * Draw this many pixels into the left/right side of the cutout to optimally use the space
      */
@@ -125,6 +130,7 @@ public class KeyguardStatusBarView extends RelativeLayout
 
         loadDimens();
         updateUserSwitcher();
+        updateOperatorNameVisibility();
         mBatteryController = Dependency.get(BatteryController.class);
     }
 
@@ -354,6 +360,7 @@ public class KeyguardStatusBarView extends RelativeLayout
                 Dependency.get(CommandQueue.class));
         Dependency.get(StatusBarIconController.class).addIconGroup(mIconManager);
         onThemeChanged();
+        Dependency.get(TunerService.class).addTunable(this, KEY_SHOW_OPERATOR_NAME);
     }
 
     @Override
@@ -362,6 +369,14 @@ public class KeyguardStatusBarView extends RelativeLayout
         Dependency.get(UserInfoController.class).removeCallback(this);
         Dependency.get(StatusBarIconController.class).removeIconGroup(mIconManager);
         Dependency.get(ConfigurationController.class).removeCallback(this);
+        Dependency.get(TunerService.class).removeTunable(this);
+    }
+
+    @Override
+    public void onTuningChanged(String key, String newValue) {
+        if (key == KEY_SHOW_OPERATOR_NAME) {
+            updateOperatorNameVisibility();
+        }
     }
 
     @Override
@@ -516,6 +531,17 @@ public class KeyguardStatusBarView extends RelativeLayout
             return 0;
         } else {
             return margin - padding;
+        }
+    }
+
+    private void updateOperatorNameVisibility() {
+        boolean showOperatorName = Dependency.get(TunerService.class)
+            .getValue(KEY_SHOW_OPERATOR_NAME, 1) != 0;
+        if (showOperatorName) {
+            mCarrierLabel.setVisibility(View.VISIBLE);
+        } else {
+            mCarrierLabel.setVisibility(View.GONE);
+            mCarrierLabel.setText(null);
         }
     }
 
