@@ -65,6 +65,7 @@ import android.os.UserManagerInternal;
 import android.os.UserManagerInternal.UserRestrictionsListener;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.FeatureFlagUtils;
 import android.util.Log;
@@ -73,6 +74,8 @@ import android.util.proto.ProtoOutputStream;
 
 import com.android.internal.R;
 import com.android.internal.annotations.VisibleForTesting;
+import com.android.internal.telephony.IccCardConstants;
+import com.android.internal.telephony.TelephonyIntents;
 import com.android.internal.util.DumpUtils;
 import com.android.internal.util.FrameworkStatsLog;
 import com.android.server.pm.UserRestrictionsUtils;
@@ -82,6 +85,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -157,6 +161,22 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
     private static final int SERVICE_IBLUETOOTH = 1;
     private static final int SERVICE_IBLUETOOTHGATT = 2;
 
+    // List of MCC/MNCs for which Bluetooth needs to be off after factory reset.
+    private static final ArrayList<String> BLUETOOTH_FACTORY_RESET_OFF_NUMERICS =
+        new ArrayList<>(List.of(
+            // Vodafone
+            "26202",    // Germany
+            "26209",    // Germany
+            "23415",    // United Kingdom
+            "21401",    // Spain
+            "22210",    // Italy
+            "20404",    // Netherlands
+            "27201",    // Ireland
+            // SFR
+            "20809",
+            "20810"
+        ));
+
     private final Context mContext;
 
     // Locks are not provided for mName and mAddress.
@@ -182,6 +202,8 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
     // used inside handler thread
     private boolean mQuietEnable = false;
     private boolean mEnable;
+    // Set if this is the first boot after factory reset, and before first SIM load after boot.
+    private boolean mNeedCheckDefaultStateOnSimLoad = false;
 
     private static CharSequence timeToLog(long timestamp) {
         return android.text.format.DateFormat.format("MM-dd HH:mm:ss", timestamp);
@@ -413,6 +435,34 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
                         Slog.e(TAG, "No Bluetooth Adapter address parameter found");
                     }
                 }
+            } else if (mNeedCheckDefaultStateOnSimLoad
+                && TelephonyIntents.ACTION_SIM_STATE_CHANGED.equals(action)
+                && IccCardConstants.INTENT_VALUE_ICC_LOADED.equals(
+                    intent.getStringExtra(IccCardConstants.INTENT_KEY_ICC_STATE))) {
+                // Determine whether the operator of the primary SIM requests Bluetooth to be off
+                // after factory reset.
+                //
+                // We know early after boot if it's a first boot after factory reset or not. SIMs
+                // are loaded much later. So as soon as SIMs are loaded, we can directly switch off
+                // Bluetooth again if required for the current SIM operator.
+                final TelephonyManager tm = (TelephonyManager)
+                    mContext.getSystemService(Context.TELEPHONY_SERVICE);
+                final String numeric = tm.getSimOperator();
+                if (BLUETOOTH_FACTORY_RESET_OFF_NUMERICS.contains(numeric)) {
+                    if (DBG) {
+                        Slog.d(TAG, "SIM loaded: " + numeric + ", turning Bluetooth OFF.");
+                    }
+                    try {
+                        disable(context.getPackageName(), true /* persist */);
+                    } catch (RemoteException e) {
+                        Slog.e(TAG, "SIM loaded: Unable to initiate disable", e);
+                    }
+                    mNeedCheckDefaultStateOnSimLoad = false;
+                } else {
+                    if (DBG) {
+                        Slog.d(TAG, "SIM loaded: " + numeric + ", keeping Bluetooth state as is.");
+                    }
+                }
             } else if (Intent.ACTION_SETTING_RESTORED.equals(action)) {
                 final String name = intent.getStringExtra(Intent.EXTRA_SETTING_NAME);
                 if (Settings.Global.BLUETOOTH_ON.equals(name)) {
@@ -485,6 +535,7 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
         filter.addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED);
         filter.addAction(BluetoothAdapter.ACTION_BLUETOOTH_ADDRESS_CHANGED);
         filter.addAction(Intent.ACTION_SETTING_RESTORED);
+        filter.addAction(TelephonyIntents.ACTION_SIM_STATE_CHANGED);
         filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
         mContext.registerReceiver(mReceiver, filter);
 
@@ -607,12 +658,16 @@ class BluetoothManagerService extends IBluetoothManager.Stub {
             if (DBG) {
                 Slog.d(TAG, "invalid bluetooth name and address stored");
             }
+            mNeedCheckDefaultStateOnSimLoad = true;
             return;
         }
         mName = Settings.Secure.getString(mContentResolver, SECURE_SETTINGS_BLUETOOTH_NAME);
         mAddress = Settings.Secure.getString(mContentResolver, SECURE_SETTINGS_BLUETOOTH_ADDRESS);
         if (DBG) {
             Slog.d(TAG, "Stored bluetooth Name=" + mName + ",Address=" + mAddress);
+        }
+        if (mName == null && mAddress == null) {
+            mNeedCheckDefaultStateOnSimLoad = true;
         }
     }
 
