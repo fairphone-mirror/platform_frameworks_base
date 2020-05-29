@@ -59,6 +59,8 @@ public final class CellIdentityLte extends CellIdentity {
     // cell bands
     private final int[] mBands;
 
+    private static final int CI = 268435456;
+
     // a list of additional PLMN-IDs reported for this cell
     private final ArraySet<String> mAdditionalPlmns;
 
@@ -190,7 +192,7 @@ public final class CellIdentityLte extends CellIdentity {
      *         {@link android.telephony.CellInfo#UNAVAILABLE UNAVAILABLE} if unavailable.
      */
     public int getCi() {
-        return mCi;
+        return (mCi == Integer.MAX_VALUE || (mCi >= 0 && mCi <= CI)) ? mCi : Integer.MAX_VALUE;
     }
 
     /**

@@ -103,6 +103,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     @VisibleForTesting
     MobileStatusTracker mMobileStatusTracker;
 
+    private boolean mShowWFCIcon = false;
+
     // Save the previous STATUS_HISTORY_SIZE states for logging.
     private final String[] mMobileStatusHistory = new String[STATUS_HISTORY_SIZE];
     // Where to copy the next state into.
@@ -290,6 +292,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         if (mProviderModelBehavior) {
             mReceiverHandler.post(mTryRegisterIms);
         }
+        mContext.registerReceiver(
+                mVowifiChanged, new IntentFilter("android.intent.action.VOWIFI_STATE_CHANGED"));
     }
 
     // There is no listener to monitor whether the IMS service is ready, so we have to retry the
@@ -323,6 +327,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mContext.getContentResolver().unregisterContentObserver(mObserver);
         mImsMmTelManager.unregisterImsRegistrationCallback(mRegistrationCallback);
         mContext.unregisterReceiver(mVolteSwitchObserver);
+        mContext.unregisterReceiver(mVowifiChanged);
     }
 
     private void updateInflateSignalStrength() {
@@ -374,6 +379,11 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
 
+        if (mShowWFCIcon) {
+            resId = R.drawable.ic_vowifi_v2_white;
+        } else {
+            resId = R.drawable.ic_volte;
+        }
         return resId;
     }
 
@@ -901,6 +911,13 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private final BroadcastReceiver mVolteSwitchObserver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             Log.d(mTag, "action=" + intent.getAction());
+            notifyListeners();
+        }
+    };
+
+    private final BroadcastReceiver mVowifiChanged = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            mShowWFCIcon = intent.getBooleanExtra("showVOWIFIIcon", false);
             notifyListeners();
         }
     };
