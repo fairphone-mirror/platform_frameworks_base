@@ -113,6 +113,8 @@ public class MobileSignalController extends SignalController<
 
     private int mCallState = TelephonyManager.CALL_STATE_IDLE;
 
+    private boolean mShowWFCIcon = false;
+
     /****************************SideCar****************************/
     @VisibleForTesting
     FiveGStateListener mFiveGStateListener;
@@ -259,6 +261,8 @@ public class MobileSignalController extends SignalController<
                 true, mObserver);
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
+        mContext.registerReceiver(
+                mVowifiChanged, new IntentFilter("android.intent.action.VOWIFI_STATE_CHANGED"));
         mFeatureConnector.connect();
     }
 
@@ -269,6 +273,7 @@ public class MobileSignalController extends SignalController<
         mPhone.listen(mPhoneStateListener, 0);
         mContext.getContentResolver().unregisterContentObserver(mObserver);
         mContext.unregisterReceiver(mVolteSwitchObserver);
+        mContext.unregisterReceiver(mVowifiChanged);
         mFeatureConnector.disconnect();
     }
 
@@ -298,6 +303,8 @@ public class MobileSignalController extends SignalController<
                 TelephonyIcons.THREE_G);
         mNetworkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_NR),
                 TelephonyIcons.FIVE_G_SA);
+
+        mNetworkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_GPRS), TelephonyIcons.G);
 
         if (!mConfig.showAtLeast3G) {
             mNetworkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_UNKNOWN),
@@ -336,6 +343,14 @@ public class MobileSignalController extends SignalController<
         mNetworkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_HSUPA), hGroup);
         mNetworkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_HSPA), hGroup);
         mNetworkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_HSPAP), hPlusGroup);
+
+        Log.i(mTag, "hspaBTBCustomized = " + mConfig.hspaBTBCustomized);
+        if (mConfig.hspaBTBCustomized) {
+            mNetworkToIconLookup.put(
+                    toIconKey(TelephonyManager.NETWORK_TYPE_HSPA), TelephonyIcons.THREE_G_PLUS);
+            mNetworkToIconLookup.put(
+                    toIconKey(TelephonyManager.NETWORK_TYPE_HSPAP), TelephonyIcons.H_PLUS);
+        }
 
         if (mConfig.show4gForLte) {
             mNetworkToIconLookup.put(toIconKey(
@@ -460,13 +475,11 @@ public class MobileSignalController extends SignalController<
     private int getVolteResId() {
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
-        if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                &&  mCurrentState.imsRegistered ) {
+        if (mShowWFCIcon) {
+            resId = R.drawable.ic_vowifi_v2_white;
+        } else if ((mCurrentState.voiceCapable || mCurrentState.videoCapable)
+                && mCurrentState.imsRegistered) {
             resId = R.drawable.ic_volte;
-        }else if ( (mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE
-                        || mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE_CA)
-                    && voiceNetTye  == TelephonyManager.NETWORK_TYPE_UNKNOWN) {
-            resId = R.drawable.ic_volte_no_voice;
         }
         return resId;
     }
@@ -569,7 +582,7 @@ public class MobileSignalController extends SignalController<
         }else if ( mConfig.enableDdsRatIconEnhancement ) {
             typeIcon = getEnhancementDdsRatIcon();
         }
-        int volteIcon = mConfig.showVolteIcon && isVolteSwitchOn() ? getVolteResId() : 0;
+        int volteIcon = mConfig.showVolteIcon ? getVolteResId() : 0;
         MobileIconGroup vowifiIconGroup = getVowifiIconGroup();
         if ( mConfig.showVowifiIcon && vowifiIconGroup != null ) {
             typeIcon = vowifiIconGroup.mDataType;
@@ -1367,6 +1380,14 @@ public class MobileSignalController extends SignalController<
             }
         }
     };
+
+    private final BroadcastReceiver mVowifiChanged =
+            new BroadcastReceiver() {
+                public void onReceive(Context context, Intent intent) {
+                    mShowWFCIcon = intent.getBooleanExtra("showVOWIFIIcon", false);
+                    notifyListeners();
+                }
+            };
 
     static class MobileIconGroup extends SignalController.IconGroup {
         final int mDataContentDescription; // mContentDescriptionDataType

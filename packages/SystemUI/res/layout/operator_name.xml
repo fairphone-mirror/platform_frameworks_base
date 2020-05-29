@@ -24,9 +24,8 @@
         android:id="@+id/operator_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:maxLength="20"
+        android:maxLength="22"
         android:gravity="center_vertical|start"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:singleLine="true"
-        android:paddingEnd="5dp" />
+        android:singleLine="true" />
 </com.android.systemui.statusbar.AlphaOptimizedFrameLayout>

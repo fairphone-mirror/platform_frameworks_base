@@ -42,6 +42,7 @@ class TelephonyIcons {
     static final int ICON_5G_SA = R.drawable.ic_5g_mobiledata;
     static final int ICON_5G_BASIC = R.drawable.ic_5g_mobiledata;
     static final int ICON_5G_UWB = R.drawable.ic_5g_uwb_mobiledata;
+    static final int ICON_3G_PLUS = R.drawable.ic_3g_plus_mobiledata;
     static final int ICON_VOWIFI = R.drawable.ic_vowifi;
     static final int ICON_VOWIFI_CALLING = R.drawable.ic_vowifi_calling;
 
@@ -70,6 +71,21 @@ class TelephonyIcons {
             R.string.data_connection_3g,
             TelephonyIcons.ICON_3G,
             true);
+
+    static final MobileIconGroup THREE_G_PLUS =
+            new MobileIconGroup(
+                    "3G+",
+                    null,
+                    null,
+                    AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH,
+                    0,
+                    0,
+                    0,
+                    0,
+                    AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0],
+                    R.string.data_connection_3g,
+                    TelephonyIcons.ICON_3G_PLUS,
+                    true);
 
     static final MobileIconGroup WFC = new MobileIconGroup(
             "WFC",
