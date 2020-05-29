@@ -36,6 +36,7 @@ public class TelephonyIcons {
     public static final int ICON_H = R.drawable.ic_h_mobiledata;
     public static final int ICON_H_PLUS = R.drawable.ic_h_plus_mobiledata;
     public static final int ICON_3G = R.drawable.ic_3g_mobiledata;
+    public static final int ICON_3G_PLUS = R.drawable.ic_3g_plus_mobiledata;
     public static final int ICON_4G = R.drawable.ic_4g_mobiledata;
     public static final int ICON_4G_PLUS = R.drawable.ic_4g_plus_mobiledata;
     public static final int ICON_4G_LTE = R.drawable.ic_4g_lte_mobiledata;
@@ -56,6 +57,12 @@ public class TelephonyIcons {
             "3G",
             R.string.data_connection_3g,
             TelephonyIcons.ICON_3G
+    );
+
+    public static final MobileIconGroup THREE_G_PLUS = new MobileIconGroup(
+            "3G+",
+            R.string.data_connection_3g,
+            TelephonyIcons.ICON_3G_PLUS
     );
 
     public static final MobileIconGroup WFC = new MobileIconGroup(

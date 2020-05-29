@@ -90,6 +90,16 @@ public class MobileMappings {
     public static Map<String, MobileIconGroup> mapIconSets(Config config) {
         final Map<String, MobileIconGroup> networkToIconLookup = new HashMap<>();
 
+        networkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_GPRS),
+                TelephonyIcons.G);
+
+        if (config.hspaBTBCustomized) {
+            networkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_HSPA),
+                    TelephonyIcons.THREE_G_PLUS);
+            networkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_HSPAP),
+                    TelephonyIcons.H_PLUS);
+        }
+
         networkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_EVDO_0),
                 TelephonyIcons.THREE_G);
         networkToIconLookup.put(toIconKey(TelephonyManager.NETWORK_TYPE_EVDO_A),
@@ -217,6 +227,7 @@ public class MobileMappings {
         public boolean hideLtePlus = false;
         public boolean hspaDataDistinguishable;
         public boolean alwaysShowDataRatIcon = false;
+        public boolean hspaBTBCustomized = false;
 
         /**
          * Reads the latest configs.
@@ -230,6 +241,8 @@ public class MobileMappings {
                     res.getBoolean(com.android.internal.R.bool.config_alwaysUseCdmaRssi);
             config.hspaDataDistinguishable =
                     res.getBoolean(R.bool.config_hspa_data_distinguishable);
+            config.hspaBTBCustomized =
+                    res.getBoolean(R.bool.config_hspa_data_btb_customized);
 
             CarrierConfigManager configMgr = (CarrierConfigManager)
                     context.getSystemService(Context.CARRIER_CONFIG_SERVICE);

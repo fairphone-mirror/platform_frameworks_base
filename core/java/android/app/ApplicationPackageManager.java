@@ -175,6 +175,26 @@ public class ApplicationPackageManager extends PackageManager {
     private volatile DevicePolicyManager mDevicePolicyManager;
     private volatile String mPermissionsControllerPackageName;
 
+    private static final String PROP_GMS_SIM_OPERATOR_NUMERIC = "gsm.sim.operator.numeric";
+
+    private static final ArrayList<String> VODAFONE_NUMERICS =
+            new ArrayList<>(
+                    List.of(
+                            "26202", // Germany
+                            "26209", // Germany
+                            "23415", // UK
+                            "22210", // Italy
+                            "21401", // Spain
+                            "27201", // Ireland
+                            "20404", // Netherlands
+                            "26801", // Portugal
+                            "20205", // Greece
+                            "22801" // Switzerland
+                            ));
+    private static final String STK_VODAFONE_TEXT = "Vodafone";
+
+    private static final String STK_PACKAGE_NAME = "com.android.stk";
+
     @GuardedBy("mDelegates")
     private final ArrayList<MoveCallbackDelegate> mDelegates = new ArrayList<>();
 
@@ -2350,6 +2370,11 @@ public class ApplicationPackageManager extends PackageManager {
         ResourceName name = new ResourceName(packageName, resid);
         CharSequence text = getCachedString(name);
         if (text != null) {
+            if (STK_PACKAGE_NAME.equalsIgnoreCase(packageName)) {
+                if (isVodafoneSIM()) {
+                    text = STK_VODAFONE_TEXT;
+                }
+            }
             return text;
         }
         if (appInfo == null) {
@@ -2363,6 +2388,11 @@ public class ApplicationPackageManager extends PackageManager {
             Resources r = getResourcesForApplication(appInfo);
             text = r.getText(resid);
             putCachedString(name, text);
+            if (STK_PACKAGE_NAME.equalsIgnoreCase(packageName)) {
+                if (isVodafoneSIM()) {
+                    text = STK_VODAFONE_TEXT;
+                }
+            }
             return text;
         } catch (NameNotFoundException e) {
             Log.w("PackageManager", "Failure retrieving resources for "
@@ -2375,6 +2405,18 @@ public class ApplicationPackageManager extends PackageManager {
                   + packageName, e);
         }
         return null;
+    }
+
+    private static boolean isVodafoneSIM() {
+        String numeric = SystemProperties.get(PROP_GMS_SIM_OPERATOR_NUMERIC);
+        if (numeric == null) {
+            return false;
+        }
+        numeric = numeric.replaceAll(",", "");
+        if (numeric.length() < 5) {
+            return false;
+        }
+        return VODAFONE_NUMERICS.contains(numeric.substring(0, 5));
     }
 
     @Override
