@@ -473,6 +473,25 @@ public final class BatteryService extends SystemService {
         mContext.startActivityAsUser(intent, UserHandle.CURRENT);
     }
 
+    private void shutdownIfNoBatteryLocked() {
+        // If the battery does not exist, it will shut down immediately.
+        if (mHealthInfo.batteryPresent == false) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mActivityManagerInternal.isSystemReady()) {
+                        Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                        intent.putExtra(Intent.EXTRA_KEY_CONFIRM, false);
+                        intent.putExtra(Intent.EXTRA_REASON,
+                                PowerManager.SHUTDOWN_LOW_BATTERY);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+                    }
+                }
+            });
+        }
+    }
+
     private void update(android.hardware.health.HealthInfo info) {
         traceBegin("HealthInfoUpdate");
 
@@ -543,6 +562,7 @@ public final class BatteryService extends SystemService {
 
         shutdownIfNoPowerLocked();
         shutdownIfOverTempLocked();
+        shutdownIfNoBatteryLocked();
 
         if (force
                 || (mHealthInfo.batteryStatus != mLastBatteryStatus
