@@ -1578,11 +1578,6 @@ public class NotificationManagerService extends SystemService {
                     cancelAllNotificationsInt(MY_UID, MY_PID, null, null, 0, 0, true, userHandle,
                             REASON_PROFILE_TURNED_OFF, null);
                 }
-            } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
-                // turn off LED when user passes through lock screen
-                if (mNotificationLight != null) {
-                    mNotificationLight.turnOff();
-                }
             } else if (action.equals(Intent.ACTION_USER_SWITCHED)) {
                 final int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, USER_NULL);
                 mUserProfiles.updateCache(context);
@@ -7087,14 +7082,14 @@ public class NotificationManagerService extends SystemService {
         // Suppressed because it's a silent update
         final Notification notification = record.getNotification();
         if (record.isUpdate && (notification.flags & FLAG_ONLY_ALERT_ONCE) != 0) {
-            return false;
+            return true;
         }
         // Suppressed because another notification in its group handles alerting
         if (record.getSbn().isGroup() && record.getNotification().suppressAlertingDueToGrouping()) {
             return false;
         }
         // not if in call or the screen's on
-        if (isInCall() || mScreenOn) {
+        if (isInCall()) {
             return false;
         }
 

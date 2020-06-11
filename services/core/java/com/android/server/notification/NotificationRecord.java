@@ -372,7 +372,8 @@ public final class NotificationRecord {
                 break;
         }
         stats.requestedImportance = requestedImportance;
-        stats.isNoisy = mSound != null || mVibration != null;
+        stats.isNoisy = mSound != null || mVibration != null
+          ||(n.defaults & Notification.DEFAULT_LIGHTS) != 0;
 
         // For pre-channels notifications, apply system overrides and then use requestedImportance
         // as importance.
