@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.UserManager;
+import android.provider.Settings.Global;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
 import android.util.Log;
@@ -30,6 +31,7 @@ import android.widget.Switch;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.systemui.R;
 import com.android.systemui.plugins.qs.QSTile.BooleanState;
+import com.android.systemui.qs.GlobalSetting;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.DataSaverController;
@@ -51,6 +53,8 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
     private boolean mListening;
     private WifiManager mWifiManager;
 
+    private final GlobalSetting mAirplaneMode;
+
     @Inject
     public HotspotTile(QSHost host, HotspotController hotspotController,
             DataSaverController dataSaverController) {
@@ -60,6 +64,12 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
         mHotspotController.observe(this, mCallbacks);
         mDataSaverController.observe(this, mCallbacks);
         mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+        mAirplaneMode = new GlobalSetting(mContext, mHandler, Global.AIRPLANE_MODE_ON) {
+            @Override
+            protected void handleValueChanged(int value) {
+                refreshState();
+            }
+        };
     }
 
     @Override
@@ -80,6 +90,7 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
         if (listening) {
             refreshState();
         }
+        mAirplaneMode.setListening(listening);
     }
 
     @Override
@@ -95,7 +106,8 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
     @Override
     protected void handleClick() {
         final boolean isEnabled = mState.value;
-        if (!isEnabled && mDataSaverController.isDataSaverEnabled()) {
+        if (mAirplaneMode.getValue() != 0
+            || (!isEnabled && mDataSaverController.isDataSaverEnabled())) {
             return;
         }
         // Immediately enter transient enabling state when turning hotspot on.
@@ -152,7 +164,8 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
         state.expandedAccessibilityClassName = Switch.class.getName();
         state.contentDescription = state.label;
 
-        final boolean isTileUnavailable = isDataSaverEnabled;
+        boolean isAirplaneMode = mAirplaneMode.getValue() != 0;
+        final boolean isTileUnavailable = isAirplaneMode || isDataSaverEnabled;
         final boolean isTileActive = (state.value || state.isTransient);
 
         if (isTileUnavailable) {
