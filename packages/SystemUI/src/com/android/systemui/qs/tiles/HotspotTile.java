@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.UserManager;
 import android.provider.Settings;
+import android.provider.Settings.Global;
 import android.service.quicksettings.Tile;
 import android.util.Log;
 import android.view.View;
@@ -38,11 +39,13 @@ import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.FalsingManager;
 import com.android.systemui.plugins.qs.QSTile.BooleanState;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
+import com.android.systemui.qs.SettingObserver;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import com.android.systemui.statusbar.policy.HotspotController;
+import com.android.systemui.util.settings.GlobalSettings;
 
 import javax.inject.Inject;
 
@@ -57,6 +60,8 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
     private final HotspotAndDataSaverCallbacks mCallbacks = new HotspotAndDataSaverCallbacks();
     private boolean mListening;
 
+    private final SettingObserver mSetting;
+
     @Inject
     public HotspotTile(
             QSHost host,
@@ -68,7 +73,8 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
             ActivityStarter activityStarter,
             QSLogger qsLogger,
             HotspotController hotspotController,
-            DataSaverController dataSaverController
+            DataSaverController dataSaverController,
+            GlobalSettings globalSettings
     ) {
         super(host, backgroundLooper, mainHandler, falsingManager, metricsLogger,
                 statusBarStateController, activityStarter, qsLogger);
@@ -76,6 +82,14 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
         mDataSaverController = dataSaverController;
         mHotspotController.observe(this, mCallbacks);
         mDataSaverController.observe(this, mCallbacks);
+
+        mSetting = new SettingObserver(globalSettings, mHandler, Global.AIRPLANE_MODE_ON) {
+            @Override
+            protected void handleValueChanged(int value, boolean observedChange) {
+                // mHandler is the background handler so calling this is OK
+                handleRefreshState(value);
+            }
+        };
     }
 
     @Override
@@ -96,6 +110,7 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
         if (listening) {
             refreshState();
         }
+        mSetting.setListening(listening);
     }
 
     @Override
@@ -111,7 +126,8 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
     @Override
     protected void handleClick(@Nullable View view) {
         final boolean isEnabled = mState.value;
-        if (!isEnabled && mDataSaverController.isDataSaverEnabled()) {
+        if (mSetting.getValue() != 0
+                || (!isEnabled && mDataSaverController.isDataSaverEnabled())) {
             return;
         }
         // Immediately enter transient enabling state when turning hotspot on.
@@ -161,7 +177,8 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
 
         final boolean isWifiTetheringAllowed =
                 WifiEnterpriseRestrictionUtils.isWifiTetheringAllowed(mHost.getUserContext());
-        final boolean isTileUnavailable = isDataSaverEnabled || !isWifiTetheringAllowed;
+        boolean isAirplaneMode = mSetting.getValue() != 0;
+        final boolean isTileUnavailable = isAirplaneMode || isDataSaverEnabled || !isWifiTetheringAllowed;
         final boolean isTileActive = (state.value || state.isTransient);
 
         if (isTileUnavailable) {
