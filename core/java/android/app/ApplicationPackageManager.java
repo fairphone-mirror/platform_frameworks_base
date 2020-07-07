@@ -159,6 +159,7 @@ public class ApplicationPackageManager extends PackageManager {
     private String mPermissionsControllerPackageName;
 
     private static final String PROP_GMS_SIM_OPERATOR_NUMERIC = "gsm.sim.operator.numeric";
+    private static final String PROP_GSM_SIM_OPERATOR_ALPHA = "gsm.sim.operator.alpha";
 
     private static final ArrayList<String> VODAFONE_NUMERICS =
             new ArrayList<>(
@@ -175,6 +176,10 @@ public class ApplicationPackageManager extends PackageManager {
                             "22801" // Switzerland
                             ));
     private static final String STK_VODAFONE_TEXT = "Vodafone";
+    private static final ArrayList<String> VIRGIN_NUMERICS =
+            new ArrayList<>(List.of("23430", "23438"));
+    private static final String VIRGIN_ALPHA = "Virgin";
+    private static final String STK_VIRGIN_TEXT = "Virgin";
 
     private static final String STK_PACKAGE_NAME = "com.android.stk";
 
@@ -2013,6 +2018,8 @@ public class ApplicationPackageManager extends PackageManager {
             if (STK_PACKAGE_NAME.equalsIgnoreCase(packageName)) {
                 if (isVodafoneSIM()) {
                     text = STK_VODAFONE_TEXT;
+                } else if (isVirginUKSIM()) {
+                    text = STK_VIRGIN_TEXT;
                 }
             }
             return text;
@@ -2031,6 +2038,8 @@ public class ApplicationPackageManager extends PackageManager {
             if (STK_PACKAGE_NAME.equalsIgnoreCase(packageName)) {
                 if (isVodafoneSIM()) {
                     text = STK_VODAFONE_TEXT;
+                } else if (isVirginUKSIM()) {
+                    text = STK_VIRGIN_TEXT;
                 }
             }
             return text;
@@ -2057,6 +2066,21 @@ public class ApplicationPackageManager extends PackageManager {
             return false;
         }
         return VODAFONE_NUMERICS.contains(numeric.substring(0, 5));
+    }
+
+    public boolean isVirginUKSIM() {
+        String mccmnc = "";
+        String numeric = SystemProperties.get(PROP_GMS_SIM_OPERATOR_NUMERIC);
+        String alpha = SystemProperties.get(PROP_GSM_SIM_OPERATOR_ALPHA);
+        if (numeric == null || alpha == null) {
+            return false;
+        }
+        numeric = numeric.replaceAll(",", "");
+        if (numeric.length() < 5) {
+            return false;
+        }
+        alpha = alpha.replaceAll(",", "");
+        return VIRGIN_NUMERICS.contains(numeric.substring(0, 5)) && alpha.startsWith(VIRGIN_ALPHA);
     }
 
     @Override
