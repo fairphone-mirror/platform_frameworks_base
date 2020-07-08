@@ -921,6 +921,6 @@
     <string name="config_appStoreAppLinkTemplate" translatable="false"></string>
 
     <!-- Custom -->
-    <!-- Whether to show VoLTE icon in the status bar -->
-    <bool name="config_display_volte">false</bool>
+    <!-- Whether to show VoLTE/VoWiFi icon in the status bar -->
+    <bool name="config_display_volte">true</bool>
 </resources>
