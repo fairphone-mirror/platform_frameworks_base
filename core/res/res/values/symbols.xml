@@ -2937,6 +2937,9 @@
   <java-symbol type="string" name="status_bar_sensors_off" />
   <java-symbol type="string" name="status_bar_screen_record" />
 
+  <java-symbol type="string" name="status_bar_vowifi1" />
+  <java-symbol type="string" name="status_bar_vowifi2" />
+
   <!-- Locale picker -->
   <java-symbol type="id" name="locale_search_menu" />
   <java-symbol type="layout" name="language_picker_item" />

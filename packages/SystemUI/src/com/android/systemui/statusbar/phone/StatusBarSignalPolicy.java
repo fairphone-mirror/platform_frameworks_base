@@ -35,6 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.telephony.SubscriptionManager;
 
 public class StatusBarSignalPolicy implements NetworkControllerImpl.SignalCallback,
         SecurityController.SecurityControllerCallback, Tunable {
@@ -65,6 +69,11 @@ public class StatusBarSignalPolicy implements NetworkControllerImpl.SignalCallba
     private ArrayList<MobileIconState> mMobileStates = new ArrayList<MobileIconState>();
     private WifiIconState mWifiIconState = new WifiIconState();
 
+    private final String mVowifiIcon1;
+    private final String mVowifiIcon2;
+    private boolean mIsVowifiSlot1 = false;
+    private boolean mIsVowifiSlot2 = false;
+
     public StatusBarSignalPolicy(Context context, StatusBarIconController iconController) {
         mContext = context;
 
@@ -82,12 +91,21 @@ public class StatusBarSignalPolicy implements NetworkControllerImpl.SignalCallba
         Dependency.get(TunerService.class).addTunable(this, StatusBarIconController.ICON_BLACKLIST);
         mNetworkController.addCallback(this);
         mSecurityController.addCallback(this);
+
+        mVowifiIcon1 = mContext.getString(com.android.internal.R.string.status_bar_vowifi1);
+        mVowifiIcon2 = mContext.getString(com.android.internal.R.string.status_bar_vowifi2);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        filter.addAction("arima.intent.action.VOWIFI_STATE_CHANGED");
+        context.registerReceiver(mVowifiChanged, filter);
     }
 
     public void destroy() {
         Dependency.get(TunerService.class).removeTunable(this);
         mNetworkController.removeCallback(this);
         mSecurityController.removeCallback(this);
+        mContext.unregisterReceiver(mVowifiChanged);
     }
 
     private void updateVpn() {
@@ -457,4 +475,43 @@ public class StatusBarSignalPolicy implements NetworkControllerImpl.SignalCallba
                     + ", visible=" + visible + ")";
         }
     }
+
+    private BroadcastReceiver mVowifiChanged =
+            new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    if (("arima.intent.action.VOWIFI_STATE_CHANGED".equals(action))
+                            && mIsAirplaneMode) {
+                        int wfcPhoneId =
+                                intent.getIntExtra(
+                                        "phoneId", SubscriptionManager.INVALID_PHONE_INDEX);
+                        if (wfcPhoneId == 0) {
+                            mIsVowifiSlot1 = intent.getBooleanExtra("showVOWIFIIcon", false);
+                            if (mIsVowifiSlot1) {
+                                mIconController.setIcon(
+                                        mVowifiIcon1, R.drawable.ic_vowifi_v2_white, null);
+                                mIconController.setIconVisibility(mVowifiIcon1, true);
+                            } else {
+                                mIconController.setIconVisibility(mVowifiIcon1, false);
+                            }
+                        } else if (wfcPhoneId == 1) {
+                            mIsVowifiSlot2 = intent.getBooleanExtra("showVOWIFIIcon", false);
+                            if (mIsVowifiSlot2) {
+                                mIconController.setIcon(
+                                        mVowifiIcon2, R.drawable.ic_vowifi_v2_white, null);
+                                mIconController.setIconVisibility(mVowifiIcon2, true);
+                            } else {
+                                mIconController.setIconVisibility(mVowifiIcon2, false);
+                            }
+                        }
+                    } else if (Intent.ACTION_AIRPLANE_MODE_CHANGED.equals(action)) {
+                        boolean isAirplaneModeOn = intent.getBooleanExtra("state", false);
+                        if (!isAirplaneModeOn) {
+                            mIconController.setIconVisibility(mVowifiIcon1, false);
+                            mIconController.setIconVisibility(mVowifiIcon2, false);
+                        }
+                    }
+                }
+            };
 }

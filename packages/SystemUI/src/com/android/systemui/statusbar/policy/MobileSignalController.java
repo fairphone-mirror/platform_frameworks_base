@@ -262,7 +262,7 @@ public class MobileSignalController extends SignalController<
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
         mContext.registerReceiver(
-                mVowifiChanged, new IntentFilter("android.intent.action.VOWIFI_STATE_CHANGED"));
+                mVowifiChanged, new IntentFilter("arima.intent.action.VOWIFI_STATE_CHANGED"));
         mFeatureConnector.connect();
     }
 
@@ -475,7 +475,7 @@ public class MobileSignalController extends SignalController<
     private int getVolteResId() {
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
-        if (mShowWFCIcon) {
+        if (mCurrentState.showWFC) {
             resId = R.drawable.ic_vowifi_v2_white;
         } else if ((mCurrentState.voiceCapable || mCurrentState.videoCapable)
                 && mCurrentState.imsRegistered) {
@@ -1384,8 +1384,15 @@ public class MobileSignalController extends SignalController<
     private final BroadcastReceiver mVowifiChanged =
             new BroadcastReceiver() {
                 public void onReceive(Context context, Intent intent) {
-                    mShowWFCIcon = intent.getBooleanExtra("showVOWIFIIcon", false);
-                    notifyListeners();
+                    boolean showVOWIFIIcon = intent.getBooleanExtra("showVOWIFIIcon", false);
+                    int wfcPhoneId =
+                            intent.getIntExtra("phoneId", SubscriptionManager.INVALID_PHONE_INDEX);
+                    int phoneId =
+                            SubscriptionManager.getPhoneId(mSubscriptionInfo.getSubscriptionId());
+                    if (wfcPhoneId == phoneId) {
+                        mCurrentState.showWFC = showVOWIFIIcon;
+                        notifyListeners();
+                    }
                 }
             };
 
@@ -1425,6 +1432,8 @@ public class MobileSignalController extends SignalController<
         boolean mobileDataEnabled;
         boolean roamingDataEnabled;
 
+        boolean showWFC;
+
         @Override
         public void copyFrom(State s) {
             super.copyFrom(s);
@@ -1445,6 +1454,7 @@ public class MobileSignalController extends SignalController<
             videoCapable = state.videoCapable;
             mobileDataEnabled = state.mobileDataEnabled;
             roamingDataEnabled = state.roamingDataEnabled;
+            showWFC = state.showWFC;
         }
 
         @Override
@@ -1468,6 +1478,7 @@ public class MobileSignalController extends SignalController<
             builder.append("videoCapable=").append(videoCapable).append(',');
             builder.append("mobileDataEnabled=").append(mobileDataEnabled).append(',');
             builder.append("roamingDataEnabled=").append(roamingDataEnabled);
+            builder.append("showWFC=").append(showWFC);
         }
 
         @Override
@@ -1488,7 +1499,8 @@ public class MobileSignalController extends SignalController<
                     && ((MobileState) o).voiceCapable == voiceCapable
                     && ((MobileState) o).videoCapable == videoCapable
                     && ((MobileState) o).mobileDataEnabled == mobileDataEnabled
-                    && ((MobileState) o).roamingDataEnabled == roamingDataEnabled;
+                    && ((MobileState) o).roamingDataEnabled == roamingDataEnabled
+                    && ((MobileState) o).showWFC == showWFC;
         }
     }
 

@@ -37,6 +37,10 @@ import com.android.systemui.statusbar.policy.NetworkController.IconState;
 import com.android.systemui.statusbar.policy.NetworkController.SignalCallback;
 import com.android.systemui.tuner.TunerService;
 import com.android.systemui.tuner.TunerService.Tunable;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.util.Log;
 
 import java.util.List;
 
@@ -44,6 +48,26 @@ public class OperatorNameView extends TextView implements DemoMode, DarkReceiver
         SignalCallback, Tunable {
 
     private static final String KEY_SHOW_OPERATOR_NAME = "show_operator_name";
+    private static final String TAG = "OperatorNameView";
+
+    private final BroadcastReceiver mVowifiChanged =
+            new BroadcastReceiver() {
+                public void onReceive(Context context, Intent intent) {
+                    boolean showVOWIFIIcon = intent.getBooleanExtra("showVOWIFIIcon", false);
+                    if (WirelessUtils.isAirplaneModeOn(mContext)) {
+                        boolean showOperatorName =
+                                Dependency.get(TunerService.class)
+                                                .getValue(KEY_SHOW_OPERATOR_NAME, 1)
+                                        != 0;
+                        Log.i(
+                                TAG,
+                                "mVowifiChanged: setVisibility showOperatorName = "
+                                        + showOperatorName);
+                        setVisibility(showOperatorName ? VISIBLE : GONE);
+                        updateText();
+                    }
+                }
+            };
 
     private KeyguardUpdateMonitor mKeyguardUpdateMonitor;
     private boolean mDemoMode;
@@ -75,6 +99,10 @@ public class OperatorNameView extends TextView implements DemoMode, DarkReceiver
         Dependency.get(DarkIconDispatcher.class).addDarkReceiver(this);
         Dependency.get(NetworkController.class).addCallback(this);
         Dependency.get(TunerService.class).addTunable(this, KEY_SHOW_OPERATOR_NAME);
+        if (mContext != null) {
+            mContext.registerReceiver(
+                    mVowifiChanged, new IntentFilter("arima.intent.action.VOWIFI_STATE_CHANGED"));
+        }
     }
 
     @Override
@@ -84,6 +112,9 @@ public class OperatorNameView extends TextView implements DemoMode, DarkReceiver
         Dependency.get(DarkIconDispatcher.class).removeDarkReceiver(this);
         Dependency.get(NetworkController.class).removeCallback(this);
         Dependency.get(TunerService.class).removeTunable(this);
+        if (mContext != null) {
+            mContext.unregisterReceiver(mVowifiChanged);
+        }
     }
 
     @Override
@@ -142,7 +173,9 @@ public class OperatorNameView extends TextView implements DemoMode, DarkReceiver
             CharSequence carrierName = subs.get(i).getCarrierName();
             if (!TextUtils.isEmpty(carrierName) && simState == TelephonyManager.SIM_STATE_READY) {
                 ServiceState ss = mKeyguardUpdateMonitor.getServiceState(subId);
-                if (ss != null && ss.getState() == ServiceState.STATE_IN_SERVICE) {
+                if (ss != null
+                        && (ss.getState() == ServiceState.STATE_IN_SERVICE
+                                || ss.getDataRegState() == ServiceState.STATE_IN_SERVICE)) {
                     displayText = carrierName;
                     break;
                 }
