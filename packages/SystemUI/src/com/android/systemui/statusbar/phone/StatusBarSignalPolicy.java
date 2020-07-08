@@ -40,6 +40,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.telephony.SubscriptionManager;
+
 import javax.inject.Inject;
 
 /** Controls the signal policies for icons shown in the statusbar. **/
@@ -80,6 +85,11 @@ public class StatusBarSignalPolicy implements SignalCallback,
     private WifiIconState mWifiIconState = new WifiIconState();
     private boolean mInitialized;
 
+    private final String mVowifiIcon1;
+    private final String mVowifiIcon2;
+    private boolean mIsVowifiSlot1 = false;
+    private boolean mIsVowifiSlot2 = false;
+
     @Inject
     public StatusBarSignalPolicy(
             Context context,
@@ -106,6 +116,13 @@ public class StatusBarSignalPolicy implements SignalCallback,
         mSlotCallStrength =
                 mContext.getString(com.android.internal.R.string.status_bar_call_strength);
         mActivityEnabled = mContext.getResources().getBoolean(R.bool.config_showActivity);
+
+        mVowifiIcon1 = mContext.getString(com.android.internal.R.string.status_bar_vowifi1);
+        mVowifiIcon2 = mContext.getString(com.android.internal.R.string.status_bar_vowifi2);
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        filter.addAction("arima.intent.action.VOWIFI_STATE_CHANGED");
+        context.registerReceiver(mVowifiChanged, filter);
     }
 
     /** Call to initilaize and register this classw with the system. */
@@ -123,6 +140,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
         mTunerService.removeTunable(this);
         mNetworkController.removeCallback(this);
         mSecurityController.removeCallback(this);
+        mContext.unregisterReceiver(mVowifiChanged);
     }
 
     private void updateVpn() {
@@ -640,4 +658,43 @@ public class StatusBarSignalPolicy implements SignalCallback,
                     + ", visible=" + visible + ")";
         }
     }
+
+    private BroadcastReceiver mVowifiChanged =
+            new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String action = intent.getAction();
+                    if (("arima.intent.action.VOWIFI_STATE_CHANGED".equals(action))
+                            && mIsAirplaneMode) {
+                        int wfcPhoneId =
+                                intent.getIntExtra(
+                                        "phoneId", SubscriptionManager.INVALID_PHONE_INDEX);
+                        if (wfcPhoneId == 0) {
+                            mIsVowifiSlot1 = intent.getBooleanExtra("showVOWIFIIcon", false);
+                            if (mIsVowifiSlot1) {
+                                mIconController.setIcon(
+                                        mVowifiIcon1, R.drawable.ic_vowifi_v2_white, null);
+                                mIconController.setIconVisibility(mVowifiIcon1, true);
+                            } else {
+                                mIconController.setIconVisibility(mVowifiIcon1, false);
+                            }
+                        } else if (wfcPhoneId == 1) {
+                            mIsVowifiSlot2 = intent.getBooleanExtra("showVOWIFIIcon", false);
+                            if (mIsVowifiSlot2) {
+                                mIconController.setIcon(
+                                        mVowifiIcon2, R.drawable.ic_vowifi_v2_white, null);
+                                mIconController.setIconVisibility(mVowifiIcon2, true);
+                            } else {
+                                mIconController.setIconVisibility(mVowifiIcon2, false);
+                            }
+                        }
+                    } else if (Intent.ACTION_AIRPLANE_MODE_CHANGED.equals(action)) {
+                        boolean isAirplaneModeOn = intent.getBooleanExtra("state", false);
+                        if (!isAirplaneModeOn) {
+                            mIconController.setIconVisibility(mVowifiIcon1, false);
+                            mIconController.setIconVisibility(mVowifiIcon2, false);
+                        }
+                    }
+                }
+            };
 }

@@ -219,7 +219,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
         mContext.registerReceiver(
-                mVowifiChanged, new IntentFilter("android.intent.action.VOWIFI_STATE_CHANGED"));
+                mVowifiChanged, new IntentFilter("arima.intent.action.VOWIFI_STATE_CHANGED"));
     }
 
     /**
@@ -281,10 +281,11 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
 
-        if (mShowWFCIcon) {
+        /* Show VoWiFi icon if it's a WiFi Call else, show
+           no icon.
+        */
+        if (mCurrentState.showWFC) {
             resId = R.drawable.ic_vowifi_v2_white;
-        } else {
-            resId = R.drawable.ic_volte;
         }
         return resId;
     }
@@ -671,8 +672,15 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
     private final BroadcastReceiver mVowifiChanged = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
-            mShowWFCIcon = intent.getBooleanExtra("showVOWIFIIcon", false);
-            notifyListeners();
+            boolean showVOWIFIIcon = intent.getBooleanExtra("showVOWIFIIcon", false);
+            int wfcPhoneId =
+                    intent.getIntExtra("phoneId", SubscriptionManager.INVALID_PHONE_INDEX);
+            int phoneId =
+                    SubscriptionManager.getPhoneId(mSubscriptionInfo.getSubscriptionId());
+            if (wfcPhoneId == phoneId) {
+                mCurrentState.showWFC = showVOWIFIIcon;
+                notifyListeners();
+            }
         }
     };
 }

@@ -41,7 +41,8 @@ internal class MobileState(
     @JvmField var roaming: Boolean = false,
     @JvmField var dataState: Int = TelephonyManager.DATA_DISCONNECTED,
     // Tracks the on/off state of the defaultDataSubscription
-    @JvmField var defaultDataOff: Boolean = false
+    @JvmField var defaultDataOff: Boolean = false,
+    @JvmField var showWFC: Boolean = false
 ) : ConnectivityState() {
 
     @JvmField var telephonyDisplayInfo = TelephonyDisplayInfo(TelephonyManager.NETWORK_TYPE_UNKNOWN,
@@ -86,6 +87,7 @@ internal class MobileState(
         roaming = o.roaming
         dataState = o.dataState
         defaultDataOff = o.defaultDataOff
+        showWFC = o.showWFC
 
         telephonyDisplayInfo = o.telephonyDisplayInfo
         serviceState = o.serviceState
@@ -151,6 +153,7 @@ internal class MobileState(
         builder.append("userSetup=$userSetup,")
         builder.append("dataState=$dataState,")
         builder.append("defaultDataOff=$defaultDataOff,")
+        builder.append("showWFC=$showWFC,")
 
         // Computed properties
         builder.append("showQuickSettingsRatIcon=${showQuickSettingsRatIcon()},")
@@ -175,6 +178,7 @@ internal class MobileState(
             "userSetup",
             "dataState",
             "defaultDataOff",
+            "showWFC",
             "showQuickSettingsRatIcon",
             "voiceServiceState",
             "isInService",
@@ -198,6 +202,7 @@ internal class MobileState(
                 userSetup,
                 dataState,
                 defaultDataOff,
+                showWFC,
                 showQuickSettingsRatIcon(),
                 getVoiceServiceState(),
                 isInService(),
@@ -227,6 +232,7 @@ internal class MobileState(
         if (roaming != other.roaming) return false
         if (dataState != other.dataState) return false
         if (defaultDataOff != other.defaultDataOff) return false
+        if (showWFC != other.showWFC) return false
         if (telephonyDisplayInfo != other.telephonyDisplayInfo) return false
         if (serviceState != other.serviceState) return false
         if (signalStrength != other.signalStrength) return false
@@ -248,6 +254,7 @@ internal class MobileState(
         result = 31 * result + roaming.hashCode()
         result = 31 * result + dataState
         result = 31 * result + defaultDataOff.hashCode()
+        result = 31 * result + showWFC.hashCode()
         result = 31 * result + telephonyDisplayInfo.hashCode()
         result = 31 * result + (serviceState?.hashCode() ?: 0)
         result = 31 * result + (signalStrength?.hashCode() ?: 0)
