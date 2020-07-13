@@ -159,6 +159,7 @@ public final class BatteryService extends SystemService {
     private int mLastLowBatteryWarningLevel;
     private int mLowBatteryCloseWarningLevel;
     private int mShutdownBatteryTemperature;
+    private int mShutdownBatteryLowTemperature;
 
     private int mPlugType;
     private int mLastPlugType = -1; // Extra state so we can detect first run
@@ -204,6 +205,8 @@ public final class BatteryService extends SystemService {
                 com.android.internal.R.integer.config_lowBatteryCloseWarningBump);
         mShutdownBatteryTemperature = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_shutdownBatteryTemperature);
+        mShutdownBatteryLowTemperature = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_shutdownBatteryLowTemperature);
 
         mBatteryLevelsEventQueue = new ArrayDeque<>();
         mMetricsLogger = new MetricsLogger();
@@ -403,11 +406,17 @@ public final class BatteryService extends SystemService {
         // shut down gracefully if temperature is too high (> 68.0C by default)
         // wait until the system has booted before attempting to display the
         // shutdown dialog.
-        if (mHealthInfo.batteryTemperatureTenthsCelsius > mShutdownBatteryTemperature) {
+        boolean isTempTooHot = mHealthInfo.batteryTemperatureTenthsCelsius
+                            > mShutdownBatteryTemperature;
+        boolean isTempTooCool = mHealthInfo.batteryTemperatureTenthsCelsius
+                            < mShutdownBatteryLowTemperature;
+
+        if (isTempTooHot || isTempTooCool) {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (mActivityManagerInternal.isSystemReady()) {
+                        Slog.d(TAG, "shutdownIfOverTempLocked request shutdown");
                         Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
                         intent.putExtra(Intent.EXTRA_KEY_CONFIRM, false);
                         intent.putExtra(Intent.EXTRA_REASON,
