@@ -173,6 +173,9 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     private SystemUIDialog mSaverConfirmation;
     private SystemUIDialog mSaverEnabledConfirmation;
     private boolean mHighTempWarning;
+    private boolean mLowTempWarning;
+    private SystemUIDialog mLowTempShutdownDialog;
+    private SystemUIDialog mHighTempShutdownDialog;
     private SystemUIDialog mHighTempDialog;
     private SystemUIDialog mThermalShutdownDialog;
     @VisibleForTesting SystemUIDialog mUsbHighTempDialog;
@@ -409,8 +412,86 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     }
 
     @Override
+    public void showShutdownDialog() {
+        if (mHighTempShutdownDialog != null) return;
+        final SystemUIDialog d = new SystemUIDialog(mContext);
+        d.setIconAttribute(android.R.attr.alertDialogIcon);
+        d.setTitle(R.string.security_Shutdown_title);
+        d.setMessage(R.string.security_Shutdown_dialog_message);
+        d.setPositiveButton(com.android.internal.R.string.ok, null);
+        d.setShowForAllUsers(true);
+        d.setOnDismissListener(dialog -> mHighTempShutdownDialog = null);
+        d.show();
+        mHighTempShutdownDialog = d;
+    }
+
+    @Override
+    public void showTemperatureWarning() {
+        if (mHighTempWarning) {
+            return;
+        }
+        mHighTempWarning = true;
+        final Notification.Builder nb =
+                new Notification.Builder(mContext, NotificationChannels.ALERTS)
+                        .setSmallIcon(R.drawable.ic_device_thermostat_24)
+                        .setWhen(0)
+                        .setShowWhen(false)
+                        .setContentTitle(mContext.getString(R.string.security_temp_title))
+                        .setContentText(mContext.getString(R.string.security_temp_notif_message))
+                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                        .setContentIntent(pendingBroadcast(ACTION_CLICKED_TEMP_WARNING))
+                        .setDeleteIntent(pendingBroadcast(ACTION_DISMISSED_TEMP_WARNING))
+                        .setColor(Utils.getColorAttrDefaultColor(mContext,
+                                android.R.attr.colorError))
+                        .setAutoCancel(false);
+        SystemUIApplication.overrideNotificationAppName(mContext, nb, false);
+        final Notification n = nb.build();
+        n.flags |= Notification.FLAG_NO_CLEAR;
+        mNoMan.notifyAsUser(TAG_TEMPERATURE, SystemMessage.NOTE_HIGH_TEMP, n, UserHandle.ALL);
+    }
+
+    @Override
+    public void showLowTempShutdownDialog() {
+        if (mLowTempShutdownDialog != null) return;
+        final SystemUIDialog d = new SystemUIDialog(mContext);
+        d.setIconAttribute(android.R.attr.alertDialogIcon);
+        d.setTitle(R.string.security_Shutdown_title);
+        d.setMessage(R.string.security_low_temp_Shutdown_dialog_message);
+        d.setPositiveButton(com.android.internal.R.string.ok, null);
+        d.setShowForAllUsers(true);
+        d.setOnDismissListener(dialog -> mLowTempShutdownDialog = null);
+        d.show();
+        mLowTempShutdownDialog = d;
+    }
+
+    @Override
+    public void showLowTemperatureWarning() {
+        if (mLowTempWarning) {
+            return;
+        }
+        mLowTempWarning = true;
+        final Notification.Builder nb =
+                new Notification.Builder(mContext, NotificationChannels.ALERTS)
+                        .setSmallIcon(R.drawable.ic_device_thermostat_24)
+                        .setWhen(0)
+                        .setShowWhen(false)
+                        .setContentTitle(mContext.getString(R.string.security_temp_title))
+                        .setContentText(mContext.getString(R.string.security_low_temp_notif_message))
+                        .setVisibility(Notification.VISIBILITY_PUBLIC)
+                        .setContentIntent(pendingBroadcast(ACTION_CLICKED_TEMP_WARNING))
+                        .setDeleteIntent(pendingBroadcast(ACTION_DISMISSED_TEMP_WARNING))
+                        .setColor(Utils.getColorAttrDefaultColor(mContext,
+                                android.R.attr.colorError))
+                        .setAutoCancel(false);
+        SystemUIApplication.overrideNotificationAppName(mContext, nb, false);
+        final Notification n = nb.build();
+        n.flags |= Notification.FLAG_NO_CLEAR;
+        mNoMan.notifyAsUser(TAG_TEMPERATURE, SystemMessage.NOTE_HIGH_TEMP, n, UserHandle.ALL);
+    }
+
+    @Override
     public void dismissHighTemperatureWarning() {
-        if (!mHighTempWarning) {
+        if (!mHighTempWarning || !mLowTempWarning) {
             return;
         }
         dismissHighTemperatureWarningInternal();
@@ -424,6 +505,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     private void dismissHighTemperatureWarningInternal() {
         mNoMan.cancelAsUser(TAG_TEMPERATURE, SystemMessage.NOTE_HIGH_TEMP, UserHandle.ALL);
         mHighTempWarning = false;
+        mLowTempWarning = false;
     }
 
     @Override
@@ -854,8 +936,6 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
                         .LowBatteryWarningEvent.LOW_BATTERY_NOTIFICATION_CANCEL);
                 dismissLowBatteryWarning();
             } else if (ACTION_CLICKED_TEMP_WARNING.equals(action)) {
-                dismissHighTemperatureWarningInternal();
-                showHighTemperatureDialog();
             } else if (ACTION_DISMISSED_TEMP_WARNING.equals(action)) {
                 dismissHighTemperatureWarningInternal();
             } else if (ACTION_CLICKED_THERMAL_SHUTDOWN_WARNING.equals(action)) {

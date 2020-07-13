@@ -98,6 +98,11 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
 
     private long mScreenOffTime = -1;
 
+    private float mThresholdWarningTemp;
+    private float mThresholdLowTemp;
+    private float mHighTempShutdown;
+    private float mLowTempShutdown;
+
     @VisibleForTesting boolean mLowWarningShownThisChargeCycle;
     @VisibleForTesting boolean mSevereWarningShownThisChargeCycle;
     @VisibleForTesting BatteryStateSnapshot mCurrentBatteryStateSnapshot;
@@ -167,13 +172,19 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 Settings.Global.LOW_POWER_MODE_TRIGGER_LEVEL),
                 false, obs, UserHandle.USER_ALL);
         updateBatteryWarningLevels();
-        mReceiver.init();
-        mUserTracker.addCallback(mUserChangedCallback, mContext.getMainExecutor());
-        mWakefulnessLifecycle.addObserver(mWakefulnessObserver);
 
         // Check to see if we need to let the user know that the phone previously shut down due
         // to the temperature being too high.
         showWarnOnThermalShutdown();
+
+        mHighTempShutdown = mContext.getResources().getInteger(R.integer.config_warningTemperatureShutdown);
+        mLowTempShutdown = mContext.getResources().getInteger(R.integer.config_warningLowTemperatureShutdown);
+        mThresholdWarningTemp = mContext.getResources().getInteger(R.integer.config_warningTemperature);
+        mThresholdLowTemp = mContext.getResources().getInteger(R.integer.config_warningLowTemperature);
+
+        mReceiver.init();
+        mUserTracker.addCallback(mUserChangedCallback, mContext.getMainExecutor());
+        mWakefulnessLifecycle.addObserver(mWakefulnessObserver);
 
         // Register an observer to configure mEnableSkinTemperatureWarning and perform the
         // registration of skin thermal event listener upon Settings change.
@@ -298,8 +309,20 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 final int oldPlugType = mPlugType;
                 mPlugType = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 1);
                 final int oldInvalidCharger = mInvalidCharger;
+                final int batteryTemp = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
                 mInvalidCharger = intent.getIntExtra(BatteryManager.EXTRA_INVALID_CHARGER, 0);
                 mLastBatteryStateSnapshot = mCurrentBatteryStateSnapshot;
+                if (batteryTemp >= mHighTempShutdown) {
+                    mWarnings.showShutdownDialog();
+                } else if (batteryTemp <= mLowTempShutdown) {
+                    mWarnings.showLowTempShutdownDialog();
+                } else if (batteryTemp >= mThresholdWarningTemp) {
+                    mWarnings.showTemperatureWarning();
+                } else if (batteryTemp < mThresholdLowTemp) {
+                    mWarnings.showLowTemperatureWarning();
+                } else {
+                    mWarnings.dismissHighTemperatureWarning();
+                }
 
                 final boolean plugged = mPlugType != 0;
                 final boolean oldPlugged = oldPlugType != 0;
@@ -692,6 +715,14 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
         void dismissHighTemperatureWarning();
 
         void showHighTemperatureWarning();
+
+        void showTemperatureWarning();
+
+        void showLowTemperatureWarning();
+
+        void showShutdownDialog();
+
+        void showLowTempShutdownDialog();
 
         /**
          * Display USB port overheat alarm

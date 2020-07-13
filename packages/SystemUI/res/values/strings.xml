@@ -2342,6 +2342,13 @@
     <!-- What to show on the ambient display player when song doesn't have a title. [CHAR LIMIT=20] -->
     <string name="music_controls_no_title">No title</string>
 
+    <string name="security_temp_title">Battery Temperature Protected</string>
+    <string name="security_temp_notif_message">Battery temperature is too high. Charging stops</string>
+    <string name="security_low_temp_notif_message">Battery temperature too low. Your device will not charging</string>
+    <string name="security_Shutdown_title">Shutdown warning</string>
+    <string name="security_Shutdown_dialog_message">Warning! Battery temperature too high, your device will be shut down.</string>
+    <string name="security_low_temp_Shutdown_dialog_message">Warning! Battery temperature too low, your device will be shut down.</string>
+
     <!-- Title of the overlay warning the user to interact with the device or it will go to sleep. [CHAR LIMIT=25] -->
     <string name="inattentive_sleep_warning_title">Standby</string>
 

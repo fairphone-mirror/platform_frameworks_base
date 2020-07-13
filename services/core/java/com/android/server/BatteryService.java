@@ -174,6 +174,7 @@ public final class BatteryService extends SystemService {
     private int mLowBatteryCloseWarningLevel;
     private int mBatteryNearlyFullLevel;
     private int mShutdownBatteryTemperature;
+    private int mShutdownBatteryLowTemperature;
 
     private int mPlugType;
     private int mLastPlugType = -1; // Extra state so we can detect first run
@@ -236,6 +237,8 @@ public final class BatteryService extends SystemService {
                 com.android.internal.R.integer.config_lowBatteryCloseWarningBump);
         mShutdownBatteryTemperature = mContext.getResources().getInteger(
                 com.android.internal.R.integer.config_shutdownBatteryTemperature);
+        mShutdownBatteryLowTemperature = mContext.getResources().getInteger(
+                com.android.internal.R.integer.config_shutdownBatteryLowTemperature);
 
         mBatteryLevelsEventQueue = new ArrayDeque<>();
         mMetricsLogger = new MetricsLogger();
@@ -435,7 +438,13 @@ public final class BatteryService extends SystemService {
             intent.putExtra(Intent.EXTRA_REASON,
                     PowerManager.SHUTDOWN_BATTERY_THERMAL_STATE);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            mHandler.post(() -> startShutdownActivity(intent));
+            boolean isTempTooHot = mHealthInfo.batteryTemperatureTenthsCelsius
+                > mShutdownBatteryTemperature;
+            boolean isTempTooCool = mHealthInfo.batteryTemperatureTenthsCelsius
+                < mShutdownBatteryLowTemperature;
+            if (isTempTooHot || isTempTooCool) {
+                mHandler.post(() -> startShutdownActivity(intent));
+            }
         }
     }
 

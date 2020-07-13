@@ -1330,7 +1330,8 @@
     <integer name="config_criticalBatteryWarningLevel">10</integer>
 
     <!-- Shutdown if the battery temperature exceeds (this value * 0.1) Celsius. -->
-    <integer name="config_shutdownBatteryTemperature">680</integer>
+    <integer name="config_shutdownBatteryTemperature">625</integer>
+    <integer name="config_shutdownBatteryLowTemperature">-235</integer>
 
     <!-- Display low battery warning when battery level dips to this value -->
     <integer name="config_lowBatteryWarningLevel">20</integer>
