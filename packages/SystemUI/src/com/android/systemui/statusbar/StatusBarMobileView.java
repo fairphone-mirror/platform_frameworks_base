@@ -206,6 +206,16 @@ public class StatusBarMobileView extends FrameLayout implements DarkReceiver,
             }
         }
 
+        if (state.typeId == R.drawable.ic_4g_plus_mobiledata) {
+            if (!state.activityIn && !state.activityOut) {
+                mMobileType.setImageResource(R.drawable.ic_4g_mobiledata);
+                mMobileType.setVisibility(View.VISIBLE);
+            } else {
+                mMobileType.setImageResource(state.typeId);
+                mMobileType.setVisibility(View.VISIBLE);
+            }
+        }
+
         mMobile.setVisibility(state.showTriangle ? View.VISIBLE : View.GONE);
         mMobileRoaming.setVisibility(state.roaming ? View.VISIBLE : View.GONE);
         mMobileRoamingSpace.setVisibility(state.roaming ? View.VISIBLE : View.GONE);
