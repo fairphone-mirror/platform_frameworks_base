@@ -479,7 +479,7 @@ public class MobileSignalController extends SignalController<
             resId = R.drawable.ic_vowifi_v2_white;
         } else if ((mCurrentState.voiceCapable || mCurrentState.videoCapable)
                 && mCurrentState.imsRegistered) {
-            resId = R.drawable.ic_volte;
+            resId = 0; // R.drawable.ic_volte;
         }
         return resId;
     }
