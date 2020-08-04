@@ -337,6 +337,8 @@ public class TelephonyManager {
         UNKNOWN
     };
 
+    private static final String VIRGIN_OPERATOR_NAME = "Virgin";
+
     /** @hide */
     @UnsupportedAppUsage
     public TelephonyManager(Context context) {
@@ -3817,6 +3819,20 @@ public class TelephonyManager {
         return getSimOperatorNameForPhone(phoneId);
     }
 
+    private static boolean isVirginSIM(String voiceOperatorNumeric, String gid1) {
+        if (voiceOperatorNumeric == null || voiceOperatorNumeric.length() < 5 || gid1 == null) {
+            return false;
+        }
+        if ("23438".equals(voiceOperatorNumeric.substring(0, 5))) {
+            return true;
+        }
+        if ("23430".equals(voiceOperatorNumeric.substring(0, 5))) {
+            // GID1: 28000000...00
+            return gid1.matches("^280+$");
+        }
+        return false;
+    }
+
     /**
      * Returns the Service Provider Name (SPN).
      *
@@ -3824,7 +3840,31 @@ public class TelephonyManager {
      */
     @UnsupportedAppUsage
     public String getSimOperatorNameForPhone(int phoneId) {
-        return getTelephonyProperty(phoneId, TelephonyProperties.icc_operator_alpha(), "");
+        if (!isSystemProcess()) {
+            return getTelephonyProperty(phoneId, TelephonyProperties.icc_operator_alpha(), "");
+        }
+
+        final String simNumber =
+                getTelephonyProperty(phoneId, TelephonyProperties.icc_operator_numeric(), "");
+        final String spn =
+                getTelephonyProperty(phoneId, TelephonyProperties.icc_operator_alpha(), "");
+        if (!SubscriptionManager.isValidPhoneId(phoneId)) {
+            return spn;
+        }
+        final int[] subIds = mSubscriptionManager.getSubId(phoneId);
+        if (subIds == null) {
+            return spn;
+        }
+        String gid1;
+        try {
+            gid1 = getGroupIdLevel1(subIds[0]);
+        } catch (SecurityException se) {
+            gid1 = null;
+        }
+        if (isVirginSIM(simNumber, gid1)) {
+            return VIRGIN_OPERATOR_NAME;
+        }
+        return spn;
     }
 
     /**
@@ -9947,6 +9987,36 @@ public class TelephonyManager {
             List<String> newList = updateTelephonyProperty(
                     TelephonyProperties.icc_operator_numeric(), phoneId, numeric);
             TelephonyProperties.icc_operator_numeric(newList);
+        }
+
+        if (!isSystemProcess()) {
+            return;
+        }
+
+        if (!SubscriptionManager.isValidPhoneId(phoneId)) {
+            return;
+        }
+        final int[] subIds = mSubscriptionManager.getSubId(phoneId);
+        if (subIds == null) {
+            return;
+        }
+        String gid1;
+        try {
+            gid1 = getGroupIdLevel1(subIds[0]);
+        } catch (SecurityException se) {
+            gid1 = null;
+        }
+        if (isVirginSIM(numeric, gid1)) {
+            final String operatorName =
+                    getTelephonyProperty(phoneId, TelephonyProperties.icc_operator_alpha(), "");
+            if (!VIRGIN_OPERATOR_NAME.equals(operatorName)) {
+                List<String> newList =
+                        updateTelephonyProperty(
+                                TelephonyProperties.icc_operator_alpha(),
+                                phoneId,
+                                VIRGIN_OPERATOR_NAME);
+                TelephonyProperties.icc_operator_alpha(newList);
+            }
         }
     }
 
