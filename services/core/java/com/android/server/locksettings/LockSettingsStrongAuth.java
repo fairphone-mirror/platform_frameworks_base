@@ -52,6 +52,8 @@ public class LockSettingsStrongAuth {
     private static final String TAG = "LockSettingsStrongAuth";
     private static final boolean DEBUG = Build.IS_DEBUGGABLE && Log.isLoggable(TAG, Log.DEBUG);
 
+    private static final long DEFAULT_LATEST_UNLOCK_TIMEOUT_MS = 24 * 60 * 60 * 1000; // 24h
+
     private static final int MSG_REQUIRE_STRONG_AUTH = 1;
     private static final int MSG_REGISTER_TRACKER = 2;
     private static final int MSG_UNREGISTER_TRACKER = 3;
@@ -63,6 +65,8 @@ public class LockSettingsStrongAuth {
     private static final int MSG_SCHEDULE_NON_STRONG_BIOMETRIC_IDLE_TIMEOUT = 9;
     private static final int MSG_REFRESH_STRONG_AUTH_TIMEOUT = 10;
 
+    private static final int MSG_SCHEDULE_LATEST_UNLOCK_IDLE_TIMEOUT = 11;
+
     @VisibleForTesting
     protected static final String STRONG_AUTH_TIMEOUT_ALARM_TAG =
             "LockSettingsStrongAuth.timeoutForUser";
@@ -72,6 +76,9 @@ public class LockSettingsStrongAuth {
     @VisibleForTesting
     protected static final String NON_STRONG_BIOMETRIC_IDLE_TIMEOUT_ALARM_TAG =
             "LockSettingsPrimaryAuth.nonStrongBiometricIdleTimeoutForUser";
+
+    private static final String LATEST_UNLOCK_TIMEOUT_ALARM_TAG =
+            "LockSettingsStrongAuth.latestUnlocktimeoutForUser";
 
     /**
      * Default and maximum timeout in milliseconds after which unlocking with weak auth times out,
@@ -98,6 +105,9 @@ public class LockSettingsStrongAuth {
     @VisibleForTesting
     protected final ArrayMap<Integer, NonStrongBiometricIdleTimeoutAlarmListener>
             mNonStrongBiometricIdleTimeoutAlarmListener = new ArrayMap<>();
+
+    private final ArrayMap<Integer, StrongAuthTimeoutAlarmListener>
+            mLatestUnlockTimeoutAlarmListenerForUser = new ArrayMap<>();
 
     private final int mDefaultStrongAuthFlags;
     private final boolean mDefaultIsNonStrongBiometricAllowed = true;
@@ -402,6 +412,21 @@ public class LockSettingsStrongAuth {
                 NON_STRONG_BIOMETRIC_IDLE_TIMEOUT_ALARM_TAG, alarm, mHandler);
     }
 
+    private void handleScheduleLatestUnlockTimeout(int userId) {
+        long when = SystemClock.elapsedRealtime() + DEFAULT_LATEST_UNLOCK_TIMEOUT_MS;
+        // cancel current alarm listener for the user (if there was one)
+        StrongAuthTimeoutAlarmListener alarm = mLatestUnlockTimeoutAlarmListenerForUser.get(userId);
+        if (alarm != null) {
+            mAlarmManager.cancel(alarm);
+        } else {
+            alarm = new StrongAuthTimeoutAlarmListener(mInjector.getElapsedRealtimeMs(), userId);
+            mLatestUnlockTimeoutAlarmListenerForUser.put(userId, alarm);
+        }
+        // schedule a new alarm listener for the user
+        mAlarmManager.set(AlarmManager.ELAPSED_REALTIME, when, LATEST_UNLOCK_TIMEOUT_ALARM_TAG,
+                alarm, mHandler);
+    }
+
     private void notifyStrongAuthTrackers(int strongAuthReason, int userId) {
         int i = mTrackers.beginBroadcast();
         try {
@@ -459,6 +484,8 @@ public class LockSettingsStrongAuth {
         if (userId == UserHandle.USER_ALL || userId >= UserHandle.USER_SYSTEM) {
             mHandler.obtainMessage(MSG_REQUIRE_STRONG_AUTH, strongAuthReason,
                     userId).sendToTarget();
+            mHandler.obtainMessage(MSG_SCHEDULE_LATEST_UNLOCK_IDLE_TIMEOUT, strongAuthReason,
+                    userId).sendToTarget();
         } else {
             throw new IllegalArgumentException(
                     "userId must be an explicit user id or USER_ALL");
@@ -485,6 +512,7 @@ public class LockSettingsStrongAuth {
     public void reportSuccessfulStrongAuthUnlock(int userId) {
         final int argNotUsed = 0;
         mHandler.obtainMessage(MSG_SCHEDULE_STRONG_AUTH_TIMEOUT, userId, argNotUsed).sendToTarget();
+        mHandler.obtainMessage(MSG_SCHEDULE_LATEST_UNLOCK_IDLE_TIMEOUT, userId, argNotUsed).sendToTarget();
     }
 
     /**
@@ -629,6 +657,9 @@ public class LockSettingsStrongAuth {
                     break;
                 case MSG_SCHEDULE_NON_STRONG_BIOMETRIC_IDLE_TIMEOUT:
                     handleScheduleNonStrongBiometricIdleTimeout(msg.arg1);
+                    break;
+                case MSG_SCHEDULE_LATEST_UNLOCK_IDLE_TIMEOUT:
+                    handleScheduleLatestUnlockTimeout(msg.arg1);
                     break;
             }
         }
