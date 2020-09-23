@@ -1688,6 +1688,13 @@ public class CarrierConfigManager {
             "always_show_data_rat_icon_bool";
 
     /**
+     * Boolean indicating if show mobile data need to be enabled
+     * @hide
+     */
+    public static final String KEY_CARRIER_DEFAULT_DATA_ENABLED_BOOL =
+            "carrier_default_mobile_data_enabled_bool";
+
+    /**
      * Boolean indicating if default data account should show LTE or 4G icon.
      */
     public static final String KEY_SHOW_4G_FOR_LTE_DATA_ICON_BOOL =
@@ -4567,6 +4574,7 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_NETWORK_TEMP_NOT_METERED_SUPPORTED_BOOL, true);
         sDefaults.putBoolean(KEY_CARRIER_SUPPORTS_MULTIANCHOR_CONFERENCE, false);
         sDefaults.putInt(KEY_DEFAULT_RTT_MODE_INT, 0);
+        sDefaults.putBoolean(KEY_CARRIER_DEFAULT_DATA_ENABLED_BOOL, false);
         sDefaults.putStringArray(KEY_MULTI_APN_ARRAY_FOR_SAME_GID, new String[] {
                 "52FF:mms,supl,hipri,default,fota:SA:nrphone",
                 "52FF:mms,supl,hipri,default,fota:NSA:nxtgenphone",
