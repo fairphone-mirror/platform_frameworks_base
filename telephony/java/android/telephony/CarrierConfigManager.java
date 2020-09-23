@@ -1938,6 +1938,13 @@ public class CarrierConfigManager {
             "always_show_data_rat_icon_bool";
 
     /**
+     * Boolean indicating if show mobile data need to be enabled
+     * @hide
+     */
+    public static final String KEY_CARRIER_DEFAULT_DATA_ENABLED_BOOL =
+            "carrier_default_mobile_data_enabled_bool";
+
+    /**
      * Boolean indicating if default data account should show LTE or 4G icon.
      */
     public static final String KEY_SHOW_4G_FOR_LTE_DATA_ICON_BOOL =
@@ -9205,6 +9212,7 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_USE_ACS_FOR_RCS_BOOL, false);
         sDefaults.putBoolean(KEY_NETWORK_TEMP_NOT_METERED_SUPPORTED_BOOL, true);
         sDefaults.putInt(KEY_DEFAULT_RTT_MODE_INT, 0);
+        sDefaults.putBoolean(KEY_CARRIER_DEFAULT_DATA_ENABLED_BOOL, false);
         sDefaults.putBoolean(KEY_STORE_SIM_PIN_FOR_UNATTENDED_REBOOT_BOOL, true);
         sDefaults.putBoolean(KEY_HIDE_ENABLE_2G, false);
         sDefaults.putStringArray(KEY_ALLOWED_INITIAL_ATTACH_APN_TYPES_STRING_ARRAY,
