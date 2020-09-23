@@ -30,10 +30,138 @@
 #include "utils/MathUtils.h"
 #include "utils/TraceUtils.h"
 
+#include <cutils/properties.h>
+// Direct access to private HAL data to workaround Adreno 330 driver bugs.
+// DO NOT actually call anything from this header; it's included only to access
+// private structs.
+#include "../../../../hardware/qcom/display/libgralloc/gralloc_priv.h"
+
 using namespace android::uirenderer::renderthread;
 
 namespace android {
 namespace uirenderer {
+
+namespace {
+
+CopyResult copyFromPrivateHandle(GraphicBuffer* graphicBuffer, Matrix4& texTransform,
+                                 const Rect& srcRect, SkBitmap* bitmap) {
+
+    static const bool workaround_enabled =
+        [] () -> bool {
+        const int value = property_get_bool("hwui.private_hal_readback", 0) == 1;
+        ALOGD("copyFromPrivateHandle: hwui.private_hal_readback=%i", value);
+        return bool(value);
+    }();
+
+    if (!workaround_enabled) {
+        return CopyResult::UnknownError;
+    }
+
+    static const Matrix4 defaultTransform = []() {
+        const float matrixData[] = {
+            1.f,  0.f,  0.f,  0.f,
+            0.f, -1.f,  0.f,  0.f,
+            0.f,  0.f,  1.f,  0.f,
+            0.f,  1.f,  0.f,  1.f
+        };
+        return Matrix4(matrixData);
+    }();
+
+    const int bitmapWidth = bitmap->width();
+    const int bitmapHeight = bitmap->height();
+
+    if (static_cast<int64_t>(graphicBuffer->getWidth()) != bitmapWidth
+        || static_cast<int64_t>(graphicBuffer->getHeight()) != bitmapHeight
+        || (!srcRect.isEmpty() &&
+            (srcRect.getWidth() != bitmapWidth || srcRect.getHeight() != bitmapHeight))
+        || texTransform != defaultTransform) {
+        // Image transformation isn't supported in any way here. Fall back to
+        // the default implementation.
+        // See CtsViewTestCases/android.view.cts.PixelCopyTest for the various
+        // ways in which scaling needs to be supported.
+        ALOGI("copyFromPrivateHandle: Image transformation is requested but not supported. "
+            "Falling back to the default implementation.");
+        return CopyResult::UnknownError;
+    }
+
+    if (bitmap->colorType() != kRGBA_8888_SkColorType) {
+        ALOGI("copyFromPrivateHandle: Only RGBA_8888 is supported.");
+        return CopyResult::SourceInvalid;
+    }
+    const size_t bytesPerPixel = bitmap->bytesPerPixel();
+
+    const native_handle_t* native_handle = graphicBuffer->handle;
+    const bool handleIsAsExpected = private_handle_t::validate(native_handle) == 0;
+    if (!handleIsAsExpected) {
+        ALOGE("copyFromPrivateHandle: GraphicBuffer doesn't seem to map to gralloc private handle.");
+        return CopyResult::SourceInvalid;
+    }
+    const private_handle_t* hnd = static_cast<const private_handle_t*>(native_handle);
+
+    // May be aligned and be larger than the actual image.
+    const int bufferWidth = hnd->width;
+    const int bufferHeight = hnd->height;
+    if (bitmapWidth > bufferWidth || bitmapHeight > bufferHeight) {
+        ALOGE("copyFromPrivateHandle: bitmap is larger than the buffer. This is not supposed to happen.");
+        return CopyResult::SourceInvalid;
+    }
+    const size_t bufferRowBytes = bufferWidth * bytesPerPixel;
+    // We access as many rows as the bitmap has, aligned to the width of the
+    // buffer.
+    const size_t minBufferSize = bufferRowBytes * bitmapHeight;
+    if (hnd->size < 0 || static_cast<size_t>(hnd->size) < minBufferSize) {
+        ALOGE("copyFromPrivateHandle: buffer is smaller than expected or invalid.");
+        return CopyResult::SourceInvalid;
+    }
+
+    const char* bufferData = reinterpret_cast<const char*>(hnd->base);
+
+    if (srcRect.isEmpty() && bitmapWidth == bufferWidth) {
+        // Take the quick path if possible
+        void* bitmapPixelAddr = bitmap->getPixels();
+        if (!bitmapPixelAddr) {
+            ALOGE("copyFromPrivateHandle: Bitmap pixel address is NULL");
+            return CopyResult::DestinationInvalid;
+        }
+        memcpy(bitmapPixelAddr, bufferData, static_cast<size_t>(hnd->size));
+    } else {
+        // The buffer has some extra space for alignment or we copy only a
+        // subset, or both. Copy requested pixels row-by-row.
+        int left = 0, top = 0;
+        if (!srcRect.isEmpty()) {
+            // Assuming that the floats in srcRect are actually integers.
+            left = static_cast<int>(srcRect.left);
+            top = static_cast<int>(srcRect.top);
+        }
+        // Check that the selected rect is within buffer range. Top/left corner
+        // is defined by srcRect, storage width and height by the bitmap, as
+        // done in equivalent GL implementation.
+        if (left + bitmapWidth > bufferWidth || top + bitmapHeight > bufferHeight) {
+            ALOGE("copyFromPrivateHandle: srcRect is larger than the buffer. This is not supposed to happen.");
+            return CopyResult::DestinationInvalid;
+        }
+        const size_t bitmapRowBytes = bitmapWidth * bytesPerPixel;
+        const char* bufferTop = bufferData + bufferRowBytes * top;
+        for (int y = 0; y < bitmapHeight; ++y) {
+            void* bitmapRowAddr = bitmap->getAddr(0, y);
+            if (!bitmapRowAddr) {
+                ALOGE("copyFromPrivateHandle: Bitmap address is NULL for row %i", y);
+                return CopyResult::DestinationInvalid;
+            }
+            const void* bufferRowAddr = bufferTop
+                + static_cast<size_t>(y) * bufferRowBytes
+                + static_cast<size_t>(left) * bytesPerPixel;
+            memcpy(bitmapRowAddr, bufferRowAddr, bitmapRowBytes);
+        }
+    }
+
+    bitmap->notifyPixelsChanged();
+
+    return CopyResult::Success;
+}
+
+} // anonymous namespace
+
 
 CopyResult Readback::copySurfaceInto(Surface& surface, const Rect& srcRect, SkBitmap* bitmap) {
     ATRACE_CALL();
@@ -64,6 +192,11 @@ CopyResult Readback::copySurfaceInto(Surface& surface, const Rect& srcRect, SkBi
         return CopyResult::UnknownError;
     }
 
+    if (copyFromPrivateHandle(sourceBuffer.get(), texTransform, srcRect, bitmap)
+        == CopyResult::Success) {
+        return CopyResult::Success;
+    }
+
     sk_sp<SkColorSpace> colorSpace =
             DataSpaceToColorSpace(static_cast<android_dataspace>(surface.getBuffersDataSpace()));
     sk_sp<SkImage> image = SkImage::MakeFromAHardwareBuffer(
@@ -79,6 +212,11 @@ CopyResult Readback::copyHWBitmapInto(Bitmap* hwBitmap, SkBitmap* bitmap) {
     Matrix4 transform;
     transform.loadScale(1, -1, 1);
     transform.translate(0, -1);
+
+    if (copyFromPrivateHandle(hwBitmap->graphicBuffer(), transform, srcRect, bitmap)
+        == CopyResult::Success) {
+        return CopyResult::Success;
+    }
 
     return copyImageInto(hwBitmap->makeImage(), transform, srcRect, bitmap);
 }
