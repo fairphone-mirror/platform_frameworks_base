@@ -1535,6 +1535,33 @@ public class Build {
     public static final boolean PERMISSIONS_REVIEW_REQUIRED = true;
 
     /**
+     * Get Fairphone 3 model variant, FP3 vs. FP3+
+     *
+     * @hide
+     * */
+    public static String getFairphoneModel() {
+        String backCamera = getString("persist.vendor.camera.back");
+        String frontCamera = getString("persist.vendor.camera.front");
+        String pcba = getString("ro.boot.pcbastage");
+        return backCamera.equals("S5KGM1SP_TXD")
+                && frontCamera.equals("S5K3P9SP_TXD")
+                && pcba.contains("8903")
+            ? "FP3+"
+            : "FP3";
+    }
+
+    /**
+     * Legacy variant of getFairphoneModel()
+     *
+     * Legacy interface is required for Arima's ServiceMenu.
+     *
+     * @hide
+     * */
+    public static String getArimaModel() {
+        return getFairphoneModel();
+    }
+
+    /**
      * Returns the version string for the radio firmware.  May return
      * null (if, for instance, the radio is not currently on).
      */
