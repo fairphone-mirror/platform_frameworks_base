@@ -29,6 +29,7 @@ import android.content.Context;
 import android.sysprop.TelephonyProperties;
 import android.text.TextUtils;
 import android.util.Slog;
+import android.util.Log;
 import android.view.View;
 
 import dalvik.system.VMRuntime;
@@ -1295,6 +1296,18 @@ public class Build {
      */
     @SystemApi
     public static final boolean PERMISSIONS_REVIEW_REQUIRED = true;
+
+    /** {@hide} */
+    public static String getFairphoneModel() {
+        String backCamera = getString("persist.vendor.camera.back");
+        String frontCamera = getString("persist.vendor.camera.front");
+        String pcba = getString("ro.boot.pcbastage");
+        return backCamera.equals("S5KGM1SP_TXD")
+                && frontCamera.equals("S5K3P9SP_TXD")
+                && pcba.contains("8903")
+            ? "FP3+"
+            : "FP3";
+    }
 
     /**
      * Returns the version string for the radio firmware.  May return
