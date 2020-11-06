@@ -700,6 +700,10 @@
     <!-- For tether entitlement recheck-->
     <protected-broadcast
         android:name="com.android.server.connectivity.tethering.PROVISIONING_RECHECK_ALARM" />
+
+    <!-- For bluetooth headset the call type(CS call or Non-CS call) -->
+    <protected-broadcast android:name="codeaurora.telecom.action.CALL_TYPE" />
+
     <!-- ====================================================================== -->
     <!--                          RUNTIME PERMISSIONS                           -->
     <!-- ====================================================================== -->
