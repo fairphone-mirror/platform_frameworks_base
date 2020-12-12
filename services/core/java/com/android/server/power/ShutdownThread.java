@@ -155,7 +155,13 @@ public final class ShutdownThread extends Thread {
         mReboot = false;
         mRebootSafeMode = false;
         mReason = reason;
-        shutdownInner(context, confirm);
+        // removed shutdown caused by SHUTDOWN_THERMAL_STATE, liquan.zhou.t2m, 20201211
+        if(mReason != null && mReason.startsWith(PowerManager.SHUTDOWN_THERMAL_STATE)) {
+            Log.d(TAG, "shutdown reason is " + mReason + ", ignore");
+        } else {
+            Log.d(TAG, "shutdown reason is " + mReason);
+            shutdownInner(context, confirm);
+        }
     }
 
     private static void shutdownInner(final Context context, boolean confirm) {
