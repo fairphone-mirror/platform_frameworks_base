@@ -4421,9 +4421,9 @@ Landroid/app/AppOpsManager$OnOpChangedInternalListener;
 Landroid/app/AppOpsManager$OnOpChangedInternalListener;-><init>()V
 Landroid/app/AppOpsManager$OnOpChangedInternalListener;->onOpChanged(ILjava/lang/String;)V
 Landroid/app/AppOpsManager$OpEntry;
-Landroid/app/AppOpsManager$OpEntry;-><init>(IIJJIILjava/lang/String;)V
-Landroid/app/AppOpsManager$OpEntry;-><init>(II[J[JIILjava/lang/String;)V
-Landroid/app/AppOpsManager$OpEntry;-><init>(II[J[JIZILjava/lang/String;)V
+Landroid/app/AppOpsManager$OpEntry;-><init>(IIJJIILjava/lang/String;II)V
+Landroid/app/AppOpsManager$OpEntry;-><init>(II[J[JIILjava/lang/String;II)V
+Landroid/app/AppOpsManager$OpEntry;-><init>(II[J[JIZILjava/lang/String;II)V
 Landroid/app/AppOpsManager$OpEntry;-><init>(Landroid/os/Parcel;)V
 Landroid/app/AppOpsManager$OpEntry;->CREATOR:Landroid/os/Parcelable$Creator;
 Landroid/app/AppOpsManager$OpEntry;->getDuration()I
