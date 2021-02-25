@@ -293,11 +293,11 @@ public class VolumeDialogImpl implements VolumeDialog,
                 addRow(STREAM_ACCESSIBILITY, R.drawable.ic_volume_accessibility,
                         R.drawable.ic_volume_accessibility, true, false);
             }
-            addRow(AudioManager.STREAM_MUSIC,
-                    R.drawable.ic_volume_media, R.drawable.ic_volume_media_mute, true, true);
+            addRow(AudioManager.STREAM_RING,
+                    R.drawable.ic_volume_ringer, R.drawable.ic_volume_ringer_mute, true, true);
             if (!AudioSystem.isSingleVolume(mContext)) {
-                addRow(AudioManager.STREAM_RING,
-                        R.drawable.ic_volume_ringer, R.drawable.ic_volume_ringer_mute, true, false);
+                addRow(AudioManager.STREAM_MUSIC,
+                        R.drawable.ic_volume_media, R.drawable.ic_volume_media_mute, true, false);
                 addRow(STREAM_ALARM,
                         R.drawable.ic_alarm, R.drawable.ic_volume_alarm_mute, true, false);
                 addRow(AudioManager.STREAM_VOICE_CALL,
@@ -406,7 +406,7 @@ public class VolumeDialogImpl implements VolumeDialog,
             }
         }
         for (VolumeRow row : mRows) {
-            if (row.stream == STREAM_MUSIC) {
+            if (row.stream == STREAM_RING) {
                 return row;
             }
         }
@@ -824,7 +824,7 @@ public class VolumeDialogImpl implements VolumeDialog,
             }
 
             if (row.defaultStream) {
-                return activeRow.stream == STREAM_RING
+                return activeRow.stream == STREAM_MUSIC
                         || activeRow.stream == STREAM_ALARM
                         || activeRow.stream == STREAM_VOICE_CALL
                         || activeRow.stream == STREAM_ACCESSIBILITY
