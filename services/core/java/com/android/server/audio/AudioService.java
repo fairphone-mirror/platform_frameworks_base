@@ -409,7 +409,7 @@ public class AudioService extends IAudioService.Stub
     * e.g. user on homescreen, no app playing anything, presses hardware volume buttons, this
     *    stream type is controlled.
     */
-   protected static final int DEFAULT_VOL_STREAM_NO_PLAYBACK = AudioSystem.STREAM_MUSIC;
+   protected static final int DEFAULT_VOL_STREAM_NO_PLAYBACK = AudioSystem.STREAM_RING;
 
     private final AudioSystem.ErrorCallback mAudioSystemCallback = new AudioSystem.ErrorCallback() {
         public void onError(int error) {
@@ -4400,10 +4400,10 @@ public class AudioService extends IAudioService.Stub
                     return AudioSystem.STREAM_VOICE_CALL;
                 }
             } else if (suggestedStreamType == AudioManager.USE_DEFAULT_STREAM_TYPE) {
-                if (wasStreamActiveRecently(AudioSystem.STREAM_RING, sStreamOverrideDelayMs)) {
+                if (wasStreamActiveRecently(AudioSystem.STREAM_MUSIC, sStreamOverrideDelayMs)) {
                     if (DEBUG_VOL)
-                        Log.v(TAG, "getActiveStreamType: Forcing STREAM_RING stream active");
-                    return AudioSystem.STREAM_RING;
+                        Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC stream active");
+                    return AudioSystem.STREAM_MUSIC;
                 } else if (wasStreamActiveRecently(
                         AudioSystem.STREAM_NOTIFICATION, sStreamOverrideDelayMs)) {
                     if (DEBUG_VOL)
@@ -4450,9 +4450,9 @@ public class AudioService extends IAudioService.Stub
                     if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: Forcing STREAM_NOTIFICATION");
                     return AudioSystem.STREAM_NOTIFICATION;
                 } else if (AudioSystem.isStreamActive(
-                        AudioSystem.STREAM_RING, sStreamOverrideDelayMs)) {
-                    if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: Forcing STREAM_RING");
-                    return AudioSystem.STREAM_RING;
+                        AudioSystem.STREAM_MUSIC, sStreamOverrideDelayMs)) {
+                    if (DEBUG_VOL) Log.v(TAG, "getActiveStreamType: Forcing STREAM_MUSIC");
+                    return AudioSystem.STREAM_MUSIC;
                 } else {
                     if (DEBUG_VOL) {
                         Log.v(TAG, "getActiveStreamType: Forcing DEFAULT_VOL_STREAM_NO_PLAYBACK("
