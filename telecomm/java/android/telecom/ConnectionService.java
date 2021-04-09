@@ -2553,7 +2553,8 @@ public abstract class ConnectionService extends Service {
         findConnectionForAction(callId, "abort").onAbort();
     }
 
-    private void answerVideo(String callId, int videoState) {
+    /** {@hide} */
+    protected void answerVideo(String callId, int videoState) {
         Log.i(this, "answerVideo %s", callId);
         if (mConnectionById.containsKey(callId)) {
             findConnectionForAction(callId, "answer").onAnswer(videoState);
@@ -2562,7 +2563,8 @@ public abstract class ConnectionService extends Service {
         }
     }
 
-    private void answer(String callId) {
+    /** {@hide} */
+    protected void answer(String callId) {
         Log.i(this, "answer %s", callId);
         if (mConnectionById.containsKey(callId)) {
             findConnectionForAction(callId, "answer").onAnswer();
