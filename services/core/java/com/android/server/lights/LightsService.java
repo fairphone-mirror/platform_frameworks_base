@@ -51,6 +51,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import android.os.IHardwareService;
+import android.content.pm.PackageManager;
 
 public class LightsService extends SystemService {
     static final String TAG = "LightsService";
@@ -66,6 +68,7 @@ public class LightsService extends SystemService {
     final LightsManagerBinderService mManagerService;
 
     private Handler mH;
+    private Context mContext;
 
     private final class LightsManagerBinderService extends ILightsManager.Stub {
 
@@ -451,6 +454,7 @@ public class LightsService extends SystemService {
     LightsService(Context context, Supplier<ILights> service, Looper looper) {
         super(context);
         mH = new Handler(looper);
+        mContext = context;
         mVintfLights = service.get() != null ? service : null;
 
         populateAvailableLights(context);
@@ -496,6 +500,7 @@ public class LightsService extends SystemService {
     public void onStart() {
         publishLocalService(LightsManager.class, mService);
         publishBinderService(Context.LIGHTS_SERVICE, mManagerService);
+        publishBinderService("hardware", mLegacyFlashlightHack);
     }
 
     @Override
@@ -547,6 +552,45 @@ public class LightsService extends SystemService {
             mInstance = null;
         }
     }
+
+    public LogicalLight getLight(int id) {
+        return mLightsByType[id];
+    }
+
+    private final IHardwareService.Stub mLegacyFlashlightHack = new IHardwareService.Stub() {
+  
+          /**
+           * refter to SurfaceControl - setDisplayBrightness
+           * @param brightness
+           *      A number between 0.0f (minimum brightness) and 1.0f (maximum brightness), or -1.0f to
+           *      turn the backlight off.
+           */
+          public void setLCDLightBrightness(float brightness) {
+              if(mContext != null) {
+                  if (mContext
+                          .checkCallingOrSelfPermission(android.Manifest.permission.HARDWARE_TEST)
+                          != PackageManager.PERMISSION_GRANTED) {
+                      if (DEBUG){
+                          Slog.v(TAG, "setLCDLightBrightness, no permission");
+                      }
+                      return;
+                  }
+              }
+              //[TCT-ROM]Modified Begin by zhengyang.ma for Task-9506270 on 2020/7/22
+              if (Float.isNaN(brightness)) {
+                  if (DEBUG){
+                      Slog.w(TAG, "Brightness is not valid: " + brightness);
+                  }
+                  return;
+              }
+  
+              LogicalLight light = getLight(LightsManager.LIGHT_ID_BACKLIGHT);
+              if (light != null) {
+                  light.setBrightness(brightness);
+              }
+              //[TCT-ROM]Modified End by zhengyang.ma for Task-9506270 on 2020/7/22
+          }
+      };
 
     static native void setLight_native(int light, int color, int mode,
             int onMS, int offMS, int brightnessMode);
