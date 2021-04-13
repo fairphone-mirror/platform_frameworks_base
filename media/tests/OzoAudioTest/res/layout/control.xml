@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="top"
+    android:paddingTop="5dp"
+    android:visibility="gone">
+
+    <Button android:id="@+id/recPause"
+        android:background="@drawable/pausebutton"
+        style="@style/ButtonText"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|right"/>
+
+    <Button android:id="@+id/recStop"
+        android:background="@drawable/stopbutton"
+        style="@style/RecordTimeText"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|right"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:padding="5dp"
+        android:gravity="center|bottom"
+        android:orientation="horizontal"
+        android:id="@+id/ozoRectCtrl">
+
+        <LinearLayout
+            android:layout_height="250dp"
+            android:layout_width="300dp"
+            android:layout_gravity="left"
+            android:orientation="vertical"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_height="0dip"
+                android:layout_width="wrap_content"
+                android:layout_weight="1" />
+
+            <!-- Change focus direction -->
+            <view class="com.android.ozoaudiotest.OzoCircle"
+                android:id="@+id/azimuthView"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="400px"
+                android:layout_height="400px"
+                android:layout_gravity="center_vertical|left">
+            </view>
+
+            <TextView
+                style="@style/SwitchText"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:paddingLeft="5dp"
+                android:text="Zoom" />
+
+            <!-- Change focus zoom factor -->
+            <SeekBar
+                android:id="@+id/zoomBar"
+                style="@style/SwitchText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:paddingBottom="15dp"
+                android:progress="0"
+                android:max="50" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="250dp"
+            android:layout_width="300dp"
+            android:layout_gravity="right"
+            android:orientation="vertical"
+            android:layout_weight="1" >
+
+            <TextView
+                android:layout_height="0dip"
+                android:layout_width="wrap_content"
+                android:layout_weight="1" />
+
+            <!-- Enable/disable custom processing mode -->
+            <Switch
+                android:id="@+id/customproc"
+                style="@style/SwitchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:switchMinWidth="60dp"
+                android:switchPadding="15dp"
+                android:text="Custom processing"
+                android:checked="false"
+                android:layout_gravity="center_vertical|right|bottom" />
+
+            <!-- Enable/disable noise suppression mode -->
+            <Switch
+                android:id="@+id/ns"
+                style="@style/SwitchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:switchMinWidth="60dp"
+                android:switchPadding="15dp"
+                android:text="Noise suppression"
+                android:checked="false"
+                android:layout_gravity="center_vertical|right|bottom" />
+
+            <!-- Enable/disable windscreen mode -->
+            <Switch
+                android:id="@+id/wnr"
+                style="@style/SwitchText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:switchMinWidth="60dp"
+                android:switchPadding="15dp"
+                android:text="WNR"
+                android:checked="false"
+                android:layout_gravity="center_vertical|right|bottom" />
+
+            <!-- Show wind level -->
+            <view class="com.android.ozoaudiotest.OzoLevel"
+                android:id="@+id/windLevelView"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|left|bottom">
+            </view>
+
+            <!-- Show audio levels -->
+            <view class="com.android.ozoaudiotest.OzoLevel"
+                android:id="@+id/levelLeft"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|left|bottom">
+            </view>
+            <view class="com.android.ozoaudiotest.OzoLevel"
+                android:id="@+id/levelRight"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="fill_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical|left|bottom">
+            </view>
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

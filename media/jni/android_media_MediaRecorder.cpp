@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
+/*
+  Copyright (C) 2019 Nokia Corporation.
+  This material, including documentation and any related
+  computer programs, is protected by copyright controlled by
+  Nokia Corporation. All rights are reserved. Copying,
+  including reproducing, storing,  adapting or translating, any
+  or all of this material requires the prior written consent of
+  Nokia Corporation. This material also contains confidential
+  information which may not be disclosed to others without the
+  prior written consent of Nokia Corporation.
+*/
+
 #include <assert.h>
 #include <fcntl.h>
 #include <inttypes.h>
@@ -841,6 +853,55 @@ static jint android_media_MediaRecord_getPortId(JNIEnv *env,  jobject thiz) {
     return (jint)portId;
 }
 
+static void
+android_media_MediaRecorder_setOzoTuneFileFD(JNIEnv *env, jobject thiz, jobject fileDescriptor)
+{
+    ALOGV("setOzoTuneFileFD");
+    if (fileDescriptor == NULL) {
+        jniThrowException(env, "java/lang/IllegalArgumentException", NULL);
+        return;
+    }
+    int fd = jniGetFDFromFileDescriptor(env, fileDescriptor);
+    sp<MediaRecorder> mr = getMediaRecorder(env, thiz);
+    if (mr == NULL) {
+        jniThrowException(env, "java/lang/IllegalStateException", NULL);
+        return;
+    }
+    status_t opStatus = mr->setOzoAudioTuneFile(fd);
+    process_media_recorder_call(env, opStatus, "java/io/IOException", "setOzoAudioTuneFile failed.");
+}
+
+static void
+android_media_MediaRecorder_setOzoAudioRuntimeParameter(JNIEnv *env, jobject thiz, jstring params)
+{
+    ALOGV("setOzoAudioRuntimeParameter()");
+
+    if (params == NULL)
+    {
+        ALOGE("Invalid or empty params string.  This parameter will be ignored.");
+        return;
+    }
+
+    sp<MediaRecorder> mr = getMediaRecorder(env, thiz);
+    if (mr == NULL) {
+        jniThrowException(env, "java/lang/IllegalStateException", NULL);
+        return;
+    }
+
+    const char* params8 = env->GetStringUTFChars(params, NULL);
+    if (params8 == NULL)
+    {
+        ALOGE("Failed to covert jstring to String8.  This parameter will be ignored.");
+        return;
+    }
+
+    process_media_recorder_call(
+        env, mr->setOzoRunTimeParameters(String8(params8)), "java/lang/RuntimeException",
+        "setOzoRunTimeParameters failed."
+    );
+    env->ReleaseStringUTFChars(params, params8);
+}
+
 // ----------------------------------------------------------------------------
 
 static const JNINativeMethod gMethods[] = {
@@ -886,6 +947,9 @@ static const JNINativeMethod gMethods[] = {
             (void *)android_media_MediaRecord_setPreferredMicrophoneDirection},
     {"native_setPreferredMicrophoneFieldDimension", "(F)I",
             (void *)android_media_MediaRecord_setPreferredMicrophoneFieldDimension},
+
+    {"setOzoAudioRuntimeParameter", "(Ljava/lang/String;)V",    (void *)android_media_MediaRecorder_setOzoAudioRuntimeParameter},
+    {"_setOzoTuneFileFD", "(Ljava/io/FileDescriptor;)V",        (void *)android_media_MediaRecorder_setOzoTuneFileFD},
 };
 
 // This function only registers the native methods, and is called from
