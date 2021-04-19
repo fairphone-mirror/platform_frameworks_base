@@ -118,7 +118,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class BatteryService extends SystemService {
     private static final String TAG = BatteryService.class.getSimpleName();
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private static final int BATTERY_SCALE = 100;    // battery capacity is a percentage
 
@@ -159,6 +159,8 @@ public final class BatteryService extends SystemService {
     private int mLastMaxChargingCurrent;
     private int mLastMaxChargingVoltage;
     private int mLastChargeCounter;
+
+    private ICustomerBatteryFunc mCustomerBatteryFunc;
 
     private int mSequence = 1;
 
@@ -664,6 +666,12 @@ public final class BatteryService extends SystemService {
 
             // Update the battery LED
             mLed.updateLightsLocked();
+
+            //Update the warm UI
+            if (mCustomerBatteryFunc == null) {
+                mCustomerBatteryFunc = new Fp4BatteryFuncImpl();
+            }
+            mCustomerBatteryFunc.notifyBatteryTempWarnChanged(mContext,new ICustomerBatteryFunc.CustomBatteryInfo().setHeathInfo(mHealthInfo));
 
             // This needs to be done after sendIntent() so that we get the lastest battery stats.
             if (logOutlier && dischargeDuration != 0) {

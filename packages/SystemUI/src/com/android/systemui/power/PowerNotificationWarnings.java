@@ -49,6 +49,8 @@ import android.util.Log;
 import android.util.Slog;
 import android.view.View;
 import android.view.WindowManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import androidx.annotation.VisibleForTesting;
 
@@ -156,6 +158,10 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     @VisibleForTesting SystemUIDialog mUsbHighTempDialog;
     private BatteryStateSnapshot mCurrentBatterySnapshot;
     private ActivityStarter mActivityStarter;
+
+    private AlertDialog mHighTemp;
+    private AlertDialog mLowTemp;
+    private AlertDialog mShutDown;
 
     /**
      */
@@ -370,6 +376,78 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         mNoMan.cancelAsUser(TAG_TEMPERATURE, SystemMessage.NOTE_HIGH_TEMP, UserHandle.ALL);
         mHighTempWarning = false;
     }
+
+
+    public void showHighTemp(boolean charging) {
+        String message;
+        if (mHighTemp != null) return;
+        if (charging) {
+            message = mContext.getResources().getString(R.string.height_temp_message);
+        } else {
+            message = mContext.getResources().getString(R.string.hight_temp_message_notchanging);
+        }
+        mHighTemp = new AlertDialog.Builder(mContext)
+                .setTitle(mContext.getResources().getString(R.string.height_temp_title))
+                .setMessage(message)
+                .setView(R.layout.alert_battery_warn)
+                .setNegativeButton(mContext.getResources().getString(R.string.low_temp_alert_dismiss), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                        mHighTemp = null;
+                    }
+                })
+                .setPositiveButton(mContext.getResources().getString(R.string.low_temp_alert_snooze), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        mHighTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        mHighTemp.setCanceledOnTouchOutside(false);
+        mHighTemp.show();
+    }
+
+    public void showLowTemp(boolean charging) {
+        String message;
+        if (mLowTemp != null || !charging) return;
+        if (charging) {
+            message = mContext.getResources().getString(R.string.low_temp_message);
+        } else {
+            message = mContext.getResources().getString(R.string.low_temp_message_notchanging);
+        }
+        mLowTemp = new AlertDialog.Builder(mContext)
+                .setTitle(mContext.getResources().getString(R.string.low_temp_title))
+                .setMessage(message)
+                .setView(R.layout.alert_battery_warn)
+                .setNegativeButton(mContext.getResources().getString(R.string.low_temp_alert_dismiss), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                        mLowTemp = null;
+                    }
+                })
+                .setPositiveButton(mContext.getResources().getString(R.string.low_temp_alert_snooze), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        mLowTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        mLowTemp.setCanceledOnTouchOutside(false);
+        mLowTemp.show();
+    }
+
+    public void updateOTP() {
+        if (mHighTemp != null) {
+            mHighTemp.dismiss();
+        }
+
+        if (mLowTemp != null) {
+            mLowTemp.dismiss();
+        }
+    }
+    
 
     @Override
     public void showHighTemperatureWarning() {

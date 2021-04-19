@@ -689,6 +689,9 @@
     <!-- For tether entitlement recheck-->
     <protected-broadcast
         android:name="com.android.server.connectivity.tethering.PROVISIONING_RECHECK_ALARM" />
+
+    <!-- fp4 high temp low temp warn-->
+    <protected-broadcast android:name="android.intent.action.BATTERY_WARM_TEMP_CHANGED" />
     <!-- ====================================================================== -->
     <!--                          RUNTIME PERMISSIONS                           -->
     <!-- ====================================================================== -->

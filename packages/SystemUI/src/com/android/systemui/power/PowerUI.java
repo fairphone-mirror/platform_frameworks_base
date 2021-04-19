@@ -235,6 +235,7 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
             filter.addAction(Intent.ACTION_SCREEN_OFF);
             filter.addAction(Intent.ACTION_SCREEN_ON);
             filter.addAction(Intent.ACTION_USER_SWITCHED);
+            filter.addAction(Intent.ACTION_BATTERY_WARM_TEMP_CHANGED);
             mBroadcastDispatcher.registerReceiverWithHandler(this, filter, mHandler);
             // Force get initial values. Relying on Sticky behavior until API for getting info.
             if (!mHasReceivedBattery) {
@@ -322,6 +323,17 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 mScreenOffTime = -1;
             } else if (Intent.ACTION_USER_SWITCHED.equals(action)) {
                 mWarnings.userSwitched();
+            } else if (Intent.ACTION_BATTERY_WARM_TEMP_CHANGED.equals(action)) {
+                Log.i(TAG, "receive ACTION_BATTERY_WARM_TEMP_CHANGED");
+                int batteryHealth = intent.getIntExtra(Intent.EXTRA_BATTERY_HEALTH, 0);
+                if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
+                    mWarnings.showHighTemp(true);
+                } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
+                    mWarnings.showLowTemp(true);
+                } else {
+                    mWarnings.updateOTP();
+                }
+
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
             }
@@ -701,6 +713,14 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
          * @param snapshot object containing relevant values for making battery warning decisions.
          */
         void updateSnapshot(BatteryStateSnapshot snapshot);
+
+
+        void showHighTemp(boolean charging);
+
+        void showLowTemp(boolean charging);
+
+        void updateOTP();
+
     }
 
     // Skin thermal event received from thermal service manager subsystem

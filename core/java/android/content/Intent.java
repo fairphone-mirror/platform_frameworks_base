@@ -3696,6 +3696,17 @@ public class Intent implements Parcelable, Cloneable {
             "android.intent.action.USER_SWITCHED";
 
     /**
+     * this is vendor function broadcast
+     * Broadcast sent to the system when battery warm temp changed.
+     * example: BATTERY_HEALTH_OVERHEAT, BatteryManager.BATTERY_HEALTH_COLD, or driver point content changed.
+     */
+    public static final String ACTION_BATTERY_WARM_TEMP_CHANGED =
+            "android.intent.action.BATTERY_WARM_TEMP_CHANGED";
+
+    public static final String EXTRA_BATTERY_HEALTH =
+            "android.intent.extra.BATTERY_HEALTH";
+
+    /**
      * Broadcast Action: Sent when the credential-encrypted private storage has
      * become unlocked for the target user. This is only sent to registered
      * receivers, not manifest receivers.
