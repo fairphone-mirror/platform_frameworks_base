@@ -160,6 +160,9 @@ public final class BatteryService extends SystemService {
     private int mLastMaxChargingVoltage;
     private int mLastChargeCounter;
 
+    private ICustomerBatteryFunc mCustomerBatteryFunc;
+    private ICustomerBatteryFunc.CustomBatteryInfo mCustomBatteryInfo;
+
     private int mSequence = 1;
 
     private int mInvalidCharger;
@@ -664,6 +667,18 @@ public final class BatteryService extends SystemService {
 
             // Update the battery LED
             mLed.updateLightsLocked();
+
+            //Update the warm UI
+
+            if (mHealthInfo.batteryHealth != mLastBatteryHealth) {
+                if (mCustomerBatteryFunc == null) {
+                    mCustomerBatteryFunc = new Fp4BatteryFuncImpl();
+                }
+                if (mCustomBatteryInfo == null) {
+                    mCustomBatteryInfo = new ICustomerBatteryFunc.CustomBatteryInfo();
+                }
+                mCustomerBatteryFunc.notifyBatteryTempWarnChanged(mContext, mCustomBatteryInfo.setHeathInfo(mHealthInfo));
+            }
 
             // This needs to be done after sendIntent() so that we get the lastest battery stats.
             if (logOutlier && dischargeDuration != 0) {

@@ -2870,4 +2870,19 @@
     <string name="media_output_dialog_connect_failed">Couldn\'t connect. Try again.</string>
     <!-- Title for pairing item [CHAR LIMIT=60] -->
     <string name="media_output_dialog_pairing_new">Pair new device</string>
+
+    <string name="low_temp_title">Low Battery Temperature</string>
+    <string name="low_temp_message">Your battery temperature is too low, please disconnect the charger!</string>
+    <string name="low_temp_message_notchanging">temperature is too low!</string>
+    <string name="high_temp_title_custom">High Battery Temperature</string>
+    <string name="high_temp_message">Your battery temperature is too high, please disconnect the charger!</string>
+    <string name="high_temp_message_notchanging">temperature is too high!</string>
+    <string name="low_temp_alert_dismiss">Dismiss</string>
+    <string name="low_temp_alert_snooze">Snooze</string>
+
+    <string name="battery_error">Battery Error</string>
+    <string name="battery_error_message">Shutdown in 4 second!</string>
+    <string name="battery_otp">Battery Over Temperature</string>
+    <string name="battery_otp_message">Shutdown in 5 seconds!</string>
+
 </resources>
