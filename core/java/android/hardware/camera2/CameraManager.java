@@ -1434,14 +1434,19 @@ public final class CameraManager {
             String[] cameraIds = null;
             boolean exposeAuxCamera = false;
             String packageName = ActivityThread.currentOpPackageName();
-            String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-            if (packageList.length() > 0) {
-                TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                splitter.setString(packageList);
-                for (String str : splitter) {
-                    if (packageName.equals(str)) {
-                        exposeAuxCamera = true;
-                        break;
+            if (packageName.contains("com.android.mmi")) {
+                  exposeAuxCamera = true;
+            } else {
+                String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
+                       "org.codeaurora.snapcam,com.android.mmi");
+                if (packageList.length() > 0) {
+                    TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
+                    splitter.setString(packageList);
+                    for (String str : splitter) {
+                        if (packageName.equals(str)) {
+                            exposeAuxCamera = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -1722,14 +1727,19 @@ public final class CameraManager {
                  */
                 boolean exposeAuxCamera = false;
                 String packageName = ActivityThread.currentOpPackageName();
-                String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-                if (packageList.length() > 0) {
-                    TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                    splitter.setString(packageList);
-                    for (String str : splitter) {
-                        if (packageName.equals(str)) {
-                            exposeAuxCamera = true;
-                            break;
+                if (packageName.contains("com.android.mmi")) {
+                      exposeAuxCamera = true;
+                } else {
+                    String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
+                           "org.codeaurora.snapcam,com.android.mmi");
+                    if (packageList.length() > 0) {
+                        TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
+                        splitter.setString(packageList);
+                        for (String str : splitter) {
+                            if (packageName.equals(str)) {
+                                exposeAuxCamera = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1940,14 +1950,19 @@ public final class CameraManager {
              */
             boolean exposeMonoCamera = false;
             String packageName = ActivityThread.currentOpPackageName();
-            String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-            if (packageList.length() > 0) {
-                TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                splitter.setString(packageList);
-                for (String str : splitter) {
-                    if (packageName.equals(str)) {
-                        exposeMonoCamera = true;
-                        break;
+            if (packageName.contains("com.android.mmi")) {
+                  exposeMonoCamera = true;
+            } else {
+                String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
+                       "org.codeaurora.snapcam,com.android.mmi");
+                if (packageList.length() > 0) {
+                    TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
+                    splitter.setString(packageList);
+                    for (String str : splitter) {
+                        if (packageName.equals(str)) {
+                            exposeMonoCamera = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -2095,14 +2110,19 @@ public final class CameraManager {
              */
             boolean exposeMonoCamera = false;
             String packageName = ActivityThread.currentOpPackageName();
-            String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-            if (packageList.length() > 0) {
-                TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                splitter.setString(packageList);
-                for (String str : splitter) {
-                    if (packageName.equals(str)) {
-                        exposeMonoCamera = true;
-                        break;
+            if (packageName.contains("com.android.mmi")) {
+                  exposeMonoCamera = true;
+            } else {
+                String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
+                       "org.codeaurora.snapcam,com.android.mmi");
+                if (packageList.length() > 0) {
+                    TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
+                    splitter.setString(packageList);
+                    for (String str : splitter) {
+                        if (packageName.equals(str)) {
+                            exposeMonoCamera = true;
+                            break;
+                        }
                     }
                 }
             }
