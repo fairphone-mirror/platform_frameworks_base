@@ -2121,6 +2121,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setOzoAudioParameters(String deviceId, int mics) {
+        Log.i(TAG, "ozo setOzoAudioParameters mics = " + mics);
         setParameter("vendor.ozoaudio.mode.value=ozoaudio");
         setParameter("vendor.ozoaudio.device.value=" + deviceId);
         setParameter("stagefrightrecorder.ozoaudio.input-channels=" + mics);
@@ -2132,6 +2133,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setOzoEffectChannelMask(int channelMask) {
+        //Log.i(TAG, "ozo setOzoEffectChannelMask channelMask = " + channelMask);
         setParameter("stagefrightrecorder.ozoaudio.channelmask=" + channelMask);
     }
 
@@ -2141,7 +2143,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setInitialFocusParameters(double gain, double azimuth, double elevation)
-    {
+    {   Log.i(TAG, "ozo setInitialFocusParameters gain=" + gain + " azimuth=" + azimuth + " elevation=" + elevation);
         setOzoInitParameter(OzoAudioParameters.FEAT_FOCUS, OzoAudioParameters.ENABLED);
         setOzoInitParameter(OzoAudioParameters.FEAT_ZOOM, Double.toString(gain));
         setOzoInitParameter(OzoAudioParameters.FEAT_FOCUSAZIMUTH, Double.toString(azimuth));
@@ -2155,6 +2157,7 @@ public class MediaRecorder implements AudioRouting,
      */
     public void setInitialFocusSectorParameters(double sectorWidth, double sectorHeight)
     {
+        Log.i(TAG, "ozo setInitialFocusSectorParameters sectorWidth=" + sectorWidth + " sectorHeight=" + sectorHeight);
         setOzoInitParameter(OzoAudioParameters.FEAT_FOCUSWIDTH, Double.toString(sectorWidth));
         setOzoInitParameter(OzoAudioParameters.FEAT_FOCUSHEIGHT, Double.toString(sectorHeight));
     }
@@ -2165,6 +2168,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void enableAudioFocus() {
+        Log.i(TAG, "ozo enableAudioFocus");
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_FOCUS, OzoAudioParameters.ENABLED);
     }
 
@@ -2174,6 +2178,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void disableAudioFocus() {
+        Log.i(TAG, "ozo disableAudioFocus");
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_FOCUS, OzoAudioParameters.DISABLED);
     }
 
@@ -2183,6 +2188,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setAudioFocusGain(double gain) {
+        Log.i(TAG, "ozo setAudioFocusGain gain="+gain);
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_ZOOM, Double.toString(gain));
     }
 
@@ -2192,6 +2198,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setAudioFocusAzimuth(double azi) {
+        Log.i(TAG, "ozo setAudioFocusAzimuth azi="+azi);
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_FOCUSAZIMUTH, Double.toString(azi));
     }
 
@@ -2201,6 +2208,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setAudioFocusElevation(double ele) {
+        Log.i(TAG, "ozo setAudioFocusAzimuth ele="+ele);
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_FOCUSELEVATION, Double.toString(ele));
     }
 
@@ -2210,6 +2218,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setAudioFocusWidth(double width) {
+        Log.i(TAG, "ozo setAudioFocusAzimuth width="+width);
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_FOCUSWIDTH, Double.toString(width));
     }
 
@@ -2219,6 +2228,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setAudioFocusHeight(double height) {
+        Log.i(TAG, "ozo setAudioFocusAzimuth height="+height);
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_FOCUSHEIGHT, Double.toString(height));
     }
 
@@ -2229,6 +2239,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void enableAudioWindNoiseNotification() {
+        Log.i(TAG, "ozo enableAudioWindNoiseNotification");
         setParameter(OzoAudioParameters.WINDSCREEN_NOTIFICATION + "=" + OzoAudioParameters.ENABLED);
     }
 
@@ -2238,6 +2249,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void enableAudioWindNoiseReduction() {
+        Log.i(TAG, "ozo enableAudioWindNoiseReduction");
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_WINDSCREEN, OzoAudioParameters.ENABLED);
     }
 
@@ -2247,6 +2259,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void disableAudioWindNoiseReduction() {
+        Log.i(TAG, "ozo disableAudioWindNoiseReduction");
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_WINDSCREEN, OzoAudioParameters.DISABLED);
     }
 
@@ -2256,6 +2269,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setInitialWindNoise(boolean wnr) {
+        Log.i(TAG, "ozo setInitialWindNoise wnr="+wnr);
         String value = OzoAudioParameters.ENABLED;
         if (wnr == false)
             value = OzoAudioParameters.DISABLED;
@@ -2270,6 +2284,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void enableAudioLevelsNotification() {
+        Log.i(TAG, "ozo enableAudioLevelsNotification");
         setParameter(OzoAudioParameters.AUDIOLEVELS_NOTIFICATION + "=" + OzoAudioParameters.ENABLED);
     }
 
@@ -2279,6 +2294,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void enableAudioNoiseSuppression() {
+        Log.i(TAG, "ozo enableAudioNoiseSuppression");
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_NOISESUPPRESSION, OzoAudioParameters.ENABLED);
     }
 
@@ -2288,6 +2304,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void disableAudioNoiseSuppression() {
+        Log.i(TAG, "ozo disableAudioNoiseSuppression");
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_NOISESUPPRESSION, OzoAudioParameters.DISABLED);
     }
 
@@ -2297,6 +2314,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setInitialNoiseSuppression() {
+        Log.i(TAG, "ozo setInitialNoiseSuppression");
         setOzoInitParameter(OzoAudioParameters.FEAT_NOISESUPPRESSION, OzoAudioParameters.ENABLED);
     }
 
@@ -2308,6 +2326,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void enableSoundSourceLocalization() {
+        Log.i(TAG, "ozo enableSoundSourceLocalization");
         setParameter(OzoAudioParameters.FRAMING_NOTIFICATION + "=" + OzoAudioParameters.ENABLED);
     }
 
@@ -2317,6 +2336,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void enableOzoAudioCustomProcessing() {
+        Log.i(TAG, "ozo enableOzoAudioCustomProcessing");
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_CUSTOM, OzoAudioParameters.ENABLED);
     }
 
@@ -2326,6 +2346,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void disableOzoAudioCustomProcessing() {
+        Log.i(TAG, "ozo disableOzoAudioCustomProcessing");
         setOzoRuntimeParameter(OzoAudioParameters.FEAT_CUSTOM, OzoAudioParameters.DISABLED);
     }
 
@@ -2338,6 +2359,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setOzoInitParameter(String key, String value) {
+        Log.i(TAG, "ozo setOzoInitParameter key="+key+" value="+value);
         setParameter(OzoAudioParameters.GENERIC_PARAM + "=" + key + "=" + value);
     }
 
@@ -2350,6 +2372,7 @@ public class MediaRecorder implements AudioRouting,
      * @hide
      */
     public void setOzoRuntimeParameter(String key, String value) {
+        Log.i(TAG, "ozo setOzoRuntimeParameter key="+key+" value="+value);
         setOzoAudioRuntimeParameter(OzoAudioParameters.GENERIC_PARAM + "=" + key + "=" + value);
     }
 
@@ -2371,6 +2394,7 @@ public class MediaRecorder implements AudioRouting,
      */
     public void setOzoTuneFile(String path)
     {
+        Log.i(TAG, "ozo setOzoTuneFile path="+path);
         mOzoTuneFilePath = path;
     }
 
@@ -2381,6 +2405,7 @@ public class MediaRecorder implements AudioRouting,
      */
     protected void prepareOzoTuneFile() throws IllegalStateException, IOException
     {
+        Log.i(TAG, "ozo prepareOzoTuneFile");
         if (mOzoTuneFilePath != null) {
             RandomAccessFile file = new RandomAccessFile(mOzoTuneFilePath, "rw");
             try {
