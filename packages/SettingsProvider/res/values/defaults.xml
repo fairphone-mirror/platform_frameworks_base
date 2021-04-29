@@ -214,7 +214,7 @@
     <string name="def_backup_agent_timeout_parameters"></string>
 
     <!-- Default for Settings.System.VIBRATE_WHEN_RINGING -->
-    <bool name="def_vibrate_when_ringing">false</bool>
+    <bool name="def_vibrate_when_ringing">true</bool>
 
     <!-- Default for Settings.Global.CELL_ON; see PhoneConstants.CELL_ON_FLAG.
         0: cellular off; 1: cellular on. -->
