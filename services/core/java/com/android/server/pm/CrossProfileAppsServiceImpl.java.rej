@@ -1,0 +1,35 @@
+diff a/services/core/java/com/android/server/pm/CrossProfileAppsServiceImpl.java b/services/core/java/com/android/server/pm/CrossProfileAppsServiceImpl.java	(rejected hunks)
+@@ -475,16 +475,16 @@ public class CrossProfileAppsServiceImpl extends ICrossProfileApps.Stub {
+             // this particular app-op to be modified without the broader app-op permissions.
+             mInjector.withCleanCallingIdentity(() ->
+                     mInjector.getAppOpsManager()
+-                            .setMode(OP_INTERACT_ACROSS_PROFILES, uid, packageName, newMode));
++                            .setUidMode(OP_INTERACT_ACROSS_PROFILES, uid, newMode));
+         } else {
+             mInjector.getAppOpsManager()
+-                    .setMode(OP_INTERACT_ACROSS_PROFILES, uid, packageName, newMode);
++                    .setUidMode(OP_INTERACT_ACROSS_PROFILES, uid, newMode);
+         }
+         // Kill the UID before sending the broadcast to ensure that apps can be informed when
+         // their app-op has been revoked.
+         maybeKillUid(packageName, uid, hadPermission);
+-        sendCanInteractAcrossProfilesChangedBroadcast(packageName, uid, UserHandle.of(userId));
+-        maybeLogSetInteractAcrossProfilesAppOp(packageName, newMode, userId, logMetrics, uid);
++        sendCanInteractAcrossProfilesChangedBroadcast(packageName, UserHandle.of(userId));
++        maybeLogSetInteractAcrossProfilesAppOp(packageName, newMode, userId, logMetrics);
+     }
+ 
+     /**
+@@ -503,11 +503,7 @@ public class CrossProfileAppsServiceImpl extends ICrossProfileApps.Stub {
+     }
+ 
+     private void maybeLogSetInteractAcrossProfilesAppOp(
+-            String packageName,
+-            @Mode int newMode,
+-            @UserIdInt int userId,
+-            boolean logMetrics,
+-            int uid) {
++            String packageName, @Mode int newMode, @UserIdInt int userId, boolean logMetrics) {
+         if (!logMetrics) {
+             return;
+         }
