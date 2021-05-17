@@ -542,4 +542,14 @@ applications that come with the platform
     <privapp-permissions package="com.android.calllogbackup">
         <permission name="com.android.voicemail.permission.READ_VOICEMAIL"/>
     </privapp-permissions>
+
+    <privapp-permissions package="com.fp.camera">
+        <permission name="android.permission.SYSTEM_CAMERA"/>
+        <permission name="android.permission.WRITE_MEDIA_STORAGE"/>
+    </privapp-permissions>
+
+     <privapp-permissions package="com.google.android.euicc">
+        <permission name="android.permission.SYSTEM_CAMERA"/>
+    </privapp-permissions>
+
 </permissions>
