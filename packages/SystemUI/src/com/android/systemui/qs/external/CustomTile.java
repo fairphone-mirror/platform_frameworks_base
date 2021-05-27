@@ -104,6 +104,7 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
     private boolean mListening;
     private boolean mIsTokenGranted;
     private boolean mIsShowingDialog;
+    private boolean mEnable;
 
     private final TileServiceKey mKey;
 
@@ -175,6 +176,9 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
         try {
             PackageManager pm = mUserContext.getPackageManager();
             int flags = PackageManager.MATCH_DIRECT_BOOT_UNAWARE | PackageManager.MATCH_DIRECT_BOOT_AWARE;
+
+            mEnable = pm.getServiceInfo(mComponent, flags) != null;
+
             if (isSystemApp(pm)) {
                 flags |= PackageManager.MATCH_DISABLED_COMPONENTS;
             }
@@ -244,7 +248,7 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
     @Override
     public boolean isAvailable() {
         if (mInitialDefaultIconFetched.get()) {
-            return mDefaultIcon != null;
+            return mEnable && mDefaultIcon != null;
         } else {
             return true;
         }

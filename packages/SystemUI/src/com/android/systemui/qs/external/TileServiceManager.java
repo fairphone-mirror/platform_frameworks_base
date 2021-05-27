@@ -15,6 +15,7 @@
  */
 package com.android.systemui.qs.external;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -96,6 +97,7 @@ public class TileServiceManager {
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        filter.addAction(Intent.ACTION_PACKAGE_CHANGED);
         filter.addDataScheme("package");
         Context context = mServices.getContext();
         context.registerReceiverAsUser(mUninstallReceiver, userTracker.getUserHandle(), filter,
@@ -270,6 +272,32 @@ public class TileServiceManager {
     private final BroadcastReceiver mUninstallReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_PACKAGE_CHANGED.equals(intent.getAction())) {
+                Uri data = intent.getData();
+                String pkgName = data.getEncodedSchemeSpecificPart();
+                String[] changeClasses =
+                        intent.getStringArrayExtra(Intent.EXTRA_CHANGED_COMPONENT_NAME_LIST);
+                if (null == changeClasses) {
+                    return;
+                }
+                PackageManager pm = context.getPackageManager();
+                int userId = ActivityManager.getCurrentUser();
+                for (int i = changeClasses.length - 1; i >= 0; i--) {
+                    final String changedClass = changeClasses[i];
+                    final ComponentName component = new ComponentName(pkgName, changedClass);
+                    Intent queryIntent = new Intent(TileService.ACTION_QS_TILE);
+                    queryIntent.setComponent(component);
+                    ResolveInfo resolveInfo = pm.resolveServiceAsUser(queryIntent, 0, userId);
+                    ResolveInfo resolveInfo_disable =
+                            pm.resolveServiceAsUser(
+                                    queryIntent, PackageManager.MATCH_DISABLED_COMPONENTS, userId);
+                    if (resolveInfo == null && resolveInfo_disable != null) {
+                        mServices.getHost().removeTile(CustomTile.toSpec(component));
+                    }
+                }
+                return;
+            }
+
             if (!Intent.ACTION_PACKAGE_REMOVED.equals(intent.getAction())) {
                 return;
             }
