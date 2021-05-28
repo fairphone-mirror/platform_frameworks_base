@@ -265,6 +265,6 @@
     <bool name="def_one_handed_mode_activated">false</bool>
 
     <!-- Default for Settings.System.TIME_12_24 -->
-    <string name="def_time_format" translatable="false">12</string>
+    <string name="def_time_format" translatable="false">24</string>
 
 </resources>
