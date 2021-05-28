@@ -369,7 +369,7 @@ public class AudioService extends IAudioService.Stub
         0,  // STREAM_SYSTEM
         0,  // STREAM_RING
         0,  // STREAM_MUSIC
-        1,  // STREAM_ALARM
+        0,  // STREAM_ALARM
         0,  // STREAM_NOTIFICATION
         0,  // STREAM_BLUETOOTH_SCO
         0,  // STREAM_SYSTEM_ENFORCED
