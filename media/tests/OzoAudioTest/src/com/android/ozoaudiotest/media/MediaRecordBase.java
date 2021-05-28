@@ -39,7 +39,7 @@ abstract class MediaRecordBase implements MediaRecordInterface, MediaLoggerInter
     // final static String OZO_DEVICE_UUID = "4238B2D5-0234-41C0-8E49-BB5D3FD474DC";
     // Pixel 4 device ID and input mics
     final static String OZO_DEVICE_UUID = "D3AE30E4-203E-400F-9CC2-B565EF964924";
-    final static int OZO_INPUTMIC_CHANNELS = 4;
+    final static int OZO_INPUTMIC_CHANNELS = 3;
     final static int MEDIARECORDER_CHANNELMASK = 0x80000006;
 
     private Context mContext;
