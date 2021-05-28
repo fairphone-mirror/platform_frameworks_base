@@ -856,7 +856,7 @@ static jint android_media_MediaRecord_getPortId(JNIEnv *env,  jobject thiz) {
 static void
 android_media_MediaRecorder_setOzoTuneFileFD(JNIEnv *env, jobject thiz, jobject fileDescriptor)
 {
-    ALOGV("ozo setOzoTuneFileFD");
+    ALOGV("setOzoTuneFileFD");
     if (fileDescriptor == NULL) {
         jniThrowException(env, "java/lang/IllegalArgumentException", NULL);
         return;
@@ -874,7 +874,7 @@ android_media_MediaRecorder_setOzoTuneFileFD(JNIEnv *env, jobject thiz, jobject 
 static void
 android_media_MediaRecorder_setOzoAudioRuntimeParameter(JNIEnv *env, jobject thiz, jstring params)
 {
-    ALOGV("ozo setOzoAudioRuntimeParameter()");
+    ALOGV("setOzoAudioRuntimeParameter()");
 
     if (params == NULL)
     {

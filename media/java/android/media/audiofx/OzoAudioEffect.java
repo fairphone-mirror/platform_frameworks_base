@@ -80,7 +80,6 @@ public class OzoAudioEffect extends AudioEffect {
      */
     public static OzoAudioEffect create(int audioSession) {
         OzoAudioEffect ozo = null;
-        Log.w(TAG, "ozo OzoAudioEffect create audioSession=" + audioSession);
         try {
             ozo = new OzoAudioEffect(audioSession);
         } catch (IllegalArgumentException e) {
@@ -104,7 +103,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int setDevice(String id) {
-        Log.w(TAG, "ozo setDevice id=" + id);
         try {
             byte[] uuid = id.getBytes("UTF-8");
             return this.setParameter(OZO_PARAM_DEVICE_UUID, uuid);
@@ -134,7 +132,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int enableWnr() {
-        Log.w(TAG, "ozo enableWnr");
         return setOzoParameter(OzoParameters.FEAT_WINDSCREEN, OzoParameters.ENABLED);
     }
 
@@ -146,7 +143,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int disableWnr() {
-        Log.w(TAG, "ozo disableWnr");
         return setOzoParameter(OzoParameters.FEAT_WINDSCREEN, OzoParameters.DISABLED);
     }
 
@@ -158,7 +154,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int getWnrLevel() {
-        Log.w(TAG, "ozo getWnrLevel");
         byte[] value = new byte[1];
         if (this.getParameter(OZO_CAPTURE_WNR_LEVEL, value) >= 0)
             return (int) value[0];
@@ -174,7 +169,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int[] getAudioLevel() {
-        Log.w(TAG, "ozo getAudioLevel");
         byte[] value = new byte[8];
         if (this.getParameter(OZO_CAPTURE_AUDIO_LEVEL, value) >= 0)
             return new int[]{byteArrayToInt(value, 0), byteArrayToInt(value, 4)};
@@ -190,7 +184,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int enableNs() {
-        Log.w(TAG, "ozo enableNs");
         return setOzoParameter(OzoParameters.FEAT_NOISESUPPRESSION, OzoParameters.ENABLED);
     }
 
@@ -202,7 +195,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int disableNs() {
-        Log.w(TAG, "ozo disableNs");
         return setOzoParameter(OzoParameters.FEAT_NOISESUPPRESSION, OzoParameters.DISABLED);
     }
 
@@ -214,7 +206,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int enableFocus() {
-        Log.w(TAG, "ozo enableFocus");
         return setOzoParameter(OzoParameters.FEAT_FOCUS, OzoParameters.ENABLED);
     }
 
@@ -226,7 +217,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int disableFocus() {
-        Log.w(TAG, "ozo disableFocus");
         return setOzoParameter(OzoParameters.FEAT_FOCUS, OzoParameters.DISABLED);
     }
 
@@ -239,7 +229,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int setFocusGain(double gain) {
-        Log.w(TAG, "ozo setFocusGain gain="+gain);
         return setOzoParameter(OzoParameters.FEAT_ZOOM, Double.toString(gain));
     }
 
@@ -252,7 +241,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int setFocusAzimuth(double azimuth) {
-        Log.w(TAG, "ozo setFocusGain azimuth="+azimuth);
         return setOzoParameter(OzoParameters.FEAT_FOCUSAZIMUTH, Double.toString(azimuth));
     }
 
@@ -265,7 +253,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int setFocusElevation(double elevation) {
-        Log.w(TAG, "ozo setFocusGain elevation="+elevation);
         return setOzoParameter(OzoParameters.FEAT_FOCUSELEVATION, Double.toString(elevation));
     }
 
@@ -278,7 +265,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int setFocusWidth(double width) {
-        Log.w(TAG, "ozo setFocusGain width="+width);
         return setOzoParameter(OzoParameters.FEAT_FOCUSWIDTH, Double.toString(width));
     }
 
@@ -291,7 +277,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int setFocusHeight(double height) {
-        Log.w(TAG, "ozo setFocusGain height="+height);
         return setOzoParameter(OzoParameters.FEAT_FOCUSHEIGHT, Double.toString(height));
     }
 
@@ -307,7 +292,6 @@ public class OzoAudioEffect extends AudioEffect {
      * @hide
      */
     public int setOzoParameter(String key, String value) {
-        Log.w(TAG, "ozo setFocusGain key="+key +" value"+value);
         try {
             String value2 = key + "=" + value;
             return setParameter(OZO_PARAM_GENERIC, value2.getBytes("UTF-8"));
