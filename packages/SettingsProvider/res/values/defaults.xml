@@ -269,7 +269,7 @@
     <bool name="def_lock_screen_show_qr_code_scanner">true</bool>
 
     <!-- Default for Settings.System.TIME_12_24 -->
-    <string name="def_time_format" translatable="false">12</string>
+    <string name="def_time_format" translatable="false">24</string>
 
     <!-- ========================================== -->
     <!-- Default values for wear specific settings. -->
