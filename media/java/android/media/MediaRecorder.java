@@ -1885,3 +1885,4 @@ public class MediaRecorder implements AudioRouting,
         public static final String WIDTH = "android.media.mediarecorder.width";
 
     }
+}
