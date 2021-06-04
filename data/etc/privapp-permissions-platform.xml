@@ -552,4 +552,8 @@ applications that come with the platform
         <permission name="android.permission.SYSTEM_CAMERA"/>
     </privapp-permissions>
 
+     <privapp-permissions package="com.tct.iris">
+        <permission name="android.permission.WRITE_SECURE_SETTINGS"/>
+        <permission name="android.permission.REAL_GET_TASKS"/>
+    </privapp-permissions>
 </permissions>
