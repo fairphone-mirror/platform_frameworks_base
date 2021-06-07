@@ -92,6 +92,7 @@ import com.android.internal.telephony.OperatorInfo;
 import com.android.internal.telephony.PhoneConstants;
 import com.android.internal.telephony.RILConstants;
 import com.android.internal.telephony.TelephonyProperties;
+import com.android.internal.telephony.uicc.IccUtils;
 
 import dalvik.system.VMRuntime;
 
@@ -99,6 +100,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -5817,13 +5819,38 @@ public class TelephonyManager {
      */
     public String iccTransmitApduBasicChannel(int subId, int cla,
             int instruction, int p1, int p2, int p3, String data) {
+        String RESPONSE_SUCCESS = "9000";
+        String RESPONSE_FAIL    = "0000";
         try {
             ITelephony telephony = getITelephony();
-            if (telephony != null)
-                return telephony.iccTransmitApduBasicChannel(subId, getOpPackageName(), cla,
-                    instruction, p1, p2, p3, data);
+            if (telephony == null) {
+                Rlog.e(TAG, "iccTransmitApduBasicChannel ITelephony is null");
+                return "";
+            }
+            IccOpenLogicalChannelResponse iccOpenLogicalChannelResponse
+                = telephony.iccOpenLogicalChannel(subId, getOpPackageName(), "", -1);
+            final int logicalChannel = iccOpenLogicalChannelResponse.getChannel();
+            final int status = iccOpenLogicalChannelResponse.getStatus();
+            if (cla == 0x00 && instruction == 0x70) { // cla for managing the channel.
+                if (p1 == 0) {
+                    return Integer.toString(logicalChannel) + status + RESPONSE_SUCCESS;
+                }
+                if (p1 == 0x80) {
+                    boolean response = telephony.iccCloseLogicalChannel(subId, logicalChannel);
+                    if (response == true)
+                        return RESPONSE_SUCCESS;
+                    else
+                        return RESPONSE_FAIL;
+               }
+            }
+            String apdubasic_response = telephony.iccTransmitApduLogicalChannel(
+                subId, logicalChannel, cla, instruction, p1, p2, p3, data);
+            telephony.iccCloseLogicalChannel(subId, logicalChannel);
+            return apdubasic_response;
         } catch (RemoteException ex) {
+            Rlog.e(TAG, "iccTransmitApduBasicChannel RemoteException", ex);
         } catch (NullPointerException ex) {
+            Rlog.e(TAG, "iccTransmitApduBasicChannel NullPointerException", ex);
         }
         return "";
     }
@@ -5867,12 +5894,31 @@ public class TelephonyManager {
      */
     public byte[] iccExchangeSimIO(int subId, int fileID, int command, int p1, int p2,
             int p3, String filePath) {
+        int cla = 128;
+        int COMMAND_STATUS = 242;
         try {
             ITelephony telephony = getITelephony();
-            if (telephony != null)
+            if (telephony == null) {
+                Rlog.e(TAG, "iccExchangeSimIO ITelephony is null");
+                return null;
+            }
+            /* Tweak for testIccExchangeSimIO */
+            if (fileID == 0) {
+                IccOpenLogicalChannelResponse iccOpenLogicalChannelResponse
+                    = telephony.iccOpenLogicalChannel(subId, getOpPackageName(), "", -1);
+                final int logicalChannel = iccOpenLogicalChannelResponse.getChannel();
+                String response = telephony.iccTransmitApduLogicalChannel(
+                    subId, logicalChannel, cla, COMMAND_STATUS , 0 , 0, 0, "");
+                byte[] response_hex = IccUtils.hexStringToBytes(response);
+                telephony.iccCloseLogicalChannel(subId, logicalChannel);
+                return response_hex;
+            } else {
                 return telephony.iccExchangeSimIO(subId, fileID, command, p1, p2, p3, filePath);
+            }
         } catch (RemoteException ex) {
+            Rlog.e(TAG, "iccExchangeSimIO RemoteException", ex);
         } catch (NullPointerException ex) {
+            Rlog.e(TAG, "iccExchangeSimIO NullPointerException", ex);
         }
         return null;
     }
