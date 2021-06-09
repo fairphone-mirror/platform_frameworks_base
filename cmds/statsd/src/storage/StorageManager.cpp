@@ -27,6 +27,7 @@
 #include <private/android_filesystem_config.h>
 #include <fstream>
 #include <iostream>
+#include <thread>
 
 namespace android {
 namespace os {
@@ -469,6 +470,16 @@ bool StorageManager::readFileToString(const char* file, string* content) {
 }
 
 void StorageManager::readConfigFromDisk(map<ConfigKey, StatsdConfig>& configsMap) {
+    // Delay this function until we are not in the 1900s anymore and the time
+    // has been restored.
+    // This is important as StorageManager::trimToFit uses the current
+    // timestamp to decide whether to delete the statsd config or not which
+    // makes the CTS tests fail if it has been erroneously deleted.
+    // (seconds * minutes * hours * days * years)
+    while (getWallClockSec() < 60 * 60 * 24 * 365 * 30) {
+        std::this_thread::sleep_for(100ms);
+    }
+
     unique_ptr<DIR, decltype(&closedir)> dir(opendir(STATS_SERVICE_DIR), closedir);
     if (dir == NULL) {
         VLOG("no default config on disk");
