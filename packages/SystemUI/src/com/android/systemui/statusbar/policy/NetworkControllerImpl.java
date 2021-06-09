@@ -1255,7 +1255,11 @@ public class NetworkControllerImpl extends BroadcastReceiver
 
             config.enableRatIconEnhancement =
                     SystemProperties.getBoolean("persist.sysui.rat_icon_enhancement", false);
-            config.showVowifiIcon = res.getBoolean(R.bool.config_display_vowifi);
+            // modify by T2M.dengxiangyu for FP4-61 2021-04-14
+            //config.showVowifiIcon = res.getBoolean(R.bool.config_display_vowifi);
+            config.showVowifiIcon = b.getBoolean(
+                    CarrierConfigManager.KEY_SHOW_WIFI_CALLING_ICON_IN_STATUS_BAR_BOOL);
+            Log.d(TAG, "show VoWifi icon: " + config.showVowifiIcon);
             config.enableDdsRatIconEnhancement =
                     SystemProperties.getBoolean("persist.sysui.dds_rat_icon_enhancement", false);
             if ( config.alwaysShowNetworkTypeIcon ) {
