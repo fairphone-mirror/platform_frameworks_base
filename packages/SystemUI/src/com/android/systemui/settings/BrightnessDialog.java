@@ -31,6 +31,7 @@ import com.android.systemui.R;
 import com.android.systemui.broadcast.BroadcastDispatcher;
 
 import javax.inject.Inject;
+import android.widget.ImageView;
 
 /** A dialog that provides controls for adjusting the screen brightness. */
 public class BrightnessDialog extends Activity {
@@ -59,7 +60,8 @@ public class BrightnessDialog extends Activity {
         setContentView(v);
 
         final ToggleSliderView slider = findViewById(R.id.brightness_slider);
-        mBrightnessController = new BrightnessController(this, slider, mBroadcastDispatcher);
+        ImageView autoBrightnessBtn = findViewById(R.id.brightness_auto);
+        mBrightnessController = new BrightnessController(this, slider, mBroadcastDispatcher, autoBrightnessBtn);
     }
 
     @Override

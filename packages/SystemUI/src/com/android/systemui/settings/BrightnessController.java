@@ -49,11 +49,15 @@ import com.android.systemui.Dependency;
 import com.android.systemui.broadcast.BroadcastDispatcher;
 
 import java.util.ArrayList;
+import android.widget.ImageView;
+import android.view.View;
+import com.android.systemui.R;
 
 public class BrightnessController implements ToggleSlider.Listener {
     private static final String TAG = "StatusBar.BrightnessController";
     private static final int SLIDER_ANIMATION_DURATION = 3000;
 
+    private static final int MSG_UPDATE_ICON = 0;
     private static final int MSG_UPDATE_SLIDER = 1;
     private static final int MSG_SET_CHECKED = 2;
     private static final int MSG_ATTACH_LISTENER = 3;
@@ -96,6 +100,7 @@ public class BrightnessController implements ToggleSlider.Listener {
     private boolean mControlValueInitialized;
 
     private ValueAnimator mSliderAnimator;
+    private ImageView mAutoBrightessBtn;
 
     public interface BrightnessStateChangeCallback {
         public void onBrightnessLevelChanged();
@@ -223,12 +228,16 @@ public class BrightnessController implements ToggleSlider.Listener {
                         Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL,
                         UserHandle.USER_CURRENT);
                 mAutomatic = automatic != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL;
+                sendUpdateAutoIconMsg();
             } else {
                 mHandler.obtainMessage(MSG_SET_CHECKED, 0).sendToTarget();
             }
         }
     };
 
+    public void sendUpdateAutoIconMsg(){
+        mHandler.obtainMessage(MSG_UPDATE_ICON, mAutomatic ? 1 : 0, 0).sendToTarget();
+    }
     /**
      * Fetch the brightness from the system settings and update the slider. Should be called from
      * background thread.
@@ -268,6 +277,9 @@ public class BrightnessController implements ToggleSlider.Listener {
             mExternalChange = true;
             try {
                 switch (msg.what) {
+                    case MSG_UPDATE_ICON:
+                        updateIcon(msg.arg1 != 0);
+                        break;
                     case MSG_UPDATE_SLIDER:
                         updateSlider(Float.intBitsToFloat(msg.arg1), msg.arg2 != 0);
                         break;
@@ -293,9 +305,10 @@ public class BrightnessController implements ToggleSlider.Listener {
     };
 
     public BrightnessController(Context context, ToggleSlider control,
-            BroadcastDispatcher broadcastDispatcher) {
+            BroadcastDispatcher broadcastDispatcher, ImageView auto) {
         mContext = context;
         mControl = control;
+        mAutoBrightessBtn = auto;
         mControl.setMax(GAMMA_SPACE_MAX);
         mBackgroundHandler = new Handler((Looper) Dependency.get(Dependency.BG_LOOPER));
         mUserTracker = new CurrentUserTracker(broadcastDispatcher) {
@@ -327,6 +340,29 @@ public class BrightnessController implements ToggleSlider.Listener {
         mDisplayManager = context.getSystemService(DisplayManager.class);
         mVrManager = IVrManager.Stub.asInterface(ServiceManager.getService(
                 Context.VR_SERVICE));
+
+        if (mAutoBrightessBtn != null) {
+            mAutoBrightessBtn.setOnClickListener(autoBtnListener);
+        }
+    }
+
+    View.OnClickListener autoBtnListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            boolean isAuto= 0!=  Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS_MODE,
+                    Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL,
+                    UserHandle.USER_CURRENT);
+            Settings.System.putIntForUser(mContext.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS_MODE, isAuto? 0 : 1,UserHandle.USER_CURRENT);
+        }
+    };
+
+    public void updateIcon(boolean automatic) {
+        if(mAutoBrightessBtn != null) {
+            mAutoBrightessBtn.setImageResource(automatic ? R.drawable.ic_fp4_qs_brightness_auto_on : R.drawable.ic_fp4_qs_brightness_auto_off);
+        }
     }
 
     public void addStateChangedCallback(BrightnessStateChangeCallback cb) {

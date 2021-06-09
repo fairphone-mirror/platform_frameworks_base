@@ -29,5 +29,16 @@
         android:contentDescription="@string/accessibility_brightness"
         android:importantForAccessibility="no"
         systemui:text="@string/status_bar_settings_auto_brightness_label" />
+        
+    <ImageView 
+        android:layout_gravity="end|center" 
+        android:id="@+id/brightness_auto"
+        android:visibility="visible"
+        android:layout_width="34.0dip"
+        android:layout_height="34.0dip"
+        android:src="@drawable/ic_fp4_qs_brightness_auto_off"
+        android:scaleType="centerInside"
+        android:layout_marginStart="-10.0dip" 
+        android:layout_marginEnd="10.0dip"/>
 
 </LinearLayout>

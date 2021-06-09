@@ -2040,7 +2040,8 @@
     <bool name="config_actionMenuItemAllCaps">true</bool>
 
     <!-- Remote server that can provide NTP responses. -->
-    <string translatable="false" name="config_ntpServer">time.android.com</string>
+    <!-- Modified by zhongping.zhang for FP4-536 2021-06-01 -->
+    <string translatable="false" name="config_ntpServer">asia.pool.ntp.org</string>
     <!-- Normal polling frequency in milliseconds -->
     <integer name="config_ntpPollingInterval">86400000</integer>
     <!-- Try-again polling interval in milliseconds, in case the network request failed -->
@@ -4195,7 +4196,7 @@
          where: IDs are unique per device, Modality as defined in BiometricAuthenticator.java,
          and Strength as defined in Authenticators.java -->
     <string-array name="config_biometric_sensors" translatable="false" >
-        <!-- <item>0:2:15</item>  ID0:Fingerprint:Strong -->
+         <item>0:2:15</item>  <!--ID0:Fingerprint:Strong -->
     </string-array>
 
     <!-- Messages that should not be shown to the user during face auth enrollment. This should be
