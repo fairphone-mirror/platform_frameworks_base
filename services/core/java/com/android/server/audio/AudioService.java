@@ -9599,6 +9599,13 @@ public class AudioService extends IAudioService.Stub
             return MAX_STREAM_VOLUME[AudioSystem.STREAM_MUSIC];
         }
         if (device == AudioSystem.DEVICE_OUT_USB_HEADSET) {
+            try {
+                if (SystemProperties.getBoolean("dev.tct.MMITest",false)) {
+                    mSafeUsbMediaVolumeIndex = mSafeMediaVolumeIndex;
+                }
+            } catch (Exception e) {
+                
+            }
             return mSafeUsbMediaVolumeIndex;
         } else {
             return mSafeMediaVolumeIndex;
