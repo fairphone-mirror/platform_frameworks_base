@@ -22,6 +22,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Process;
@@ -721,6 +722,11 @@ public class SystemConfig {
             addFeature(PackageManager.FEATURE_RAM_LOW, 0);
         } else {
             addFeature(PackageManager.FEATURE_RAM_NORMAL, 0);
+        }
+
+        // The Fairphone 2 gyroscope sensor can be toggled by the user
+        if (!SensorManager.isFp2GyroscopeEnabled()) {
+            mUnavailableFeatures.add(PackageManager.FEATURE_SENSOR_GYROSCOPE);
         }
 
         for (String featureName : mUnavailableFeatures) {

@@ -22,6 +22,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.MemoryFile;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -82,6 +83,9 @@ import java.util.List;
 public abstract class SensorManager {
     /** @hide */
     protected static final String TAG = "SensorManager";
+
+    /** {@hide} */
+    public static final String PROP_FP2_USE_GYROSCOPE = "persist.fp2.use_gyroscope";
 
     private static final float[] sTempMatrix = new float[16];
 
@@ -1033,6 +1037,15 @@ public abstract class SensorManager {
     public boolean isDynamicSensorDiscoverySupported() {
         List<Sensor> sensors = getSensorList(Sensor.TYPE_DYNAMIC_SENSOR_META);
         return sensors.size() > 0;
+    }
+
+    /** {@hide}
+     * Tell if the Fairphone 2 gyroscope sensor has been enabled by the user.
+     *
+     * @return <code>true/code> if the gyroscope sensor is enabled, <code>false</code> otherwise.
+     */
+    public static boolean isFp2GyroscopeEnabled() {
+        return SystemProperties.getBoolean(PROP_FP2_USE_GYROSCOPE, false);
     }
 
     /** @hide */
