@@ -110,7 +110,7 @@ public class NfcTile extends QSTileImpl<BooleanState> {
                 ? Tile.STATE_UNAVAILABLE
                 : state.value ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
         state.icon = ResourceIcon.get(
-                state.value ? R.drawable.ic_qs_nfc_enabled : R.drawable.ic_qs_nfc_disabled);
+                state.value ? R.drawable.ic_qs_nfc_enabled_fp4 : R.drawable.ic_qs_nfc_disabled_fp4);
         state.label = mContext.getString(R.string.quick_settings_nfc_label);
         state.expandedAccessibilityClassName = Switch.class.getName();
         state.contentDescription = state.label;
@@ -133,7 +133,7 @@ public class NfcTile extends QSTileImpl<BooleanState> {
     private NfcAdapter getAdapter() {
         if (mAdapter == null) {
             try {
-                mAdapter = NfcAdapter.getDefaultAdapter(mContext);
+                mAdapter = NfcAdapter.getDefaultAdapter();
             } catch (UnsupportedOperationException e) {
                 mAdapter = null;
             }
