@@ -159,7 +159,9 @@
     <string name="def_immersive_mode_confirmations" translatable="false"></string>
 
     <!-- Default for Settings.Global.WIFI_SCAN_ALWAYS_AVAILABLE -->
-    <integer name="def_wifi_scan_always_available">0</integer>
+    <!--[BUGFIX]-MOD-BEGIN by T2M.ZhangJie,06/15/2021,11241915,-->
+    <integer name="def_wifi_scan_always_available">1</integer>
+    <!--[BUGFIX]-MOD-END by T2M.ZhangJie-->
 
     <!-- Default for Settings.Secure.LOCK_SCREEN_SHOW_NOTIFICATIONS, 1==on -->
     <integer name="def_lock_screen_show_notifications">1</integer>
