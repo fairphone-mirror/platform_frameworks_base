@@ -57,9 +57,9 @@ import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
+import android.os.SystemProperties;
 import dagger.Lazy;
-
+import android.os.SystemClock;
 @Singleton
 public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
 
@@ -226,7 +226,8 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
     final class Receiver extends BroadcastReceiver {
 
         private boolean mHasReceivedBattery = false;
-
+        private String TFT_PROPERTY = "persist.sys.tct.tft.date";
+        private  long lastsystemtime = 0;
         public void init() {
             // Register for Intent broadcasts for...
             IntentFilter filter = new IntentFilter();
@@ -236,7 +237,9 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
             filter.addAction(Intent.ACTION_SCREEN_ON);
             filter.addAction(Intent.ACTION_USER_SWITCHED);
             filter.addAction(Intent.ACTION_BATTERY_WARM_TEMP_CHANGED);
+            filter.addAction(Intent.ACTION_SHUTDOWN);
             mBroadcastDispatcher.registerReceiverWithHandler(this, filter, mHandler);
+            lastsystemtime = SystemClock.elapsedRealtime();
             // Force get initial values. Relying on Sticky behavior until API for getting info.
             if (!mHasReceivedBattery) {
                 // Get initial state
@@ -260,6 +263,18 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                     }
                 });
             } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
+                if(SystemClock.elapsedRealtime() - lastsystemtime > 5*60*1000){
+                    long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                    long currentime = 0;
+                    if(lasttime == 0){
+                        currentime = SystemClock.elapsedRealtime();
+                    }else{
+                        currentime = lasttime + SystemClock.elapsedRealtime() - lastsystemtime;
+                    }
+                    lastsystemtime = SystemClock.elapsedRealtime();
+                    SystemProperties.set(TFT_PROPERTY,currentime + "");
+                }
+
                 mHasReceivedBattery = true;
                 final int oldBatteryLevel = mBatteryLevel;
                 mBatteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 100);
@@ -334,6 +349,16 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                     mWarnings.updateOTP();
                 }
 
+            } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
+                long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                long currentime = 0;
+                if(lasttime == 0){
+                    currentime = SystemClock.elapsedRealtime();
+                }else{
+                    currentime = lasttime + SystemClock.elapsedRealtime() - lastsystemtime;
+                }
+                lastsystemtime = SystemClock.elapsedRealtime();
+                SystemProperties.set(TFT_PROPERTY,currentime + "");
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
             }
