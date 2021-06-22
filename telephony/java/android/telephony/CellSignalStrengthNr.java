@@ -50,11 +50,12 @@ public final class CellSignalStrengthNr extends CellSignalStrength implements Pa
 
     // Lifted from Default carrier configs and max range of SSRSRP
     // Boundaries: [-140 dB, -44 dB]
+    // Modify by hongkang.feng for FP4-241
     private int[] mSsRsrpThresholds = new int[] {
-            -110, /* SIGNAL_STRENGTH_POOR */
-            -90, /* SIGNAL_STRENGTH_MODERATE */
-            -80, /* SIGNAL_STRENGTH_GOOD */
-            -65,  /* SIGNAL_STRENGTH_GREAT */
+            -120, /* SIGNAL_STRENGTH_POOR */
+            -105, /* SIGNAL_STRENGTH_MODERATE */
+            -95, /* SIGNAL_STRENGTH_GOOD */
+            -85,  /* SIGNAL_STRENGTH_GREAT */
     };
 
     // Lifted from Default carrier configs and max range of SSRSRQ
