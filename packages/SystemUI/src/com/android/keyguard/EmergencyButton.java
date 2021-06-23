@@ -238,8 +238,8 @@ public class EmergencyButton extends Button {
                     visible = mEnableEmergencyCallWhileSimLocked;
                 } else {
                     // Show if there is a secure screen (pin/pattern/SIM pin/SIM puk) or config set
-                    visible = mLockPatternUtils.isSecure(KeyguardUpdateMonitor.getCurrentUser()) ||
-                            mContext.getResources().getBoolean(R.bool.config_showEmergencyButton);
+                    //visible = mLockPatternUtils.isSecure(KeyguardUpdateMonitor.getCurrentUser()) ||
+                           // mContext.getResources().getBoolean(R.bool.config_showEmergencyButton);
                 }
 
                 if (mContext.getResources().getBoolean(R.bool.kg_hide_emgcy_btn_when_oos)) {
