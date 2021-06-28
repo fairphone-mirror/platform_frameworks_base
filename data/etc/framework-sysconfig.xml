@@ -60,4 +60,8 @@
     <!-- Whitelist of what components are permitted to run in the background -->
     <allow-in-power-save package="com.android.deskclock" />
 
+    <component-override package="com.google.android.googlequicksearchbox" >
+        <component class="com.google.android.googlequicksearchbox.VoiceSearchActivity" enabled="false" />
+    </component-override>
+
 </config>
