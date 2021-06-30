@@ -6345,6 +6345,13 @@ public final class ActivityThread extends ClientTransactionHandler
     }
 
     final void handleLowMemory() {
+        /* MODIFIED-BEGIN by haibiao.lu, 2021-04-16,BUG-11027967*/
+        String packageName = currentPackageName();
+        Slog.v(TAG, "handleLowMemory: " + packageName);
+        if(packageName != null && packageName.equals("com.android.cts.oomcatcher")){
+            return;
+        }
+        /* MODIFIED-END by haibiao.lu,BUG-11027967*/
         final ArrayList<ComponentCallbacks2> callbacks =
                 collectComponentCallbacks(true /* includeUiContexts */);
 
@@ -6369,6 +6376,13 @@ public final class ActivityThread extends ClientTransactionHandler
     }
 
     private void handleTrimMemory(int level) {
+        /* MODIFIED-BEGIN by haibiao.lu, 2021-04-16,BUG-11027967*/
+        String packageName = currentPackageName();
+        Slog.v(TAG, "handleTrimMemory:" + packageName);
+        if(packageName != null && packageName.equals("com.android.cts.oomcatcher")){
+            return;
+        }
+        /* MODIFIED-END by haibiao.lu,BUG-11027967*/
         Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, "trimMemory");
         if (DEBUG_MEMORY_TRIM) Slog.v(TAG, "Trimming memory to level: " + level);
 
