@@ -4169,6 +4169,7 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
         mInstallerService.restoreAndApplyStagedSessionIfNeeded();
 
         mExistingPackages = null;
+        new AppStateController(mContext,mHandler);
 
         // Clear cache on flags changes.
         DeviceConfig.addOnPropertiesChangedListener(
