@@ -21723,6 +21723,7 @@ public class PackageManagerService extends IPackageManager.Stub
         mInstallerService.restoreAndApplyStagedSessionIfNeeded();
 
         mExistingPackages = null;
+        new AppStateController(mContext,mHandler);
     }
 
     public void waitForAppDataPrepared() {
