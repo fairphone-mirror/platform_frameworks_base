@@ -24867,6 +24867,7 @@ public class PackageManagerService extends IPackageManager.Stub
         mInstallerService.restoreAndApplyStagedSessionIfNeeded();
 
         mExistingPackages = null;
+        new AppStateController(mContext,mHandler);
 
         // Clear cache on flags changes.
         DeviceConfig.addOnPropertiesChangedListener(
