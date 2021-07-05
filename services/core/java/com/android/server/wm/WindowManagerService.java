@@ -442,6 +442,8 @@ public class WindowManagerService extends IWindowManager.Stub
     /** System UI can create more window context... */
     private static final int SYSTEM_UI_MULTIPLIER = 2;
 
+    static final int ANIMATION_PERFORMANCE_TUNING_FACTOR = 2;
+
     final WindowManagerConstants mConstants;
 
     final WindowTracing mWindowTracing;
@@ -3191,9 +3193,9 @@ public class WindowManagerService extends IWindowManager.Stub
         if (!mAnimationsDisabled) {
             if (value == -1.0f) {
                 switch (which) {
-                    case WINDOW_ANIMATION_SCALE: value = mWindowAnimationScaleSetting; break;
+                    case WINDOW_ANIMATION_SCALE: value = mWindowAnimationScaleSetting/ANIMATION_PERFORMANCE_TUNING_FACTOR; break;
                     case TRANSITION_ANIMATION_SCALE: value = mTransitionAnimationScaleSetting; break;
-                    case ANIMATION_DURATION_SCALE: value = mAnimatorDurationScaleSetting; break;
+                    case ANIMATION_DURATION_SCALE: value = mAnimatorDurationScaleSetting/ANIMATION_PERFORMANCE_TUNING_FACTOR; break;
                 }
             }
         } else {
@@ -3229,7 +3231,7 @@ public class WindowManagerService extends IWindowManager.Stub
     @Override
     public float getCurrentAnimatorScale() {
         synchronized (mGlobalLock) {
-            return mAnimationsDisabled ? 0 : mAnimatorDurationScaleSetting;
+            return mAnimationsDisabled ? 0 : mAnimatorDurationScaleSetting/ANIMATION_PERFORMANCE_TUNING_FACTOR;
         }
     }
 
