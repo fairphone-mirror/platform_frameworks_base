@@ -224,6 +224,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.List;
+import com.android.server.display.AuxiliarySensorController;
 
 /**
  * WindowManagerPolicy implementation for the Android phone UI.  This
@@ -381,6 +382,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     // Assigned on main thread, accessed on UI thread
     volatile VrManagerInternal mVrManagerInternal;
+
+    AuxiliarySensorController mAuxiliarySensorController;
 
     // Vibrator pattern for haptic feedback of a long press.
     long[] mLongPressVibePattern;
@@ -1991,6 +1994,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         mWindowManagerFuncs.onKeyguardShowingAndNotOccludedChanged();
                     }
                 });
+
+
+        mAuxiliarySensorController = AuxiliarySensorController.getInstance();
     }
 
     /**
@@ -3714,6 +3720,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         // Handle special keys.
         switch (keyCode) {
+            // case KeyEvent.KEYCODE_PALM_IN:
+            //     if (mAuxiliarySensorController != null) {
+            //         mAuxiliarySensorController.interceptKeyBeforeQueueing(event);
+            //     }
+            // break;
             case KeyEvent.KEYCODE_BACK: {
                 if (down) {
                     interceptBackKeyDown();

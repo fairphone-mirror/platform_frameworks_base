@@ -66,6 +66,8 @@ import com.android.server.policy.WindowManagerPolicy;
 import java.io.PrintWriter;
 import java.util.List;
 
+import com.android.server.display.AuxiliarySensorController;
+
 /**
  * Controls the power state of the display.
  *
@@ -89,7 +91,7 @@ import java.util.List;
  * slower by changing the "animator duration scale" option in Development Settings.
  */
 final class DisplayPowerController implements AutomaticBrightnessController.Callbacks,
-        DisplayWhiteBalanceController.Callbacks {
+        DisplayWhiteBalanceController.Callbacks, AuxiliarySensorController.Callbacks{
     private static final String TAG = "DisplayPowerController";
     private static final String SCREEN_ON_BLOCKED_TRACE_NAME = "Screen on blocked";
     private static final String SCREEN_OFF_BLOCKED_TRACE_NAME = "Screen off blocked";
@@ -117,7 +119,8 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
     private static final int MSG_CONFIGURE_BRIGHTNESS = 5;
     private static final int MSG_SET_TEMPORARY_BRIGHTNESS = 6;
     private static final int MSG_SET_TEMPORARY_AUTO_BRIGHTNESS_ADJUSTMENT = 7;
-    private static final int MSG_IGNORE_PROXIMITY = 8;
+    // private static final int MSG_IGNORE_PROXIMITY = 8;
+    private static final int MSG_POWER_ON_IN_CALL = 8;
 
     private static final int PROXIMITY_UNKNOWN = -1;
     private static final int PROXIMITY_NEGATIVE = 0;
@@ -139,6 +142,11 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
     private static final int REPORTED_TO_POLICY_SCREEN_TURNING_ON = 1;
     private static final int REPORTED_TO_POLICY_SCREEN_ON = 2;
     private static final int REPORTED_TO_POLICY_SCREEN_TURNING_OFF = 3;
+
+    private static final boolean FEATURE_AUXILIARY_SENSOR_SUPPORT = true;
+    private static final boolean FEATURE_POWER_ON_IN_CALL_SUPPORT = true;
+    private boolean isNoOffByPSensor = false;
+    private AuxiliarySensorController mAuxiliarySensorController;
 
     private final Object mLock = new Object();
 
@@ -559,6 +567,13 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
         }
         mDisplayWhiteBalanceSettings = displayWhiteBalanceSettings;
         mDisplayWhiteBalanceController = displayWhiteBalanceController;
+
+        //[AuxiliarySensor]Begin Added by chuanzhi.shao 2021/7/1
+        if (FEATURE_AUXILIARY_SENSOR_SUPPORT) {
+            mAuxiliarySensorController = AuxiliarySensorController.getInstance();
+            mAuxiliarySensorController.init(mContext, sensorManager, this);
+        }
+        //[AuxiliarySensor]Begin Added by chuanzhi.shao 2021/7/1
     }
 
     private Sensor findDisplayLightSensor(String sensorType) {
@@ -749,6 +764,23 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
             sendUpdatePowerState();
         }
     };
+
+    //[AuxiliarySensor]Begin Added by chuanzhi.shao
+    public void requestNoOffByPSensor(boolean noOffByPSensor) {
+        if (mProximitySensorEnabled  && mPendingProximity == PROXIMITY_POSITIVE) {
+            Slog.d(TAG, "requestNoOffByPSensor: noOffByPSensor = " + noOffByPSensor);
+            if (!(FEATURE_AUXILIARY_SENSOR_SUPPORT
+                    && mAuxiliarySensorController.getAuxiliarySensorState())){
+                isNoOffByPSensor = noOffByPSensor;
+            }
+            if (noOffByPSensor) {
+                //Deactivate PSensor to turn on display
+                Message msg = mHandler.obtainMessage(MSG_POWER_ON_IN_CALL);
+                mHandler.sendMessage(msg);
+            }
+        }
+    }
+    //[AuxiliarySensor]End Added by chuanzhi.shao
 
     private void updatePowerState() {
         // Update the power state request.
@@ -1207,7 +1239,15 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
      * currently enabled and forcing the screen to be dark.
      */
     public void ignoreProximitySensorUntilChanged() {
-        mHandler.sendEmptyMessage(MSG_IGNORE_PROXIMITY);
+        // mHandler.sendEmptyMessage(MSG_IGNORE_PROXIMITY);
+    }
+
+    @Override
+    public void powerOnByAuxiliarySensor() {
+        if (FEATURE_AUXILIARY_SENSOR_SUPPORT) {
+            Message msg = mHandler.obtainMessage(MSG_POWER_ON_IN_CALL);
+            mHandler.sendMessage(msg);
+        }
     }
 
     public void setBrightnessConfiguration(BrightnessConfiguration c) {
@@ -1553,6 +1593,7 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
     };
 
     private void setProximitySensorEnabled(boolean enable) {
+        Trace.traceBegin(Trace.TRACE_TAG_POWER, "setProximitySensorEnabled:" + enable);
         if (enable) {
             if (!mProximitySensorEnabled) {
                 // Register the listener.
@@ -1561,6 +1602,9 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
                 mIgnoreProximityUntilChanged = false;
                 mSensorManager.registerListener(mProximitySensorListener, mProximitySensor,
                         SensorManager.SENSOR_DELAY_NORMAL, mHandler);
+                if (FEATURE_AUXILIARY_SENSOR_SUPPORT) {
+                    mAuxiliarySensorController.setAuxiliarySensorEnabled(true);
+                }
             }
         } else {
             if (mProximitySensorEnabled) {
@@ -1573,8 +1617,16 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
                 mHandler.removeMessages(MSG_PROXIMITY_SENSOR_DEBOUNCED);
                 mSensorManager.unregisterListener(mProximitySensorListener);
                 clearPendingProximityDebounceTime(); // release wake lock (must be last)
+
+                if (FEATURE_AUXILIARY_SENSOR_SUPPORT) {
+                    mAuxiliarySensorController.setAuxiliarySensorEnabled(false);
+                }
+                if (FEATURE_POWER_ON_IN_CALL_SUPPORT) {
+                    isNoOffByPSensor = false;
+                }
             }
         }
+        Trace.traceEnd(Trace.TRACE_TAG_POWER);
     }
 
     private void handleProximitySensorEvent(long time, boolean positive) {
@@ -1598,6 +1650,10 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
                 mPendingProximity = PROXIMITY_NEGATIVE;
                 setPendingProximityDebounceTime(
                         time + PROXIMITY_SENSOR_NEGATIVE_DEBOUNCE_DELAY); // acquire wake lock
+            }
+
+            if (FEATURE_AUXILIARY_SENSOR_SUPPORT) {
+                mAuxiliarySensorController.setPendingProximity(mPendingProximity);
             }
 
             // Debounce the new sensor reading.
@@ -2019,8 +2075,15 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
                     updatePowerState();
                     break;
 
-                case MSG_IGNORE_PROXIMITY:
-                    ignoreProximitySensorUntilChangedInternal();
+                // case MSG_IGNORE_PROXIMITY:
+                //     ignoreProximitySensorUntilChangedInternal();
+                //     break;
+
+                case MSG_POWER_ON_IN_CALL:
+                    if (FEATURE_POWER_ON_IN_CALL_SUPPORT) {
+                        boolean positive = mPendingProximity == PROXIMITY_POSITIVE;
+                        handleProximitySensorEvent(SystemClock.uptimeMillis(), !positive);
+                    }
                     break;
             }
         }
@@ -2033,6 +2096,24 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
                 final long time = SystemClock.uptimeMillis();
                 final float distance = event.values[0];
                 boolean positive = distance >= 0.0f && distance < mProximityThreshold;
+
+                //[AuxiliarySensor]Begin Added by chuanzhi.shao 2021/7/1
+                if (FEATURE_POWER_ON_IN_CALL_SUPPORT) {
+                    Slog.d(TAG, "onSensorChanged: isNoOffByPSensor = " + isNoOffByPSensor);
+                    Slog.d(TAG, "onSensorChanged: positive = " + positive);
+                    if (isNoOffByPSensor) {  // do not turn on or off display by PSensor
+                        if (!positive) {  // when PSensor is not active, reset isNoOffByPSensor
+                            isNoOffByPSensor = false;
+                        }
+                        return;
+                    }
+                }
+                if (FEATURE_AUXILIARY_SENSOR_SUPPORT
+                        && mAuxiliarySensorController.setAuxiliarySensorState(positive,mPendingProximity)) {
+                    return;
+                }
+                //[AuxiliarySensor]End Added by chuanzhi.shao 2021/7/1
+
                 handleProximitySensorEvent(time, positive);
             }
         }

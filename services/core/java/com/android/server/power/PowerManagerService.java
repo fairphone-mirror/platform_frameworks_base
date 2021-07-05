@@ -232,6 +232,8 @@ public final class PowerManagerService extends SystemService
     /** If turning screen on takes more than this long, we show a warning on logcat. */
     private static final int SCREEN_ON_LATENCY_WARNING_MS = 200;
 
+    private static final boolean FEATURE_POWER_ON_IN_CALL_SUPPORT = true;//[AuxiliarySensor]Added by chuanzhi.shao
+
     /** Constants for {@link #shutdownOrRebootInternal} */
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({HALT_MODE_SHUTDOWN, HALT_MODE_REBOOT, HALT_MODE_REBOOT_SAFE_MODE})
@@ -581,6 +583,8 @@ public final class PowerManagerService extends SystemService
 
     // True if we in the process of performing a forceSuspend
     private boolean mForceSuspendActive;
+
+    private int mScreenDisplayState = Display.STATE_UNKNOWN;
 
     // Transition to Doze is in progress.  We have transitioned to WAKEFULNESS_DOZING,
     // but the DreamService has not yet been told to start (it's an async process).
@@ -1668,11 +1672,27 @@ public final class PowerManagerService extends SystemService
 
     private void wakeUpInternal(long eventTime, @WakeReason int reason, String details, int uid,
             String opPackageName, int opUid) {
+        //[AuxiliarySensor]Begin Added by chuanzhi.shao
+        boolean wakeup_ret = false;
         synchronized (mLock) {
             if (wakeUpNoUpdateLocked(eventTime, reason, details, uid, opPackageName, opUid)) {
+                if (FEATURE_POWER_ON_IN_CALL_SUPPORT) {
+                    wakeup_ret = true;
+                }
                 updatePowerStateLocked();
             }
+            if (FEATURE_POWER_ON_IN_CALL_SUPPORT && wakeup_ret) {
+                if (DEBUG) {
+                    Slog.d(TAG, "wakeUpInternal mScreenDisplayState = " + mScreenDisplayState
+                            + ", reason = " + reason);
+                }
+                if (mScreenDisplayState == Display.STATE_OFF
+                        && reason == PowerManager.WAKE_REASON_POWER_BUTTON) {
+                    mDisplayManagerInternal.requestNoOffByPSensor(true);
+                }
+            }
         }
+        //[AuxiliarySensor]End Added by chuanzhi.shao
     }
 
     private boolean wakeUpNoUpdateLocked(long eventTime, @WakeReason int reason, String details,
@@ -1715,6 +1735,20 @@ public final class PowerManagerService extends SystemService
     }
 
     private void goToSleepInternal(long eventTime, int reason, int flags, int uid) {
+        //[AuxiliarySensor]Begin Added by chuanzhi.shao
+        if (FEATURE_POWER_ON_IN_CALL_SUPPORT) {
+            if (DEBUG) {
+                Slog.d(TAG, "goToSleepInternal mmScreenDisplayState = "
+                        + mScreenDisplayState + ", reason = " + reason);
+            }
+            if (mScreenDisplayState == Display.STATE_OFF
+                    && reason == PowerManager.GO_TO_SLEEP_REASON_POWER_BUTTON){
+                // turn on display, and do not go to sleep
+                mDisplayManagerInternal.requestNoOffByPSensor(true);
+                return;
+            }
+        }
+        //[AuxiliarySensor]End Added by chuanzhi.shao
         synchronized (mLock) {
             if (goToSleepNoUpdateLocked(eventTime, reason, flags, uid)) {
                 updatePowerStateLocked();
@@ -3001,6 +3035,11 @@ public final class PowerManagerService extends SystemService
             // The order of operations matters here.
             synchronized (mLock) {
                 if (mDisplayState != state) {
+                    //[AuxiliarySensor]Begin Added by chuanzhi.shao
+                    if (FEATURE_POWER_ON_IN_CALL_SUPPORT) {
+                        mScreenDisplayState = state;
+                    }
+                    //[AuxiliarySensor]End Added by chuanzhi.shao
                     mDisplayState = state;
                     setPowerModeInternal(MODE_DISPLAY_INACTIVE,
                             !Display.isActiveState(state));
