@@ -2600,6 +2600,13 @@ public final class DisplayManagerService extends SystemService {
             }
         }
 
+        //[AuxiliarySensor]Begin Added by chuanzhi.shao
+        @Override
+        public void requestNoOffByPSensor(boolean noOffByPSensor) {
+            mDisplayPowerController.requestNoOffByPSensor(noOffByPSensor);
+        }
+        //[AuxiliarySensor]Begin Added by chuanzhi.shao
+
         @Override
         public SurfaceControl.ScreenshotGraphicBuffer systemScreenshot(int displayId) {
             return systemScreenshotInternal(displayId);
