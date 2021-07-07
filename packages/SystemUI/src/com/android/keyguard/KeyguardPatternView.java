@@ -241,7 +241,7 @@ public class KeyguardPatternView extends LinearLayout implements KeyguardSecurit
 
     private void displayDefaultSecurityMessage() {
         if (mSecurityMessageDisplay != null) {
-            mSecurityMessageDisplay.setMessage("");
+            mSecurityMessageDisplay.setMessage(R.string.keyguard_enter_your_pattern);
         }
     }
 
