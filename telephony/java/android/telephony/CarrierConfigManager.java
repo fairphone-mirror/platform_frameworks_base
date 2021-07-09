@@ -2148,6 +2148,22 @@ public class CarrierConfigManager {
     public static final String KEY_MMS_UA_PROF_TAG_NAME_STRING = "uaProfTagName";
     public static final String KEY_MMS_UA_PROF_URL_STRING = "uaProfUrl";
     public static final String KEY_MMS_USER_AGENT_STRING = "userAgent";
+
+    /** add by T2M.zhangrenjie for FP4-1362 begin  */
+    /**
+     * default value of anonymousenable mms
+     * @hide
+     */
+    public static final String KEY_CONFIG_MMS_ANONYMOUS_ENABLE = "mms_anonymous_enable";
+    /**
+     * default value of advertisment mms
+     * @hide
+     */
+    public static final String KEY_CONFIG_MMS_ADVERTISMENT_ENABLE = "mms_advertisment_enable";
+
+    /** add by T2M.zhangrenjie for FP4-1362 end  */
+
+
     /**
      * If true, add "Connection: close" header to MMS HTTP requests so the connection
      * is immediately closed (disabling keep-alive).
@@ -9441,6 +9457,10 @@ public class CarrierConfigManager {
                 new long[] {180000, 180000, 180000, 180000});
         sDefaults.putBooleanArray(KEY_DATA_STALL_RECOVERY_SHOULD_SKIP_BOOL_ARRAY,
                 new boolean[] {false, false, true, false, false});
+        /** add by T2M.zhangrenjie for FP4-1362 begin  */
+        sDefaults.putBoolean(KEY_CONFIG_MMS_ANONYMOUS_ENABLE, true);
+        sDefaults.putBoolean(KEY_CONFIG_MMS_ADVERTISMENT_ENABLE, true);
+        /** add by T2M.zhangrenjie for FP4-1362 end  */
     }
 
     /**
