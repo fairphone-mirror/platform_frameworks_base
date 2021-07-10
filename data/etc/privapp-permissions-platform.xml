@@ -564,4 +564,12 @@ applications that come with the platform
         <permission name="android.permission.WRITE_SECURE_SETTINGS"/>
         <permission name="android.permission.REAL_GET_TASKS"/>
     </privapp-permissions>
+
+    <privapp-permissions package="de.telekom.tsc">
+        <permission name="android.permission.INSTALL_PACKAGES" />
+        <permission name="android.permission.READ_PHONE_STATE" />
+        <permission name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+        <permission name="android.permission.PACKAGE_VERIFICATION_AGENT"/>
+    </privapp-permissions>
+    
 </permissions>

@@ -208,12 +208,32 @@ public class AppStateController{
         }
     };
 
+    private final String[] DT_APPS = {"de.telekom.tsc"};
+    private final String[] dtSIMPlmn = {"20416","21630","21901","21920","23203","23207","26201","26206"};
+    AppUnderControll dt = new AppUnderControll(DT_APPS){
+        @Override
+        public void setNewState(){
+            //if not first boot, don't disable 2Degrees apps
+            if(isFirstBoot() && !isSimAppropriate()){
+                twoDegrees.newState = PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+            }
+            if(isSimAppropriate()){
+                twoDegrees.newState = PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
+            }
+        }
+
+        @Override
+        public boolean isSimAppropriate(){
+            return isSubInfoAppropriate(dtSIMPlmn, plmn0) || isSubInfoAppropriate(dtSIMPlmn, plmn1);
+        }
+    };
+
     private void updateAppState(){
         if(mHandler == null) return;
         getSubscriptionInfo(mContext);
         mHandler.post(()->
             //updateAppState(orange,att,unefon,twoDegrees)
-                updateAppState(orange)
+                updateAppState(orange,dt)
         );
     }
 
