@@ -70,9 +70,7 @@ CopyResult copyFromPrivateHandle(GraphicBuffer* graphicBuffer, Matrix4& texTrans
     const int bitmapWidth = bitmap->width();
     const int bitmapHeight = bitmap->height();
 
-    if (static_cast<int64_t>(graphicBuffer->getWidth()) != bitmapWidth
-        || static_cast<int64_t>(graphicBuffer->getHeight()) != bitmapHeight
-        || (!srcRect.isEmpty() &&
+    if ((!srcRect.isEmpty() &&
             (srcRect.getWidth() != bitmapWidth || srcRect.getHeight() != bitmapHeight))
         || texTransform != defaultTransform) {
         // Image transformation isn't supported in any way here. Fall back to
@@ -81,6 +79,13 @@ CopyResult copyFromPrivateHandle(GraphicBuffer* graphicBuffer, Matrix4& texTrans
         // ways in which scaling needs to be supported.
         ALOGI("copyFromPrivateHandle: Image transformation is requested but not supported. "
             "Falling back to the default implementation.");
+        return CopyResult::UnknownError;
+    }
+
+    if (static_cast<int64_t>(graphicBuffer->getWidth()) < bitmapWidth
+        || static_cast<int64_t>(graphicBuffer->getHeight()) < bitmapHeight) {
+        ALOGE("copyFromPrivateHandle: Source buffer is smaller than the target image. "
+            "This should not be the case, as no scaling is requested.");
         return CopyResult::UnknownError;
     }
 
