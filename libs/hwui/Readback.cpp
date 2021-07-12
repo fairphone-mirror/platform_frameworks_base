@@ -98,6 +98,18 @@ CopyResult copyFromPrivateHandle(GraphicBuffer* graphicBuffer, Matrix4& texTrans
     }
     const private_handle_t* hnd = static_cast<const private_handle_t*>(native_handle);
 
+    if (hnd->flags & private_handle_t::PRIV_FLAGS_NON_CPU_WRITER) {
+        // The buffer comes from a non-CPU hardware component. Specifically for buffers coming from
+        // hardware encoders, access doesn't seem to work reliably in the way it's done here.
+        ALOGI("copyFromPrivateHandle: Cannot handle non-CPU buffers.");
+        return CopyResult::UnknownError;
+    }
+
+    if (hnd->flags & private_handle_t::PRIV_FLAGS_HW_COMPOSER) {
+        ALOGI("copyFromPrivateHandle: Not handling hardware composer buffers");
+        return CopyResult::UnknownError;
+    }
+
     // May be aligned and be larger than the actual image.
     const int bufferWidth = hnd->width;
     const int bufferHeight = hnd->height;
