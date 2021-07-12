@@ -267,4 +267,8 @@
 
     <!-- These are the packages that shouldn't run as system user -->
     <system-user-blacklisted-app package="com.android.wallpaper.livepicker" />
+
+    <allow-in-power-save package="de.telekom.tsc"/> 
+
+    <allow-in-power-save-except-idle package="de.telekom.tsc"/>
 </permissions>
