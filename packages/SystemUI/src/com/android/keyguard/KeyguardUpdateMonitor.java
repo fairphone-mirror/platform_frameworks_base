@@ -64,6 +64,7 @@ import android.os.Handler;
 import android.os.IRemoteCallback;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.Trace;
@@ -1849,6 +1850,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     private void updateFingerprintListeningState() {
         // If this message exists, we should not authenticate again until this message is
         // consumed by the handler
+        PowerManager mPm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         if (mHandler.hasMessages(MSG_BIOMETRIC_AUTHENTICATION_CONTINUE)) {
             return;
         }
@@ -1856,7 +1858,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         boolean shouldListenForFingerprint = shouldListenForFingerprint();
         boolean runningOrRestarting = mFingerprintRunningState == BIOMETRIC_STATE_RUNNING
                 || mFingerprintRunningState == BIOMETRIC_STATE_CANCELLING_RESTARTING;
-        if (runningOrRestarting && !shouldListenForFingerprint) {
+        if (!mPm.isScreenOn() || (runningOrRestarting && !shouldListenForFingerprint)) {
             stopListeningForFingerprint();
         } else if (!runningOrRestarting && shouldListenForFingerprint) {
             startListeningForFingerprint();
