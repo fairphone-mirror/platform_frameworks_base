@@ -562,6 +562,7 @@ applications that come with the platform
         <permission name="android.permission.READ_PHONE_STATE" />
         <permission name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
         <permission name="android.permission.PACKAGE_VERIFICATION_AGENT"/>
+        <permission name="android.permission.START_ACTIVITIES_FROM_BACKGROUND"/>
     </privapp-permissions>
-    
+
 </permissions>
