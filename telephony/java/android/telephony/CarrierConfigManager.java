@@ -164,6 +164,72 @@ public class CarrierConfigManager {
     /**
      * @hide
      */
+    public static final String KEY_WIFI_NETWORK_EXIST =
+            "wifi_network_exist";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_PRECONFIG_AP_DELETE =
+            "wifi_preconfig_ap_delete";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID =
+            "wifi_network_ssid";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE =
+            "wifi_security_mode";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD =
+            "wifi_eap_method";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID_2 =
+            "wifi_network_ssid2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE_2 =
+            "wifi_security_mode2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD_2 =
+            "wifi_eap_method2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID_3 =
+            "wifi_network_ssid3";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE_3 =
+            "wifi_security_mode3";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD_3 =
+            "wifi_eap_method3";
+
+    /**
+     * @hide
+     */
     public static final String KEY_GEA_ALGORITHM_INT =
             "gea_algorithm";
 

@@ -210,10 +210,12 @@ package android.net.wifi {
     method public String getDomainSuffixMatch();
     method public int getEapMethod();
     method public String getIdentity();
+    method @NonNull public String getIsPresetAp(@NonNull String);
     method public String getPassword();
     method public int getPhase2Method();
     method public String getPlmn();
     method public String getRealm();
+    method @NonNull public String getSimSlot(@NonNull String);
     method @Deprecated public String getSubjectMatch();
     method public boolean isAuthenticationSimBased();
     method public void setAltSubjectMatch(String);
@@ -225,10 +227,12 @@ package android.net.wifi {
     method public void setDomainSuffixMatch(String);
     method public void setEapMethod(int);
     method public void setIdentity(String);
+    method public void setIsPresetAp(@NonNull String, @NonNull String);
     method public void setPassword(String);
     method public void setPhase2Method(int);
     method public void setPlmn(String);
     method public void setRealm(String);
+    method public void setSimSlot(@NonNull String, @NonNull String);
     method @Deprecated public void setSubjectMatch(String);
     method public void writeToParcel(android.os.Parcel, int);
     field @NonNull public static final android.os.Parcelable.Creator<android.net.wifi.WifiEnterpriseConfig> CREATOR;
