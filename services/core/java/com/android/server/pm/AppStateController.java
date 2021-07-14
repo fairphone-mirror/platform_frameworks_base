@@ -215,10 +215,10 @@ public class AppStateController{
         public void setNewState(){
             //if not first boot, don't disable 2Degrees apps
             if(isFirstBoot() && !isSimAppropriate()){
-                twoDegrees.newState = PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+                dt.newState = PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
             }
             if(isSimAppropriate()){
-                twoDegrees.newState = PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
+                dt.newState = PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
             }
         }
 
