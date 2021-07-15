@@ -2884,4 +2884,10 @@
     <string name="battery_otp">Battery Over Temperature</string>
     <string name="battery_otp_message">Shutdown in 5 seconds!</string>
 
+    <string name="usbntc_temp_message">Your USB NTC temperature is too High,please disconnect the changer!</string>
+    <string name="usbntc_temp_title">Height USB NTC Temperature</string>
+
+    <string name="usbntc_temp_notification_title">Warning</string>
+    <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
+
 </resources>
