@@ -791,6 +791,14 @@
         <item name="android:textSize">@dimen/controls_setup_subtitle</item>
     </style>
 
+    <style name="usbntc_dialog_toast" parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
     <!-- The attributes used for title (textAppearanceLarge) and message (textAppearanceMedium)
          are already as necessary:
           * Title: headline, medium 20sp
