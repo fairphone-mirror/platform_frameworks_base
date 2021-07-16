@@ -2936,6 +2936,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
             // We don't need the observer anymore...
             mContext.getContentResolver().unregisterContentObserver(mDeviceProvisionedObserver);
             mDeviceProvisionedObserver = null;
+
+            ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+            am.restartPackage("com.android.settings");
         }
     }
 
