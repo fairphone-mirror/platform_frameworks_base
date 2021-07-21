@@ -207,6 +207,12 @@ public class CarrierConfigManager {
             "call_barring_visibility_bool";
 
     /**
+     * @hide
+     */
+    public static final String KEY_DISPLAY_WIFI_CALLING_BUTTON_BOOL =
+            "com.google.android.dialer.display_wifi_calling_button_bool";
+
+    /**
      * Flag indicating whether or not changing the call barring password via the "Call Barring"
      * settings menu is supported. If true, the option will be visible in the "Call
      * Barring" settings menu. If false, the option will not be visible.
@@ -4100,6 +4106,7 @@ public class CarrierConfigManager {
 
         sDefaults.putBoolean(KEY_CARRIER_VOLTE_PROVISIONED_BOOL, false);
         sDefaults.putBoolean(KEY_CALL_BARRING_VISIBILITY_BOOL, true);
+        sDefaults.putBoolean(KEY_DISPLAY_WIFI_CALLING_BUTTON_BOOL, false);
         sDefaults.putBoolean(KEY_CALL_BARRING_SUPPORTS_PASSWORD_CHANGE_BOOL, true);
         sDefaults.putBoolean(KEY_CALL_BARRING_SUPPORTS_DEACTIVATE_ALL_BOOL, true);
         sDefaults.putInt(KEY_CALL_BARRING_DEFAULT_SERVICE_CLASS_INT, SERVICE_CLASS_VOICE);
