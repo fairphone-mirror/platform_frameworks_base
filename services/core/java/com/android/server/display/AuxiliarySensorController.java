@@ -60,7 +60,7 @@ public class AuxiliarySensorController {
     private static final int GYRO_THRESHOLD = 23;
     private static final int CLEAR_THRESHOLD = 90;
     private static final int SLOPE_VALUE = 5;
-    private static final int ACCELERATION_VALUE = 12;
+    private static final int ACCELERATION_VALUE = 11;
     private static final int GSENSOR_THRESHOLD = 7;
     private int mCallStatus = 0;
     private static final int TOUCH_THRESHOLD = 300;
