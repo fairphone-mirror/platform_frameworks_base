@@ -52,7 +52,7 @@ import javax.inject.Inject;
 public class NfcTile extends QSTileImpl<BooleanState> {
 
     private static final String NFC = "nfc";
-    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_nfc);
+    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_nfc_disabled_fp4);
 
     @Nullable
     private NfcAdapter mAdapter;
@@ -151,7 +151,7 @@ public class NfcTile extends QSTileImpl<BooleanState> {
     private NfcAdapter getAdapter() {
         if (mAdapter == null) {
             try {
-                mAdapter = NfcAdapter.getDefaultAdapter(mContext);
+                mAdapter = NfcAdapter.getDefaultAdapter();
             } catch (UnsupportedOperationException e) {
                 mAdapter = null;
             }
