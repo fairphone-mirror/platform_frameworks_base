@@ -248,8 +248,8 @@ public class CarrierConfigManager {
     /**
      * @hide
      */
-    public static final String KEY_CELL_BROADCAST_CHANNELS =
-            "cell_broadcast_channels_array";
+    public static final String KEY_SMS_CELL_BROADCAST_ENABLED =
+            "sms_cell_broadcast_enabled";
 
     /**
      * @hide
