@@ -301,4 +301,9 @@
     <allow-in-power-save package="de.telekom.tsc"/> 
 
     <allow-in-power-save-except-idle package="de.telekom.tsc"/>
+
+    <allow-in-power-save package="com.orange.update"/> 
+
+    <allow-in-power-save-except-idle package="com.orange.update"/>
+    
 </permissions>
