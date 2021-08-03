@@ -90,29 +90,34 @@ public class AppStateController{
             //2*1 widget
             ComponentName comboFolderWidget =  new ComponentName("com.orange.update","com.orange.update.widget.ComboFolderWidgetProvider");
             IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
-            for(String pkg : orange.pkgs){
-                if(!isAppInstalled(pkg)) continue;
-                try{
-                    //[TCT-ROM]Begin modify by tairan.hao for 10635863 on 2020-01-12
-                    if("com.orange.update".equals(pkg)){
-                        // if(orange.newState != mIPm.getComponentEnabledSetting(folderWidget, mContext.getUserId())){
-                        //     //Log.d(TAG,"set FolderWidgetProvider as " + orange.newState);
-                        // }
-                        Log.d(TAG,"updateAppState comboFolderWidget " +  mIPm.getComponentEnabledSetting(comboFolderWidget, mContext.getUserId()));
-                        if(!hasEnabled && orange.newState != mIPm.getComponentEnabledSetting(comboFolderWidget, mContext.getUserId())){
-                            mIPm.setComponentEnabledSetting(comboFolderWidget, orange.newState, orange.enableFlag, mContext.getUserId());
-                            mIPm.setComponentEnabledSetting(folderWidget, orange.newState, orange.enableFlag, mContext.getUserId());
-                            hasEnabled = orange.newState == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
-                            Log.d(TAG,"set orange 1*1 and 2*1 widgets as " + orange.newState);
-                        }
-                        //[TCT-ROM]End modify by tairan.hao for 10635863 on 2020-01-12
-                    }else if(orange.newState != mIPm.getApplicationEnabledSetting(pkg,USER_SYSTEM)){
-                        mIPm.setApplicationEnabledSetting(pkg,orange.newState, orange.enableFlag, USER_SYSTEM, "System");
-                        Log.d(TAG,"set " + pkg + " enable state as " + orange.newState);
-                    }
-                }catch(Exception e ){
-                    Log.i(TAG,"cannot set " + pkg + " as " + orange.newState);
+            for (String pkg : orange.pkgs) {
+
+                updateInstallState(pkg, isSimAppropriate(), mIPm);
+
+                if (!isAppInstalled(pkg)) {
+                    continue;
                 }
+//                try {
+//                    //[TCT-ROM]Begin modify by tairan.hao for 10635863 on 2020-01-12
+//                    if ("com.orange.update".equals(pkg)) {
+//                        // if(orange.newState != mIPm.getComponentEnabledSetting(folderWidget, mContext.getUserId())){
+//                        //     //Log.d(TAG,"set FolderWidgetProvider as " + orange.newState);
+//                        // }
+//                        Log.d(TAG, "updateAppState comboFolderWidget " + mIPm.getComponentEnabledSetting(comboFolderWidget, mContext.getUserId()));
+//                        if (!hasEnabled && orange.newState != mIPm.getComponentEnabledSetting(comboFolderWidget, mContext.getUserId())) {
+//                            mIPm.setComponentEnabledSetting(comboFolderWidget, orange.newState, orange.enableFlag, mContext.getUserId());
+//                            mIPm.setComponentEnabledSetting(folderWidget, orange.newState, orange.enableFlag, mContext.getUserId());
+//                            hasEnabled = orange.newState == PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
+//                            Log.d(TAG, "set orange 1*1 and 2*1 widgets as " + orange.newState);
+//                        }
+//                        //[TCT-ROM]End modify by tairan.hao for 10635863 on 2020-01-12
+//                    } else if (orange.newState != mIPm.getApplicationEnabledSetting(pkg, USER_SYSTEM)) {
+//                        mIPm.setApplicationEnabledSetting(pkg, orange.newState, orange.enableFlag, USER_SYSTEM, "System");
+//                        Log.d(TAG, "set " + pkg + " enable state as " + orange.newState);
+//                    }
+//                } catch (Exception e) {
+//                    Log.i(TAG, "cannot set " + pkg + " as " + orange.newState);
+//                }
             }
         }
     };
@@ -361,7 +366,24 @@ public class AppStateController{
         return false;
     }
 
-    class AppUnderControll{
+    private void updateInstallState(String pkg, boolean isSimAppropriate, IPackageManager ipm) {
+        if ("com.orange.update".equals(pkg) || "com.orange.aura.oobe".equals(pkg)) {
+            Log.i(TAG, "setSystemAppInstallState ```````````````````````` ");
+            try {
+                if (isSimAppropriate) {
+                    Log.i(TAG, "setSystemAppInstallState true " + pkg);
+                    ipm.setSystemAppInstallState(pkg, true, mContext.getUserId());
+                } else {
+                    Log.i(TAG, "setSystemAppInstallState false" + pkg);
+                    ipm.setSystemAppInstallState(pkg, false, mContext.getUserId());
+                }
+            } catch (Exception e) {
+                Log.i(TAG, "setSystemAppInstallState Exception " + e.getMessage());
+            }
+        }
+    }
+
+    class AppUnderControll {
         private String[] pkgs;
         private int newState = PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;// 0
         private int enableFlag = PackageManager.DONT_KILL_APP;
