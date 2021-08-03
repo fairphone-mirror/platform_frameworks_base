@@ -95,6 +95,8 @@ public class NetworkControllerImpl extends BroadcastReceiver
     private static final int EMERGENCY_NO_SUB = 300;
     private static final int EMERGENCY_ASSUMED_VOICE_CONTROLLER = 400;
 
+    private static final String SHOW_VOLTE_ICON = "config_update_volte_icon";
+
     private final Context mContext;
     private final TelephonyManager mPhone;
     private final WifiManager mWifiManager;
@@ -1234,7 +1236,7 @@ public class NetworkControllerImpl extends BroadcastReceiver
             config.showRsrpSignalLevelforLTE =
                     res.getBoolean(R.bool.config_showRsrpSignalLevelforLTE);
             config.hideNoInternetState = res.getBoolean(R.bool.config_hideNoInternetState);
-            config.showVolteIcon = res.getBoolean(R.bool.config_display_volte);
+            //config.showVolteIcon = res.getBoolean(R.bool.config_display_volte);
 
             CarrierConfigManager configMgr = (CarrierConfigManager)
                     context.getSystemService(Context.CARRIER_CONFIG_SERVICE);
@@ -1252,6 +1254,9 @@ public class NetworkControllerImpl extends BroadcastReceiver
                 config.hideLtePlus = b.getBoolean(
                         CarrierConfigManager.KEY_HIDE_LTE_PLUS_DATA_ICON_BOOL);
                 // modify by T2M.zhang renjie for FP4-923 2021-06-21
+
+                config.showVolteIcon = b.getBoolean(SHOW_VOLTE_ICON, false);
+                Log.d(TAG, "show VoLTE icon: " + config.showVowifiIcon);
                 config.showVowifiIcon = b.getBoolean(
                     CarrierConfigManager.KEY_SHOW_WIFI_CALLING_ICON_IN_STATUS_BAR_BOOL);
                 Log.d(TAG, "show VoWifi icon: " + config.showVowifiIcon);
