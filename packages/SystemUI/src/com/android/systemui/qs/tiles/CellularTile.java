@@ -63,10 +63,13 @@ import com.android.systemui.statusbar.policy.NetworkController.MobileDataIndicat
 import com.android.systemui.statusbar.policy.NetworkController.SignalCallback;
 
 import javax.inject.Inject;
+import android.os.SystemProperties;
 
 /** Quick settings tile: Cellular **/
 public class CellularTile extends QSTileImpl<SignalState> {
     private static final String ENABLE_SETTINGS_DATA_PLAN = "enable.settings.data.plan";
+
+    private static final String SIM_DATA_SWITCH = "persist.sys.settingswitch.sim";
 
     private final NetworkController mController;
     private final DataUsageController mDataController;
@@ -207,7 +210,12 @@ public class CellularTile extends QSTileImpl<SignalState> {
                     cb.multipleSubs ? cb.dataSubscriptionName : "",
                     getMobileDataContentName(cb));
         } else {
-            state.state = Tile.STATE_INACTIVE;
+            boolean settingsSwitchOn = SystemProperties.getBoolean(SIM_DATA_SWITCH, true);
+            if (settingsSwitchOn) {
+                state.state = Tile.STATE_INACTIVE;                
+            }else{
+                state.state = Tile.STATE_UNAVAILABLE;
+            }
             state.secondaryLabel = r.getString(R.string.cell_data_off);
         }
 
