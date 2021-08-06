@@ -53,6 +53,7 @@ import com.android.internal.app.AlertController;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
+import android.content.ContentUris;
 
 /**
  * The {@link RingtonePickerActivity} allows the user to choose one from all of the
@@ -283,7 +284,7 @@ public final class RingtonePickerActivity extends AlertActivity implements
                 @Override
                 protected void onPostExecute(Uri ringtoneUri) {
                     if (ringtoneUri != null) {
-                        requeryForAdapter();
+                        requeryForAdapter(ringtoneUri);
                     } else {
                         // Ringtone was not added, display error Toast
                         Toast.makeText(RingtonePickerActivity.this, R.string.unable_to_add_ringtone,
@@ -386,24 +387,39 @@ public final class RingtonePickerActivity extends AlertActivity implements
      *
      * This should only need to happen after adding or removing a ringtone.
      */
-    private void requeryForAdapter() {
+    private void requeryForAdapter(Uri ringtoneUri) {
         // Refresh and set a new cursor, closing the old one.
         initRingtoneManager();
         mAdapter.changeCursor(mCursor);
 
         // Update checked item location.
         int checkedPosition = POS_UNKNOWN;
-        for (int i = 0; i < mAdapter.getCount(); i++) {
-            if (mAdapter.getItemId(i) == mCheckedItemId) {
-                checkedPosition = getListPosition(i);
-                break;
-            }
-        }
+        checkedPosition = getListPosition(getRingtonePosition(ringtoneUri));
+        // for (int i = 0; i < mAdapter.getCount(); i++) {
+        //     if (mAdapter.getItemId(i) == mCheckedItemId) {
+        //         checkedPosition = getListPosition(i);
+        //         break;
+        //     }
+        // }
         if (mHasSilentItem && checkedPosition == POS_UNKNOWN) {
             checkedPosition = mSilentPos;
         }
         setCheckedItem(checkedPosition);
         setupAlert();
+    }
+
+    public int getRingtonePosition(Uri ringtoneUri) {
+        if (ringtoneUri == null) return POS_UNKNOWN;
+        final long ringtoneId = ContentUris.parseId(ringtoneUri);
+
+        final Cursor cursor = mCursor;
+        cursor.moveToPosition(-1);
+        while (cursor.moveToNext()) {
+            if (ringtoneId == cursor.getLong(0)) {
+                return cursor.getPosition();
+            }
+        }
+        return POS_UNKNOWN;
     }
 
     /**
