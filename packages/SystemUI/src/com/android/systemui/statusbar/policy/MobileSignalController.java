@@ -438,13 +438,15 @@ public class MobileSignalController extends SignalController<
     private int getVolteResId() {
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
-        if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                &&  mCurrentState.imsRegistered ) {
-            resId = R.drawable.ic_volte;
-        }else if ( (mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE
-                        || mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE_CA)
-                    && voiceNetTye  == TelephonyManager.NETWORK_TYPE_UNKNOWN) {
-            resId = R.drawable.ic_volte_no_voice;
+        if(!mCurrentState.airplaneMode) {        // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
+            if ((mCurrentState.voiceCapable || mCurrentState.videoCapable)
+                    && mCurrentState.imsRegistered) {
+                resId = R.drawable.ic_volte;
+            } else if ((mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE
+                    || mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE_CA)
+                    && voiceNetTye == TelephonyManager.NETWORK_TYPE_UNKNOWN) {
+                resId = R.drawable.ic_volte_no_voice;
+            }
         }
         return resId;
     }
@@ -566,6 +568,7 @@ public class MobileSignalController extends SignalController<
                     + " icons.mDataType=" + icons.mDataType
                     + " mConfig.showVolteIcon=" + mConfig.showVolteIcon
                     + " isVolteSwitchOn=" + isVolteSwitchOn()
+                    + "mCurrentState.airplaneMode="+ mCurrentState.airplaneMode
                     + " volteIcon=" + volteIcon
                     + " mConfig.showVowifiIcon=" + mConfig.showVowifiIcon);
         }
@@ -975,6 +978,10 @@ public class MobileSignalController extends SignalController<
     }
 
     private MobileIconGroup getVowifiIconGroup() {
+        if (mCurrentState.airplaneMode) { // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
+            return null;
+        }
+// add by T2M.zhangrenjie for FP4-2003 2021-08-09 end
         if ( isVowifiAvailable() && !isCallIdle() ) {
             return TelephonyIcons.VOWIFI_CALLING;
         }else if (isVowifiAvailable()) {
