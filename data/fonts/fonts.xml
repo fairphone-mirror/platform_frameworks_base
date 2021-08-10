@@ -691,4 +691,7 @@
     <family lang="und-Wara">
         <font weight="400" style="normal">NotoSansWarangCiti-Regular.otf</font>
     </family>
+    <family name="radikal-regular">
+        <font weight="400" style="normal">RadikalRegular.ttf</font>
+    </family>
 </familyset>
