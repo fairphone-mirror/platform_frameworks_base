@@ -91,6 +91,11 @@
       <item quantity="other">Falscher PIN-Code der SIM-Karte. Du hast noch <xliff:g id="NUMBER_1">%d</xliff:g> Versuche.</item>
       <item quantity="one">Falscher PIN-Code der SIM-Karte. Du hast noch <xliff:g id="NUMBER_0">%d</xliff:g> Versuch, bevor du das Gerät von deinem Mobilfunkanbieter entsperren lassen musst.</item>
     </plurals>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+      <item quantity="other">Falscher PIN-Code der SIM-Karte<xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuche.</item>
+      <item quantity="one">Falscher PIN-Code der SIM-Karte<xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuch, bevor du das Gerät von deinem Mobilfunkanbieter entsperren lassen musst.</item>
+    </plurals>
+ 
     <string name="kg_password_wrong_puk_code_dead" msgid="3698285357028468617">"Die SIM-Karte kann nicht verwendet werden. Bitte wende dich an deinen Mobilfunkanbieter."</string>
     <plurals name="kg_password_wrong_puk_code" formatted="false" msgid="3937306685604862886">
       <item quantity="other">Falscher PUK-Code der SIM-Karte. Du hast noch <xliff:g id="NUMBER_1">%d</xliff:g> Versuche, bevor deine SIM-Karte endgültig gesperrt wird.</item>
