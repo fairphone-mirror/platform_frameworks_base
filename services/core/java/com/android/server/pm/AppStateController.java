@@ -14,10 +14,12 @@ import android.content.pm.IPackageManager;
 import android.content.IntentFilter;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
+import android.telephony.CarrierConfigManager;
 import android.telephony.SubscriptionManager;
 import android.telephony.SubscriptionInfo;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.os.Process;
 
 import static android.os.UserHandle.USER_SYSTEM;
 
@@ -29,74 +31,82 @@ import com.android.internal.telephony.PhoneConstants;
 /* [TCT-ROM] create by tairan.hao for Task 9884474 on 2020-09-09
     move implenments and do refactor from SystemUI3.0/JoySystemUI/app/src/main/java/com/android/systemui/statusbar/phone/StatusBar.java
 */
-public class AppStateController{
+public class AppStateController {
 
     private final String TAG = "AppStateController";
     private Context mContext;
     private Handler mHandler;
     SubscriptionManager mSubscriptionManager;
 
-    private String spn0,plmn0,iccid0;
-    private String spn1,plmn1,iccid1;
+    private String spn0, plmn0, iccid0;
+    private String spn1, plmn1, iccid1;
     private int simCount = 0;
 
+    private int mUserId;
+
     /**
-     * @hide
      * @param context
      * @param handler
+     * @hide
      */
-    public AppStateController(Context context,Handler handler){
+    public AppStateController(Context context, Handler handler) {
         this.mContext = context;
         this.mHandler = handler;
+        mUserId = Process.myUserHandle().myUserId();
         registerReceiver();
     }
 
+    /* =============================================================================================================  */
+    /**
+     * Orange
+     */
     //Orange defect 8172436 8670766
     private final String[] orangeApps = {"com.orange.aura.oobe",
-    "com.orange.update",
-    "com.orange.clock",
-    "com.orange.widgets.mostusedapps",
-    "com.orange.widget.tips"};
-    private final String[] orangeSIMPlmn = {"21403","21421","20801","26003","22610","23101",
-    "20610","25901","27099","21419", "63203", "65202",
-    "61302", "62402", "34001", "62303", "61101", "61203",
-    "63086", "60201", "62701", "41677", "64700", "61807",
-    "64602", "61002", "61701", "60400", "61404", "60801",
-    "61901", "60501"};
-    AppUnderControll orange = new AppUnderControll(orangeApps){
+            "com.orange.update",
+            "com.orange.clock",
+            "com.orange.widgets.mostusedapps",
+            "com.orange.widget.tips"};
+    private final String[] orangeSIMPlmn = {"21403", "21421", "20801", "26003", "22610", "23101",
+            "20610", "25901", "27099", "21419", "63203", "65202",
+            "61302", "62402", "34001", "62303", "61101", "61203",
+            "63086", "60201", "62701", "41677", "64700", "61807",
+            "64602", "61002", "61701", "60400", "61404", "60801",
+            "61901", "60501"};
+    AppUnderControll orange = new AppUnderControll(orangeApps) {
         private boolean hasEnabled = false; //[TCT-ROM]Add by tairan.hao for 10635863 on 2020-01-12
+
         @Override
-        public void setNewState(){
+        public void setNewState() {
             //if not first boot, don't disable orange apps
-            if(isFirstBoot() && !isSimAppropriate()){
+            if (isFirstBoot() && !isSimAppropriate()) {
                 orange.newState = PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
             }
-            if(isSimAppropriate()){
+            if (isSimAppropriate()) {
                 orange.newState = PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
             }
         }
 
         @Override
-        public boolean isSimAppropriate(){
+        public boolean isSimAppropriate() {
             String[] simyo = {"simyo"};
-            return isSubInfoAppropriate(orangeSIMPlmn, plmn0) && !isSubInfoAppropriate(simyo,spn0) ||
-                    isSubInfoAppropriate(orangeSIMPlmn, plmn1) && !isSubInfoAppropriate(simyo,spn1);
+            return isSubInfoAppropriate(orangeSIMPlmn, plmn0) && !isSubInfoAppropriate(simyo, spn0) ||
+                    isSubInfoAppropriate(orangeSIMPlmn, plmn1) && !isSubInfoAppropriate(simyo, spn1);
         }
 
         @Override
-        public void updateAppState(){
+        public void updateAppState() {
             //1*1 widget
-            ComponentName folderWidget =  new ComponentName("com.orange.update","com.orange.update.widget.FolderWidgetProvider");
+            ComponentName folderWidget = new ComponentName("com.orange.update", "com.orange.update.widget.FolderWidgetProvider");
             //2*1 widget
-            ComponentName comboFolderWidget =  new ComponentName("com.orange.update","com.orange.update.widget.ComboFolderWidgetProvider");
+            ComponentName comboFolderWidget = new ComponentName("com.orange.update", "com.orange.update.widget.ComboFolderWidgetProvider");
             IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
             for (String pkg : orange.pkgs) {
 
                 updateInstallState(pkg, isSimAppropriate(), mIPm);
 
-                if (!isAppInstalled(pkg)) {
-                    continue;
-                }
+//                if (!isAppInstalled(pkg)) {
+//                    continue;
+//                }
 //                try {
 //                    //[TCT-ROM]Begin modify by tairan.hao for 10635863 on 2020-01-12
 //                    if ("com.orange.update".equals(pkg)) {
@@ -122,6 +132,10 @@ public class AppStateController{
         }
     };
 
+    /* =============================================================================================================  */
+    /**
+     * ATT
+     */
     //ATT defect 8743303 10658538
     private final String[] attApps = {"com.att.miatt"};
     //[TCT-ROM]Begin modify by tairan.hao for 10691772 on 2021-02-04
@@ -164,24 +178,28 @@ public class AppStateController{
 
     };
 
+    /* =============================================================================================================  */
+    /**
+     * UNEFON
+     */
     //UNEFON defect 8910971 8743303
     private final String[] UNEFON_APPS = {"com.att.miunefonmx"};
-    private final String[] unefonSIMPlmn = {"33405","334050"};
-    AppUnderControll unefon = new AppUnderControll(UNEFON_APPS){
+    private final String[] unefonSIMPlmn = {"33405", "334050"};
+    AppUnderControll unefon = new AppUnderControll(UNEFON_APPS) {
         @Override
-        public boolean isSimAppropriate(){
-            if(iccid0 != null && iccid0.length() >= 9){
-                Log.d(TAG,"iccid0[8]= " + iccid0.substring(8,9));
-                if("3".equals(iccid0.substring(8,9)) || "1".equals(iccid0.substring(8,9))){
-                    if(isSubInfoAppropriate(attSIMPlmn, plmn0)){
+        public boolean isSimAppropriate() {
+            if (iccid0 != null && iccid0.length() >= 9) {
+                Log.d(TAG, "iccid0[8]= " + iccid0.substring(8, 9));
+                if ("3".equals(iccid0.substring(8, 9)) || "1".equals(iccid0.substring(8, 9))) {
+                    if (isSubInfoAppropriate(attSIMPlmn, plmn0)) {
                         return true;
                     }
                 }
             }
-            if(iccid1 != null && iccid1.length() >= 9){
-                Log.d(TAG,"iccid1[8] =" + iccid1.substring(8,9));
-                if("3".equals(iccid1.substring(8,9)) || "1".equals(iccid1.substring(8,9))){
-                    if(isSubInfoAppropriate(attSIMPlmn, plmn1)){
+            if (iccid1 != null && iccid1.length() >= 9) {
+                Log.d(TAG, "iccid1[8] =" + iccid1.substring(8, 9));
+                if ("3".equals(iccid1.substring(8, 9)) || "1".equals(iccid1.substring(8, 9))) {
+                    if (isSubInfoAppropriate(attSIMPlmn, plmn1)) {
                         return true;
                     }
                 }
@@ -190,7 +208,12 @@ public class AppStateController{
 
         }
     };
+    /* =============================================================================================================  */
 
+
+    /**
+     * TWO DEGREES
+     */
     //TWO_DEGREES Task 9463498
     private final String[] TWO_DEGREES_APPS = {"com.twodegreesmobile.twodegrees"};
     private final String[] twoDegreesSIMPlmn = {"53024"};
@@ -213,13 +236,26 @@ public class AppStateController{
         }
     };
 
+    /* =============================================================================================================  */
+
+
+    /**
+     * DT telekom
+     */
     private final String[] DT_APPS = {"de.telekom.tsc"};
-    private final String[] dtSIMPlmn = {"20416","21630","21901","21920","23203","23207","26201","26206"};
-    AppUnderControll dt = new AppUnderControll(DT_APPS){
+    private final String[] dtSIMPlmn = {"20416", "21630", "21901", "21920", "23203", "23207", "26201", "26206"};
+    private final String[] dtSIMGidPlmn = {
+            "20416FFFF", "204168FFF", "204164E4C",
+            "2190101FF", "2190102FF", "2190103FF", "2190199FF", "21901FFFF", "2190110FF", "2190111FF", "2190112FF"
+            "2192001FF", "2192002FF", "2192003FF", "2192099FF", "21920FFFF", "2192010FF", "2192011FF", "2192012FF",
+            "2320301FF", "2320331FF", "2320332FF",
+            "2320707FF", "2320730FF", "23207FFFF",
+            "2620101FF", "2620102FF", "2620103FF", "2620104FF", "2620199FF", "262014BFF", "2620144FF",
+            "2620601FF", "2620602FF", "2620603FF", "2620604FF", "2620699FF", "262064BFF", "2620644FF"};
+    AppUnderControll dt = new AppUnderControll(DT_APPS) {
         @Override
-        public void setNewState(){
-            //if not first boot, don't disable 2Degrees apps
-            if(isFirstBoot() && !isSimAppropriate()){
+        public void setNewState() {
+            if (isFirstBoot() && !isSimAppropriate()) {
                 dt.newState = PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
             }
             if(isSimAppropriate()){
@@ -228,13 +264,57 @@ public class AppStateController{
         }
 
         @Override
-        public boolean isSimAppropriate(){
-            return isSubInfoAppropriate(dtSIMPlmn, plmn0) || isSubInfoAppropriate(dtSIMPlmn, plmn1);
+        public boolean isSimAppropriate() {
+//            CarrierConfigManager configManager = (CarrierConfigManager) mContext.getSystemService(Context.CARRIER_CONFIG_SERVICE);
+//            SubscriptionManager subscriptionManager = (SubscriptionManager) mContext.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
+//            boolean isDtConfigEnable = false;
+//            int[] list = subscriptionManager.getActiveSubscriptionIdList();
+//            if (list != null && list.length > 0) {
+//                try {
+//                    isDtConfigEnable = configManager.getConfigForSubId(list[0]).getBoolean("preinstall_app_enabler");
+//                } catch (Exception e) {
+//                    Log.e(TAG, "dt config load error " + e.getMessage());
+//                }
+//
+//            }
+//            Log.e(TAG, "dt config enable = " + isDtConfigEnable);
+//            return isDtConfigEnable;
+            if (plmn0 != null && plmn0.equals("21630")) {
+                if (spn0.equals("Telekom HU")) {
+                    return true;
+                }
+                if (spn0.equals("T-Mobile H")) {
+                    return true;
+                }
+            }
+            if (isSubInfoAppropriate(dtSIMPlmn, plmn0)) {
+                TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(TelephonyManager.class);
+                String subGid1 = "";
+                String gid1 = telephonyManager.getGroupIdLevel1();
+                if (gid1.length() > 2) {
+                    subGid1 = gid1.substring(0, 4);
+                    String mccMncGid = plmn0 + subGid1;
+                    if (isSubInfoAppropriate(dtSIMGidPlmn, mccMncGid)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public void updateAppState() {
+            IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
+            for (String pkg : dt.pkgs) {
+                updateInstallState(pkg, isSimAppropriate(), mIPm);
+            }
         }
     };
 
-    private void updateAppState(){
-        if(mHandler == null) return;
+    /* =============================================================================================================  */
+
+    private void updateAppState() {
+        if (mHandler == null) return;
         getSubscriptionInfo(mContext);
         mHandler.post(()->
             //updateAppState(orange,att,unefon,twoDegrees)
@@ -367,20 +447,13 @@ public class AppStateController{
     }
 
     private void updateInstallState(String pkg, boolean isSimAppropriate, IPackageManager ipm) {
-        if ("com.orange.update".equals(pkg) || "com.orange.aura.oobe".equals(pkg)) {
-            Log.i(TAG, "setSystemAppInstallState ```````````````````````` ");
-            try {
-                if (isSimAppropriate) {
-                    Log.i(TAG, "setSystemAppInstallState true " + pkg);
-                    ipm.setSystemAppInstallState(pkg, true, mContext.getUserId());
-                } else {
-                    Log.i(TAG, "setSystemAppInstallState false" + pkg);
-                    ipm.setSystemAppInstallState(pkg, false, mContext.getUserId());
-                }
-            } catch (Exception e) {
-                Log.i(TAG, "setSystemAppInstallState Exception " + e.getMessage());
-            }
+        Log.d(TAG, pkg + " updateInstallState sim Appropriate  " + isSimAppropriate);
+        try {
+            ipm.setSystemAppInstallState(pkg, isSimAppropriate, mContext.getUserId());
+        } catch (Exception e) {
+            Log.d(TAG, pkg + " updateInstallState error " + e.getMessage());
         }
+
     }
 
     class AppUnderControll {
@@ -408,9 +481,10 @@ public class AppStateController{
 
         public void updateAppState(){
             IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
-            for(String pkg : pkgs){
-                try{
-                    if( !isAppInstalled(pkg) || newState == mIPm.getApplicationEnabledSetting(pkg,USER_SYSTEM)) continue;
+            for (String pkg : pkgs) {
+                try {
+                    if (!isAppInstalled(pkg) || newState == mIPm.getApplicationEnabledSetting(pkg, USER_SYSTEM))
+                        continue;
                     mIPm.setApplicationEnabledSetting(pkg,
                             newState, enableFlag, USER_SYSTEM, "System");
                     Log.d(TAG,"set " + pkg + " enable state as " + newState);
