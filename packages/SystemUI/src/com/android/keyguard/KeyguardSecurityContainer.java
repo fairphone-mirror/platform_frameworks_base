@@ -40,6 +40,7 @@ import android.metrics.LogMaker;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.MathUtils;
@@ -110,6 +111,8 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
     private static final UiEventLogger sUiEventLogger = new UiEventLoggerImpl();
 
     private static final long IME_DISAPPEAR_DURATION_MS = 125;
+
+    public static final String KEY_UNLOCK_FAILED_RESET = "unlock_failed_reset";
 
     private KeyguardSecurityModel mSecurityModel;
     private LockPatternUtils mLockPatternUtils;
@@ -657,6 +660,31 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         }
     }
 
+    private boolean resetForFailedUnlock(int userId) {
+        final int failedAttempts = mLockPatternUtils.getCurrentFailedPasswordAttempts(userId);
+        if (failedAttempts >= 14) {
+            boolean unlockFaileReset = Settings.Global.getInt(
+                    mContext.getContentResolver(),
+                    KEY_UNLOCK_FAILED_RESET, 0) == 1;
+            if (DEBUG) Log.d(TAG, "resetForFailedUnlock: # " + unlockFaileReset);
+            if (unlockFaileReset) {
+                doMasterClear();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void doMasterClear() {
+        Intent intent = new Intent(Intent.ACTION_FACTORY_RESET);
+        intent.setPackage("android");
+        intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        intent.putExtra(Intent.EXTRA_REASON, "MasterClearConfirm");
+        //        intent.putExtra(Intent.EXTRA_WIPE_EXTERNAL_STORAGE, mEraseSdCard);
+        mContext.sendBroadcast(intent);
+        //  Intent handling is asynchronous -- assume it will happen soon.
+    }
+
     /**
      * Shows the primary security screen for the user. This will be either the multi-selector
      * or the user's security method.
@@ -850,6 +878,9 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
             } else {
                 SysUiStatsLog.write(SysUiStatsLog.KEYGUARD_BOUNCER_PASSWORD_ENTERED,
                         SysUiStatsLog.KEYGUARD_BOUNCER_PASSWORD_ENTERED__RESULT__FAILURE);
+                if (resetForFailedUnlock(userId)) {
+                    return;
+                }
                 KeyguardSecurityContainer.this.reportFailedUnlockAttempt(userId, timeoutMs);
             }
             mMetricsLogger.write(new LogMaker(MetricsEvent.BOUNCER)
