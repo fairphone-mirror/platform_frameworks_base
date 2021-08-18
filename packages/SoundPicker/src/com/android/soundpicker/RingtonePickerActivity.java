@@ -230,7 +230,7 @@ public final class RingtonePickerActivity extends AlertActivity implements
 
 
         // Create the list of ringtones and hold on to it so we can update later.
-        mAdapter = new BadgedRingtoneAdapter(this, mRingtoneManager.getCursor(),
+        mAdapter = new BadgedRingtoneAdapter(this, mCursor,
                 /* isManagedProfile = */ UserManager.get(this).isManagedProfile(mPickerUserId));
 
 
