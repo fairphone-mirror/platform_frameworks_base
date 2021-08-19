@@ -978,10 +978,6 @@ public class MobileSignalController extends SignalController<
     }
 
     private MobileIconGroup getVowifiIconGroup() {
-        if (mCurrentState.airplaneMode) { // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
-            return null;
-        }
-// add by T2M.zhangrenjie for FP4-2003 2021-08-09 end
         if ( isVowifiAvailable() && !isCallIdle() ) {
             return TelephonyIcons.VOWIFI_CALLING;
         }else if (isVowifiAvailable()) {
