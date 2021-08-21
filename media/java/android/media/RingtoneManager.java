@@ -438,8 +438,16 @@ public class RingtoneManager {
         }
 
         ArrayList<Cursor> ringtoneCursors = new ArrayList<Cursor>();
-        ringtoneCursors.add(getInternalRingtones());
-        ringtoneCursors.add(getMediaRingtones());
+
+        Cursor internalRingtones = getInternalRingtones();
+        if (internalRingtones != null){
+            ringtoneCursors.add(internalRingtones);
+        }
+
+        Cursor mediaRingtones = getMediaRingtones();
+        if (mediaRingtones != null) {
+            ringtoneCursors.add(mediaRingtones);
+        }
 
         if (mIncludeParentRingtones) {
             Cursor parentRingtonesCursor = getParentProfileRingtones();
