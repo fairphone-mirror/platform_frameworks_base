@@ -58,7 +58,8 @@ import android.os.SystemProperties;
 public class CellularTile extends QSTileImpl<SignalState> {
     private static final String ENABLE_SETTINGS_DATA_PLAN = "enable.settings.data.plan";
 
-    private static final String SIM_DATA_SWITCH = "persist.sys.settingswitch.sim";
+    private static final String SIM_DATA_SWITCH_DEFAULT = "persist.sys.settingswitch.sim";
+    private static final String SIM_DATA_SWITCH_ESIM = "persist.sys.settingswitch.esim";
 
     private final NetworkController mController;
     private final DataUsageController mDataController;
@@ -66,6 +67,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
 
     private final CellSignalCallback mSignalCallback = new CellSignalCallback();
     private final ActivityStarter mActivityStarter;
+    private final SubscriptionManager mSubscriptionManager;
 
     @Inject
     public CellularTile(QSHost host, NetworkController networkController,
@@ -75,6 +77,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
         mActivityStarter = activityStarter;
         mDataController = mController.getMobileDataController();
         mDetailAdapter = new CellularDetailAdapter();
+        mSubscriptionManager = mContext.getSystemService(SubscriptionManager.class);
         mController.observe(getLifecycle(), mSignalCallback);
     }
 
@@ -191,7 +194,13 @@ public class CellularTile extends QSTileImpl<SignalState> {
                     cb.multipleSubs ? cb.dataSubscriptionName : "",
                     getMobileDataContentName(cb));
         } else {
-            boolean settingsSwitchOn = SystemProperties.getBoolean(SIM_DATA_SWITCH, true);
+            int phoneId = mSubscriptionManager.getSlotIndex(cb.subId);
+            boolean settingsSwitchOn = false;
+            if (phoneId == 0) {
+                settingsSwitchOn = SystemProperties.getBoolean(SIM_DATA_SWITCH_DEFAULT, true);
+            }else{
+                settingsSwitchOn = SystemProperties.getBoolean(SIM_DATA_SWITCH_ESIM, true);
+            }
             if (settingsSwitchOn) {
                 state.state = Tile.STATE_INACTIVE;                
             }else{
@@ -251,6 +260,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
         boolean noSim;
         boolean roaming;
         boolean multipleSubs;
+        int subId;
     }
 
     private final class CellSignalCallback implements SignalCallback {
@@ -273,6 +283,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
             mInfo.activityOut = activityOut;
             mInfo.roaming = roaming;
             mInfo.multipleSubs = mController.getNumberSubscriptions() > 1;
+            mInfo.subId = subId;
             refreshState(mInfo);
         }
 
