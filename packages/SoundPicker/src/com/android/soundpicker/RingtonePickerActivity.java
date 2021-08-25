@@ -440,9 +440,9 @@ public final class RingtonePickerActivity extends AlertActivity implements
             if (ringtoneId == cursor.getLong(RingtoneManager.ID_COLUMN_INDEX)) {
                 String uriString = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
                 final Uri uri = Uri.parse(uriString);
-                if (isExternalRingtoneUri(uri)) {
+//                if (isExternalRingtoneUri(uri)) {
                     return cursor.getPosition();
-                }
+//                }
             }
         }
         return -1;
