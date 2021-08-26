@@ -192,8 +192,8 @@ public final class RingtonePickerActivity extends AlertActivity implements
          * Get whether to show the 'Default' item, and the URI to play when the
          * default is clicked
          */
-//        mHasDefaultItem = intent.getBooleanExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
-        mHasDefaultItem = false;
+        mHasDefaultItem = intent.getBooleanExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+//        mHasDefaultItem = false;
         mUriForDefaultItem = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI);
         if (mUriForDefaultItem == null) {
             if (mType == RingtoneManager.TYPE_NOTIFICATION) {
@@ -350,7 +350,9 @@ public final class RingtonePickerActivity extends AlertActivity implements
         mStaticItemCount = 0;
 
         if (mHasDefaultItem) {
-            mDefaultRingtonePos = addDefaultRingtoneItem(listView);
+
+//            mDefaultRingtonePos = addDefaultRingtoneItem(listView);
+            mDefaultRingtonePos = 0;
 
             if (getCheckedItem() == POS_UNKNOWN && RingtoneManager.isDefault(mExistingUri)) {
                 setCheckedItem(mDefaultRingtonePos);
