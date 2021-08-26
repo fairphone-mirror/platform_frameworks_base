@@ -526,7 +526,7 @@ public class KeyguardStatusBarView extends RelativeLayout implements
      */
     private int calculateMargin(int margin, int padding) {
         if (padding >= margin) {
-            return 0;
+            return margin;
         } else {
             return margin - padding;
         }
