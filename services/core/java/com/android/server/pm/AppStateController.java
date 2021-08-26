@@ -3,6 +3,7 @@ package com.android.server.pm;
 import java.util.List;
 import java.util.ArrayList;
 
+import android.os.PersistableBundle;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.Handler;
@@ -38,11 +39,9 @@ public class AppStateController {
 
     private final String TAG = "AppStateController";
 
-    private static final String SETTINGS_CONFIG_SIM_LOCK_GID = "sim_lock_gid";
+    private static final String KEY_CARRIER_PREINSTALL = "carrier_preinstall";
 
-    private static final String SETTINGS_CONFIG_SIM_LOCK_SPN = "sim_lock_spn";
-
-    private static final String SETTINGS_CONFIG_SIM_LOCK_MCCMNC = "sim_lock_mccmnc";
+    private static final String CARRIER_PREINSTALL_ARRAY[] = {"de.telekom.tsc", "com.orange.aura.oobe", "com.orange.update"};
 
     private Context mContext;
     private Handler mHandler;
@@ -52,10 +51,9 @@ public class AppStateController {
     private String spn1, plmn1, iccid1;
     private String gid1_0, gid1_1;
 
-    private MyCarrierInfo mMyCarrierInfo;
-
     private int simCount = 0;
 
+    private int mUserId;
 
     /**
      * @param context
@@ -65,6 +63,7 @@ public class AppStateController {
     public AppStateController(Context context, Handler handler) {
         this.mContext = context;
         this.mHandler = handler;
+        mUserId = Process.myUserHandle().myUserId();
         registerReceiver();
     }
 
@@ -114,7 +113,7 @@ public class AppStateController {
             IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
             for (String pkg : orange.pkgs) {
 
-                updateInstallState(pkg, isSimAppropriate(), mIPm);
+                //              updateInstallState(pkg, isSimAppropriate(), mIPm);
 
 //                if (!isAppInstalled(pkg)) {
 //                    continue;
@@ -251,87 +250,32 @@ public class AppStateController {
     /* =============================================================================================================  */
 
 
-    /**
-     * DT telekom
-     */
-    private final String[] DT_APPS = {"de.telekom.tsc"};
-    private final String[] dtSIMPlmn = {"20416", "21630", "21901", "21920", "23203", "23207", "26201", "26206"};
-    private final String[] dtSIMGidPlmn = {
-            "20416FFFF", "204168FFF", "204164E4C",
-            "2190101FF", "2190102FF", "2190103FF", "2190199FF", "21901FFFF", "2190110FF", "2190111FF", "2190112FF",
-            "2192001FF", "2192002FF", "2192003FF", "2192099FF", "21920FFFF", "2192010FF", "2192011FF", "2192012FF",
-            "2320301FF", "2320331FF", "2320332FF",
-            "2320707FF", "2320730FF", "23207FFFF",
-            "2620101FF", "2620102FF", "2620103FF", "2620104FF", "2620199FF", "262014BFF", "2620144FF",
-            "2620601FF", "2620602FF", "2620603FF", "2620604FF", "2620699FF", "262064BFF", "2620644FF"};
-    AppUnderControll dt = new AppUnderControll(DT_APPS) {
-        @Override
-        public void setNewState() {
-            if (isFirstBoot() && !isSimAppropriate()) {
-                dt.newState = PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
-            }
-            if (isSimAppropriate()) {
-                dt.newState = PackageManager.COMPONENT_ENABLED_STATE_DEFAULT;
-            }
-        }
-
-        @Override
-        public boolean isSimAppropriate() {
-//            CarrierConfigManager configManager = (CarrierConfigManager) mContext.getSystemService(Context.CARRIER_CONFIG_SERVICE);
-//            SubscriptionManager subscriptionManager = (SubscriptionManager) mContext.getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE);
-//            boolean isDtConfigEnable = false;
-//            int[] list = subscriptionManager.getActiveSubscriptionIdList();
-//            if (list != null && list.length > 0) {
-//                try {
-//                    isDtConfigEnable = configManager.getConfigForSubId(list[0]).getBoolean("preinstall_app_enabler");
-//                } catch (Exception e) {
-//                    Log.e(TAG, "dt config load error " + e.getMessage());
-//                }
-//
-//            }
-//            Log.e(TAG, "dt config enable = " + isDtConfigEnable);
-//            return isDtConfigEnable;
-            if (plmn0 != null && plmn0.equals("21630")) {
-                if (spn0.equals("Telekom HU")) {
-                    return true;
-                }
-                if (spn0.equals("T-Mobile H")) {
-                    return true;
-                }
-            }
-            if (isSubInfoAppropriate(dtSIMPlmn, plmn0)) {
-                TelephonyManager telephonyManager = (TelephonyManager) mContext.getSystemService(TelephonyManager.class);
-                String subGid1 = "";
-                String gid1 = telephonyManager.getGroupIdLevel1();
-                if (gid1.length() > 2) {
-                    subGid1 = gid1.substring(0, 4);
-                    String mccMncGid = plmn0 + subGid1;
-                    if (isSubInfoAppropriate(dtSIMGidPlmn, mccMncGid)) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public void updateAppState() {
-            IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
-            for (String pkg : dt.pkgs) {
-                updateInstallState(pkg, isSimAppropriate(), mIPm);
-            }
-        }
-    };
-
-    /* =============================================================================================================  */
-
     private void updateAppState() {
         if (mHandler == null) return;
         getSubscriptionInfo(mContext);
         mHandler.post(() ->
                 //updateAppState(orange,att,unefon,twoDegrees)
-                updateAppState(orange, dt)
+                //updateAppState(orange, dt)
+                updateCarrierAppState()
         );
+    }
+
+    private void updateCarrierAppState() {
+        mHandler.post(() -> {
+            CarrierConfigManager configManager = (CarrierConfigManager) mContext.getSystemService(Context.CARRIER_CONFIG_SERVICE);
+            IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
+            for (String pkg : CARRIER_PREINSTALL_ARRAY) {
+                updateInstallState(pkg, false, mIPm);
+            }
+            PersistableBundle config = configManager.getConfig();
+            String[] preInstallApps = config.getStringArray(KEY_CARRIER_PREINSTALL);
+            if (preInstallApps != null && preInstallApps.length > 0) {
+                for (String app : preInstallApps) {
+                    Log.d(TAG, "load carrier preintall " + app);
+                    updateInstallState(app, true, mIPm);
+                }
+            }
+        });
     }
 
     private void updateAppState(AppUnderControll... appUnderControll) {
@@ -407,21 +351,6 @@ public class AppStateController {
         } else {
             Log.i(TAG, "subInfoList == null!!!");
         }
-
-
-        if (getSimLockState() == 1) {
-            if (simCount > 0) {
-                MyCarrierInfo info = new MyCarrierInfo();
-                info.setMccMnc(plmn0);
-                info.setSpn(spn0);
-                info.setGid(gid1_0);
-                saveLockCarrierInfo(info);
-            } else {
-                spn0 = getLockSpn();
-                plmn0 = getLockMccMnc();
-                gid1_0 = getLockGid();
-            }
-        }
     }
 
     private boolean hasSimStateChanged = false;
@@ -431,6 +360,7 @@ public class AppStateController {
         mIntentFilter.addAction(TelephonyManager.ACTION_SIM_APPLICATION_STATE_CHANGED);
         //mIntentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
         mIntentFilter.addAction(Intent.ACTION_LOCKED_BOOT_COMPLETED);
+        mIntentFilter.addAction(CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED);
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -438,12 +368,16 @@ public class AppStateController {
                     hasSimStateChanged = true;
                     int simStatus = intent.getIntExtra(TelephonyManager.EXTRA_SIM_STATE, -99);
                     Log.d(TAG, "ACTION_SIM_APPLICATION_STATE_CHANGED" + " simStatus= " + simStatus);
-                    updateAppState();
+                    //updateAppState();
                 }
                 //if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) && !hasSimStateChanged){
                 if (Intent.ACTION_LOCKED_BOOT_COMPLETED.equals(intent.getAction()) && !hasSimStateChanged) {
                     Log.d(TAG, "LOCKED_BOOT_COMPLETED");
-                    updateAppState();
+                    //updateAppState();
+                }
+
+                if (CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED.equals(intent.getAction())){
+                    updateCarrierAppState();
                 }
             }
         }, mIntentFilter);
@@ -478,9 +412,9 @@ public class AppStateController {
     }
 
     private void updateInstallState(String pkg, boolean isSimAppropriate, IPackageManager ipm) {
-        Log.d(TAG, pkg + " updateInstallState sim Appropriate  " + isSimAppropriate);
+        Log.d(TAG, pkg + " updateInstallState sim Appropriate  " + isSimAppropriate + " mUserId = " + mUserId);
         try {
-            ipm.setSystemAppInstallState(pkg, isSimAppropriate, mContext.getUserId());
+            ipm.setSystemAppInstallState(pkg, isSimAppropriate, mUserId);
         } catch (Exception e) {
             Log.d(TAG, pkg + " updateInstallState error " + e.getMessage());
         }
@@ -526,64 +460,5 @@ public class AppStateController {
         }
 
     }
-
-
-    private int getSimLockState() {
-        int lockState = SystemProperties.getInt("persist.radio.dsd.locked", 0);
-        Log.d(TAG, " getSimLockState >> " + lockState);
-        return lockState;
-    }
-
-    private String getLockGid() {
-        String lockMccGid = Settings.Global.getString(mContext.getContentResolver(), SETTINGS_CONFIG_SIM_LOCK_GID);
-        return lockMccGid;
-    }
-
-    private String getLockSpn() {
-        String lockMccGid = Settings.Global.getString(mContext.getContentResolver(), SETTINGS_CONFIG_SIM_LOCK_SPN);
-        return lockMccGid;
-    }
-
-    private String getLockMccMnc() {
-        String mccMnc = Settings.Global.getString(mContext.getContentResolver(), SETTINGS_CONFIG_SIM_LOCK_MCCMNC);
-        return mccMnc;
-    }
-
-    private void saveLockCarrierInfo(MyCarrierInfo info) {
-        Settings.Global.putString(mContext.getContentResolver(), SETTINGS_CONFIG_SIM_LOCK_GID, info.getGid());
-        Settings.Global.putString(mContext.getContentResolver(), SETTINGS_CONFIG_SIM_LOCK_MCCMNC, info.getMccMnc());
-        Settings.Global.putString(mContext.getContentResolver(), SETTINGS_CONFIG_SIM_LOCK_SPN, info.getSpn());
-    }
-
-    private class MyCarrierInfo {
-        private String mccMnc;
-        private String gid;
-        private String spn;
-
-        public void setMccMnc(String mccMnc) {
-            this.mccMnc = mccMnc;
-        }
-
-        public void setGid(String gid) {
-            this.gid = gid;
-        }
-
-        public void setSpn(String spn) {
-            this.spn = spn;
-        }
-
-        public String getMccMnc() {
-            return mccMnc;
-        }
-
-        public String getGid() {
-            return gid;
-        }
-
-        public String getSpn() {
-            return spn;
-        }
-    }
-
 
 }
