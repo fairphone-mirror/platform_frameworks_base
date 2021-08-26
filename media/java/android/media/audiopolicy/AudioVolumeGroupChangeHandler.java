@@ -90,9 +90,11 @@ public class AudioVolumeGroupChangeHandler {
 
                     switch (msg.what) {
                         case AUDIOVOLUMEGROUP_EVENT_VOLUME_CHANGED:
-                            for (int i = 0; i < listeners.size(); i++) {
-                                listeners.get(i).onAudioVolumeGroupChanged((int) msg.arg1,
-                                                                           (int) msg.arg2);
+                            synchronized (this) {
+                                for (int i = 0; i < listeners.size(); i++) {
+                                    listeners.get(i).onAudioVolumeGroupChanged((int) msg.arg1,
+                                                                               (int) msg.arg2);
+                                }
                             }
                             break;
 
