@@ -268,11 +268,13 @@ public class AppStateController {
                 updateInstallState(pkg, false, mIPm);
             }
             PersistableBundle config = configManager.getConfig();
-            String[] preInstallApps = config.getStringArray(KEY_CARRIER_PREINSTALL);
-            if (preInstallApps != null && preInstallApps.length > 0) {
-                for (String app : preInstallApps) {
-                    Log.d(TAG, "load carrier preintall " + app);
-                    updateInstallState(app, true, mIPm);
+            if (config!=null) {
+                String[] preInstallApps = config.getStringArray(KEY_CARRIER_PREINSTALL);
+                if (preInstallApps != null && preInstallApps.length > 0) {
+                    for (String app : preInstallApps) {
+                        Log.d(TAG, "load carrier preintall " + app);
+                        updateInstallState(app, true, mIPm);
+                    }
                 }
             }
         });
@@ -361,9 +363,16 @@ public class AppStateController {
         //mIntentFilter.addAction(Intent.ACTION_BOOT_COMPLETED);
         mIntentFilter.addAction(Intent.ACTION_LOCKED_BOOT_COMPLETED);
         mIntentFilter.addAction(CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED);
+        mIntentFilter.addAction(Intent.ACTION_USER_SWITCHED);
+        mIntentFilter.addAction(Intent.ACTION_USER_REMOVED);
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                if (Intent.ACTION_USER_SWITCHED.equals(intent.getAction())) {
+                    mUserId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, 0);
+                    Log.d(TAG, "ACTION_USER_SWITCHED" + " mUserId= " + mUserId);
+                    updateCarrierAppState();
+                }
                 if (TelephonyManager.ACTION_SIM_APPLICATION_STATE_CHANGED.equals(intent.getAction())) {
                     hasSimStateChanged = true;
                     int simStatus = intent.getIntExtra(TelephonyManager.EXTRA_SIM_STATE, -99);
@@ -376,7 +385,7 @@ public class AppStateController {
                     //updateAppState();
                 }
 
-                if (CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED.equals(intent.getAction())){
+                if (CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED.equals(intent.getAction())) {
                     updateCarrierAppState();
                 }
             }
