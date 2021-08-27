@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
+import java.util.concurrent.TimeUnit;
 
 /**
  * NotificationViewHierarchyManager manages updating the view hierarchy of notification views based
@@ -586,7 +587,13 @@ public class NotificationViewHierarchyManager implements DynamicPrivacyControlle
                 }
             }
             row.setFeedbackIcon(mAssistantFeedbackController.getFeedbackIcon(entry));
-            row.setLastAudiblyAlertedMs(entry.getLastAudiblyAlertedMs());
+            // modify by T2M.zhang renjie for FP4-2257 21-8-27 begin
+            if ("com.android.stk".equals(entry.getSbn().getPackageName())){
+                row.setLastAudiblyAlertedMs(System.currentTimeMillis()-TimeUnit.SECONDS.toMillis(31));
+            }else {
+                row.setLastAudiblyAlertedMs(entry.getLastAudiblyAlertedMs());
+            }
+            // modify by T2M.zhang renjie for FP4-2257 21-8-27 end
         }
 
         Trace.beginSection("NotificationPresenter#onUpdateRowStates");
