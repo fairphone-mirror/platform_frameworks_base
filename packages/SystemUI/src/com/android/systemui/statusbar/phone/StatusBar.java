@@ -290,7 +290,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     // 1020-1040 reserved for BaseStatusBar
 
     // Time after we abort the launch transition.
-    private static final long LAUNCH_TRANSITION_TIMEOUT_MS = 5000;
+    private static final long LAUNCH_TRANSITION_TIMEOUT_MS = 3600000;
 
     protected static final boolean CLOSE_PANEL_WHEN_EMPTIED = true;
 
@@ -2810,6 +2810,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mQSPanel.showDeviceMonitoringDialog();
             }
             else if (ACTION_RESET_VIEW.equals(action)) {
+                mHandler.removeMessages(MSG_LAUNCH_TRANSITION_TIMEOUT);
                 mHandler.sendEmptyMessage(MSG_LAUNCH_TRANSITION_TIMEOUT);
             }
         }
@@ -3321,6 +3322,7 @@ public class StatusBar extends SystemUI implements DemoMode,
      * because the launched app crashed or something else went wrong.
      */
     public void startLaunchTransitionTimeout() {
+        mHandler.removeMessages(MSG_LAUNCH_TRANSITION_TIMEOUT);
         mHandler.sendEmptyMessageDelayed(MSG_LAUNCH_TRANSITION_TIMEOUT,
                 LAUNCH_TRANSITION_TIMEOUT_MS);
     }
