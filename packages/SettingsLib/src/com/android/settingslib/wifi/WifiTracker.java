@@ -74,6 +74,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import android.database.ContentObserver;
 
 /**
  * Tracks saved or available wifi networks and their state.
@@ -173,6 +174,7 @@ public class WifiTracker implements LifecycleObserver, OnStart, OnStop, OnDestro
     private WifiNetworkScoreCache mScoreCache;
     private boolean mNetworkScoringUiEnabled;
     private long mMaxSpeedLabelScoreCacheAge;
+    private String mLastNetworkInfoState = "";
 
     private static final String WIFI_SECURITY_PSK = "PSK";
     private static final String WIFI_SECURITY_EAP = "EAP";
@@ -342,6 +344,8 @@ public class WifiTracker implements LifecycleObserver, OnStart, OnStop, OnDestro
 
         resumeScanning();
         if (!mRegistered) {
+            mContext.getContentResolver().registerContentObserver(
+                Settings.Global.getUriFor(Settings.Global.WTFITRACKER_NETWORKINFO), true, mNetworkInfoObserver);
             mContext.registerReceiver(mReceiver, mFilter, null /* permission */, mWorkHandler);
             // NetworkCallback objects cannot be reused. http://b/20701525 .
             mNetworkCallback = new WifiTrackerNetworkCallback();
@@ -399,6 +403,7 @@ public class WifiTracker implements LifecycleObserver, OnStart, OnStop, OnDestro
     @MainThread
     public void onStop() {
         if (mRegistered) {
+            mContext.getContentResolver().unregisterContentObserver(mNetworkInfoObserver);
             mContext.unregisterReceiver(mReceiver);
             mConnectivityManager.unregisterNetworkCallback(mNetworkCallback);
             mRegistered = false;
@@ -898,11 +903,27 @@ public class WifiTracker implements LifecycleObserver, OnStart, OnStop, OnDestro
                 // TODO(sghuman): Refactor these methods so they cannot result in duplicate
                 // onAccessPointsChanged updates being called from this intent.
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                 Log.d(TAG, "NETWORK_STATE_CHANGED_ACTION receive info: " + info.toString());
                 updateNetworkInfo(info);
                 fetchScansAndConfigsAndUpdateAccessPoints();
             } else if (WifiManager.RSSI_CHANGED_ACTION.equals(action)) {
                 updateNetworkInfo(/* networkInfo= */ null);
             }
+        }
+    };
+
+    private ContentObserver mNetworkInfoObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange) {
+            String value = Settings.Global.getString(mContext.getContentResolver(), Settings.Global.WTFITRACKER_NETWORKINFO);
+            Log.d(TAG, "mNetworkInfoObserver value as: " + value);
+            if (mLastNetworkInfoState.equals(value)) {
+                return;
+            }
+            NetworkInfo info = new NetworkInfo(value);
+            updateNetworkInfo(info);
+            fetchScansAndConfigsAndUpdateAccessPoints();
+            mLastNetworkInfoState = value;
         }
     };
 

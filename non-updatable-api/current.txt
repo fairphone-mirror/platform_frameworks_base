@@ -30091,6 +30091,7 @@ package android.net {
     method @Deprecated public boolean isFailover();
     method @Deprecated public boolean isRoaming();
     method @Deprecated public void setDetailedState(@NonNull android.net.NetworkInfo.DetailedState, @Nullable String, @Nullable String);
+    method @Deprecated @Nullable public String toTransferString();
     method @Deprecated public void writeToParcel(android.os.Parcel, int);
     field @Deprecated @NonNull public static final android.os.Parcelable.Creator<android.net.NetworkInfo> CREATOR;
   }
@@ -38805,6 +38806,7 @@ package android.provider {
     field @Deprecated public static final int WIFI_SLEEP_POLICY_NEVER_WHILE_PLUGGED = 1; // 0x1
     field public static final String WIFI_WATCHDOG_ON = "wifi_watchdog_on";
     field public static final String WINDOW_ANIMATION_SCALE = "window_animation_scale";
+    field public static final String WTFITRACKER_NETWORKINFO = "wifitracker_networkinfo";
   }
 
   public static class Settings.NameValueTable implements android.provider.BaseColumns {
