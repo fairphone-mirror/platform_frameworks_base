@@ -430,6 +430,8 @@ public final class RingtonePickerActivity extends AlertActivity implements
     private int getRingtonePosition(Uri ringtoneUri, Cursor cursor) {
         if (ringtoneUri == null) return -1;
 
+        if (RingtoneManager.isDefault(ringtoneUri)) return -1;
+
         final long ringtoneId = ContentUris.parseId(ringtoneUri);
 
         if (cursor != null) {
@@ -820,16 +822,16 @@ public final class RingtonePickerActivity extends AlertActivity implements
         }
     }
 
-
-    private static boolean isRingtoneUriInStorage(Uri ringtone, Uri storage) {
-        Uri uriWithoutUserId = ContentProvider.getUriWithoutUserId(ringtone);
-        return uriWithoutUserId == null ? false
-                : uriWithoutUserId.toString().startsWith(storage.toString());
-    }
-
-    private static boolean isExternalRingtoneUri(Uri uri) {
-        return !isRingtoneUriInStorage(uri, MediaStore.Audio.Media.INTERNAL_CONTENT_URI);
-    }
+//
+//    private static boolean isRingtoneUriInStorage(Uri ringtone, Uri storage) {
+//        Uri uriWithoutUserId = ContentProvider.getUriWithoutUserId(ringtone);
+//        return uriWithoutUserId == null ? false
+//                : uriWithoutUserId.toString().startsWith(storage.toString());
+//    }
+//
+//    private static boolean isExternalRingtoneUri(Uri uri) {
+//        return !isRingtoneUriInStorage(uri, MediaStore.Audio.Media.INTERNAL_CONTENT_URI);
+//    }
 
 
 }
