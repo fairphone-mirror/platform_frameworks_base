@@ -2878,6 +2878,10 @@
     <string name="hight_temp_message_notchanging">temperature is too high!</string>
     <string name="low_temp_alert_dismiss">Dismiss</string>
     <string name="low_temp_alert_snooze">Snooze</string>
+    <string name="low_temp_message_20">Warning!Battery temperature is too low,your device will be shut down</string>
+    <string name="low_temp_message_5">Battery temperature is too low</string>
+    <string name="height_temp_message_55">Warning!Battery temperature is too high,please close unnecessary applications</string>
+    <string name="height_temp_message_60">Warning!Battery temperature is too high,your device will be shut down</string>
 
     <string name="battery_error">Battery Error</string>
     <string name="battery_error_message">Shutdown in 4 second!</string>

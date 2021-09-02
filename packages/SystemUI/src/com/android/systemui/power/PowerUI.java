@@ -340,16 +340,17 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
             } else if (Intent.ACTION_USER_SWITCHED.equals(action)) {
                 mWarnings.userSwitched();
             } else if (Intent.ACTION_BATTERY_WARM_TEMP_CHANGED.equals(action)) {
-                Log.i(TAG, "receive ACTION_BATTERY_WARM_TEMP_CHANGED");
                 int batteryHealth = intent.getIntExtra(Intent.EXTRA_BATTERY_HEALTH, 0);
+                int batteryTemperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
+                int batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
+                Log.i(TAG, "receive ACTION_BATTERY_WARM_TEMP_CHANGED:batteryTemperature:"+batteryTemperature+"  batteryStatus:"+batteryStatus);
                 if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
-                    mWarnings.showHighTemp(true);
+                    mWarnings.showHighTemp(true,batteryStatus,batteryTemperature);
                 } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
-                    mWarnings.showLowTemp(true);
+                    mWarnings.showLowTemp(true,batteryStatus,batteryTemperature);
                 } else {
                     mWarnings.updateOTP();
                 }
-
             } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
                 long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
                 long currentime = 0;
@@ -745,9 +746,9 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
         void updateSnapshot(BatteryStateSnapshot snapshot);
 
 
-        void showHighTemp(boolean charging);
+        void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature);
 
-        void showLowTemp(boolean charging);
+        void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature);
 
         void updateOTP();
 

@@ -75,7 +75,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import com.android.systemui.power.UsbNTCTempDialog;
 import android.app.NotificationChannel;
-
+import android.os.BatteryManager;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
 /**
  */
 @Singleton
@@ -382,11 +386,22 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     }
 
 
-    public void showHighTemp(boolean charging) {
-        String message;
+    public void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature) {
+        String message = "";
         if (mHighTemp != null) return;
         if (charging) {
-            message = mContext.getResources().getString(R.string.height_temp_message);
+            if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING) {
+                if (batteryTemperature >= 550) {
+                    message = mContext.getResources().getString(R.string.height_temp_message_55);
+                    setUsbChargingPresent(0);
+                  } 
+            } else {
+                if (batteryTemperature >= 600) {
+                    message = mContext.getResources().getString(R.string.height_temp_message_60);
+                  } else {
+                    message = mContext.getResources().getString(R.string.height_temp_message);
+                  }
+            }
         } else {
             message = mContext.getResources().getString(R.string.hight_temp_message_notchanging);
         }
@@ -405,18 +420,33 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         dialog.dismiss();
+                        mHighTemp = null;
                     }
                 }).create();
         mHighTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         mHighTemp.setCanceledOnTouchOutside(false);
         mHighTemp.show();
+        if (batteryTemperature >= 600) {
+            mHandler.postDelayed(()-> updateOTP(),3*1000);
+        }
     }
 
-    public void showLowTemp(boolean charging) {
-        String message;
+    public void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature) {
+        String message = "";
         if (mLowTemp != null || !charging) return;
         if (charging) {
-            message = mContext.getResources().getString(R.string.low_temp_message);
+           if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING) {
+                if(batteryTemperature <= 50) {
+                    message = mContext.getResources().getString(R.string.low_temp_message_5);
+                    setUsbChargingPresent(0);
+                } 
+            } else {
+                if (batteryTemperature <= -200) {
+                    message = mContext.getResources().getString(R.string.low_temp_message_20);
+                } else {
+                    message = mContext.getResources().getString(R.string.low_temp_message);
+                }
+            }
         } else {
             message = mContext.getResources().getString(R.string.low_temp_message_notchanging);
         }
@@ -435,20 +465,49 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         dialog.dismiss();
+                        mLowTemp = null;
                     }
                 }).create();
         mLowTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         mLowTemp.setCanceledOnTouchOutside(false);
         mLowTemp.show();
+        if (batteryTemperature <= -200) {
+            mHandler.postDelayed(()-> updateOTP(),3*1000);
+        } 
     }
+
+    private void setUsbChargingPresent(int value){
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(new File("/sys/class/power_supply/battery/charging_enabled"));
+            fileOutputStream.write(Integer.toString(value).getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Slog.e(TAG, "setUsbChargingPresent fail1" + e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Slog.e(TAG, "setUsbChargingPresent fail2" + e);
+        } finally {
+            if (fileOutputStream != null) {                
+                try {
+                        fileOutputStream.close();
+                    } catch (IOException e) {
+                        Slog.e(TAG, "failed to close setUsbChargingPresent stream");
+                    }
+            }
+        }
+    }
+
 
     public void updateOTP() {
         if (mHighTemp != null) {
             mHighTemp.dismiss();
+            mHighTemp = null;
         }
 
         if (mLowTemp != null) {
             mLowTemp.dismiss();
+            mLowTemp = null;
         }
     }
 
