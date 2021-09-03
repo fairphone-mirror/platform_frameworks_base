@@ -18,6 +18,7 @@ package android.media;
 
 import android.annotation.IntRange;
 import android.annotation.NonNull;
+import android.app.ActivityThread;
 import android.graphics.ImageFormat;
 import android.graphics.ImageFormat.Format;
 import android.hardware.HardwareBuffer;
@@ -809,6 +810,8 @@ public class ImageReader implements AutoCloseable {
                 isReaderValid = mIsReaderValid;
             }
             if (listener != null && isReaderValid) {
+                String packageName = ActivityThread.currentOpPackageName();
+                ALOE("PackageName: %s", packageName);
                 listener.onImageAvailable(ImageReader.this);
             }
         }
