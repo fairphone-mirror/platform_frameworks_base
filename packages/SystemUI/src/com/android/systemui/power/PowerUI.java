@@ -227,6 +227,7 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
 
         private boolean mHasReceivedBattery = false;
         private String TFT_PROPERTY = "persist.sys.tct.tft.date";
+        private String TFT_PROPERTY_PERSIST = "sys.t2m.tft";
         private  long lastsystemtime = 0;
         public void init() {
             // Register for Intent broadcasts for...
@@ -263,9 +264,14 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                         mWarnings.dismissLowBatteryWarning();
                     }
                 });
-            } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
+            } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) { 
+                long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                long lastPeristTime = SystemProperties.getLong(TFT_PROPERTY_PERSIST,0);
+                if(lasttime == 0 && lastPeristTime != 0){
+                    SystemProperties.set(TFT_PROPERTY,lastPeristTime + "");
+                }
                 if(SystemClock.elapsedRealtime() - lastsystemtime > 5*60*1000){
-                    long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                    lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
                     long currentime = 0;
                     if(lasttime == 0){
                         currentime = SystemClock.elapsedRealtime();
@@ -353,6 +359,11 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 }
             } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
                 long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                long lastPeristTime = SystemProperties.getLong(TFT_PROPERTY_PERSIST,0);
+                if(lasttime == 0 && lastPeristTime != 0){
+                    SystemProperties.set(TFT_PROPERTY,lastPeristTime + "");
+                    lasttime = lastPeristTime;
+                }
                 long currentime = 0;
                 if(lasttime == 0){
                     currentime = SystemClock.elapsedRealtime();
