@@ -519,6 +519,7 @@ static jint ImageReader_imageSetup(JNIEnv* env, jobject thiz, jobject image) {
         return ACQUIRE_MAX_IMAGES;
     }
 
+    ALOGE("bufferConsumer acquireBuffer: frame_number %" PRIu64 ", timestamp %" PRIu64 "", buffer->mFrameNumber, buffer->mTimestamp);
     status_t res = bufferConsumer->acquireBuffer(buffer, 0);
     if (res != OK) {
         ctx->returnBufferItem(buffer);
