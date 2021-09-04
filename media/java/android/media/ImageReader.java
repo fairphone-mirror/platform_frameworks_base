@@ -19,6 +19,7 @@ package android.media;
 import android.annotation.IntRange;
 import android.annotation.NonNull;
 import android.graphics.ImageFormat;
+import android.app.ActivityThread;
 import android.graphics.ImageFormat.Format;
 import android.hardware.HardwareBuffer;
 import android.hardware.HardwareBuffer.Usage;
@@ -26,6 +27,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.Surface;
+import android.util.Log;
 
 import dalvik.system.VMRuntime;
 
@@ -75,6 +77,7 @@ public class ImageReader implements AutoCloseable {
      */
     private static final int ACQUIRE_MAX_IMAGES = 2;
 
+    private final static String TAG = "ImageReader";
     /**
      * <p>
      * Create a new reader for images of the desired size and format.
@@ -809,6 +812,8 @@ public class ImageReader implements AutoCloseable {
                 isReaderValid = mIsReaderValid;
             }
             if (listener != null && isReaderValid) {
+                String packageName = ActivityThread.currentOpPackageName();
+                Log.e(TAG,"PackageName:" + packageName);
                 listener.onImageAvailable(ImageReader.this);
             }
         }
