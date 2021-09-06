@@ -64,6 +64,9 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
     private val boltPath = Path()
     private val scaledBolt = Path()
 
+    private val heatPath = Path()
+    private val scaledHeat = Path()
+
     // Plus sign (used for power save mode)
     private val plusPath = Path()
     private val scaledPlus = Path()
@@ -101,6 +104,12 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
         }
 
     var powerSaveEnabled = false
+        set(value) {
+            field = value
+            postInvalidate()
+        }
+
+    var heated = false
         set(value) {
             field = value
             postInvalidate()
@@ -210,6 +219,13 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             }
         }
 
+        if (heated){
+            unifiedPath.op(scaledHeat,Path.Op.DIFFERENCE)
+            if (!invertFillIcon) {
+                c.drawPath(scaledHeat, fillPaint)
+            }
+        }
+
         if (dualTone) {
             // Dual tone means we draw the shape again, clipped to the charge level
             c.drawPath(unifiedPath, dualToneBackgroundFill)
@@ -249,6 +265,15 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             // And draw the plus sign on top of the fill
             c.drawPath(scaledPlus, errorPaint)
         }
+        if (heated){
+            c.clipOutPath(scaledHeat)
+            if (invertFillIcon) {
+                c.drawPath(scaledHeat, fillColorStrokePaint)
+            } else {
+                c.drawPath(scaledHeat, fillColorStrokeProtection)
+            }
+        }
+
         c.restore()
     }
 
@@ -371,6 +396,7 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
         fillMask.transform(scaleMatrix, scaledFill)
         scaledFill.computeBounds(fillRect, true)
         boltPath.transform(scaleMatrix, scaledBolt)
+        heatPath.transform(scaleMatrix, scaledHeat)
         plusPath.transform(scaleMatrix, scaledPlus)
 
         // It is expected that this view only ever scale by the same factor in each dimension, so
@@ -402,6 +428,13 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
         val boltPathString = context.resources.getString(
                 com.android.internal.R.string.config_batterymeterBoltPath)
         boltPath.set(PathParser.createPathFromPathData(boltPathString))
+
+        val heatPathString = context.resources.getString(
+                com.android.internal.R.string.config_batterymeterHeatPath)
+
+
+        heatPath.set(PathParser.createPathFromPathData(heatPathString))
+
 
         val plusPathString = context.resources.getString(
                 com.android.internal.R.string.config_batterymeterPowersavePath)
