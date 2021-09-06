@@ -4102,6 +4102,9 @@
     <string name="config_batterymeterPowersavePath" translatable="false">
         M9,10l-2,0l0,-2l-2,0l0,2l-2,0l0,2l2,0l0,2l2,0l0,-2l2,0z
     </string>
+    <string name="config_batterymeterHeatPath" translatable="false">
+        M4.5,4 H7.5 V12 H4.5 M4.5,14 H7.5 V17.5 H4.5
+    </string>
 
     <!-- X path for SignalDrawable as defined on a 24x24 canvas. -->
     <string name="config_signalXPath" translatable="false">

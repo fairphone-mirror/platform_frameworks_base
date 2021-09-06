@@ -3236,6 +3236,7 @@
   <java-symbol type="string" name="config_batterymeterErrorPerimeterPath" />
   <java-symbol type="string" name="config_batterymeterFillMask" />
   <java-symbol type="string" name="config_batterymeterBoltPath" />
+  <java-symbol type="string" name="config_batterymeterHeatPath" />
   <java-symbol type="string" name="config_batterymeterPowersavePath" />
   <java-symbol type="bool" name="config_batterymeterDualTone" />
   <java-symbol type="string" name="config_signalXPath" />
