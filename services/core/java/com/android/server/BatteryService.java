@@ -720,7 +720,7 @@ public final class BatteryService extends SystemService {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivityAsUser(intent, UserHandle.CURRENT);
             }
-        }, 4 * 1000);
+        }, 6 * 1000);
     }
 
 
