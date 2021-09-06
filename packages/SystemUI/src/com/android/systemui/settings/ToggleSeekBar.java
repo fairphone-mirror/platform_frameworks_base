@@ -22,7 +22,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.SeekBar;
-
+import android.util.Log;
 import com.android.settingslib.RestrictedLockUtils;
 import com.android.systemui.Dependency;
 import com.android.systemui.plugins.ActivityStarter;
@@ -31,6 +31,8 @@ public class ToggleSeekBar extends SeekBar {
     private String mAccessibilityLabel;
 
     private RestrictedLockUtils.EnforcedAdmin mEnforcedAdmin = null;
+
+    long mLastTime = 0;
 
     public ToggleSeekBar(Context context) {
         super(context);
@@ -46,6 +48,19 @@ public class ToggleSeekBar extends SeekBar {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        int action = event.getAction();
+
+        if (action == MotionEvent.ACTION_DOWN) {
+            long currentTime = System.currentTimeMillis();
+            Log.d("ToggleSeekBar", "currentTime - mLastTime = " + (currentTime - mLastTime));
+            if (currentTime - mLastTime < 300) {
+                return false;
+            } else {
+                mLastTime = currentTime;
+            }
+        }
+
         if (mEnforcedAdmin != null) {
             Intent intent = RestrictedLockUtils.getShowAdminSupportDetailsIntent(
                     mContext, mEnforcedAdmin);
