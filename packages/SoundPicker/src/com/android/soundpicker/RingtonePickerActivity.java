@@ -195,8 +195,12 @@ public final class RingtonePickerActivity extends AlertActivity implements
          * default is clicked
          */
         mHasDefaultItem = intent.getBooleanExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        Log.e("sdp_", " mHasDefaultItem " + mHasDefaultItem);
 //        mHasDefaultItem = false;
         mUriForDefaultItem = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI);
+
+        Log.e("sdp_", " mUriForDefaultItem " + mUriForDefaultItem);
+
         if (mUriForDefaultItem == null) {
             if (mType == RingtoneManager.TYPE_NOTIFICATION) {
                 mUriForDefaultItem = Settings.System.DEFAULT_NOTIFICATION_URI;
@@ -227,7 +231,7 @@ public final class RingtonePickerActivity extends AlertActivity implements
         // Get the URI whose list item should have a checkmark
         mExistingUri = intent
                 .getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI);
-
+        Log.e("sdp_", " mExistingUri " + mExistingUri);
 
         // Create the list of ringtones and hold on to it so we can update later.
         mAdapter = new BadgedRingtoneAdapter(this, mCursor,
@@ -364,6 +368,20 @@ public final class RingtonePickerActivity extends AlertActivity implements
             if (getCheckedItem() == POS_UNKNOWN && RingtoneManager.isDefault(mExistingUri)) {
                 setCheckedItem(mDefaultRingtonePos);
             }
+
+
+            boolean isDefault = false;
+            try {
+                final long ringtoneId = ContentUris.parseId(mExistingUri);
+                isDefault = false;
+            } catch (Exception exception){
+                isDefault = true;
+            }
+
+            if (getCheckedItem() == POS_UNKNOWN && isDefault) {
+                setCheckedItem(mDefaultRingtonePos);
+            }
+
         }
 
 
@@ -432,22 +450,32 @@ public final class RingtonePickerActivity extends AlertActivity implements
 
         if (RingtoneManager.isDefault(ringtoneUri)) return -1;
 
-        final long ringtoneId = ContentUris.parseId(ringtoneUri);
+        try {
+            final long ringtoneId = ContentUris.parseId(ringtoneUri);
 
-        if (cursor != null) {
-            cursor.moveToPosition(-1);
-        }
+            if (cursor != null) {
+                cursor.moveToPosition(-1);
+            }
 
-        while (cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
 //            Log.d(TAG, "title: " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
-            if (ringtoneId == cursor.getLong(RingtoneManager.ID_COLUMN_INDEX)) {
-                String uriString = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
-                final Uri uri = Uri.parse(uriString);
+                if (ringtoneId == cursor.getLong(RingtoneManager.ID_COLUMN_INDEX)) {
+                    String uriString = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
+                    final Uri uri = Uri.parse(uriString);
 //                if (isExternalRingtoneUri(uri)) {
                     return cursor.getPosition();
 //                }
+                }
             }
+        } catch (Exception exception) {
+            Log.e("sdp_","parseIdFail");
+
+            return -1;
+
+
         }
+
+
         return -1;
     }
 
