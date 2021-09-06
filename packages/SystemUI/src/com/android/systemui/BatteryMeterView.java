@@ -333,6 +333,12 @@ public class BatteryMeterView extends LinearLayout implements
         mDrawable.setPowerSaveEnabled(isPowerSave);
     }
 
+    @Override
+    public void onBatteryTempretureChanged(int tempreture) {
+        //TODO
+        mDrawable.setHeated(tempreture >= 500);
+    }
+
     private TextView loadPercentView() {
         return (TextView) LayoutInflater.from(getContext())
                 .inflate(R.layout.battery_percentage_view, null);

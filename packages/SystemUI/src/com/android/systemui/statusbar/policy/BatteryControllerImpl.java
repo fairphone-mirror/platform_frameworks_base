@@ -80,6 +80,8 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
     private Estimate mEstimate;
     private boolean mFetchingEstimate = false;
 
+    private int mTempreture;
+
     @VisibleForTesting
     @Inject
     public BatteryControllerImpl(Context context, EnhancedEstimates enhancedEstimates,
@@ -98,6 +100,7 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
         filter.addAction(Intent.ACTION_BATTERY_CHANGED);
         filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
         filter.addAction(ACTION_LEVEL_TEST);
+        filter.addAction(Intent.ACTION_BATTERY_WARM_TEMP_CHANGED);
         mBroadcastDispatcher.registerReceiver(this, filter);
     }
 
@@ -203,6 +206,9 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
                     mMainHandler.postDelayed(this, 200);
                 }
             });
+        } else if (Intent.ACTION_BATTERY_WARM_TEMP_CHANGED.equals(action)) {
+            mTempreture = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
+            fileBatteryTempretureChanged();
         }
     }
 
@@ -321,6 +327,15 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
             final int N = mChangeCallbacks.size();
             for (int i = 0; i < N; i++) {
                 mChangeCallbacks.get(i).onPowerSaveChanged(mPowerSave);
+            }
+        }
+    }
+
+    private void fileBatteryTempretureChanged(){
+        synchronized (mChangeCallbacks) {
+            final int N = mChangeCallbacks.size();
+            for (int i = 0; i < N; i++) {
+                mChangeCallbacks.get(i).onBatteryTempretureChanged(mTempreture);
             }
         }
     }
