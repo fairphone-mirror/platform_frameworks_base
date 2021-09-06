@@ -388,44 +388,43 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
 
     public void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature) {
         String message = "";
+        updateOTP();
+        android.util.Log.e("batteryTemperature","showHighTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature);
         if (mHighTemp != null) return;
-        if (charging) {
-            if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING) {
-                if (batteryTemperature >= 550) {
-                    message = mContext.getResources().getString(R.string.height_temp_message_55);
-                    setUsbChargingPresent(0);
-                  } 
-            } else {
-                if (batteryTemperature >= 600) {
-                    message = mContext.getResources().getString(R.string.height_temp_message_60);
-                  } else {
-                    message = mContext.getResources().getString(R.string.height_temp_message);
-                  }
-            }
-        } else {
-            message = mContext.getResources().getString(R.string.hight_temp_message_notchanging);
+
+        if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING && batteryTemperature >= 550) {
+            message = mContext.getResources().getString(R.string.height_temp_message_55);
+            setUsbChargingPresent(0);
         }
-        mHighTemp = new AlertDialog.Builder(mContext)
-                .setTitle(mContext.getResources().getString(R.string.height_temp_title))
-                .setMessage(message)
-                .setView(R.layout.alert_battery_warn)
-                .setNegativeButton(mContext.getResources().getString(R.string.low_temp_alert_dismiss), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        dialog.dismiss();
-                        mHighTemp = null;
-                    }
-                })
-                .setPositiveButton(mContext.getResources().getString(R.string.low_temp_alert_snooze), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        dialog.dismiss();
-                        mHighTemp = null;
-                    }
-                }).create();
-        mHighTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        mHighTemp.setCanceledOnTouchOutside(false);
-        mHighTemp.show();
+
+        if (batteryTemperature >= 600) {
+            message = mContext.getResources().getString(R.string.height_temp_message_60);
+        } 
+            
+        if (mHighTemp == null) {
+            mHighTemp = new AlertDialog.Builder(mContext)
+                    .setTitle(mContext.getResources().getString(R.string.height_temp_title))
+                    .setMessage(message)
+                    .setView(R.layout.alert_battery_warn)
+                    .setNegativeButton(mContext.getResources().getString(R.string.low_temp_alert_dismiss), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                            mHighTemp = null;
+                        }
+                    })
+                    .setPositiveButton(mContext.getResources().getString(R.string.low_temp_alert_snooze), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                            mHighTemp = null;
+                        }
+                    }).create();
+            mHighTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            mHighTemp.setCanceledOnTouchOutside(false);
+            mHighTemp.show();
+        }
+
         if (batteryTemperature >= 600) {
             mHandler.postDelayed(()-> updateOTP(),3*1000);
         }
@@ -433,44 +432,42 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
 
     public void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature) {
         String message = "";
+        updateOTP();
+        android.util.Log.e("batteryTemperature","showLowTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature);
         if (mLowTemp != null || !charging) return;
-        if (charging) {
-           if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING) {
-                if(batteryTemperature <= 50) {
-                    message = mContext.getResources().getString(R.string.low_temp_message_5);
-                    setUsbChargingPresent(0);
-                } 
-            } else {
-                if (batteryTemperature <= -200) {
-                    message = mContext.getResources().getString(R.string.low_temp_message_20);
-                } else {
-                    message = mContext.getResources().getString(R.string.low_temp_message);
-                }
-            }
-        } else {
-            message = mContext.getResources().getString(R.string.low_temp_message_notchanging);
+
+        if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING && batteryTemperature <= 50) {
+            message = mContext.getResources().getString(R.string.low_temp_message_5);
+            setUsbChargingPresent(0);
         }
-        mLowTemp = new AlertDialog.Builder(mContext)
-                .setTitle(mContext.getResources().getString(R.string.low_temp_title))
-                .setMessage(message)
-                .setView(R.layout.alert_battery_warn)
-                .setNegativeButton(mContext.getResources().getString(R.string.low_temp_alert_dismiss), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        dialog.dismiss();
-                        mLowTemp = null;
-                    }
-                })
-                .setPositiveButton(mContext.getResources().getString(R.string.low_temp_alert_snooze), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        dialog.dismiss();
-                        mLowTemp = null;
-                    }
-                }).create();
-        mLowTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
-        mLowTemp.setCanceledOnTouchOutside(false);
-        mLowTemp.show();
+
+        if (batteryTemperature <= -200) {
+            message = mContext.getResources().getString(R.string.low_temp_message_20);
+        }
+        if (mLowTemp == null) {
+            mLowTemp = new AlertDialog.Builder(mContext)
+                    .setTitle(mContext.getResources().getString(R.string.low_temp_title))
+                    .setMessage(message)
+                    .setView(R.layout.alert_battery_warn)
+                    .setNegativeButton(mContext.getResources().getString(R.string.low_temp_alert_dismiss), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                            mLowTemp = null;
+                        }
+                    })
+                    .setPositiveButton(mContext.getResources().getString(R.string.low_temp_alert_snooze), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                            mLowTemp = null;
+                        }
+                    }).create();
+            mLowTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            mLowTemp.setCanceledOnTouchOutside(false);
+            mLowTemp.show();
+        }
+
         if (batteryTemperature <= -200) {
             mHandler.postDelayed(()-> updateOTP(),3*1000);
         } 
