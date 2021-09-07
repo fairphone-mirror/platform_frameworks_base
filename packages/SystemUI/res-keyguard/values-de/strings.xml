@@ -143,4 +143,8 @@
     <string name="clock_title_default" msgid="6342735240617459864">"Standard"</string>
     <string name="clock_title_bubble" msgid="2204559396790593213">"Bubble"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analog"</string>
+    <plurals name="kg_password_default_pin_message_multi_sim">
+        <item quantity="one">Falscher Pin-Code für SIM<xliff:g id="slotid">%d</xliff:g>, Du hast noch <xliff:g id="number">%d</xliff:g> Versuch, danach musst du dich an deinen Anbieter wenden, um dein Gerät zu entsperren.</item>
+        <item quantity="other">Falscher Pin-Code für SIM<xliff:g id="slotid">%d</xliff:g>, Du hast noch <xliff:g id="number">%d</xliff:g> Versuche.</item>
+    </plurals>
 </resources>
