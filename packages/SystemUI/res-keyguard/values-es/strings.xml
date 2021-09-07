@@ -131,10 +131,6 @@
       <item quantity="other">Introduce el PIN de la tarjeta SIM. Te quedan <xliff:g id="NUMBER_1">%d</xliff:g> intentos.</item>
       <item quantity="one">Introduce el PIN de la tarjeta SIM. Te queda <xliff:g id="NUMBER_0">%d</xliff:g> intento para tener que ponerte en contacto con tu operador para desbloquear el dispositivo.</item>
     </plurals>
-    <plurals name="kg_password_default_pin_message_multi_sim">
-        <item quantity="one">Ingrese el PIN de la tarjeta SIM<xliff:g id="slotid">%d</xliff:g>, le queda <xliff:g id="number">%d</xliff:g> intento.</item>
-        <item quantity="other">Ingrese el PIN de la tarjeta SIM<xliff:g id="slotid">%d</xliff:g>, le queda <xliff:g id="number">%d</xliff:g> intentos.</item>
-    </plurals>
     <plurals name="kg_password_default_puk_message" formatted="false" msgid="571308542462946935">
       <item quantity="other">La tarjeta SIM está inhabilitada. Introduce el código PUK para continuar. Te quedan <xliff:g id="_NUMBER_1">%d</xliff:g> intentos para que la tarjeta SIM quede inservible de forma permanente. Ponte en contacto con tu operador para obtener más información.</item>
       <item quantity="one">La tarjeta SIM está inhabilitada. Introduce el código PUK para continuar. Te queda <xliff:g id="_NUMBER_0">%d</xliff:g> intento para que la tarjeta SIM quede inservible de forma permanente. Ponte en contacto con tu operador para obtener más información.</item>
@@ -142,4 +138,8 @@
     <string name="clock_title_default" msgid="6342735240617459864">"Predeterminado"</string>
     <string name="clock_title_bubble" msgid="2204559396790593213">"Burbuja"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analógico"</string>
+    <plurals name="kg_password_default_pin_message_multi_sim">
+        <item quantity="one">Código de PIN de SIM<xliff:g id="slotid">%d</xliff:g> incorrecto, tiene <xliff:g id="number">%d</xliff:g> intento restante antes de que debe ponerse en contacto con su proveedor para desbloquear su EVICE.</item>
+        <item quantity="other">Código de PIN de SIM<xliff:g id="slotid">%d</xliff:g> incorrecto, tiene <xliff:g id="number">%d</xliff:g> intentos restantes.</item>
+    </plurals>
 </resources>

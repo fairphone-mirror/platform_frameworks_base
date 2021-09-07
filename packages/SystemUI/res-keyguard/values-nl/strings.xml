@@ -131,10 +131,6 @@
       <item quantity="other">Geef de pincode van de simkaart op. Je hebt nog <xliff:g id="NUMBER_1">%d</xliff:g> pogingen over.</item>
       <item quantity="one">Geef de pincode van de simkaart op. Je hebt nog <xliff:g id="NUMBER_0">%d</xliff:g> poging over voordat je contact met je provider moet opnemen om het apparaat te ontgrendelen.</item>
     </plurals>
-    <plurals name="kg_password_default_pin_message_multi_sim">
-        <item quantity="one">Voer de SIM<xliff:g id="slotid">%d</xliff:g>-PIN-code in, u hebt nog <xliff:g id="number">%d</xliff:g> poging te doen.</item>
-        <item quantity="other">Voer de SIM<xliff:g id="slotid">%d</xliff:g>-PIN-code in, u hebt nog <xliff:g id="number">%d</xliff:g> pogingen te doen.</item>
-    </plurals>
     <plurals name="kg_password_default_puk_message" formatted="false" msgid="571308542462946935">
       <item quantity="other">De simkaart is nu uitgezet. Geef de pukcode op om door te gaan. Je hebt nog <xliff:g id="_NUMBER_1">%d</xliff:g> pogingen over voordat de simkaart definitief onbruikbaar wordt. Neem contact op met je provider voor meer informatie.</item>
       <item quantity="one">De simkaart is nu uitgezet. Geef de pukcode op om door te gaan. Je hebt nog <xliff:g id="_NUMBER_0">%d</xliff:g> poging over voordat de simkaart definitief onbruikbaar wordt. Neem contact op met je provider voor meer informatie.</item>
@@ -142,4 +138,8 @@
     <string name="clock_title_default" msgid="6342735240617459864">"Standaard"</string>
     <string name="clock_title_bubble" msgid="2204559396790593213">"Bel"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analoog"</string>
+    <plurals name="kg_password_default_pin_message_multi_sim">
+        <item quantity="one">Incorrecte SIM<xliff:g id="slotid">%d</xliff:g> PIN-code. Je hebt nog <xliff:g id="number">%d</xliff:g> poging over voordat je contact moet opnemen met je provider om je SIMkaart te ontgrendelen.</item>
+        <item quantity="other">Incorrecte SIM<xliff:g id="slotid">%d</xliff:g> PIN-code. Je hebt nog <xliff:g id="number">%d</xliff:g> pogingen over.</item>
+    </plurals>
 </resources>

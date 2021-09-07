@@ -138,4 +138,8 @@
     <string name="clock_title_default" msgid="6342735240617459864">"Standard"</string>
     <string name="clock_title_bubble" msgid="2204559396790593213">"Boble"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analog"</string>
+    <plurals name="kg_password_default_pin_message_multi_sim">
+        <item quantity="one">Forkert SIM<xliff:g id="slotid">%d</xliff:g> PIN-kode, du har <xliff:g id="number">%d</xliff:g> resterende forsøg, før du skal kontakte din transportør for at låse din evice op.</item>
+        <item quantity="other">Forkert SIM<xliff:g id="slotid">%d</xliff:g> PIN-kode, du har <xliff:g id="number">%d</xliff:g> resterende forsøg.</item>
+    </plurals>
 </resources>
