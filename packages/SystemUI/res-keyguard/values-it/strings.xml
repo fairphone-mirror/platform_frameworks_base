@@ -95,10 +95,6 @@
       <item quantity="other">Inserisci il codice PIN della SIM. Hai ancora <xliff:g id="NUMBER_1">%d</xliff:g> tentativi a disposizione.</item>
       <item quantity="one">Inserisci il codice PIN della SIM. Hai ancora <xliff:g id="NUMBER_0">%d</xliff:g> tentativo a disposizione, dopodiché dovrai contattare l\'operatore per sbloccare il dispositivo.</item>
     </plurals>
-    <plurals name="kg_password_default_pin_message_multi_sim">
-        <item quantity="one">Inserire il PIN per la SIM<xliff:g id="slotid">%d</xliff:g>, hai ancora <xliff:g id="number">%d</xliff:g> tentativo a disposizione.</item>
-        <item quantity="other">Inserire il PIN per la SIM<xliff:g id="slotid">%d</xliff:g>, hai ancora <xliff:g id="number">%d</xliff:g> tentativi a disposizione.</item>
-    </plurals>
     <plurals name="kg_password_default_puk_message" formatted="false" msgid="571308542462946935">
       <item quantity="other">La scheda SIM è ora disattivata. Inserisci il codice PUK per continuare. Hai ancora <xliff:g id="_NUMBER_1">%d</xliff:g> tentativi a disposizione prima che la SIM diventi definitivamente inutilizzabile. Per informazioni dettagliate, contatta l\'operatore.</item>
       <item quantity="one">La scheda SIM è ora disattivata. Inserisci il codice PUK per continuare. Hai ancora <xliff:g id="_NUMBER_0">%d</xliff:g> tentativo a disposizione prima che la SIM diventi definitivamente inutilizzabile. Per informazioni dettagliate, contatta l\'operatore.</item>
@@ -106,4 +102,8 @@
     <string name="clock_title_default" msgid="6342735240617459864">"Predefinito"</string>
     <string name="clock_title_bubble" msgid="2204559396790593213">"Bolla"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analogico"</string>
+    <plurals name="kg_password_default_pin_message_multi_sim">
+        <item quantity="one">Codice PIN SIM<xliff:g id="slotid">%d</xliff:g> errato, hai ancora <xliff:g id="number">%d</xliff:g> tentativo rimanente prima di dover contattare il tuo operatore per sbloccare il dispositivo.</item>
+        <item quantity="other">Codice PIN SIM<xliff:g id="slotid">%d</xliff:g> errato, hai <xliff:g id="number">%d</xliff:g> tentativi rimanenti.</item>
+    </plurals>
 </resources>
