@@ -106,4 +106,5 @@
         <item quantity="one">Incorrecte SIM<xliff:g id="slotid">%d</xliff:g> PIN-code. Je hebt nog <xliff:g id="number">%d</xliff:g> poging over voordat je contact moet opnemen met je provider om je telefoon te ontgrendelen.</item>
         <item quantity="other">Incorrecte SIM<xliff:g id="slotid">%d</xliff:g> PIN-code. Je hebt nog <xliff:g id="number">%d</xliff:g> pogingen over.</item>
     </plurals>
+    <string name="fingerprint_dialog_touch_sensor">Raak de vingerafdruksensor aan</string>
 </resources>

@@ -106,4 +106,5 @@
         <item quantity="one">PIN do SIM<xliff:g id="slotid">%d</xliff:g> errado; tem mais <xliff:g id="number">%d</xliff:g> tentativa; depois terá de contactar a sua transportadora para desbloquear o dispositivo.</item>
         <item quantity="other">PIN do SIM<xliff:g id="slotid">%d</xliff:g> errado; tem mais <xliff:g id="number">%d</xliff:g> tentativas.</item>
     </plurals>
+    <string name="fingerprint_dialog_touch_sensor">Toque no sensor de impressão digital</string>
 </resources>

@@ -106,4 +106,5 @@
         <item quantity="one">Code PIN SIM<xliff:g id="slotid">%d</xliff:g> incorrect, vous avez <xliff:g id="number">%d</xliff:g> tentative restante avant de contacter votre opérateur pour déverrouiller votre appareil.</item>
         <item quantity="other">Code PIN SIM<xliff:g id="slotid">%d</xliff:g> incorrect, vous avez <xliff:g id="number">%d</xliff:g> tentatives restantes.</item>
     </plurals>
+    <string name="fingerprint_dialog_touch_sensor">"Touchez le capteur d'empreinte digitale"</string>
 </resources>
