@@ -147,4 +147,5 @@
         <item quantity="one">Falscher Pin-Code für SIM<xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuch, danach musst du dich an deinen Netzanbieter wenden, um dein Gerät zu entsperren.</item>
         <item quantity="other">Falscher Pin-Code für SIM<xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuche.</item>
     </plurals>
+    <string name="fingerprint_dialog_touch_sensor">Berühre den Fingerabdrucksensor.</string>
 </resources>

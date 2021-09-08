@@ -142,4 +142,5 @@
         <item quantity="one">Código incorrecto de PIN SIM<xliff:g id="slotid">%d</xliff:g>, tiene <xliff:g id="number">%d</xliff:g> intento restante antes de que debe ponerse en contacto con su operador para desbloquear su dispositivo.</item>
         <item quantity="other">Código de PIN de SIM<xliff:g id="slotid">%d</xliff:g> incorrecto, tiene <xliff:g id="number">%d</xliff:g> intentos restantes.</item>
     </plurals>
+    <string name="fingerprint_dialog_touch_sensor">Toque el sensor de huellas dactilares</string>
 </resources>

@@ -142,5 +142,5 @@
         <item quantity="one">Ukorrekt SIM<xliff:g id="slotid">%d</xliff:g> pinkode, du har <xliff:g id="number">%d</xliff:g> forsøg tilbage, før du må kontakte din udbyder for at låse din enhed op.</item>
         <item quantity="other">Ukorrekt SIM<xliff:g id="slotid">%d</xliff:g> pinkode, du har <xliff:g id="number">%d</xliff:g> forsøg tilbage.</item>
     </plurals>
-
+    <string name="fingerprint_dialog_touch_sensor">Rør fingerspidssensoren</string>
 </resources>
