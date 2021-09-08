@@ -103,7 +103,7 @@
     <string name="clock_title_bubble" msgid="2204559396790593213">"Bolha"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analógico"</string>
     <plurals name="kg_password_default_pin_message_multi_sim">
-        <item quantity="one">Código de Pin SIM<xliff:g id="slotid">%d</xliff:g> incorreto, você tem <xliff:g id="number">%d</xliff:g> tentativa restante antes de entrar em contato com sua operadora para desbloquear sua Evice.</item>
-        <item quantity="other">Código PIN incorreto SIM<xliff:g id="slotid">%d</xliff:g>, você tem <xliff:g id="number">%d</xliff:g> tentativas restantes.</item>
+        <item quantity="one">PIN do SIM<xliff:g id="slotid">%d</xliff:g> errado; tem mais <xliff:g id="number">%d</xliff:g> tentativa; depois terá de contactar a sua transportadora para desbloquear o dispositivo.</item>
+        <item quantity="other">PIN do SIM<xliff:g id="slotid">%d</xliff:g> errado; tem mais <xliff:g id="number">%d</xliff:g> tentativas.</item>
     </plurals>
 </resources>

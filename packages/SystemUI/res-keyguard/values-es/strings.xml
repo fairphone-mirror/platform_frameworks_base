@@ -103,7 +103,7 @@
     <string name="clock_title_bubble" msgid="2204559396790593213">"Burbuja"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analógico"</string>
     <plurals name="kg_password_default_pin_message_multi_sim">
-        <item quantity="one">Código de PIN de SIM<xliff:g id="slotid">%d</xliff:g> incorrecto, tiene <xliff:g id="number">%d</xliff:g> intento restante antes de que debe ponerse en contacto con su proveedor para desbloquear su EVICE.</item>
+        <item quantity="one">Código incorrecto de PIN SIM<xliff:g id="slotid">%d</xliff:g>, tiene <xliff:g id="number">%d</xliff:g> intento restante antes de que debe ponerse en contacto con su operador para desbloquear su dispositivo.</item>
         <item quantity="other">Código de PIN de SIM<xliff:g id="slotid">%d</xliff:g> incorrecto, tiene <xliff:g id="number">%d</xliff:g> intentos restantes.</item>
     </plurals>
 </resources>
