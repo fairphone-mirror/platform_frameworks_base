@@ -139,7 +139,7 @@
     <string name="clock_title_bubble" msgid="2204559396790593213">"Bubbla"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analog"</string>
     <plurals name="kg_password_default_pin_message_multi_sim">
-        <item quantity="one">Felaktig SIM<xliff:g id="slotid">%d</xliff:g> PIN-kod, du har <xliff:g id="number">%d</xliff:g> återstående försök innan du måste kontakta din operatör för att låsa upp din Evice.</item>
-        <item quantity="other">Felaktig SIM<xliff:g id="slotid">%d</xliff:g> PIN-kod, du har <xliff:g id="number">%d</xliff:g> återstående försök.</item>
+        <item quantity="one">Felaktig SIM<xliff:g id="slotid">%d</xliff:g> -PIN-kod, du har <xliff:g id="number">%d</xliff:g> återstående försök innan du måste kontakta din operatör för att låsa upp din enhet.</item>
+        <item quantity="other">Felaktig SIM<xliff:g id="slotid">%d</xliff:g>-PIN -kod, du har <xliff:g id="number">%d</xliff:g> återstående försök.</item>
     </plurals>
 </resources>
