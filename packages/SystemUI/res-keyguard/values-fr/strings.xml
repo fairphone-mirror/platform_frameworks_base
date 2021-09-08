@@ -139,7 +139,7 @@
     <string name="clock_title_bubble" msgid="2204559396790593213">"Bulle"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analogique"</string>
     <plurals name="kg_password_default_pin_message_multi_sim">
-        <item quantity="one">Code PIN SIM<xliff:g id="slotid">%d</xliff:g> incorrect, vous avez <xliff:g id="number">%d</xliff:g> tentative restante avant de contacter votre opérateur pour déverrouiller votre Evice.</item>
+        <item quantity="one">Code PIN SIM<xliff:g id="slotid">%d</xliff:g> incorrect, vous avez <xliff:g id="number">%d</xliff:g> tentative restante avant de contacter votre opérateur pour déverrouiller votre appareil.</item>
         <item quantity="other">Code PIN SIM<xliff:g id="slotid">%d</xliff:g> incorrect, vous avez <xliff:g id="number">%d</xliff:g> tentatives restantes.</item>
     </plurals>
 </resources>
