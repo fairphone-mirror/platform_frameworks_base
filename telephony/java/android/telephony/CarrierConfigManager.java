@@ -2063,6 +2063,11 @@ public class CarrierConfigManager {
 
     /** add by T2M.zhangrenjie for FP4-1362 end  */
 
+    /**
+     * default value of CARRIER_PREINSTALL
+     * @hide
+     */
+    public static final String KEY_CARRIER_PREINSTALL = "carrier_preinstall";
 
     /**
      * If true, add "Connection: close" header to MMS HTTP requests so the connection
@@ -5956,6 +5961,8 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_CONFIG_MMS_ANONYMOUS_ENABLE, true);
         sDefaults.putBoolean(KEY_CONFIG_MMS_ADVERTISMENT_ENABLE, true);
         /** add by T2M.zhangrenjie for FP4-1362 end  */
+        sDefaults.putStringArray(KEY_CARRIER_PREINSTALL,
+                new String[]{""});
     }
 
     /**
