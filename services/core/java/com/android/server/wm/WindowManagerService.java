@@ -442,7 +442,7 @@ public class WindowManagerService extends IWindowManager.Stub
     /** System UI can create more window context... */
     private static final int SYSTEM_UI_MULTIPLIER = 2;
 
-    static final int ANIMATION_PERFORMANCE_TUNING_FACTOR = 4;
+    static final int ANIMATION_PERFORMANCE_TUNING_FACTOR = 2;
 
     final WindowManagerConstants mConstants;
 
