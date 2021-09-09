@@ -37,6 +37,8 @@ public class AppStateController {
 
     private boolean mIsCarrierConfigLoaded = false;
 
+    private boolean mIsCarrierConfigReveiver = false;
+
 
     private int mUserId;
 
@@ -51,6 +53,8 @@ public class AppStateController {
         mUserId = Process.myUserHandle().myUserId();
         registerReceiver();
         initCarrierAppList();
+        setPreInstallCarrierApkState();
+        Log.d(TAG, "AppStateController init");
     }
 
     private void initCarrierAppList() {
@@ -114,22 +118,23 @@ public class AppStateController {
                 //if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) && !hasSimStateChanged){
                 if (Intent.ACTION_LOCKED_BOOT_COMPLETED.equals(intent.getAction())) {
                     Log.d(TAG, "LOCKED_BOOT_COMPLETED");
-                    if (!mHasSetAppState) {
-                        setPreInstallCarrierApkState();
-                        mHasSetAppState = true;
-                    }
+//                    if (!mHasSetAppState && mIsCarrierConfigReveiver) {
+//                        setPreInstallCarrierApkState();
+//                        mHasSetAppState = true;
+//                    }
                 }
 
                 if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
                     Log.d(TAG, "ACTION_BOOT_COMPLETED");
-                    if (!mHasSetAppState) {
-                        setPreInstallCarrierApkState();
-                        mHasSetAppState = true;
-                    }
+//                    if (!mHasSetAppState && mIsCarrierConfigReveiver) {
+//                        setPreInstallCarrierApkState();
+//                        mHasSetAppState = true;
+//                    }
                 }
 
                 if (CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED.equals(intent.getAction())) {
                     Log.d(TAG, "ACTION_CARRIER_CONFIG_CHANGED");
+                    mIsCarrierConfigReveiver = true;
                     updateCarrierAppState();
                     judgeAndFireSetAppState();
                 }
