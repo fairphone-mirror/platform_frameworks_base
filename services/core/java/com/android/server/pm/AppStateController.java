@@ -71,21 +71,21 @@ public class AppStateController {
         PersistableBundle config = configManager.getConfig();
         if (config != null) {
             String[] preInstallApps = config.getStringArray(KEY_CARRIER_PREINSTALL);
-            if (preInstallApps != null && preInstallApps.length >= 0) {
-                mIsCarrierConfigLoaded = true;
-            }
             if (preInstallApps != null && preInstallApps.length > 0) {
+                Log.d(TAG, "get carrier config preintall count = " + preInstallApps.length);
                 for (String app : preInstallApps) {
                     Log.d(TAG, "get carrier config preintall " + app);
                     for (AppState appState : mAppStateArrayList) {
                         if (appState.pkgName.equals(app)) {
                             appState.installState = true;
+                            if (!mIsCarrierConfigLoaded) {
+                                mIsCarrierConfigLoaded = true;
+                            }
                         }
                     }
                 }
             }
         }
-
     }
 
     private void registerReceiver() {
@@ -134,9 +134,9 @@ public class AppStateController {
 
                 if (CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED.equals(intent.getAction())) {
                     Log.d(TAG, "ACTION_CARRIER_CONFIG_CHANGED");
-                    mIsCarrierConfigReveiver = true;
                     updateCarrierAppState();
-                    judgeAndFireSetAppState();
+                    mHandler.postDelayed(() -> judgeAndFireSetAppState(),200);
+
                 }
             }
         }, mIntentFilter);
