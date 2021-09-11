@@ -68,11 +68,12 @@ public class AppStateController {
 
     private void updateCarrierAppState() {
         CarrierConfigManager configManager = (CarrierConfigManager) mContext.getSystemService(Context.CARRIER_CONFIG_SERVICE);
-        PersistableBundle config = configManager.getConfig();
+        //PersistableBundle config = configManager.getConfig();
+        PersistableBundle config = configManager.getConfigLocked();
         if (config != null) {
             String[] preInstallApps = config.getStringArray(KEY_CARRIER_PREINSTALL);
             if (preInstallApps != null && preInstallApps.length > 0) {
-                Log.d(TAG, "get carrier config preintall count = " + preInstallApps.length);
+                Log.d(TAG, "get carrier config preintall count ==== " + preInstallApps.length);
                 for (String app : preInstallApps) {
                     Log.d(TAG, "get carrier config preintall " + app);
                     for (AppState appState : mAppStateArrayList) {
