@@ -73,6 +73,8 @@ import java.util.concurrent.Executor;
 
 import org.codeaurora.internal.NrConfigType;
 import org.codeaurora.internal.NrIconType;
+import android.telephony.ims.stub.ImsRegistrationImplBase;
+import android.telephony.ims.ProvisioningManager;
 
 public class MobileSignalController extends SignalController<
         MobileSignalController.MobileState, MobileSignalController.MobileIconGroup> {
@@ -557,6 +559,7 @@ public class MobileSignalController extends SignalController<
                     mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : -1,
                     statusIcon.contentDescription);
         }
+
         if (DEBUG) {
             Log.d(mTag, "notifyListeners mConfig.alwaysShowNetworkTypeIcon="
                     + mConfig.alwaysShowNetworkTypeIcon + "  getNetworkType:" + mTelephonyDisplayInfo.getNetworkType() +
@@ -973,8 +976,22 @@ public class MobileSignalController extends SignalController<
     }
 
     private boolean isVowifiAvailable() {
+
+        // modify by T2M.zhang renjie for FP4-2829 21-9-11 begin
+        boolean mVoWiFiSettingEnabled = false;
+        int activeDataSubId = mDefaults.getActiveDataSubId();
+        try {
+            final ImsMmTelManager imsMmTelManager =
+                    ImsMmTelManager.createForSubscriptionId(activeDataSubId);
+            mVoWiFiSettingEnabled = imsMmTelManager.isVoWiFiSettingEnabled();
+        } catch (IllegalArgumentException exception) {
+            Log.w(mTag, "fail to get Wfc settings. subId=" + activeDataSubId, exception);
+        }
+        Log.i(mTag, "isVowifiAvailable,mVoWiFiSettingEnabled = " + mVoWiFiSettingEnabled);
         return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
-                && getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN;
+                && getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN
+                && mVoWiFiSettingEnabled;
+        // modify by T2M.zhang renjie for FP4-2829 21-9-11 end
     }
 
     private MobileIconGroup getVowifiIconGroup() {
