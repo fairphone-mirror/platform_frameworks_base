@@ -56,10 +56,8 @@ public class Fp4BatteryFuncImpl implements ICustomerBatteryFunc {
             } else {
                 currentTemperatureState = 999;
             }
-
             if (currentTemperatureState != lastTemperatureState) {
                 // if (mLastBatteryHealth != currentBatteryHealth) {
-                setUsbChargingPresent(1);
                 Intent intent = new Intent(Intent.ACTION_BATTERY_WARM_TEMP_CHANGED);
                 Log.i(TAG, "send ACTION_BATTERY_WARM_TEMP_CHANGED CustomBatteryInfo = " + info);
                 intent.putExtra(Intent.EXTRA_BATTERY_HEALTH, currentBatteryHealth);
@@ -73,27 +71,7 @@ public class Fp4BatteryFuncImpl implements ICustomerBatteryFunc {
         //}
     }
 
-    private void setUsbChargingPresent(int value){
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(new File("/sys/class/power_supply/battery/charging_enabled"));
-            fileOutputStream.write(Integer.toString(value).getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Slog.e(TAG, "setUsbChargingPresent fail1" + e);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Slog.e(TAG, "setUsbChargingPresent fail2" + e);
-        } finally {
-            if (fileOutputStream != null) {                
-                try {
-                        fileOutputStream.close();
-                    } catch (IOException e) {
-                        Slog.e(TAG, "failed to close setUsbChargingPresent stream");
-                    }
-            }
-        }
-    }
+
 
     private String getUsbPresent() {
         String version = null;

@@ -60,6 +60,15 @@ import javax.inject.Singleton;
 import android.os.SystemProperties;
 import dagger.Lazy;
 import android.os.SystemClock;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.FileOutputStream;
+
 @Singleton
 public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
 
@@ -350,10 +359,11 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 int batteryTemperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
                 int batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
                 Log.i(TAG, "receive ACTION_BATTERY_WARM_TEMP_CHANGED:batteryTemperature:"+batteryTemperature+"  batteryStatus:"+batteryStatus);
+                setUsbChargingPresent(1);
                 if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
-                    mWarnings.showHighTemp(true,batteryStatus,batteryTemperature);
+                    mWarnings.showHighTemp(true,batteryStatus,batteryTemperature,batteryHealth);
                 } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
-                    mWarnings.showLowTemp(true,batteryStatus,batteryTemperature);
+                    mWarnings.showLowTemp(true,batteryStatus,batteryTemperature,batteryHealth);
                 } else {
                     mWarnings.updateOTP();
                 }
@@ -378,6 +388,28 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 mWarnings.showUsbNTCTemp(dismissDialog,speakerNoise);
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
+            }
+        }
+    }
+
+    private void setUsbChargingPresent(int value){
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(new File("/sys/class/power_supply/battery/charging_enabled"));
+            fileOutputStream.write(Integer.toString(value).getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Slog.e(TAG, "setUsbChargingPresent fail1" + e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Slog.e(TAG, "setUsbChargingPresent fail2" + e);
+        } finally {
+            if (fileOutputStream != null) {                
+                try {
+                        fileOutputStream.close();
+                    } catch (IOException e) {
+                        Slog.e(TAG, "failed to close setUsbChargingPresent stream");
+                    }
             }
         }
     }
@@ -757,9 +789,9 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
         void updateSnapshot(BatteryStateSnapshot snapshot);
 
 
-        void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature);
+        void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth);
 
-        void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature);
+        void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth);
 
         void updateOTP();
 
