@@ -386,11 +386,11 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     }
 
 
-    public void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature) {
+    public void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth) {
         String message = "";
         updateOTP();
-        android.util.Log.e("batteryTemperature","showHighTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature);
-        if (mHighTemp != null) return;
+        android.util.Log.i("batteryTemperature","showHighTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature+"  batteryHealth:"+batteryHealth);
+        if (mHighTemp != null || batteryHealth != BatteryManager.BATTERY_HEALTH_OVERHEAT) return;
 
         if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING && batteryTemperature >= 550) {
             message = mContext.getResources().getString(R.string.height_temp_message_55);
@@ -430,11 +430,11 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         }
     }
 
-    public void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature) {
+    public void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth) {
         String message = "";
         updateOTP();
-        android.util.Log.e("batteryTemperature","showLowTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature);
-        if (mLowTemp != null || !charging) return;
+        android.util.Log.i("batteryTemperature","showLowTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature+" batteryHealth:"+batteryHealth);
+        if (mLowTemp != null || !charging || batteryHealth != BatteryManager.BATTERY_HEALTH_COLD) return;
 
         if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING && batteryTemperature <= 50) {
             message = mContext.getResources().getString(R.string.low_temp_message_5);
