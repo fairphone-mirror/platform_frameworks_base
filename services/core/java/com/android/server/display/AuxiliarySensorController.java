@@ -29,29 +29,26 @@ import com.android.server.UiThread;
 import com.android.server.wm.PointerEventDispatcher;
 
 
+import java.util.ArrayList;
 public class AuxiliarySensorController {
 
     private static final String TAG = "AuxiliarySensorController";
 
-    //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-    private static final int TYPE_CALL_GESTURE = 33171101;
-    //[TCT ROM][Sensor]End Added by qiancheng.zhao for task 11039392 on 2021-05-11
     private static AuxiliarySensorController mInstance;
     private Context mContext;
     private Sensor mGyroSensor;
     private Sensor mGSensor;
-    private Sensor mCallGesture;
+    private Sensor mLightSensor;
 
     private boolean  mFeatureSupport= false;
-    private boolean  mCallGestureSupport= false;
     private boolean  mEnableGyroState = false;
     private boolean  mGyroChangeState = false;
     private boolean  mGChangeState = false;
     private boolean  mAccelerationState = false;
+    private boolean  mLightState = false;
     private boolean  mEnableSensorAuxiliary = false;
     private boolean  mEnableAcceleration = false;
     private boolean  mGsensorState = false;
-    private boolean  mTouchState = false;
     private static final double R2D = 180.0f / (double) Math.PI;
     private static final double NS2S = 1.0f / 1000000000.0f;
     private double integratedValues[] = new double[3];
@@ -60,35 +57,20 @@ public class AuxiliarySensorController {
     private static final int GYRO_THRESHOLD = 23;
     private static final int CLEAR_THRESHOLD = 90;
     private static final int SLOPE_VALUE = 5;
-    private static final int ACCELERATION_VALUE = 11;
+    private static final int ACCELERATION_VALUE = 12;
     private static final int GSENSOR_THRESHOLD = 7;
     private int mCallStatus = 0;
-    private static final int TOUCH_THRESHOLD = 300;
+    private int mPendingProximity = PROXIMITY_UNKNOWN;
 
     private static final int PROXIMITY_UNKNOWN = -1;
     private static final int PROXIMITY_NEGATIVE = 0;
     private static final int PROXIMITY_POSITIVE = 1;
-    private int mPendingProximity = PROXIMITY_UNKNOWN;
-    //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-    private static final int GESTURE_UNKNOWN = -1;
-    private static final int GESTURE_PUTUP = 0;
-    private static final int GESTURE_PUTDOWN = 1;
-    private int mPendingGesture = GESTURE_UNKNOWN;
-    //[TCT ROM][Sensor]End  Added by qiancheng.zhao for task 11039392 on 2021-05-11
-
     private boolean mAuxiliarySensorEnabled;
     private boolean mDisplayStateOn = true;
     private AuxiliaryDisplayListener displayListener;
-    private static final String TOUCH_INPUT_CHANNEL_NAME = "TouchInputChannel";
 
     // The sensor manager.
     private SensorManager mSensorManager;
-     //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-    // Main thread only. Hold onto reference to avoid garbage collection
-    private InputMonitor mInputMonitor;
-    // Main thread only. Hold onto reference to avoid garbage collection
-    private InputEventReceiver mInputEventReceiver;
-    //[TCT ROM][Sensor]End Added by qiancheng.zhao for task 11039392 on 2021-05-11
 
     private Callbacks mCallbacks;
     private TelephonyManager mTelephonyManager;
@@ -109,12 +91,9 @@ public class AuxiliarySensorController {
         mContext = context;
         final PackageManager pm = mContext.getPackageManager();
         mFeatureSupport = (pm != null) /*&& pm.hasSystemFeature("vendor.tct.sensor.auxiliary")*/;
-        //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-        // mCallGestureSupport  = (pm != null) /*&& pm.hasSystemFeature("vendor.tct.sensor.callgesture")*/;
-        // mCallGesture = mSensorManager.getDefaultSensor(TYPE_CALL_GESTURE);
-        //[TCT ROM][Sensor]End Added by qiancheng.zhao for task 11039392 on 2021-05-11
         mGyroSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         mGSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mLightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         displayListener =
             new AuxiliaryDisplayListener(
@@ -133,19 +112,10 @@ public class AuxiliarySensorController {
             mEnableSensorAuxiliary = true;
             Slog.d(TAG, "Sensor auxiliary start " );
         }
-       //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-       if (mCallGestureSupport && pendingProximity != PROXIMITY_POSITIVE && positive) {
-            mTouchState = false;
-        }
-       //[TCT ROM][Sensor]End  Added by qiancheng.zhao for task 11039392 on 2021-05-11
+
         if (pendingProximity == PROXIMITY_POSITIVE) {
             if (positive) {
                 resetSensorAuxiliaryState();
-               //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-                if (mCallGestureSupport) {
-                    mTouchState = false;
-                }
-                //[TCT ROM][Sensor]End Added by qiancheng.zhao for task 11039392 on 2021-05-11
                 Slog.d(TAG, "Sensor Auxiliary reset" );
             } else {
                 if (mCallStatus == TelephonyManager.CALL_STATE_OFFHOOK && mEnableSensorAuxiliary) {
@@ -154,16 +124,13 @@ public class AuxiliarySensorController {
                     Slog.d(TAG, "Sensor auxiliary enable" );
                     return true;
                 }
-                //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-                 if (mCallStatus == TelephonyManager.CALL_STATE_OFFHOOK && mCallGestureSupport && mGsensorState) {
-                    mTouchState = true;
-                    Slog.d(TAG, "Sensor call  gesture enable" );
-                    return true;
-                }
-                //[TCT ROM][Sensor]End Added by qiancheng.zhao for task 11039392 on 2021-05-11
             }
         }
         return false;
+    }
+
+    public void setPendingProximity(int pendingProximity) {
+        mPendingProximity = pendingProximity;
     }
 
     public void setAuxiliarySensorEnabled(boolean enable) {
@@ -173,17 +140,11 @@ public class AuxiliarySensorController {
         if (enable) {
             if (!mAuxiliarySensorEnabled) {
                 mAuxiliarySensorEnabled = true;
-                //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-                if (mCallGestureSupport) {
-                    mSensorManager.registerListener(mAuxiliarySensorListener, mCallGesture,
-                            SensorManager.SENSOR_DELAY_NORMAL);
-                    startTouchMonitoring();
-                } else {
-                    mSensorManager.registerListener(mAuxiliarySensorListener, mGyroSensor,
-                            SensorManager.SENSOR_DELAY_GAME);
-                }
-                //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
+                mSensorManager.registerListener(mAuxiliarySensorListener, mGyroSensor,
+                        SensorManager.SENSOR_DELAY_GAME);
                 mSensorManager.registerListener(mAuxiliarySensorListener, mGSensor,
+                        SensorManager.SENSOR_DELAY_NORMAL);
+                mSensorManager.registerListener(mAuxiliarySensorListener, mLightSensor,
                         SensorManager.SENSOR_DELAY_NORMAL);
                 mCallStatus = mTelephonyManager.getCallState();
                 mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -192,27 +153,14 @@ public class AuxiliarySensorController {
         } else {
             if (mAuxiliarySensorEnabled) {
                 mAuxiliarySensorEnabled = false;
-                //[TCT ROM]Begin Added by qiancheng.zhao for defect 10694957 on 2021/02/03
                 mPendingProximity = PROXIMITY_UNKNOWN;
-                //[TCT ROM]End Added by qiancheng.zhao for defect 10694957 on 2021/02/03
                 mSensorManager.unregisterListener(mAuxiliarySensorListener);
                 mTelephonyManager.listen(mPhoneStateListener, 0);
                 initSensorAuxiliaryState();
                 displayListener.unregister();
-                if (mCallGestureSupport) {
-                    stopTouchMonitoring();
-                    mTouchState = false;
-                    mPendingGesture = GESTURE_UNKNOWN;
-                }
             }
         }
     }
-
-    //[TCT ROM]Begin Added by qiancheng.zhao for defect 10694957 on 2021/02/03
-    public void setPendingProximity(int pendingProximity) {
-        mPendingProximity = pendingProximity;
-    }
-    //[TCT ROM]End Added by qiancheng.zhao for defect 10694957 on 2021/02/03
 
     public boolean getAuxiliarySensorState() {
         if (!mFeatureSupport) {
@@ -225,71 +173,6 @@ public class AuxiliarySensorController {
         void powerOnByAuxiliarySensor();
     }
 
-    //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-    public void interceptKeyBeforeQueueing(KeyEvent event) {
-        // if (mCallGestureSupport && mAuxiliarySensorEnabled && mPendingProximity != PROXIMITY_POSITIVE) {
-            // final int keyCode = event.getKeyCode();
-            // switch (keyCode) {
-            //     case KeyEvent.KEYCODE_PALM_IN:
-            //         if (!mTouchState) {
-            //             Slog.d(TAG, "AuxiliarySensor KEYCODE_PALM_IN ");
-            //             mCallbacks.powerOnByAuxiliarySensor();
-            //             mTouchState = true;
-            //             Slog.d(TAG, "AuxiliarySensor set sreen off");
-            //         }
-            // }
-        // }
-    }
-
-    private void startTouchMonitoring() {
-        if (mInputEventReceiver == null) {
-            InputManager inputManager = (InputManager) mContext.getSystemService(Context.INPUT_SERVICE);
-            mInputMonitor = inputManager.monitorGestureInput(
-                    TOUCH_INPUT_CHANNEL_NAME,
-                    Display.DEFAULT_DISPLAY);
-            mInputEventReceiver = new TouchReceiver(
-                    mInputMonitor.getInputChannel());
-        }
-    }
-
-    private void stopTouchMonitoring() {
-        if (mInputEventReceiver != null) {
-            mInputEventReceiver.dispose();
-            mInputEventReceiver = null;
-        }
-    }
-
-    private class TouchReceiver extends InputEventReceiver {
-
-        /**
-         * Creates an input event receiver bound to the specified input channel.
-         *
-         * @param inputChannel The input channel.
-         * @param looper       The looper to use when invoking callbacks.
-         */
-        TouchReceiver(InputChannel inputChannel) {
-            super(inputChannel, UiThread.getHandler().getLooper());
-        }
-
-        @Override
-        public void onInputEvent(InputEvent event) {
-            if (mAuxiliarySensorEnabled && mPendingProximity != PROXIMITY_POSITIVE
-                    && (event instanceof MotionEvent)) {
-                MotionEvent motionEvent = (MotionEvent) event;
-                Slog.d(TAG, "AuxiliarySensor motionEvent.getY() = " + motionEvent.getY());
-                if (motionEvent.getActionMasked() == MotionEvent.ACTION_DOWN
-                        && (motionEvent.getY() <= TOUCH_THRESHOLD) && mPendingGesture == GESTURE_PUTUP) {
-                    mCallbacks.powerOnByAuxiliarySensor();
-                    mTouchState = true;
-                    resetSensorAuxiliaryState();
-                    Slog.d(TAG, "AuxiliarySensor set sreen off");
-                }
-            }
-            finishInputEvent(event, false);
-        }
-    }
-    //[TCT ROM][Sensor]End Added by qiancheng.zhao for task 11039392 on 2021-05-11
-
     private final SensorEventListener mAuxiliarySensorListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -297,7 +180,7 @@ public class AuxiliarySensorController {
                 if (mDisplayStateOn) {
                     mGyroChangeState = checkGyroStatus(event);
                 } else  if ( mEnableGyroState && (mCallStatus != TelephonyManager.CALL_STATE_OFFHOOK
-                        || (checkGyroStatus(event) && mGChangeState) || mAccelerationState)) {
+                        || (checkGyroStatus(event) && mGChangeState) || mAccelerationState || mLightState)) {
                     mCallbacks.powerOnByAuxiliarySensor();
                     Slog.d(TAG, "AuxiliarySensor set wakeup");
                     initSensorAuxiliaryState();
@@ -311,22 +194,16 @@ public class AuxiliarySensorController {
                 mGsensorState =  Math.abs(z) < GSENSOR_THRESHOLD;
                 mAccelerationState = ((float) Math.sqrt(x*x + y*y +z*z) > ACCELERATION_VALUE );
             }
-             //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-            if (mCallGestureSupport && event.sensor.getType() == TYPE_CALL_GESTURE) {
-                final float distance = event.values[0];
-                Slog.d(TAG, "distance = " + distance);
-                if (mPendingGesture != GESTURE_PUTUP && distance == 3.0f) {
-                    mPendingGesture = GESTURE_PUTUP;
-                } else if (mPendingGesture != GESTURE_PUTDOWN && distance == 4.0f) {
-                    mPendingGesture = GESTURE_PUTDOWN;
-                }
-                if (mTouchState && mPendingProximity == PROXIMITY_POSITIVE && mPendingGesture == GESTURE_PUTDOWN) {
-                    mCallbacks.powerOnByAuxiliarySensor();
-                    Slog.d(TAG, "AuxiliarySensor set wakeup by call gesture ");
-                    mTouchState = false;
+
+            if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
+                int value = (int) event.values[0];
+                android.util.Log.e(TAG,"onSensorChanged TYPE_LIGHT value = "+value);
+                if (value > 20) {
+                    mLightState = true;
+                }else{
+                    mLightState = false;
                 }
             }
-           //[TCT ROM][Sensor]End Added by qiancheng.zhao for task 11039392 on 2021-05-11
         }
 
         @Override
@@ -337,16 +214,9 @@ public class AuxiliarySensorController {
 
     private void onDisplayStateChanged(boolean isDisplayOn) {
         mDisplayStateOn = isDisplayOn;
-        //[TCT ROM]Begin Added by qiancheng.zhao for defect 10694957 on 2021/02/03
-        if (isDisplayOn && mPendingProximity != PROXIMITY_POSITIVE) {
+        if (isDisplayOn) {
             initSensorAuxiliaryState();
-            //[TCT ROM][Sensor]Begin Added by qiancheng.zhao for task 11039392 on 2021-05-11
-            if (mCallGestureSupport) {
-                mTouchState = false;
-            }
-            //[TCT ROM][Sensor]End Added by qiancheng.zhao for task 11039392 on 2021-05-11
         }
-        //[TCT ROM]End Added by qiancheng.zhao for defect 10694957 on 2021/02/03
     }
 
     private void initSensorAuxiliaryState() {
@@ -362,6 +232,7 @@ public class AuxiliarySensorController {
         mGyroChangeState = false;
         mGChangeState = false;
         mAccelerationState = false;
+        mLightState = false;
         mGsensorState = false;
         mEnableGyroState = false;
         releaseWakeLock();
