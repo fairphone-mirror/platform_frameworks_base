@@ -359,7 +359,6 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 int batteryTemperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
                 int batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
                 Log.i(TAG, "receive ACTION_BATTERY_WARM_TEMP_CHANGED:batteryTemperature:"+batteryTemperature+"  batteryStatus:"+batteryStatus);
-                setUsbChargingPresent(1);
                 if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
                     mWarnings.showHighTemp(true,batteryStatus,batteryTemperature,batteryHealth);
                 } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
@@ -388,28 +387,6 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 mWarnings.showUsbNTCTemp(dismissDialog,speakerNoise);
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
-            }
-        }
-    }
-
-    private void setUsbChargingPresent(int value){
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(new File("/sys/class/power_supply/battery/charging_enabled"));
-            fileOutputStream.write(Integer.toString(value).getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Slog.e(TAG, "setUsbChargingPresent fail1" + e);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Slog.e(TAG, "setUsbChargingPresent fail2" + e);
-        } finally {
-            if (fileOutputStream != null) {                
-                try {
-                        fileOutputStream.close();
-                    } catch (IOException e) {
-                        Slog.e(TAG, "failed to close setUsbChargingPresent stream");
-                    }
             }
         }
     }

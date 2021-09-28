@@ -392,12 +392,9 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         android.util.Log.i("batteryTemperature","showHighTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature+"  batteryHealth:"+batteryHealth);
         if (mHighTemp != null || batteryHealth != BatteryManager.BATTERY_HEALTH_OVERHEAT) return;
 
-        if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING && batteryTemperature >= 550) {
+        if (batteryTemperature >= 550) {
             message = mContext.getResources().getString(R.string.height_temp_message_55);
-            setUsbChargingPresent(0);
-        }
-
-        if (batteryTemperature >= 600) {
+        } else if (batteryTemperature >= 600) {
             message = mContext.getResources().getString(R.string.height_temp_message_60);
         } 
             
@@ -422,7 +419,11 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
                     }).create();
             mHighTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
             mHighTemp.setCanceledOnTouchOutside(false);
-            mHighTemp.show();
+            if (!message.equals("")) {
+                mHighTemp.show();
+            } else {
+                mHighTemp = null;
+            }
         }
 
         if (batteryTemperature >= 600) {
@@ -436,14 +437,12 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         android.util.Log.i("batteryTemperature","showLowTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature+" batteryHealth:"+batteryHealth);
         if (mLowTemp != null || !charging || batteryHealth != BatteryManager.BATTERY_HEALTH_COLD) return;
 
-        if (batteryStatus == BatteryManager.BATTERY_STATUS_CHARGING && batteryTemperature <= 50) {
+        if (batteryTemperature <= 50) {
             message = mContext.getResources().getString(R.string.low_temp_message_5);
-            setUsbChargingPresent(0);
-        }
-
-        if (batteryTemperature <= -200) {
+        } else if (batteryTemperature <= -200) {
             message = mContext.getResources().getString(R.string.low_temp_message_20);
         }
+
         if (mLowTemp == null) {
             mLowTemp = new AlertDialog.Builder(mContext)
                     .setTitle(mContext.getResources().getString(R.string.low_temp_title))
@@ -465,36 +464,17 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
                     }).create();
             mLowTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
             mLowTemp.setCanceledOnTouchOutside(false);
-            mLowTemp.show();
+            if (!message.equals("")) {
+                mLowTemp.show();
+            } else {
+                mLowTemp = null;
+            }
         }
 
         if (batteryTemperature <= -200) {
             mHandler.postDelayed(()-> updateOTP(),3*1000);
         } 
     }
-
-    private void setUsbChargingPresent(int value){
-        FileOutputStream fileOutputStream = null;
-        try {
-            fileOutputStream = new FileOutputStream(new File("/sys/class/power_supply/battery/charging_enabled"));
-            fileOutputStream.write(Integer.toString(value).getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-            Slog.e(TAG, "setUsbChargingPresent fail1" + e);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Slog.e(TAG, "setUsbChargingPresent fail2" + e);
-        } finally {
-            if (fileOutputStream != null) {                
-                try {
-                        fileOutputStream.close();
-                    } catch (IOException e) {
-                        Slog.e(TAG, "failed to close setUsbChargingPresent stream");
-                    }
-            }
-        }
-    }
-
 
     public void updateOTP() {
         if (mHighTemp != null) {
