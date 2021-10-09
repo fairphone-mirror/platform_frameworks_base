@@ -763,6 +763,8 @@ public abstract class ApexManager {
                             apks = Lists.newArrayList();
                             mApksInApex.put(aai.apexModuleName, apks);
                         }
+                        Slog.i(TAG, "Registering " + pkg.getPackageName() + " as apk-in-apex of "
+                                + aai.apexModuleName);
                         apks.add(pkg.getPackageName());
                     }
                 }
