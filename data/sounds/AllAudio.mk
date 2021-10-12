@@ -126,6 +126,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/newwavelabs/BussaMove.ogg:$(TARGET_COPY_OUT_PRODUCT)/media/audio/ringtones/BussaMove.ogg \
     $(LOCAL_PATH)/ringtones/CANISMAJOR.ogg:$(TARGET_COPY_OUT_PRODUCT)/media/audio/ringtones/CANISMAJOR.ogg \
     $(LOCAL_PATH)/ringtones/CASSIOPEIA.ogg:$(TARGET_COPY_OUT_PRODUCT)/media/audio/ringtones/CASSIOPEIA.ogg \
+    $(LOCAL_PATH)/ringtones/Sunbeam.mp3:$(TARGET_COPY_OUT_PRODUCT)/media/audio/ringtones/Sunbeam.mp3 \
     $(LOCAL_PATH)/newwavelabs/Cairo.ogg:$(TARGET_COPY_OUT_PRODUCT)/media/audio/ringtones/Cairo.ogg \
     $(LOCAL_PATH)/newwavelabs/Calypso_Steel.ogg:$(TARGET_COPY_OUT_PRODUCT)/media/audio/ringtones/Calypso_Steel.ogg \
     $(LOCAL_PATH)/ringtones/ogg/CanisMajor.ogg:$(TARGET_COPY_OUT_PRODUCT)/media/audio/ringtones/CanisMajor.ogg \
