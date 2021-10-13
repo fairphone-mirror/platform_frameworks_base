@@ -100,6 +100,7 @@ public final class RingtonePickerActivity extends AlertActivity implements
 
     /** The Uri to place a checkmark next to. */
     private Uri mExistingUri;
+    private Uri mDefaultRingtoneUri;
 
     /** The number of static items in the list. */
     private int mStaticItemCount;
@@ -195,11 +196,9 @@ public final class RingtonePickerActivity extends AlertActivity implements
          * default is clicked
          */
         mHasDefaultItem = intent.getBooleanExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
-        Log.e("sdp_", " mHasDefaultItem " + mHasDefaultItem);
 //        mHasDefaultItem = false;
         mUriForDefaultItem = intent.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI);
 
-        Log.e("sdp_", " mUriForDefaultItem " + mUriForDefaultItem);
 
         if (mUriForDefaultItem == null) {
             if (mType == RingtoneManager.TYPE_NOTIFICATION) {
@@ -231,7 +230,27 @@ public final class RingtonePickerActivity extends AlertActivity implements
         // Get the URI whose list item should have a checkmark
         mExistingUri = intent
                 .getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI);
-        Log.e("sdp_", " mExistingUri " + mExistingUri);
+
+        if (mType == RingtoneManager.TYPE_RINGTONE){
+
+            mDefaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this,mType);
+
+            if (!mHasDefaultItem && mDefaultRingtoneUri != null && ContentUris.parseId(mDefaultRingtoneUri)>0 && getRingtonePosition(mDefaultRingtoneUri,mCursor) == -1){
+
+                try {
+
+                    mExistingUri = mRingtoneManager.addCustomExternalRingtone(mDefaultRingtoneUri, mType);
+
+                    RingtoneManager.setActualDefaultRingtoneUri(this,mType,mExistingUri);
+
+                    mCursor = new LocalizedCursor(mRingtoneManager.getCursor(), getResources(), COLUMN_LABEL);
+
+                } catch (IOException | IllegalArgumentException e) {
+                    Log.e(TAG, "Unable to add new ringtone", e);
+                }
+
+            }
+        }
 
         // Create the list of ringtones and hold on to it so we can update later.
         mAdapter = new BadgedRingtoneAdapter(this, mCursor,
