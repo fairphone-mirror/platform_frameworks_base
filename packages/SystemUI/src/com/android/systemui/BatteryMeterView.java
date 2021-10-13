@@ -313,6 +313,9 @@ public class BatteryMeterView extends LinearLayout implements
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        if (mTempreture != -999) {
+            mDrawable.setHeated(mTempreture >= 550);
+        }
         mUserTracker.stopTracking();
         mBatteryController.removeCallback(this);
         getContext().getContentResolver().unregisterContentObserver(mSettingObserver);
@@ -326,6 +329,9 @@ public class BatteryMeterView extends LinearLayout implements
         mCharging = pluggedIn;
         mLevel = level;
         updatePercentText();
+        if (mTempreture != -999) {
+            mDrawable.setHeated(mTempreture >= 550);
+        }
     }
 
     @Override
@@ -333,10 +339,13 @@ public class BatteryMeterView extends LinearLayout implements
         mDrawable.setPowerSaveEnabled(isPowerSave);
     }
 
+    int mTempreture = -999;
+
     @Override
     public void onBatteryTempretureChanged(int tempreture) {
         //TODO
-        mDrawable.setHeated(tempreture >= 500);
+        mTempreture = tempreture;
+        mDrawable.setHeated(tempreture >= 550);
     }
 
     private TextView loadPercentView() {

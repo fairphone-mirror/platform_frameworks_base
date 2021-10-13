@@ -252,6 +252,14 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             }
         }
 
+        if (heated){
+            c.clipOutPath(scaledHeat)
+            if (invertFillIcon) {
+                c.drawPath(scaledHeat, fillColorStrokePaint)
+            } else {
+                c.drawPath(scaledHeat, fillColorStrokeProtection)
+            }
+        }
         if (charging) {
             c.clipOutPath(scaledBolt)
             if (invertFillIcon) {
@@ -265,14 +273,7 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             // And draw the plus sign on top of the fill
             c.drawPath(scaledPlus, errorPaint)
         }
-        if (heated){
-            c.clipOutPath(scaledHeat)
-            if (invertFillIcon) {
-                c.drawPath(scaledHeat, fillColorStrokePaint)
-            } else {
-                c.drawPath(scaledHeat, fillColorStrokeProtection)
-            }
-        }
+      
 
         c.restore()
     }
