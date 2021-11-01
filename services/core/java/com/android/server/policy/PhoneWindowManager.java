@@ -649,6 +649,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private static final int MSG_RINGER_TOGGLE_CHORD = 27;
     private static final int MSG_MOVE_DISPLAY_TO_TOP = 28;
 
+    // Lineage additions
+    private static final int MSG_CAMERA_LONG_PRESS = 101;
+
     private class PolicyHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -740,6 +743,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 case MSG_MOVE_DISPLAY_TO_TOP:
                     mWindowManagerFuncs.moveDisplayToTop(msg.arg1);
                     mMovingDisplayToTopKeyTriggered = false;
+                    break;
+                case MSG_CAMERA_LONG_PRESS:
+                    handleCameraLongPress();
                     break;
             }
         }
@@ -843,6 +849,26 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         mAudioManagerInternal.silenceRingerModeInternal("volume_hush");
         Settings.Secure.putInt(mContext.getContentResolver(), Settings.Secure.HUSH_GESTURE_USED, 1);
         mLogger.action(MetricsProto.MetricsEvent.ACTION_HUSH_GESTURE, mRingerToggleChord);
+    }
+
+    private void handleCameraLongPress() {
+        performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, false,
+                "Camera - Long Press");
+
+        final boolean keyguardActive = mKeyguardDelegate == null
+                ? false
+                : mKeyguardDelegate.isShowing();
+
+        Intent intent;
+        if (keyguardActive) {
+            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE);
+        } else {
+            intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+        }
+        startActivityAsUser(intent, UserHandle.CURRENT_OR_SELF);
+
+        wakeUp(SystemClock.uptimeMillis(), mAllowTheaterModeWakeFromKey,
+                PowerManager.WAKE_REASON_WAKE_KEY, "android.policy:KEY");
     }
 
     IStatusBarService getStatusBarService() {
@@ -3874,6 +3900,20 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 break;
             }
+
+            case KeyEvent.KEYCODE_CAMERA:
+                if (down) {
+                    KeyEvent newEvent = new KeyEvent(event.getDownTime(), event.getEventTime(),
+                            event.getAction(), keyCode, 0);
+                    Message msg = mHandler.obtainMessage(MSG_CAMERA_LONG_PRESS, newEvent);
+                    msg.setAsynchronous(true);
+                    mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
+                    // Consume key down events of all presses.
+                    break;
+                } else {
+                    mHandler.removeMessages(MSG_CAMERA_LONG_PRESS);
+                }
+                break;
 
             case KeyEvent.KEYCODE_ENDCALL: {
                 result &= ~ACTION_PASS_TO_USER;
