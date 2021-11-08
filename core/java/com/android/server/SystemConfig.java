@@ -19,6 +19,7 @@ package com.android.server;
 import static com.android.internal.util.ArrayUtils.appendInt;
 
 import android.app.ActivityManager;
+import android.bluetooth.BluetoothManager;
 import android.content.ComponentName;
 import android.content.pm.FeatureInfo;
 import android.content.pm.PackageManager;
@@ -981,9 +982,13 @@ public class SystemConfig {
             addFeature(PackageManager.FEATURE_RAM_NORMAL, 0);
         }
 
-        // The Fairphone 2 gyroscope sensor can be toggled by the user
+        // Features that can be toggled by users on Fairphone 2
         if (!SensorManager.isFp2GyroscopeEnabled()) {
             mUnavailableFeatures.add(PackageManager.FEATURE_SENSOR_GYROSCOPE);
+        }
+
+        if (!BluetoothManager.isFp2BluetoothLeEnabled()) {
+            mUnavailableFeatures.add(PackageManager.FEATURE_BLUETOOTH_LE);
         }
 
         for (String featureName : mUnavailableFeatures) {

@@ -23,6 +23,7 @@ import android.annotation.SystemService;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -55,6 +56,9 @@ public final class BluetoothManager {
     private static final boolean DBG = false;
 
     private final BluetoothAdapter mAdapter;
+
+    /** {@hide} */
+    public static final String PROP_FP2_USE_BLUETOOTH_LE = "persist.fp2.use_bluetooth_le";
 
     /**
      * @hide
@@ -240,5 +244,14 @@ public final class BluetoothManager {
             Log.e(TAG, "", e);
             return null;
         }
+    }
+
+    /** {@hide}
+     * Tell if the Bluetooth LE feature has been enabled by the user.
+     *
+     * @return whether Bluetooth LE has been enabled
+     */
+    public static boolean isFp2BluetoothLeEnabled() {
+        return SystemProperties.getBoolean(PROP_FP2_USE_BLUETOOTH_LE, false);
     }
 }
