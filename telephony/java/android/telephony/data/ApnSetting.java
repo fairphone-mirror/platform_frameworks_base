@@ -1569,6 +1569,17 @@ public class ApnSetting implements Parcelable {
             return true;
         }
 
+        //[FEATURE]-Add-BEGIN by Xijun.Zhang,11/09/2021,FP4-3206
+        //VoWiFi MMS Service
+        //In general, APN networktypeBitmask does not include IWLAN,
+        //For MMS over WiFi APN, networktypeBitmask should include IWLAN.
+        //If the APN can be used for all networktypes include IWLNA,
+        //networktypebitmask can be 0.
+        if (networkType == TelephonyManager.NETWORK_TYPE_IWLAN
+            && (mNetworkTypeBitmask & TelephonyManager.NETWORK_TYPE_BITMASK_IWLAN) !=0 ) {
+            return true;
+        }
+        //[FEATURE]-Add-END by Xijun.Zhang,11/09/2021,FP4-3206
         return ServiceState.bitmaskHasTech(mNetworkTypeBitmask, networkType);
     }
 
