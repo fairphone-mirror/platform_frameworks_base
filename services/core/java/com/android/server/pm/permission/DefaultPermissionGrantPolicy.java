@@ -195,6 +195,11 @@ final class DefaultPermissionGrantPolicy {
         CAMERA_PERMISSIONS.add(Manifest.permission.CAMERA);
     }
 
+    private static final Set<String> CAMERA_PERMISSIONS_POLICY = new ArraySet<>();
+    static {
+        CAMERA_PERMISSIONS_POLICY.add(Manifest.permission.ACCESS_NOTIFICATION_POLICY);
+    }
+
     private static final Set<String> SENSORS_PERMISSIONS = new ArraySet<>();
     static {
         SENSORS_PERMISSIONS.add(Manifest.permission.BODY_SENSORS);
@@ -569,7 +574,7 @@ final class DefaultPermissionGrantPolicy {
         // Camera
         grantPermissionsToSystemPackage(pm,
                 getDefaultSystemHandlerActivityPackage(pm, MediaStore.ACTION_IMAGE_CAPTURE, userId),
-                userId, CAMERA_PERMISSIONS, MICROPHONE_PERMISSIONS, STORAGE_PERMISSIONS);
+                userId, CAMERA_PERMISSIONS, CAMERA_PERMISSIONS_POLICY ,MICROPHONE_PERMISSIONS, STORAGE_PERMISSIONS);
 
         // Sound recorder
         grantPermissionsToSystemPackage(pm,
