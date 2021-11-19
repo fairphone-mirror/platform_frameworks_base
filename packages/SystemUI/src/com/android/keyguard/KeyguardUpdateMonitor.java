@@ -152,6 +152,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     private static final String ACTION_FACE_UNLOCK_STOPPED
             = "com.android.facelock.FACE_UNLOCK_STOPPED";
 
+
+    public static final String KEY_CONFIRM_SIM_DELETION = "fingerprint_settings";
+
     // Callback messages
     private static final int MSG_TIME_UPDATE = 301;
     private static final int MSG_BATTERY_UPDATE = 302;
@@ -2105,6 +2108,16 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         updateFaceListeningState();
     }
 
+
+    private boolean getFingerPrintBehaviorState() {
+        return Settings.Global.getInt(
+                mContext.getContentResolver(),
+                KEY_CONFIRM_SIM_DELETION,
+                false ? 1 : 0)
+                == 1;
+    }
+
+
     private void updateFingerprintListeningState() {
         // If this message exists, we should not authenticate again until this message is
         // consumed by the handler
@@ -2118,11 +2131,26 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         final boolean shouldListenForFingerprint = shouldListenForFingerprint(isUdfpsEnrolled());
         final boolean runningOrRestarting = mFingerprintRunningState == BIOMETRIC_STATE_RUNNING
                 || mFingerprintRunningState == BIOMETRIC_STATE_CANCELLING_RESTARTING;
-        if (!mPm.isScreenOn() || (runningOrRestarting && !shouldListenForFingerprint)) {
-            stopListeningForFingerprint();
-        } else if (!runningOrRestarting && shouldListenForFingerprint) {
-            startListeningForFingerprint();
+
+        boolean fingerPrintBahaviorState = getFingerPrintBehaviorState();
+
+        if (fingerPrintBahaviorState) { //touch unlock
+
+            if (runningOrRestarting && !shouldListenForFingerprint) {
+                stopListeningForFingerprint();
+            } else if (!runningOrRestarting && shouldListenForFingerprint) {
+                startListeningForFingerprint();
+            }
+
+        } else { //press unlock
+
+            if (!mPm.isScreenOn() || (runningOrRestarting && !shouldListenForFingerprint)) {
+                stopListeningForFingerprint();
+            } else if (!runningOrRestarting && shouldListenForFingerprint) {
+                startListeningForFingerprint();
+            }
         }
+
     }
 
     /**
