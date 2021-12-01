@@ -159,7 +159,8 @@ public class AppOpsManager {
             MODE_IGNORED,
             MODE_ERRORED,
             MODE_DEFAULT,
-            MODE_FOREGROUND
+            MODE_FOREGROUND,
+            MODE_ASK
     })
     public @interface Mode {}
 
@@ -207,6 +208,12 @@ public class AppOpsManager {
      * the actual check for access to the op.</p>
      */
     public static final int MODE_FOREGROUND = 4;
+
+    /**
+     * @hide Result from {@link #checkOp}, {@link #noteOp}, {@link #startOp}:
+     * AppOps Service should show a dialog box on screen to get user permission.
+     */
+    public static final int MODE_ASK = 5;
 
     /**
      * Flag for {@link #startWatchingMode(String, String, int, OnOpChangedListener)}:
@@ -836,10 +843,12 @@ public class AppOpsManager {
     public static final int OP_READ_DEVICE_IDENTIFIERS = 89;
     /** @hide Read location metadata from media */
     public static final int OP_ACCESS_MEDIA_LOCATION = 90;
+    /** @hide SU access */
+    public static final int OP_SU = 91;
 
     /** @hide */
     @UnsupportedAppUsage
-    public static final int _NUM_OP = 91;
+    public static final int _NUM_OP = 92;
 
     /** Access to coarse location information. */
     public static final String OPSTR_COARSE_LOCATION = "android:coarse_location";
@@ -1118,6 +1127,8 @@ public class AppOpsManager {
     public static final String OPSTR_ACCESS_ACCESSIBILITY = "android:access_accessibility";
     /** @hide Read device identifiers */
     public static final String OPSTR_READ_DEVICE_IDENTIFIERS = "android:read_device_identifiers";
+    /** @hide */
+    public static final String OPSTR_SU = "android:su";
 
     // Warning: If an permission is added here it also has to be added to
     // com.android.packageinstaller.permission.utils.EventLogger
@@ -1179,6 +1190,7 @@ public class AppOpsManager {
             OP_REQUEST_INSTALL_PACKAGES,
             OP_START_FOREGROUND,
             OP_SMS_FINANCIAL_TRANSACTIONS,
+            OP_SU,
     };
 
     /**
@@ -1281,6 +1293,7 @@ public class AppOpsManager {
             OP_ACCESS_ACCESSIBILITY,            // ACCESS_ACCESSIBILITY
             OP_READ_DEVICE_IDENTIFIERS,         // READ_DEVICE_IDENTIFIERS
             OP_ACCESS_MEDIA_LOCATION,           // ACCESS_MEDIA_LOCATION
+            OP_SU,                              // SU
     };
 
     /**
@@ -1378,6 +1391,7 @@ public class AppOpsManager {
             OPSTR_ACCESS_ACCESSIBILITY,
             OPSTR_READ_DEVICE_IDENTIFIERS,
             OPSTR_ACCESS_MEDIA_LOCATION,
+            OPSTR_SU,
     };
 
     /**
@@ -1476,6 +1490,7 @@ public class AppOpsManager {
             "ACCESS_ACCESSIBILITY",
             "READ_DEVICE_IDENTIFIERS",
             "ACCESS_MEDIA_LOCATION",
+            "SU",
     };
 
     /**
@@ -1575,6 +1590,7 @@ public class AppOpsManager {
             null, // no permission for OP_ACCESS_ACCESSIBILITY
             null, // no direct permission for OP_READ_DEVICE_IDENTIFIERS
             Manifest.permission.ACCESS_MEDIA_LOCATION,
+            null, // no permission for OP_SU
     };
 
     /**
@@ -1674,6 +1690,7 @@ public class AppOpsManager {
             null, // ACCESS_ACCESSIBILITY
             null, // READ_DEVICE_IDENTIFIERS
             null, // ACCESS_MEDIA_LOCATION
+            UserManager.DISALLOW_SU, // SU
     };
 
     /**
@@ -1772,6 +1789,7 @@ public class AppOpsManager {
             false, // ACCESS_ACCESSIBILITY
             false, // READ_DEVICE_IDENTIFIERS
             false, // ACCESS_MEDIA_LOCATION
+            false, // SU
     };
 
     /**
@@ -1869,6 +1887,7 @@ public class AppOpsManager {
             AppOpsManager.MODE_ALLOWED, // ACCESS_ACCESSIBILITY
             AppOpsManager.MODE_ERRORED, // READ_DEVICE_IDENTIFIERS
             AppOpsManager.MODE_ALLOWED, // ALLOW_MEDIA_LOCATION
+            AppOpsManager.MODE_ASK,     // OP_SU
     };
 
     /**
@@ -1970,6 +1989,7 @@ public class AppOpsManager {
             false, // ACCESS_ACCESSIBILITY
             false, // READ_DEVICE_IDENTIFIERS
             false, // ACCESS_MEDIA_LOCATION
+            false, // SU
     };
 
     /**

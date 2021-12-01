@@ -1468,6 +1468,7 @@ public class UserManagerService extends IUserManager.Stub {
                 mGuestRestrictions.putBoolean(UserManager.DISALLOW_INSTALL_UNKNOWN_SOURCES, true);
                 mGuestRestrictions.putBoolean(UserManager.DISALLOW_OUTGOING_CALLS, true);
                 mGuestRestrictions.putBoolean(UserManager.DISALLOW_SMS, true);
+                mGuestRestrictions.putBoolean(UserManager.DISALLOW_SU, true);
             }
         }
     }
@@ -4266,6 +4267,7 @@ public class UserManagerService extends IUserManager.Stub {
             if (user != null && !user.isAdmin() && !user.isDemo()) {
                 setUserRestriction(UserManager.DISALLOW_SMS, true, user.id);
                 setUserRestriction(UserManager.DISALLOW_OUTGOING_CALLS, true, user.id);
+                setUserRestriction(UserManager.DISALLOW_SU, true, user.id);
             }
             return user;
         }
