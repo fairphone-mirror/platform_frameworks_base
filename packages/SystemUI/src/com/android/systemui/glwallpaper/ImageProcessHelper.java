@@ -67,7 +67,7 @@ class ImageProcessHelper {
     private float mThreshold = DEFAULT_THRESHOLD;
 
     void start(Bitmap bitmap) {
-        new ThresholdComputeTask(mHandler).execute(bitmap);
+        new ThresholdComputeTask(mHandler).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, bitmap);
     }
 
     float getThreshold() {
