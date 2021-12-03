@@ -338,12 +338,12 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
      * be slightly longer than the time between onFingerprintAuthenticated and
      * setKeyguardGoingAway(true).
      */
-    private static final int FINGERPRINT_CONTINUE_DELAY_MS = 500;
+    private static final int FINGERPRINT_CONTINUE_DELAY_MS = 1000;
 
     // If the HAL dies or is unable to authenticate, keyguard should retry after a short delay
     private int mHardwareFingerprintUnavailableRetryCount = 0;
     private int mHardwareFaceUnavailableRetryCount = 0;
-    private static final int HAL_ERROR_RETRY_TIMEOUT = 500; // ms
+    private static final int HAL_ERROR_RETRY_TIMEOUT = 1000; // ms
     private static final int HAL_ERROR_RETRY_MAX = 20;
 
     private final Runnable mFpCancelNotReceived = () -> {
