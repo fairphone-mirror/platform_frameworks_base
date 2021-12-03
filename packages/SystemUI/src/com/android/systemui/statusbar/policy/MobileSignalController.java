@@ -409,7 +409,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             if (mInflateSignalStrengths) {
                 level++;
             }
-
+            checkDefaultData();// modify by T2M.zhang renjie for FP4-2991 21-12-3
             boolean dataDisabled = mCurrentState.userSetup
                     && (mCurrentState.iconGroup == TelephonyIcons.DATA_DISABLED
                     || (mCurrentState.iconGroup == TelephonyIcons.NOT_DEFAULT_DATA
