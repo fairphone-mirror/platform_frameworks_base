@@ -153,11 +153,6 @@ public abstract class SliceProvider extends ContentProvider {
      */
     public static final String EXTRA_PKG = "pkg";
     /**
-     * @Deprecated provider pkg is now being extracted in SlicePermissionActivity
-     * @hide
-     */
-    public static final String EXTRA_PROVIDER_PKG = "provider_pkg";
-    /**
      * @hide
      */
     public static final String EXTRA_RESULT = "result";
@@ -520,7 +515,6 @@ public abstract class SliceProvider extends ContentProvider {
                 com.android.internal.R.string.config_slicePermissionComponent)));
         intent.putExtra(EXTRA_BIND_URI, sliceUri);
         intent.putExtra(EXTRA_PKG, callingPackage);
-        intent.putExtra(EXTRA_PROVIDER_PKG, context.getPackageName());
         // Unique pending intent.
         intent.setData(sliceUri.buildUpon().appendQueryParameter("package", callingPackage)
                 .build());
