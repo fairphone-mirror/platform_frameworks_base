@@ -149,6 +149,7 @@
     <!-- no translation found for crossSimFormat_spn (9125246077491634262) -->
     <skip />
     <string name="crossSimFormat_spn_cross_sim_calling" msgid="5620807020002879057">"<xliff:g id="SPN">%s</xliff:g>-Anruf über Ersatz-SIM"</string>
+    <string name="wfc_mode_ims_preferred_summary">IMS bevorzugt</string>
     <string name="cfTemplateNotForwarded" msgid="862202427794270501">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g>: Nicht weitergeleitet"</string>
     <string name="cfTemplateForwarded" msgid="9132506315842157860">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g>: <xliff:g id="DIALING_NUMBER">{1}</xliff:g>"</string>
     <string name="cfTemplateForwardedTime" msgid="735042369233323609">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g><xliff:g id="DIALING_NUMBER">{1}</xliff:g> nach <xliff:g id="TIME_DELAY">{2}</xliff:g> Sekunden."</string>
