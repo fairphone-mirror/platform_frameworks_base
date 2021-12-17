@@ -551,8 +551,13 @@ public final class NotificationEntry extends ListEntry {
             return false;
         }
         Bundle extras = mSbn.getNotification().extras;
-        RemoteInputHistoryItem[] replyTexts = (RemoteInputHistoryItem[]) extras.getParcelableArray(
+        RemoteInputHistoryItem[] replyTexts = null;
+        try{
+            replyTexts = (RemoteInputHistoryItem[]) extras.getParcelableArray(
                 Notification.EXTRA_REMOTE_INPUT_HISTORY_ITEMS);
+        }catch(Exception e){
+            //TODO
+        }
         if (!ArrayUtils.isEmpty(replyTexts)) {
             return true;
         }
