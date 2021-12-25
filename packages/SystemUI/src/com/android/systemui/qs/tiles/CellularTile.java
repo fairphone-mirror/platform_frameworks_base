@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Switch;
+import android.telephony.TelephonyManager;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
@@ -68,6 +69,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
     private final CellSignalCallback mSignalCallback = new CellSignalCallback();
     private final ActivityStarter mActivityStarter;
     private final SubscriptionManager mSubscriptionManager;
+    private final TelephonyManager mTelephonyManager;
 
     @Inject
     public CellularTile(QSHost host, NetworkController networkController,
@@ -78,6 +80,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
         mDataController = mController.getMobileDataController();
         mDetailAdapter = new CellularDetailAdapter();
         mSubscriptionManager = mContext.getSystemService(SubscriptionManager.class);
+        mTelephonyManager = mContext.getSystemService(TelephonyManager.class);
         mController.observe(getLifecycle(), mSignalCallback);
     }
 
@@ -230,7 +233,7 @@ public class CellularTile extends QSTileImpl<SignalState> {
     }
 
     private CharSequence getMobileDataContentName(CallbackInfo cb) {
-        if (cb.roaming && !TextUtils.isEmpty(cb.dataContentDescription)) {
+        if (cb.roaming && !TextUtils.isEmpty(cb.dataContentDescription) && mTelephonyManager.isDataRoamingEnabled()) {
             String roaming = mContext.getString(R.string.data_connection_roaming);
             String dataDescription = cb.dataContentDescription.toString();
             return mContext.getString(R.string.mobile_data_text_format, roaming, dataDescription);
