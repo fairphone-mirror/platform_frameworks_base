@@ -231,15 +231,27 @@ public final class RingtonePickerActivity extends AlertActivity implements
         mExistingUri = intent
                 .getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI);
 
+
+	Log.e("sdp_","mExistingUri " + mExistingUri);
+
         if (mType == RingtoneManager.TYPE_RINGTONE){
+
+		Log.e("sdp_","mType RingtoneManager.TYPE_RINGTONE");
 
             mDefaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(this,mType);
 
+		Log.e("sdp_","mDefaultRingtoneUri " + mDefaultRingtoneUri);
+
+		Log.e("sdp_","!mHasDefaultItem " + !mHasDefaultItem + " mDefaultRingtoneUri != null " + (mDefaultRingtoneUri != null) + " ContentUris.parseId(mDefaultRingtoneUri)>0 " + "  getRingtonePosition(mDefaultRingtoneUri,mCursor) == -1 " + (getRingtonePosition(mDefaultRingtoneUri,mCursor) == -1));
+
             if (!mHasDefaultItem && mDefaultRingtoneUri != null && ContentUris.parseId(mDefaultRingtoneUri)>0 && getRingtonePosition(mDefaultRingtoneUri,mCursor) == -1){
+		Log.e("sdp_","if if if ");
 
                 try {
 
                     mExistingUri = mRingtoneManager.addCustomExternalRingtone(mDefaultRingtoneUri, mType);
+
+			Log.e("sdp_","try mExistingUri " + mExistingUri);
 
                     RingtoneManager.setActualDefaultRingtoneUri(this,mType,mExistingUri);
 
@@ -473,20 +485,15 @@ public final class RingtonePickerActivity extends AlertActivity implements
             final long ringtoneId = ContentUris.parseId(ringtoneUri);
 
             if (cursor != null) {
-                Log.i(TAG,"cursor.moveToPosition(-1)");
                 cursor.moveToPosition(-1);
-            }else {
-                Log.i(TAG,"cursor != null return -1");
-                return -1;
             }
 
             while (cursor.moveToNext()) {
-            Log.d(TAG, "title: " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+//            Log.d(TAG, "title: " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
                 if (ringtoneId == cursor.getLong(RingtoneManager.ID_COLUMN_INDEX)) {
-                    // String uriString = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
-                    // final Uri uri = Uri.parse(uriString);
+                    String uriString = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
+                    final Uri uri = Uri.parse(uriString);
 //                if (isExternalRingtoneUri(uri)) {
-                    Log.d(TAG, "title: " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)+"   cursor.getPosition():"+cursor.getPosition());
                     return cursor.getPosition();
 //                }
                 }
