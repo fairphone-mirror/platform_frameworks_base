@@ -485,15 +485,20 @@ public final class RingtonePickerActivity extends AlertActivity implements
             final long ringtoneId = ContentUris.parseId(ringtoneUri);
 
             if (cursor != null) {
+                Log.i(TAG,"cursor.moveToPosition(-1)");
                 cursor.moveToPosition(-1);
+            }else {
+                Log.i(TAG,"cursor != null return -1");
+                return -1;
             }
 
             while (cursor.moveToNext()) {
-//            Log.d(TAG, "title: " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+            Log.d(TAG, "title: " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX));
                 if (ringtoneId == cursor.getLong(RingtoneManager.ID_COLUMN_INDEX)) {
-                    String uriString = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
-                    final Uri uri = Uri.parse(uriString);
+                    // String uriString = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
+                    // final Uri uri = Uri.parse(uriString);
 //                if (isExternalRingtoneUri(uri)) {
+                    Log.d(TAG, "title: " + cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX)+"   cursor.getPosition():"+cursor.getPosition());
                     return cursor.getPosition();
 //                }
                 }
