@@ -39,6 +39,7 @@ import android.os.Message;
 import android.os.Process;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.SystemProperties;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RSIllegalArgumentException;
@@ -314,6 +315,16 @@ public class Camera {
             }
         } catch (RemoteException e) {
             Log.e(TAG, "Audio service is unavailable for queries");
+        }
+
+        // Override camera orientation for front camera
+        if (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT) {
+            String frontCamModule = SystemProperties.get("fp2.cam.front.sensor");
+            if (frontCamModule.equals("ov2685")) {
+                cameraInfo.orientation = 270;
+            } else if (frontCamModule.equals("ov5670")) {
+                cameraInfo.orientation = 90;
+            }
         }
     }
     private native static void _getCameraInfo(int cameraId, CameraInfo cameraInfo);

@@ -34,6 +34,7 @@ import android.hardware.camera2.params.StreamConfigurationDuration;
 import android.hardware.camera2.utils.ArrayUtils;
 import android.hardware.camera2.utils.ListUtils;
 import android.hardware.camera2.utils.ParamsUtils;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.util.Range;
 import android.util.Size;
@@ -173,6 +174,16 @@ public class LegacyMetadataMapper {
         m.set(LENS_FACING, i.facing == CameraInfo.CAMERA_FACING_BACK ?
                 LENS_FACING_BACK : LENS_FACING_FRONT);
         m.set(SENSOR_ORIENTATION, i.orientation);
+
+        // Override camera orientation for front camera
+        if (i.facing == CameraInfo.CAMERA_FACING_FRONT) {
+            String frontCamModule = SystemProperties.get("fp2.cam.front.sensor");
+            if (frontCamModule.equals("ov2685")) {
+                m.set(SENSOR_ORIENTATION, 270);
+            } else if (frontCamModule.equals("ov5670")) {
+                m.set(SENSOR_ORIENTATION, 90);
+            }
+        }
     }
 
     private static void mapCharacteristicsFromParameters(CameraMetadataNative m,
