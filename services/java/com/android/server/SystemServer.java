@@ -206,8 +206,9 @@ public final class SystemServer {
     private static final long SNAPSHOT_INTERVAL = 60 * 60 * 1000; // 1hr
 
     // The earliest supported time.  We pick one day into 1970, to
-    // give any timezone code room without going into negative time.
-    private static final long EARLIEST_SUPPORTED_TIME = 86400 * 1000;
+    // give any timezone code room without going into negative time.86400 * 1000
+    // FP4-3387 [FP4 Dev-372] Hardcode date of phone to launch date 2021-11-11
+    private static final long EARLIEST_SUPPORTED_TIME = 1636599485000L;
 
     private static final long SLOW_DISPATCH_THRESHOLD_MS = 100;
     private static final long SLOW_DELIVERY_THRESHOLD_MS = 200;
@@ -600,6 +601,10 @@ public final class SystemServer {
             startBootstrapServices(t);
             startCoreServices(t);
             startOtherServices(t);
+            if (System.currentTimeMillis() < EARLIEST_SUPPORTED_TIME ){
+                Slog.w(TAG,"System clock is before 2021-11-11,setting to 2021-11-11");
+                SystemClock.setCurrentTimeMillis(EARLIEST_SUPPORTED_TIME);
+            }
         } catch (Throwable ex) {
             Slog.e("System", "******************************************");
             Slog.e("System", "************ Failure starting system services", ex);
