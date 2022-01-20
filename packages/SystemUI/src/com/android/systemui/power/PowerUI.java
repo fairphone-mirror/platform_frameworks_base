@@ -249,6 +249,7 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
             filter.addAction(Intent.ACTION_BATTERY_WARM_TEMP_CHANGED);
             filter.addAction(Intent.ACTION_SHUTDOWN);
             filter.addAction("intent.battery.usbntc.temperror");
+            filter.addAction(Intent.ACTION_BOOT_COMPLETED);
             mBroadcastDispatcher.registerReceiverWithHandler(this, filter, mHandler);
             lastsystemtime = SystemClock.elapsedRealtime();
             // Force get initial values. Relying on Sticky behavior until API for getting info.
@@ -385,6 +386,12 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 boolean dismissDialog = intent.getIntExtra("disable",0) != 0;
                 boolean speakerNoise = intent.getIntExtra("speakerNoise",0) != 0;
                 mWarnings.showUsbNTCTemp(dismissDialog,speakerNoise);
+            } else if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
+                // boolean cameraOis = SystemProperties.getBoolean("persist.sysui.cameraOis", false);
+                // Slog.d("CameraOISTempDialog", "ACTION_BOOT_COMPLETED cameraOis = "+cameraOis);
+                // if (cameraOis) {
+                //     mWarnings.cameraOISGryoCali();
+                // }
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
             }
@@ -773,6 +780,8 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
         void updateOTP();
 
         void showUsbNTCTemp(boolean isShow,boolean speakerNoise);
+
+        void cameraOISGryoCali();
 
     }
 

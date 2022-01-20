@@ -1097,4 +1097,12 @@
     <string name="media_output_dialog_disconnected" msgid="1834473104836986046">"<xliff:g id="DEVICE_NAME">%1$s</xliff:g>（已断开连接）"</string>
     <string name="media_output_dialog_connect_failed" msgid="3225190634236259010">"无法连接。请重试。"</string>
     <string name="media_output_dialog_pairing_new" msgid="9099497976087485862">"与新设备配对"</string>
+
+    <string name="camera_ois_calibration_title1">检测到新的摄像头模块 \n 需要 OIS 校准</string>
+    <string name="camera_ois_calibration_message1">请把手机面朝上放在柔软的平面上。在按下OK后，过程将开始，通常它只需要10秒</string>
+
+    <string name="camera_ois_calibration_title2">OIS校准处理</string>
+    <string name="camera_ois_calibration_message2">按下 OK 后，该过程将开始，通常只需 10 秒。 请不要移动或摇晃手机，并保持手机稳定在表面上。</string>
+    <string name="camera_ois_calibration_title3">OIS校准失败！</string>
+    <string name="camera_ois_calibration_message3">单击确定以关闭弹框</string>
 </resources>

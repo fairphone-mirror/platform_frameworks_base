@@ -80,6 +80,7 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import com.android.systemui.power.CameraOISTempDialog;
 /**
  */
 @Singleton
@@ -170,6 +171,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     private AlertDialog mShutDown;
     private UsbNTCTempDialog mUsbNTCTemp;
     private int usbNTCNotificationId = 11241;
+    private CameraOISTempDialog mCameraOISTemp;
 
     /**
      */
@@ -486,6 +488,21 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
             mLowTemp.dismiss();
             mLowTemp = null;
         }
+    }
+
+    public void cameraOISGryoCali(){
+        if (mCameraOISTemp != null) {
+            return;
+        }
+        mCameraOISTemp = new CameraOISTempDialog(mContext);
+         WindowManager.LayoutParams attributes = mCameraOISTemp.getWindow().getAttributes();
+        attributes.dimAmount = 0.7f;
+        mCameraOISTemp.getWindow().setAttributes(attributes);
+        mCameraOISTemp.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        
+        mCameraOISTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR);
+        mCameraOISTemp.show();
+        Slog.d("CameraOISTempDialog", "cameraOISGryoCali show ");
     }
 
 
