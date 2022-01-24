@@ -485,7 +485,7 @@ public class CameraOISTempDialog extends AlertDialog {
                 // Message.obtain(mUiHandler, UI_UPDATE_OIS_GET, false).sendToTarget();
             }
             dismissAll();
-            // SystemProperties.set("persist.sysui.cameraOis", "true");
+            SystemProperties.set("persist.sys.cameraOis", "false");
             mState = Scene.OIS_GET;
             Message.obtain(mUiHandler, UI_UPDATE_OIS_DESTORY, checkOisCail).sendToTarget();
         }
@@ -510,6 +510,7 @@ public class CameraOISTempDialog extends AlertDialog {
                       start();
                       break;
                     case UI_UPDATE_OIS_DESTORY:
+                        stop();
                         Boolean setOk = (Boolean)msg.obj;
                         if (setOk) {
                             mTitleTips.setText(mContext.getResources().getString(R.string.camera_ois_calibration_title3));

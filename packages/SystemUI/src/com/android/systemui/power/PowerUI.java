@@ -387,11 +387,15 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 boolean speakerNoise = intent.getIntExtra("speakerNoise",0) != 0;
                 mWarnings.showUsbNTCTemp(dismissDialog,speakerNoise);
             } else if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
-                // boolean cameraOis = SystemProperties.getBoolean("persist.sysui.cameraOis", false);
-                // Slog.d("CameraOISTempDialog", "ACTION_BOOT_COMPLETED cameraOis = "+cameraOis);
-                // if (cameraOis) {
-                //     mWarnings.cameraOISGryoCali();
-                // }
+                boolean cameraOis = SystemProperties.getBoolean("persist.sys.cameraOis", false);
+                boolean systemCamera = SystemProperties.getBoolean("ro.vendor.t2m.camera_change", false);
+                Slog.d("CameraOISTempDialog", "ACTION_BOOT_COMPLETED cameraOis = "+cameraOis + " ; systemCamera = "+systemCamera);
+                if (systemCamera) {
+                    SystemProperties.set("persist.sys.cameraOis", "true");
+                }
+                if (cameraOis || systemCamera) {
+                    mWarnings.cameraOISGryoCali();
+                }
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
             }
