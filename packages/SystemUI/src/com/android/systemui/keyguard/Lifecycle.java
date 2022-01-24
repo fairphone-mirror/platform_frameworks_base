@@ -39,7 +39,9 @@ public class Lifecycle<T> {
 
     public void dispatch(Consumer<T> consumer) {
         for (int i = 0; i < mObservers.size(); i++) {
-            consumer.accept(mObservers.get(i));
+            if (mObservers != null) {
+                consumer.accept(mObservers.get(i));
+            }
         }
     }
 }
