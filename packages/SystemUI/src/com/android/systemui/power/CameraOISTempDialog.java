@@ -480,12 +480,12 @@ public class CameraOISTempDialog extends AlertDialog {
             // Message.obtain(mUiHandler, UI_UPDATE_OIS_START_3, true).sendToTarget();
             if (checkOisCail) {
                 Log.e(TAG, "ois cail sucessed");
+                SystemProperties.set("persist.sys.cameraOis", "false");
             }else{
                 Log.e(TAG, "ois cail failed");
                 // Message.obtain(mUiHandler, UI_UPDATE_OIS_GET, false).sendToTarget();
             }
             dismissAll();
-            SystemProperties.set("persist.sys.cameraOis", "false");
             mState = Scene.OIS_GET;
             Message.obtain(mUiHandler, UI_UPDATE_OIS_DESTORY, checkOisCail).sendToTarget();
         }
