@@ -1103,6 +1103,8 @@
 
     <string name="camera_ois_calibration_title2">OIS校准处理</string>
     <string name="camera_ois_calibration_message2">按下 OK 后，该过程将开始，通常只需 10 秒。 请不要移动或摇晃手机，并保持手机稳定在表面上。</string>
-    <string name="camera_ois_calibration_title3">OIS校准失败！</string>
-    <string name="camera_ois_calibration_message3">单击确定以关闭弹框</string>
+    <string name="camera_ois_calibration_title3">OIS校准成功！</string>
+    <string name="camera_ois_calibration_message3">单击确定以享受您的手机</string>
+    <string name="camera_ois_calibration_title4">OIS校准失败！</string>
+    <string name="camera_ois_calibration_message4">单击确定以关闭弹框</string>
 </resources>

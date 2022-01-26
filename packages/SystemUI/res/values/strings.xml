@@ -2901,7 +2901,7 @@
     <string name="camera_ois_calibration_message2">After pressing OK the process will start and normally it takes only up to 10 seconds. Please do not move or shake the phone and keep it steady on the surface.</string>
     <string name="camera_ois_calibration_title3">OIS calibration succeed！</string>
     <string name="camera_ois_calibration_message3">Click OK to enjoy your phone</string>
-    <string name="camera_ois_calibration_title4">OIS calibration failed|</string>
+    <string name="camera_ois_calibration_title4">OIS calibration failed!</string>
     <string name="camera_ois_calibration_message4">Click OK to close dialog</string>
 
 </resources>
