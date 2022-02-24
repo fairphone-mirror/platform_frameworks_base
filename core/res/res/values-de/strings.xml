@@ -86,7 +86,7 @@
     <string name="NetworkPreferenceSwitchTitle" msgid="1008329951315753038">"Mobilfunknetz nicht erreichbar"</string>
     <string name="NetworkPreferenceSwitchSummary" msgid="2086506181486324860">"Versuche, das bevorzugte Netzwerk zu ändern. Tippe, um ein anderes auszuwählen."</string>
     <string name="EmergencyCallWarningTitle" msgid="1615688002899152860">"Notrufe nicht möglich"</string>
-    <string name="EmergencyCallWarningSummary" msgid="1194185880092805497">"Notrufe über WLAN nicht möglich"</string>
+    <string name="EmergencyCallWarningSummary" msgid="1194185880092805497">"Notrufe nur bei Mobilfunkabdeckung möglich"</string>
     <string name="notification_channel_network_alert" msgid="4788053066033851841">"Warnmeldungen"</string>
     <string name="notification_channel_call_forward" msgid="8230490317314272406">"Anrufweiterleitung"</string>
     <string name="notification_channel_emergency_callback" msgid="54074839059123159">"Notfallrückrufmodus"</string>
