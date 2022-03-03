@@ -214,7 +214,7 @@ public class AuxiliarySensorController {
 
     private void onDisplayStateChanged(boolean isDisplayOn) {
         mDisplayStateOn = isDisplayOn;
-        if (isDisplayOn) {
+        if (isDisplayOn && mPendingProximity != PROXIMITY_POSITIVE) {
             initSensorAuxiliaryState();
         }
     }
