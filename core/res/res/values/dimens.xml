@@ -53,7 +53,7 @@
     <!-- Height of the status bar in landscape.
          Do not read this dimen directly. Use {@link SystemBarUtils#getStatusBarHeight} instead.
          -->
-    <dimen name="status_bar_height_landscape">@dimen/status_bar_height_portrait</dimen>
+    <dimen name="status_bar_height_landscape">24dp</dimen>
     <!-- Height of area above QQS where battery/time go.
          Do not read this dimen directly. Use {@link SystemBarUtils#getQuickQsOffsetHeight} instead.
          -->
