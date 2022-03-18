@@ -133,7 +133,7 @@
     <skip />
     <string name="wfcSpnFormat_spn_wifi_calling" msgid="3165949348000906194">"<xliff:g id="SPN">%s</xliff:g> WiFi Calling"</string>
     <string name="wfcSpnFormat_spn_wifi_calling_vo_hyphen" msgid="3836827895369365298">"<xliff:g id="SPN">%s</xliff:g> WiFi Calling"</string>
-    <string name="wfcSpnFormat_wlan_call" msgid="4895315549916165700">"WLAN-Anruf"</string>
+    <string name="wfcSpnFormat_wlan_call" msgid="4895315549916165700">"WLAN Call"</string>
     <string name="wfcSpnFormat_spn_wlan_call" msgid="255919245825481510">"<xliff:g id="SPN">%s</xliff:g> WLAN-Anruf"</string>
     <string name="wfcSpnFormat_spn_wifi" msgid="7232899594327126970">"<xliff:g id="SPN">%s</xliff:g> WLAN"</string>
     <string name="wfcSpnFormat_wifi_calling_bar_spn" msgid="8383917598312067365">"WiFi Calling | <xliff:g id="SPN">%s</xliff:g>"</string>
