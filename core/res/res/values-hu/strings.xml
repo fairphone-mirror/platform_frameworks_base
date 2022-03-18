@@ -138,7 +138,7 @@
     <string name="wfcSpnFormat_spn_wifi" msgid="7232899594327126970">"<xliff:g id="SPN">%s</xliff:g> Wi-Fi"</string>
     <string name="wfcSpnFormat_wifi_calling_bar_spn" msgid="8383917598312067365">"Wi-Fi-hívás | <xliff:g id="SPN">%s</xliff:g>"</string>
     <string name="wfcSpnFormat_spn_vowifi" msgid="6865214948822061486">"<xliff:g id="SPN">%s</xliff:g> VoWifi"</string>
-    <string name="wfcSpnFormat_wifi_calling" msgid="6178935388378661755">"Wi-Fi-hívás"</string>
+    <string name="wfcSpnFormat_wifi_calling" msgid="6178935388378661755">"WiFi Hang"</string>
     <string name="wfcSpnFormat_wifi" msgid="1376356951297043426">"Wi-Fi"</string>
     <string name="wfcSpnFormat_wifi_calling_wo_hyphen" msgid="7178561009225028264">"Wi-Fi-hívás"</string>
     <string name="wfcSpnFormat_vowifi" msgid="8371335230890725606">"VoWifi"</string>

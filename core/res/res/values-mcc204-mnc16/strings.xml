@@ -19,9 +19,6 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <!-- A string used to replace %s in a URL to fill in the locale for countries  -->
-    <!-- whose locale we don't natively support.  A 0 length string triggers no replacement. Do not translate -->
-    <string name="locale_replacement">de_at</string>
-    <!-- Spn during Wi-Fi Calling: "WLAN Call" -->
-    <string name="wfcSpnFormat_wlan_call">WLAN-Call</string>
+    <string name="wfcSpnFormat_spn_wifi" msgid="7232899594327126970">"<xliff:g id="SPN">%s</xliff:g> WiFi"</string>
+
 </resources>
