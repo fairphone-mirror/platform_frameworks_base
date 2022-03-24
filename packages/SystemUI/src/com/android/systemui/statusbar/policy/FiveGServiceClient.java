@@ -292,7 +292,10 @@ public class FiveGServiceClient {
         MobileIconGroup iconGroup = TelephonyIcons.UNKNOWN;
         switch (nrIconType){
             case NrIconType.TYPE_5G_BASIC:
-                iconGroup = TelephonyIcons.FIVE_G_BASIC;
+                //[BUG]-Modify-Begin by shaopan.tang 2022-03-24 [FP4-3618]Display 5G instead of 5G basic
+                //iconGroup = TelephonyIcons.FIVE_G_BASIC;
+                iconGroup = TelephonyIcons.FIVE_G;
+                //[BUG]-Modify-End by shaopan.tang
                 break;
             case NrIconType.TYPE_5G_UWB:
                 iconGroup = TelephonyIcons.FIVE_G_UWB;
