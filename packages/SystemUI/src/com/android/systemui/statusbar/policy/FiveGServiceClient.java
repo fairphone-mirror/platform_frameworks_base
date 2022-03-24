@@ -263,7 +263,7 @@ public class FiveGServiceClient {
         MobileIconGroup iconGroup = TelephonyIcons.UNKNOWN;
         switch (nrIconType){
             case NrIconType.TYPE_5G_BASIC:
-                iconGroup = TelephonyIcons.FIVE_G_BASIC;
+                iconGroup = TelephonyIcons.FIVE_G;
                 break;
             case NrIconType.TYPE_5G_UWB:
                 iconGroup = TelephonyIcons.FIVE_G_UWB;
