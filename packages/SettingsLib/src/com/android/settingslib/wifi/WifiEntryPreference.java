@@ -64,7 +64,6 @@ public class WifiEntryPreference extends Preference implements WifiEntry.WifiEnt
     private final IconInjector mIconInjector;
     private WifiEntry mWifiEntry;
     private int mLevel = -1;
-    private int mWifiStandard;
     private boolean mVhtMax8SpatialStreamsSupport;
     private boolean mHe8ssCapableAp;
     private boolean mShowX; // Shows the Wi-Fi signl icon of Pie+x when it's true.
@@ -141,19 +140,17 @@ public class WifiEntryPreference extends Preference implements WifiEntry.WifiEnt
         setTitle(mWifiEntry.getTitle());
         final int level = mWifiEntry.getLevel();
         final boolean showX = mWifiEntry.shouldShowXLevelIcon();
-        final int standard = mWifiEntry.getWifiStandard();
         final boolean vhtMax8SpatialStreamsSupport = mWifiEntry.isVhtMax8SpatialStreamsSupported();
         final boolean he8ssCapableAp = mWifiEntry.isHe8ssCapableAp();
 
 
-        if (level != mLevel || standard != mWifiStandard || he8ssCapableAp != mHe8ssCapableAp ||
+        if (level != mLevel || he8ssCapableAp != mHe8ssCapableAp ||
                 vhtMax8SpatialStreamsSupport != mVhtMax8SpatialStreamsSupport || showX != mShowX) {
             mLevel = level;
             mShowX = showX;
-            mWifiStandard = standard;
             mHe8ssCapableAp = he8ssCapableAp;
             mVhtMax8SpatialStreamsSupport = vhtMax8SpatialStreamsSupport;
-            updateIcon(mShowX, mLevel, mWifiStandard, mHe8ssCapableAp && mVhtMax8SpatialStreamsSupport);
+            updateIcon(mShowX, mLevel, 0 /* WIFI_STANDARD_UNKNOWN */, mHe8ssCapableAp && mVhtMax8SpatialStreamsSupport);
             notifyChanged();
         }
 

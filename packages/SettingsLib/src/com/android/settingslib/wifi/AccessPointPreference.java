@@ -74,7 +74,6 @@ public class AccessPointPreference extends Preference {
     private AccessPoint mAccessPoint;
     private Drawable mBadge;
     private int mLevel;
-    private int mWifiStandard;
     private boolean mHe8ssCapableAp;
     private boolean mVhtMax8SpatialStreamsSupport;
     private CharSequence mContentDescription;
@@ -239,21 +238,18 @@ public class AccessPointPreference extends Preference {
         final Context context = getContext();
         int level = mAccessPoint.getLevel();
         int wifiSpeed = mAccessPoint.getSpeed();
-        int wifiStandard = mAccessPoint.getWifiStandard();
         boolean vhtMax8SpatialStreamsSupport = mAccessPoint.isVhtMax8SpatialStreamsSupported();
         boolean he8ssCapableAp = mAccessPoint.isHe8ssCapableAp();
 
         if (level != mLevel ||
             wifiSpeed != mWifiSpeed ||
-            wifiStandard != mWifiStandard ||
             mVhtMax8SpatialStreamsSupport != vhtMax8SpatialStreamsSupport ||
             mHe8ssCapableAp != he8ssCapableAp) {
             mLevel = level;
             mWifiSpeed = wifiSpeed;
-            mWifiStandard = wifiStandard;
             mVhtMax8SpatialStreamsSupport = vhtMax8SpatialStreamsSupport;
             mHe8ssCapableAp = he8ssCapableAp;
-            updateIcon(mLevel, mWifiStandard, mVhtMax8SpatialStreamsSupport && mHe8ssCapableAp, context);
+            updateIcon(mLevel, 0 /* WIFI_STANDARD_UNKNOWN */, mVhtMax8SpatialStreamsSupport && mHe8ssCapableAp, context);
             notifyChanged();
         }
 
