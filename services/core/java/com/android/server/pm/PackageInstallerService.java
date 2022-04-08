@@ -299,12 +299,11 @@ public class PackageInstallerService extends IPackageInstaller.Stub implements
     @GuardedBy("mSessions")
     private void reconcileStagesLocked(String volumeUuid) {
 
-        final ArraySet<File> unclaimedStages = getStagingDirsOnVolume(volumeUuid);
-
         // We also need to clean up orphaned staging directory for staged sessions
         final File stagedSessionStagingDir = Environment.getDataStagingDirectory(volumeUuid);
         unclaimedStages.addAll(newArraySet(stagedSessionStagingDir.listFiles()));
 
+        final ArraySet<File> unclaimedStages = getStagingDirsOnVolume(volumeUuid);
         // Ignore stages claimed by active sessions
         for (int i = 0; i < mSessions.size(); i++) {
             final PackageInstallerSession session = mSessions.valueAt(i);
