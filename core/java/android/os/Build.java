@@ -1297,7 +1297,11 @@ public class Build {
     @SystemApi
     public static final boolean PERMISSIONS_REVIEW_REQUIRED = true;
 
-    /** {@hide} */
+    /**
+     * Get Fairphone 3 model variant, FP3 vs. FP3+
+     *
+     * @hide
+     * */
     public static String getFairphoneModel() {
         String backCamera = getString("persist.vendor.camera.back");
         String frontCamera = getString("persist.vendor.camera.front");
@@ -1307,6 +1311,17 @@ public class Build {
                 && pcba.contains("8903")
             ? "FP3+"
             : "FP3";
+    }
+
+    /**
+     * Legacy variant of getFairphoneModel()
+     *
+     * Legacy interface is required for Arima's ServiceMenu.
+     *
+     * @hide
+     * */
+    public static String getArimaModel() {
+        return getFairphoneModel();
     }
 
     /**
