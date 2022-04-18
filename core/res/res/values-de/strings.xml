@@ -93,7 +93,7 @@
     <string name="notification_channel_mobile_data_status" msgid="1941911162076442474">"Status der mobilen Datennutzung"</string>
     <string name="notification_channel_sms" msgid="1243384981025535724">"SMS"</string>
     <string name="notification_channel_voice_mail" msgid="8457433203106654172">"Mailboxnachrichten"</string>
-    <string name="notification_channel_wfc" msgid="9048240466765169038">"WLAN-Telefonie"</string>
+    <string name="notification_channel_wfc" msgid="9048240466765169038">"Wi-Fi Calling"</string>
     <string name="notification_channel_sim" msgid="5098802350325677490">"Status der SIM-Karte"</string>
     <string name="notification_channel_sim_high_prio" msgid="642361929452850928">"Benachrichtigungen mit hoher Priorität von der SIM-Karte"</string>
     <string name="peerTtyModeFull" msgid="337553730440832160">"Peer hat TTY-Modus \"Vollständig\" angefordert."</string>
@@ -122,12 +122,12 @@
     <string name="roamingText11" msgid="5245687407203281407">"Roaming-Banner ein"</string>
     <string name="roamingText12" msgid="673537506362152640">"Roaming-Banner aus"</string>
     <string name="roamingTextSearching" msgid="5323235489657753486">"Suche nach Dienst"</string>
-    <string name="wfcRegErrorTitle" msgid="3193072971584858020">"WLAN-Telefonie konnte nicht eingerichtet werden"</string>
+    <string name="wfcRegErrorTitle" msgid="3193072971584858020">"Wi-Fi Calling konnte nicht eingerichtet werden"</string>
   <string-array name="wfcOperatorErrorAlertMessages">
-    <item msgid="468830943567116703">"Um über WLAN telefonieren und Nachrichten senden zu können, bitte zuerst deinen Mobilfunkanbieter, diesen Dienst einzurichten. Anschließend kannst du die Option \"WLAN-Telefonie\" über die Einstellungen erneut aktivieren. (Fehlercode: <xliff:g id="CODE">%1$s</xliff:g>)"</item>
+    <item msgid="468830943567116703">"Um über WLAN telefonieren und Nachrichten senden zu können, bitte zuerst deinen Mobilfunkanbieter, diesen Dienst einzurichten. Anschließend kannst du die Option \"Wi-Fi Calling\" über die Einstellungen erneut aktivieren. (Fehlercode: <xliff:g id="CODE">%1$s</xliff:g>)"</item>
   </string-array>
   <string-array name="wfcOperatorErrorNotificationMessages">
-    <item msgid="4795145070505729156">"Probleme beim Registrieren der WLAN-Telefonie bei deinem Mobilfunkanbieter: <xliff:g id="CODE">%1$s</xliff:g>"</item>
+    <item msgid="4795145070505729156">"Probleme beim Registrieren der Wi-Fi Calling bei deinem Mobilfunkanbieter: <xliff:g id="CODE">%1$s</xliff:g>"</item>
   </string-array>
     <!-- no translation found for wfcSpnFormat_spn (2982505428519096311) -->
     <skip />
