@@ -1543,12 +1543,6 @@ public class MobileSignalController extends SignalController<
 
     private void setTransmitPower(int key, int value) {
         if (mPhone != null) {
-            Log.d(
-                    mTag,
-                    "[SW_SAR] MobuileSignalController setTransmitPower key = "
-                            + key
-                            + ", value = "
-                            + value);
             mPhone.setTransmitPower(key, value);
         }
     }

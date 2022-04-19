@@ -53,7 +53,7 @@ public class PsensorListener {
             mPsensorMaxRange = mProximitySensor.getMaximumRange();
         } else {
             mPsensorMaxRange = 0.0F;
-            Log.d(
+            Log.e(
                     TAG,
                     "[SW_SAR] Psensor abnormal, using default value for mPsensorMaxRange = "
                             + mPsensorMaxRange);
