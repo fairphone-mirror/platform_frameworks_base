@@ -4583,8 +4583,4 @@ public final class BluetoothAdapter {
         }
         return BluetoothProfile.PRIORITY_UNDEFINED;
     }
-
-    IBluetooth getService() {
-         return mService;
-    }
 }
