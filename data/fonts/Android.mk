@@ -44,7 +44,7 @@ $(eval $(call create-font-symlink,DroidSerif-BoldItalic.ttf,NotoSerif-BoldItalic
 
 extra_font_files := \
     DroidSans.ttf \
-    DroidSans-Bold.ttf
+    DroidSans-Bold.ttf 
 
 ################################
 # Use DroidSansMono to hang extra_font_files on
@@ -74,8 +74,8 @@ $(eval include $(BUILD_PREBUILT))
 endef
 
 font_src_files := \
-    AndroidClock.ttf
-
+    AndroidClock.ttf \
+    RadikalRegular.ttf
 $(foreach f, $(font_src_files), $(call build-one-font-module, $(f)))
 
 build-one-font-module :=

@@ -72,6 +72,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import android.widget.ImageView;
 
 /** View that represents the quick settings tile panel (when expanded/pulled down). **/
 public class QSPanel extends LinearLayout implements Tunable, Callback, BrightnessMirrorListener,
@@ -228,8 +229,9 @@ public class QSPanel extends LinearLayout implements Tunable, Callback, Brightne
         mBrightnessView = LayoutInflater.from(mContext).inflate(
             R.layout.quick_settings_brightness_dialog, this, false);
         addView(mBrightnessView);
+        ImageView autoBrightnessBtn = mBrightnessView.findViewById(R.id.brightness_auto);
         mBrightnessController = new BrightnessController(getContext(),
-                findViewById(R.id.brightness_slider), mBroadcastDispatcher);
+                findViewById(R.id.brightness_slider), mBroadcastDispatcher, autoBrightnessBtn);
     }
 
     protected QSTileLayout createRegularTileLayout() {

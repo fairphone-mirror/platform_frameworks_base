@@ -186,7 +186,8 @@ public class Input extends BaseCommand {
             }
 
             do {
-                final int keycode = KeyEvent.keyCodeFromString(arg);
+                // final int keycode = KeyEvent.keyCodeFromString(arg);
+                final int keycode = KeyEvent.fpKeyCodeFromString(arg);
                 sendKeyEvent(inputSource, keycode, longpress, displayId);
             } while ((arg = nextArg()) != null);
         }

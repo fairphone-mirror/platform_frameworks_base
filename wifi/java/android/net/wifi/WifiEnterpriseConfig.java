@@ -580,6 +580,22 @@ public class WifiEnterpriseConfig implements Parcelable {
         return mEapMethod;
     }
 
+    public @NonNull String getSimSlot(@NonNull String key){
+        return getFieldValue(key, "");
+    }
+
+    public @NonNull String getIsPresetAp(@NonNull String key){
+        return getFieldValue(key, "");
+    }
+
+    public void setSimSlot(@NonNull String key,@NonNull String value){
+        setFieldValue(key, value, "");
+    }
+
+    public void setIsPresetAp(@NonNull String key,@NonNull String value){
+        setFieldValue(key, value, "");
+    }
+
     /**
      * Set Phase 2 authentication method. Sets the inner authentication method to be used in
      * phase 2 after setting up a secure channel

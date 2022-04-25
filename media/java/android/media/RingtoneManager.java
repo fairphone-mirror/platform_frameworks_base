@@ -436,8 +436,16 @@ public class RingtoneManager {
         }
 
         ArrayList<Cursor> ringtoneCursors = new ArrayList<Cursor>();
-        ringtoneCursors.add(getInternalRingtones());
-        ringtoneCursors.add(getMediaRingtones());
+
+        Cursor internalRingtones = getInternalRingtones();
+        if (internalRingtones != null){
+            ringtoneCursors.add(internalRingtones);
+        }
+
+        Cursor mediaRingtones = getMediaRingtones();
+        if (mediaRingtones != null) {
+            ringtoneCursors.add(mediaRingtones);
+        }
 
         if (mIncludeParentRingtones) {
             Cursor parentRingtonesCursor = getParentProfileRingtones();
@@ -515,11 +523,12 @@ public class RingtoneManager {
         try {
             if (ringtoneUri == null) return -1;
             final long ringtoneId = ContentUris.parseId(ringtoneUri);
-
             final Cursor cursor = getCursor();
             cursor.moveToPosition(-1);
             while (cursor.moveToNext()) {
+
                 if (ringtoneId == cursor.getLong(ID_COLUMN_INDEX)) {
+
                     return cursor.getPosition();
                 }
             }

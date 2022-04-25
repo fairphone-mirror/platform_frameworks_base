@@ -551,6 +551,47 @@ public class NetworkInfo implements Parcelable {
         }
     }
 
+    public @Nullable String toTransferString() {
+       // synchronized (this) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(getType()).append(",").append(getSubtype()).append(",")
+            .append(getTypeName()).append(",")
+            .append(getSubtypeName()).append(",")
+            .append(mState).append(",").append(mDetailedState).append(",")
+            .append(mReason == null ? "unspecified" : mReason).append(",")
+            .append(mExtraInfo == null ? "none" : mExtraInfo).append(",")
+            .append(mIsFailover).append(",")
+            .append(mIsAvailable).append(",")
+            .append(mIsRoaming);
+            return builder.toString();
+        //}
+    }
+
+    //"1,0,WIFI,,CONNECTED,AUTHENTICATING,unspecified,none,false,true,false";
+    /** {@hide} */
+    public NetworkInfo(String transferString) {
+        String[] props = transferString.split(",");
+        mNetworkType = Integer.parseInt(props[0]);
+        mSubtype = Integer.parseInt(props[1]);
+        mTypeName = props[2];
+        mSubtypeName = props[3];
+        for (State state : State.values()) {
+            if (props[4].equals(state.toString())) {
+                mState = state;
+            }
+        }
+        for (DetailedState dstate : DetailedState.values()) {
+            if (props[5].equals(dstate.toString())) {
+                mDetailedState = dstate;
+            }
+        }
+        mReason = (props[6] == "unspecified" ? null : mReason);
+        mExtraInfo = (props[7] == "none" ? null : mExtraInfo);
+        mIsFailover = Boolean.parseBoolean(props[8]);
+        mIsAvailable = Boolean.parseBoolean(props[9]);
+        mIsRoaming = Boolean.parseBoolean(props[10]);
+    }
+
     @Override
     public int describeContents() {
         return 0;

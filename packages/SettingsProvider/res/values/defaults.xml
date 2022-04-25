@@ -18,7 +18,7 @@
 -->
 <resources>
     <bool name="def_dim_screen">true</bool>
-    <integer name="def_screen_off_timeout">60000</integer>
+    <integer name="def_screen_off_timeout">30000</integer>
     <integer name="def_sleep_timeout">-1</integer>
     <bool name="def_airplane_mode_on">false</bool>
     <bool name="def_theater_mode_on">false</bool>
@@ -30,8 +30,8 @@
     <bool name="def_auto_time_zone">true</bool>
     <bool name="def_accelerometer_rotation">false</bool>
     <!-- Default screen brightness, from 0 to 255.  102 is 40%. -->
-    <integer name="def_screen_brightness">102</integer>
-    <bool name="def_screen_brightness_automatic_mode">false</bool>
+    <integer name="def_screen_brightness">128</integer>
+    <bool name="def_screen_brightness_automatic_mode">true</bool>
     <fraction name="def_window_animation_scale">100%</fraction>
     <fraction name="def_window_transition_scale">100%</fraction>
     <bool name="def_haptic_feedback">true</bool>
@@ -159,7 +159,9 @@
     <string name="def_immersive_mode_confirmations" translatable="false"></string>
 
     <!-- Default for Settings.Global.WIFI_SCAN_ALWAYS_AVAILABLE -->
-    <integer name="def_wifi_scan_always_available">0</integer>
+    <!--[BUGFIX]-MOD-BEGIN by T2M.ZhangJie,06/15/2021,11241915,-->
+    <integer name="def_wifi_scan_always_available">1</integer>
+    <!--[BUGFIX]-MOD-END by T2M.ZhangJie-->
 
     <!-- Default for Settings.Secure.LOCK_SCREEN_SHOW_NOTIFICATIONS, 1==on -->
     <integer name="def_lock_screen_show_notifications">1</integer>
@@ -214,7 +216,7 @@
     <string name="def_backup_agent_timeout_parameters"></string>
 
     <!-- Default for Settings.System.VIBRATE_WHEN_RINGING -->
-    <bool name="def_vibrate_when_ringing">false</bool>
+    <bool name="def_vibrate_when_ringing">true</bool>
 
     <!-- Default for Settings.Global.APPLY_RAMPING_RINGER -->
     <bool name="def_apply_ramping_ringer">false</bool>
@@ -247,5 +249,5 @@
     <bool name="def_hdmiControlAutoDeviceOff">false</bool>
 
     <!-- Default for Settings.System.TIME_12_24 -->
-    <string name="def_time_format" translatable="false">12</string>
+    <string name="def_time_format" translatable="false">24</string>
 </resources>

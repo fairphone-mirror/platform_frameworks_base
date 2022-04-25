@@ -26,7 +26,7 @@
 
     <!-- Control whether status bar should distinguish HSPA data icon form UMTS
     data icon on devices -->
-    <bool name="config_hspa_data_distinguishable">false</bool>
+    <bool name="config_hspa_data_distinguishable">true</bool>
 
     <!-- Component to be used as the status bar service.  Must implement the IStatusBar
      interface.  This name is in the ComponentName flattened format (package/class)  -->
@@ -69,10 +69,10 @@
     <integer translatable="false" name="config_search_panel_view_vibration_duration">20</integer>
 
     <!-- Show mic or phone affordance on Keyguard -->
-    <bool name="config_keyguardShowLeftAffordance">false</bool>
+    <bool name="config_keyguardShowLeftAffordance">true</bool>
 
     <!-- Show camera affordance on Keyguard -->
-    <bool name="config_keyguardShowCameraAffordance">false</bool>
+    <bool name="config_keyguardShowCameraAffordance">true</bool>
 
     <!-- The length of the vibration when the notification pops open. -->
     <integer name="one_finger_pop_duration_ms">10</integer>
@@ -285,7 +285,7 @@
     <bool name="enable_safety_warning">true</bool>
 
     <!-- Whether to show operator name in the status bar -->
-    <bool name="config_showOperatorNameInStatusBar">false</bool>
+    <bool name="config_showOperatorNameInStatusBar">true</bool>
 
     <!-- Duration of the full carrier network change icon animation. -->
     <integer name="carrier_network_change_anim_time">3000</integer>

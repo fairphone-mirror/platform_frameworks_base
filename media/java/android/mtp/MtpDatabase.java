@@ -427,6 +427,7 @@ public class MtpDatabase implements AutoCloseable {
         }
         // Add the new file to MediaProvider
         if (succeeded) {
+            //porting by T2M yubin.ying for FP4-3645 20220419
             updateMediaStore(mContext, obj.getPath().toFile());
         }
     }
@@ -576,8 +577,10 @@ public class MtpDatabase implements AutoCloseable {
             return MtpConstants.RESPONSE_GENERAL_ERROR;
         }
 
+        //porting by T2M yubin.ying for FP4-3645 20220419
         updateMediaStore(mContext, oldPath.toFile());
         updateMediaStore(mContext, newPath.toFile());
+        //porting by T2M yubin.ying for FP4-3645 20220419
         return MtpConstants.RESPONSE_OK;
     }
 
@@ -614,8 +617,10 @@ public class MtpDatabase implements AutoCloseable {
         Path path = newParentObj.getPath().resolve(name);
         Path oldPath = oldParentObj.getPath().resolve(name);
 
+        //porting by T2M yubin.ying for FP4-3645 20220419
         updateMediaStore(mContext, oldPath.toFile());
         updateMediaStore(mContext, path.toFile());
+        //porting by T2M yubin.ying for FP4-3645 20220419
     }
 
     @VisibleForNative
@@ -638,7 +643,7 @@ public class MtpDatabase implements AutoCloseable {
         if (!success) {
             return;
         }
-
+        //porting by T2M yubin.ying for FP4-3645 20220419
         updateMediaStore(mContext, obj.getPath().toFile());
     }
 
@@ -652,6 +657,7 @@ public class MtpDatabase implements AutoCloseable {
             MediaStore.scanFile(resolver, file);
         }
     }
+    //porting by T2M yubin.ying for FP4-3645 20220419
 
     @VisibleForNative
     private int setObjectProperty(int handle, int property,
@@ -671,7 +677,8 @@ public class MtpDatabase implements AutoCloseable {
             case MtpConstants.DEVICE_PROPERTY_SYNCHRONIZATION_PARTNER:
             case MtpConstants.DEVICE_PROPERTY_DEVICE_FRIENDLY_NAME:
                 // writable string properties kept in shared preferences
-                String value = mDeviceProperties.getString(Integer.toString(property), "");
+                // String value = mDeviceProperties.getString(Integer.toString(property), "");
+                String value = "Fairphone 4 5G";
                 int length = value.length();
                 if (length > 255) {
                     length = 255;
@@ -894,10 +901,12 @@ public class MtpDatabase implements AutoCloseable {
             }
 
             String[] whereArgs = new String[]{path.toString()};
+            //porting by T2M yubin.ying for FP4-3645 20220419
             if (mMediaProvider.delete(objectsUri, PATH_WHERE, whereArgs) == 0) {
                 Log.i(TAG, "MediaProvider didn't delete " + path);
             }
             updateMediaStore(mContext, path.toFile());
+            //porting by T2M yubin.ying for FP4-3645 20220419
         } catch (Exception e) {
             Log.d(TAG, "Failed to delete " + path + " from MediaProvider");
         }

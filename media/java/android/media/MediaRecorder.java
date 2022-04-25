@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+
 package android.media;
 
 import android.annotation.CallbackExecutor;
@@ -124,7 +125,6 @@ public class MediaRecorder implements AudioRouting,
     private OnInfoListener mOnInfoListener;
 
     private int mChannelCount;
-
     /**
      * Default constructor.
      */
@@ -146,6 +146,7 @@ public class MediaRecorder implements AudioRouting,
          */
         native_setup(new WeakReference<MediaRecorder>(this), packageName,
                 ActivityThread.currentOpPackageName());
+
     }
 
     /**
@@ -1436,7 +1437,6 @@ public class MediaRecorder implements AudioRouting,
                     }
                 }
                 return;
-
             default:
                 Log.e(TAG, "Unknown message type " + msg.what);
                 return;
@@ -1886,4 +1886,3 @@ public class MediaRecorder implements AudioRouting,
 
     }
 }
-

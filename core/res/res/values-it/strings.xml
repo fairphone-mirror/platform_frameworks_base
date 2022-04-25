@@ -146,6 +146,7 @@
     <string name="wfc_mode_wifi_preferred_summary" msgid="1035175836270943089">"Chiamata tramite Wi-Fi"</string>
     <string name="wfc_mode_cellular_preferred_summary" msgid="4958965609212575619">"Chiamata su rete mobile"</string>
     <string name="wfc_mode_wifi_only_summary" msgid="104951993894678665">"Solo Wi-Fi"</string>
+    <string name="wfc_mode_ims_preferred_summary">IMS preferito</string>
     <string name="cfTemplateNotForwarded" msgid="862202427794270501">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g>: inoltro non effettuato"</string>
     <string name="cfTemplateForwarded" msgid="9132506315842157860">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g>: <xliff:g id="DIALING_NUMBER">{1}</xliff:g>"</string>
     <string name="cfTemplateForwardedTime" msgid="735042369233323609">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g><xliff:g id="DIALING_NUMBER">{1}</xliff:g> dopo <xliff:g id="TIME_DELAY">{2}</xliff:g> secondi"</string>
@@ -1413,6 +1414,7 @@
     <string name="deny" msgid="6632259981847676572">"Rifiuta"</string>
     <string name="permission_request_notification_title" msgid="1810025922441048273">"Autorizzazione richiesta"</string>
     <string name="permission_request_notification_with_subtitle" msgid="3743417870360129298">"Autorizzazione richiesta\nper l\'account <xliff:g id="ACCOUNT">%s</xliff:g>."</string>
+    <string name="permission_request_notification_for_app_with_subtitle" msgid="1298704005732851350">"Autorizzazione richiesta da <xliff:g id="APP">%1$s</xliff:g>\nper l\'account <xliff:g id="ACCOUNT">%2$s</xliff:g>."</string>
     <string name="forward_intent_to_owner" msgid="4620359037192871015">"Stai utilizzando l\'app al di fuori del tuo profilo di lavoro"</string>
     <string name="forward_intent_to_work" msgid="3620262405636021151">"Stai utilizzando l\'app nel tuo profilo di lavoro"</string>
     <string name="input_method_binding_label" msgid="1166731601721983656">"Metodo inserimento"</string>

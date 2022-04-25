@@ -60,6 +60,7 @@ public class KeyguardIndicationTextView extends TextView {
         } else if (!TextUtils.equals(text, mText)) {
             mText = text;
             setVisibility(View.VISIBLE);
+            android.util.Log.e("KeyguardIndicationTextView","switchIndication text = "+text);
             setText(mText);
         }
     }

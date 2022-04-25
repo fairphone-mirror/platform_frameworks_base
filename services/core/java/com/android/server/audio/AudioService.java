@@ -340,7 +340,7 @@ public class AudioService extends IAudioService.Stub
         0,  // STREAM_SYSTEM
         0,  // STREAM_RING
         0,  // STREAM_MUSIC
-        1,  // STREAM_ALARM
+        0,  // STREAM_ALARM
         0,  // STREAM_NOTIFICATION
         0,  // STREAM_BLUETOOTH_SCO
         0,  // STREAM_SYSTEM_ENFORCED
@@ -757,7 +757,7 @@ public class AudioService extends IAudioService.Stub
                         MAX_STREAM_VOLUME[AudioSystem.STREAM_MUSIC] / 4;
             } else {
                 AudioSystem.DEFAULT_STREAM_VOLUME[AudioSystem.STREAM_MUSIC] =
-                        MAX_STREAM_VOLUME[AudioSystem.STREAM_MUSIC] / 3;
+                        7 * MAX_STREAM_VOLUME[AudioSystem.STREAM_MUSIC] / 15;
             }
         }
 
@@ -773,7 +773,7 @@ public class AudioService extends IAudioService.Stub
         } else {
             // Default is 6 out of 7 (default maximum), so scale accordingly.
             AudioSystem.DEFAULT_STREAM_VOLUME[AudioSystem.STREAM_ALARM] =
-                        6 * MAX_STREAM_VOLUME[AudioSystem.STREAM_ALARM] / 7;
+                        4 * MAX_STREAM_VOLUME[AudioSystem.STREAM_ALARM] / 7;
         }
 
         int maxSystemVolume = SystemProperties.getInt("ro.config.system_vol_steps", -1);
@@ -7220,6 +7220,13 @@ public class AudioService extends IAudioService.Stub
             return MAX_STREAM_VOLUME[AudioSystem.STREAM_MUSIC];
         }
         if (device == AudioSystem.DEVICE_OUT_USB_HEADSET) {
+            // try {
+                // if (SystemProperties.getBoolean("dev.tct.MMITest",false)) {
+                    mSafeUsbMediaVolumeIndex = mSafeMediaVolumeIndex;
+                // }
+            // } catch (Exception e) {
+                
+            // }
             return mSafeUsbMediaVolumeIndex;
         } else {
             return mSafeMediaVolumeIndex;

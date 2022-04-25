@@ -263,6 +263,9 @@ public class StatusBar extends SystemUI implements DemoMode,
             "com.android.systemui.statusbar.banner_action_cancel";
     private static final String BANNER_ACTION_SETUP =
             "com.android.systemui.statusbar.banner_action_setup";
+
+    private static final String ACTION_RESET_VIEW = "com.android.systemui.statusbar.phone.resetview";
+
     public static final String TAG = "StatusBar";
     public static final boolean DEBUG = false;
     public static final boolean SPEW = false;
@@ -287,7 +290,7 @@ public class StatusBar extends SystemUI implements DemoMode,
     // 1020-1040 reserved for BaseStatusBar
 
     // Time after we abort the launch transition.
-    private static final long LAUNCH_TRANSITION_TIMEOUT_MS = 5000;
+    private static final long LAUNCH_TRANSITION_TIMEOUT_MS = 3600000;
 
     protected static final boolean CLOSE_PANEL_WHEN_EMPTIED = true;
 
@@ -1288,6 +1291,7 @@ public class StatusBar extends SystemUI implements DemoMode,
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(DevicePolicyManager.ACTION_SHOW_DEVICE_MONITORING_DIALOG);
+        filter.addAction(ACTION_RESET_VIEW);
         mBroadcastDispatcher.registerReceiver(mBroadcastReceiver, filter, null, UserHandle.ALL);
     }
 
@@ -2805,6 +2809,10 @@ public class StatusBar extends SystemUI implements DemoMode,
             else if (DevicePolicyManager.ACTION_SHOW_DEVICE_MONITORING_DIALOG.equals(action)) {
                 mQSPanel.showDeviceMonitoringDialog();
             }
+            else if (ACTION_RESET_VIEW.equals(action)) {
+                mHandler.removeMessages(MSG_LAUNCH_TRANSITION_TIMEOUT);
+                mHandler.sendEmptyMessage(MSG_LAUNCH_TRANSITION_TIMEOUT);
+            }
         }
     };
 
@@ -3186,6 +3194,10 @@ public class StatusBar extends SystemUI implements DemoMode,
     }
 
     boolean updateIsKeyguard() {
+        return updateIsKeyguard(false /* force */);
+    }
+
+    boolean updateIsKeyguard(boolean force) {
         boolean wakeAndUnlocking = mBiometricUnlockController.getMode()
                 == BiometricUnlockController.MODE_WAKE_AND_UNLOCK;
 
@@ -3208,7 +3220,7 @@ public class StatusBar extends SystemUI implements DemoMode,
                 showKeyguardImpl();
             }
         } else {
-            return hideKeyguardImpl();
+            return hideKeyguardImpl(force);
         }
         return false;
     }
@@ -3314,6 +3326,7 @@ public class StatusBar extends SystemUI implements DemoMode,
      * because the launched app crashed or something else went wrong.
      */
     public void startLaunchTransitionTimeout() {
+        mHandler.removeMessages(MSG_LAUNCH_TRANSITION_TIMEOUT);
         mHandler.sendEmptyMessageDelayed(MSG_LAUNCH_TRANSITION_TIMEOUT,
                 LAUNCH_TRANSITION_TIMEOUT_MS);
     }
@@ -3339,11 +3352,11 @@ public class StatusBar extends SystemUI implements DemoMode,
     /**
      * @return true if we would like to stay in the shade, false if it should go away entirely
      */
-    public boolean hideKeyguardImpl() {
+    public boolean hideKeyguardImpl(boolean force) {
         mIsKeyguard = false;
         Trace.beginSection("StatusBar#hideKeyguard");
         boolean staying = mStatusBarStateController.leaveOpenOnKeyguardHide();
-        if (!(mStatusBarStateController.setState(StatusBarState.SHADE))) {
+        if (!(mStatusBarStateController.setState(StatusBarState.SHADE, force))) {
             //TODO: StatusBarStateController should probably know about hiding the keyguard and
             // notify listeners.
 
@@ -3770,7 +3783,8 @@ public class StatusBar extends SystemUI implements DemoMode,
                 // is correct.
                 mHandler.post(() -> onCameraLaunchGestureDetected(mLastCameraLaunchSource));
             }
-            updateIsKeyguard();
+            // When finished going to sleep, force the status bar state to avoid stale state.
+            updateIsKeyguard(true /* force */);
         }
 
         @Override

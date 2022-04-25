@@ -2040,7 +2040,8 @@
     <bool name="config_actionMenuItemAllCaps">true</bool>
 
     <!-- Remote server that can provide NTP responses. -->
-    <string translatable="false" name="config_ntpServer">time.android.com</string>
+    <!-- Modified by zhongping.zhang for FP4-536 2021-06-01 -->
+    <string translatable="false" name="config_ntpServer">asia.pool.ntp.org</string>
     <!-- Normal polling frequency in milliseconds -->
     <integer name="config_ntpPollingInterval">86400000</integer>
     <!-- Try-again polling interval in milliseconds, in case the network request failed -->
@@ -3507,7 +3508,7 @@
     <bool name="config_allow3rdPartyAppOnInternal">true</bool>
 
     <!-- Specifies the path that is used by AdaptiveIconDrawable class to crop launcher icons. -->
-    <string name="config_icon_mask" translatable="false">"M50,0L92,0C96.42,0 100,4.58 100 8L100,92C100, 96.42 96.42 100 92 100L8 100C4.58, 100 0 96.42 0 92L0 8 C 0 4.42 4.42 0 8 0L50 0Z"</string>
+    <string name="config_icon_mask" translatable="false">"M50 0A50 50,0,1,1,50 100A50 50,0,1,1,50 0"</string>
 
     <!-- The component name, flattened to a string, for the default accessibility service to be
          enabled by the accessibility shortcut. This service must be trusted, as it can be activated
@@ -4101,6 +4102,9 @@
     <string name="config_batterymeterPowersavePath" translatable="false">
         M9,10l-2,0l0,-2l-2,0l0,2l-2,0l0,2l2,0l0,2l2,0l0,-2l2,0z
     </string>
+    <string name="config_batterymeterHeatPath" translatable="false">
+        M4.5,4 H7.5 V12 H4.5 M4.5,14 H7.5 V17.5 H4.5
+    </string>
 
     <!-- X path for SignalDrawable as defined on a 24x24 canvas. -->
     <string name="config_signalXPath" translatable="false">
@@ -4224,7 +4228,7 @@
          where: IDs are unique per device, Modality as defined in BiometricAuthenticator.java,
          and Strength as defined in Authenticators.java -->
     <string-array name="config_biometric_sensors" translatable="false" >
-        <!-- <item>0:2:15</item>  ID0:Fingerprint:Strong -->
+         <item>0:2:15</item>  <!--ID0:Fingerprint:Strong -->
     </string-array>
 
     <!-- Messages that should not be shown to the user during face auth enrollment. This should be

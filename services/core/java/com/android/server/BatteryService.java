@@ -84,6 +84,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import android.util.Log;
 
 /**
  * <p>BatteryService monitors the charging status, and charge level of the device
@@ -150,7 +155,7 @@ public final class BatteryService extends SystemService {
     private android.hardware.health.V2_1.HealthInfo mHealthInfo2p1;
     private boolean mBatteryLevelCritical;
     private int mLastBatteryStatus;
-    private int mLastBatteryHealth;
+    //private int mLastBatteryHealth;
     private boolean mLastBatteryPresent;
     private int mLastBatteryLevel;
     private int mLastBatteryVoltage;
@@ -159,6 +164,9 @@ public final class BatteryService extends SystemService {
     private int mLastMaxChargingCurrent;
     private int mLastMaxChargingVoltage;
     private int mLastChargeCounter;
+
+    private ICustomerBatteryFunc mCustomerBatteryFunc;
+    private ICustomerBatteryFunc.CustomBatteryInfo mCustomBatteryInfo;
 
     private int mSequence = 1;
 
@@ -502,7 +510,7 @@ public final class BatteryService extends SystemService {
         shutdownIfOverTempLocked();
 
         if (force || (mHealthInfo.batteryStatus != mLastBatteryStatus ||
-                mHealthInfo.batteryHealth != mLastBatteryHealth ||
+                //mHealthInfo.batteryHealth != mLastBatteryHealth ||
                 mHealthInfo.batteryPresent != mLastBatteryPresent ||
                 mHealthInfo.batteryLevel != mLastBatteryLevel ||
                 mPlugType != mLastPlugType ||
@@ -558,7 +566,7 @@ public final class BatteryService extends SystemService {
                 }
             }
             if (mHealthInfo.batteryStatus != mLastBatteryStatus ||
-                    mHealthInfo.batteryHealth != mLastBatteryHealth ||
+                   // mHealthInfo.batteryHealth != mLastBatteryHealth ||
                     mHealthInfo.batteryPresent != mLastBatteryPresent ||
                     mPlugType != mLastPlugType) {
                 EventLog.writeEvent(EventLogTags.BATTERY_STATUS,
@@ -665,13 +673,30 @@ public final class BatteryService extends SystemService {
             // Update the battery LED
             mLed.updateLightsLocked();
 
+            //Update the warm UI
+
+            //if (mHealthInfo.batteryHealth != mLastBatteryHealth) {
+            if (mCustomerBatteryFunc == null) {
+                mCustomerBatteryFunc = new Fp4BatteryFuncImpl();
+            }
+            if (mCustomBatteryInfo == null) {
+                mCustomBatteryInfo = new ICustomerBatteryFunc.CustomBatteryInfo();
+            }
+            mCustomerBatteryFunc.notifyBatteryTempWarnChanged(mContext, mCustomBatteryInfo.setHeathInfo(mHealthInfo));
+            //}
+            if (mHealthInfo.batteryTemperature <= -200 || mHealthInfo.batteryTemperature >= 600) {
+                shutDown();
+            } 
+
+            sendUsbNTCMessage();
+
             // This needs to be done after sendIntent() so that we get the lastest battery stats.
             if (logOutlier && dischargeDuration != 0) {
                 logOutlierLocked(dischargeDuration);
             }
 
             mLastBatteryStatus = mHealthInfo.batteryStatus;
-            mLastBatteryHealth = mHealthInfo.batteryHealth;
+            //mLastBatteryHealth = mHealthInfo.batteryHealth;
             mLastBatteryPresent = mHealthInfo.batteryPresent;
             mLastBatteryLevel = mHealthInfo.batteryLevel;
             mLastPlugType = mPlugType;
@@ -683,6 +708,92 @@ public final class BatteryService extends SystemService {
             mLastBatteryLevelCritical = mBatteryLevelCritical;
             mLastInvalidCharger = mInvalidCharger;
         }
+    }
+
+    private void shutDown(){
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                intent.putExtra(Intent.EXTRA_KEY_CONFIRM, false);
+                //intent.putExtra(Intent.EXTRA_REASON,PowerManager.SHUTDOWN_BATTERY_THERMAL_STATE);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+            }
+        }, 6 * 1000);
+    }
+
+
+    private void sendUsbNTCMessage(){
+        int status = mHealthInfo.batteryStatus;
+        boolean isUsbPresent = getUsbPresent();
+        float ntcTemp = getUsbNTCTemp();
+
+        if (isUsbPresent && ntcTemp >= 90){
+            // float ntcTemp = getUsbNTCTemp();
+            Intent intent = new Intent("intent.battery.usbntc.temperror");
+            intent.putExtra("disable",0);
+            if (ntcTemp >= 90 && ntcTemp < 100) {
+                intent.putExtra("speakerNoise",0);
+            }else if (ntcTemp >= 100) {
+                intent.putExtra("speakerNoise",1);
+            }
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
+                }
+            });
+
+        }else if ((isUsbPresent && ntcTemp <= 80) || !isUsbPresent) {
+            Intent intent = new Intent("intent.battery.usbntc.temperror");
+            intent.putExtra("disable",1);
+            intent.putExtra("speakerNoise",0);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
+                }
+            });
+        }
+    }
+
+    private boolean getUsbPresent() {
+        String version = null;
+        try {
+            InputStream is = new FileInputStream("/sys/class/power_supply/usb/present");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            version = reader.readLine();
+            reader.close();
+            is.close();
+            Slog.e(TAG, "getUsbPresent version" + version);
+            return "1".equals(version);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Slog.e(TAG, "getVersion fail" + e);
+        }
+        return false;
+    }
+
+    private float getUsbNTCTemp() {
+        String version = null;
+        float temp = -1f;
+        try {
+            InputStream is = new FileInputStream("/sys/class/power_supply/usb/connector_temp");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            version = reader.readLine();
+            reader.close();
+            is.close();
+
+            int current = Integer.parseInt(version.trim());
+
+            temp = (float)(current / 10.0f);
+            Slog.e(TAG, "getUsbNTCTemp temp" + temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Slog.e(TAG, "getVersion fail" + e);
+        }
+        return temp;
     }
 
     private void sendBatteryChangedIntentLocked() {

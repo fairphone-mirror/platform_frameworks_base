@@ -471,6 +471,9 @@
         android:name="android.intent.action.PERMISSION_RESPONSE_RECEIVED" />
     <!-- Defined in RestrictionsManager -->
 
+    <protected-broadcast
+        android:name="intent.battery.usbntc.temperror" />
+
     <protected-broadcast android:name="android.intent.action.REQUEST_PERMISSION" />
     <protected-broadcast android:name="android.nfc.handover.intent.action.HANDOVER_STARTED" />
     <protected-broadcast android:name="android.nfc.handover.intent.action.TRANSFER_DONE" />
@@ -700,6 +703,9 @@
     <!-- For tether entitlement recheck-->
     <protected-broadcast
         android:name="com.android.server.connectivity.tethering.PROVISIONING_RECHECK_ALARM" />
+
+    <!-- fp4 high temp low temp warn-->
+    <protected-broadcast android:name="android.intent.action.BATTERY_WARM_TEMP_CHANGED" />
     <!-- ====================================================================== -->
     <!--                          RUNTIME PERMISSIONS                           -->
     <!-- ====================================================================== -->

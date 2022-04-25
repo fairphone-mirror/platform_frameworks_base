@@ -105,6 +105,171 @@ public class CarrierConfigManager {
     public static final String
             ACTION_CARRIER_CONFIG_CHANGED = "android.telephony.action.CARRIER_CONFIG_CHANGED";
 
+    // add by T2M.dengxiangyu for FP4-61 2021-04-14 begin
+    /**
+     * @hide
+     */
+    public static final String KEY_DEFAULT_NETWORK_MODE =
+            "default_network_mode";
+
+    /**
+     * @hide
+     */
+
+    public static final String KEY_PREFERRED_NETWORK_MODE =
+            "preferred_network_mode_choices";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_PREFERRED_NETWORK_VALUE =
+            "preferred_network_mode_values";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_CALLING_TITLE =
+            "wifi_calling_settings_title";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_CALLING_DISPLAY =
+            "status_hint_label_wifi_call";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_VT_IMS_ENABLED_BOOLEAN =
+            "vt_ims_enabled";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_SMS_OVER_IMS_ENABLED_BOOLEAN =
+            "sms_ims_enabled";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_TIME_FORMAT =
+            "time_format";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_BLUETOOTH_DEFAULT_ON =
+            "bluetooth_default_on";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_EXIST =
+            "wifi_network_exist";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_PRECONFIG_AP_DELETE =
+            "wifi_preconfig_ap_delete";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID =
+            "wifi_network_ssid";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE =
+            "wifi_security_mode";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD =
+            "wifi_eap_method";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID_2 =
+            "wifi_network_ssid2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE_2 =
+            "wifi_security_mode2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD_2 =
+            "wifi_eap_method2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID_3 =
+            "wifi_network_ssid3";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE_3 =
+            "wifi_security_mode3";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD_3 =
+            "wifi_eap_method3";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_GEA_ALGORITHM_INT =
+            "gea_algorithm";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WB_AMR_INT =
+            "wb_amr";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_VOLTE_ROAMING_BOOL =
+            "volte_roaming";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_SMS_CELL_BROADCAST_ENABLED =
+            "sms_cell_broadcast_enabled";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_ECC_NUMBER_LIST =
+            "ecc_num_list_array";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_VT_TOGGLE_SHOW_BOOL =
+            "vt_toggle_show";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WFC_TOGGLE_SHOW_BOOL =
+            "wfc_toggle_show";
+    // add by T2M.dengxiangyu for FP4-61 2021-04-14 end
+
     // Below are the keys used in carrier config bundles. To add a new variable, define the key and
     // give it a default value in sDefaults. If you need to ship a per-network override in the
     // system image, that can be added in packages/apps/CarrierConfig.
@@ -205,6 +370,10 @@ public class CarrierConfigManager {
     */
     public static final String KEY_CALL_BARRING_VISIBILITY_BOOL =
             "call_barring_visibility_bool";
+
+    /* add by T2M.zhangrenjie for FP4-1811 */
+    public static final String KEY_DISPLAY_WIFI_CALLING_BUTTON_BOOL =
+            "com.google.android.dialer.display_wifi_calling_button_bool";
 
     /**
      * Flag indicating whether or not changing the call barring password via the "Call Barring"
@@ -1810,6 +1979,27 @@ public class CarrierConfigManager {
     public static final String KEY_MMS_UA_PROF_TAG_NAME_STRING = "uaProfTagName";
     public static final String KEY_MMS_UA_PROF_URL_STRING = "uaProfUrl";
     public static final String KEY_MMS_USER_AGENT_STRING = "userAgent";
+
+    /** add by T2M.zhangrenjie for FP4-1362 begin  */
+    /**
+     * default value of anonymousenable mms
+     * @hide
+     */
+    public static final String KEY_CONFIG_MMS_ANONYMOUS_ENABLE = "mms_anonymous_enable";
+    /**
+     * default value of advertisment mms
+     * @hide
+     */
+    public static final String KEY_CONFIG_MMS_ADVERTISMENT_ENABLE = "mms_advertisment_enable";
+
+    /** add by T2M.zhangrenjie for FP4-1362 end  */
+
+    /**
+     * default value of CARRIER_PREINSTALL
+     * @hide
+     */
+    public static final String KEY_CARRIER_PREINSTALL = "carrier_preinstall";
+
     /**
      * If true, add "Connection: close" header to MMS HTTP requests so the connection
      * is immediately closed (disabling keep-alive).
@@ -4093,6 +4283,7 @@ public class CarrierConfigManager {
 
         sDefaults.putBoolean(KEY_CARRIER_VOLTE_PROVISIONED_BOOL, false);
         sDefaults.putBoolean(KEY_CALL_BARRING_VISIBILITY_BOOL, true);
+        sDefaults.putBoolean(KEY_DISPLAY_WIFI_CALLING_BUTTON_BOOL, true);/* add by T2M.zhangrenjie for FP4-1811 */
         sDefaults.putBoolean(KEY_CALL_BARRING_SUPPORTS_PASSWORD_CHANGE_BOOL, true);
         sDefaults.putBoolean(KEY_CALL_BARRING_SUPPORTS_DEACTIVATE_ALL_BOOL, true);
         sDefaults.putInt(KEY_CALL_BARRING_DEFAULT_SERVICE_CLASS_INT, SERVICE_CLASS_VOICE);
@@ -4184,7 +4375,7 @@ public class CarrierConfigManager {
                 });
         sDefaults.putStringArray(KEY_GSM_ROAMING_NETWORKS_STRING_ARRAY, null);
         sDefaults.putStringArray(KEY_GSM_NONROAMING_NETWORKS_STRING_ARRAY, null);
-        sDefaults.putString(KEY_CONFIG_IMS_PACKAGE_OVERRIDE_STRING, null);
+        sDefaults.putString(KEY_CONFIG_IMS_PACKAGE_OVERRIDE_STRING, "com.google.android.ims");
         sDefaults.putString(KEY_CONFIG_IMS_MMTEL_PACKAGE_OVERRIDE_STRING, null);
         sDefaults.putString(KEY_CONFIG_IMS_RCS_PACKAGE_OVERRIDE_STRING, null);
         sDefaults.putStringArray(KEY_CDMA_ROAMING_NETWORKS_STRING_ARRAY, null);
@@ -4431,13 +4622,14 @@ public class CarrierConfigManager {
                         -95, /* SIGNAL_STRENGTH_GOOD */
                         -85  /* SIGNAL_STRENGTH_GREAT */
                 });
+        //modify by hongkang.feng for FP4-241 nr signal level
         sDefaults.putIntArray(KEY_5G_NR_SSRSRP_THRESHOLDS_INT_ARRAY,
                 // Boundaries: [-140 dB, -44 dB]
                 new int[] {
-                    -110, /* SIGNAL_STRENGTH_POOR */
-                    -90, /* SIGNAL_STRENGTH_MODERATE */
-                    -80, /* SIGNAL_STRENGTH_GOOD */
-                    -65,  /* SIGNAL_STRENGTH_GREAT */
+                    -128, /* SIGNAL_STRENGTH_POOR */
+                    -118, /* SIGNAL_STRENGTH_MODERATE */
+                    -108, /* SIGNAL_STRENGTH_GOOD */
+                    -98,  /* SIGNAL_STRENGTH_GREAT */
                 });
         sDefaults.putIntArray(KEY_5G_NR_SSRSRQ_THRESHOLDS_INT_ARRAY,
                 // Boundaries: [-43 dB, 20 dB]
@@ -4586,6 +4778,12 @@ public class CarrierConfigManager {
                 "53FF:mms,supl,hipri,default,fota:1xRTT:nxtgenphone",
         });
         sDefaults.putBoolean(KEY_REQUIRE_APN_FILTERING_WITH_RADIO_CAPABILITY, false);
+        /** add by T2M.zhangrenjie for FP4-1362 begin  */
+        sDefaults.putBoolean(KEY_CONFIG_MMS_ANONYMOUS_ENABLE, true);
+        sDefaults.putBoolean(KEY_CONFIG_MMS_ADVERTISMENT_ENABLE, true);
+        /** add by T2M.zhangrenjie for FP4-1362 end  */
+        sDefaults.putStringArray(KEY_CARRIER_PREINSTALL,
+                new String[]{""});
     }
 
     /**
@@ -4644,6 +4842,25 @@ public class CarrierConfigManager {
         }
         return null;
     }
+
+    @Nullable
+    public PersistableBundle getConfigLocked() {
+        try {
+            ICarrierConfigLoader loader = getICarrierConfigLoader();
+            if (loader == null) {
+                Rlog.w(TAG, "Error getting config "
+                        + " ICarrierConfigLoader is null");
+                return null;
+            }
+            return loader.getConfigLocked(SubscriptionManager.getDefaultSubscriptionId(), mContext.getOpPackageName());
+        } catch (RemoteException ex) {
+            Rlog.e(TAG, "Error getting config " + ": "
+                    + ex.toString());
+        }
+        return null;
+    }
+
+
 
     /**
      * Overrides the carrier config of the provided subscription ID with the provided values.

@@ -86,14 +86,14 @@
     <string name="NetworkPreferenceSwitchTitle" msgid="1008329951315753038">"Mobilfunknetz nicht erreichbar"</string>
     <string name="NetworkPreferenceSwitchSummary" msgid="2086506181486324860">"Versuche, das bevorzugte Netzwerk zu ändern. Tippe, um ein anderes auszuwählen."</string>
     <string name="EmergencyCallWarningTitle" msgid="1615688002899152860">"Notrufe nicht möglich"</string>
-    <string name="EmergencyCallWarningSummary" msgid="1194185880092805497">"Notrufe über WLAN nicht möglich"</string>
+    <string name="EmergencyCallWarningSummary" msgid="1194185880092805497">"Notrufe nur bei Mobilfunkabdeckung möglich"</string>
     <string name="notification_channel_network_alert" msgid="4788053066033851841">"Warnmeldungen"</string>
     <string name="notification_channel_call_forward" msgid="8230490317314272406">"Anrufweiterleitung"</string>
     <string name="notification_channel_emergency_callback" msgid="54074839059123159">"Notfallrückrufmodus"</string>
     <string name="notification_channel_mobile_data_status" msgid="1941911162076442474">"Status der mobilen Datennutzung"</string>
     <string name="notification_channel_sms" msgid="1243384981025535724">"SMS"</string>
     <string name="notification_channel_voice_mail" msgid="8457433203106654172">"Mailboxnachrichten"</string>
-    <string name="notification_channel_wfc" msgid="9048240466765169038">"WLAN-Telefonie"</string>
+    <string name="notification_channel_wfc" msgid="9048240466765169038">"Wi-Fi Calling"</string>
     <string name="notification_channel_sim" msgid="5098802350325677490">"Status der SIM-Karte"</string>
     <string name="notification_channel_sim_high_prio" msgid="642361929452850928">"Benachrichtigungen mit hoher Priorität von der SIM-Karte"</string>
     <string name="peerTtyModeFull" msgid="337553730440832160">"Peer hat TTY-Modus \"Vollständig\" angefordert."</string>
@@ -122,30 +122,31 @@
     <string name="roamingText11" msgid="5245687407203281407">"Roaming-Banner ein"</string>
     <string name="roamingText12" msgid="673537506362152640">"Roaming-Banner aus"</string>
     <string name="roamingTextSearching" msgid="5323235489657753486">"Suche nach Dienst"</string>
-    <string name="wfcRegErrorTitle" msgid="3193072971584858020">"WLAN-Telefonie konnte nicht eingerichtet werden"</string>
+    <string name="wfcRegErrorTitle" msgid="3193072971584858020">"Wi-Fi Calling konnte nicht eingerichtet werden"</string>
   <string-array name="wfcOperatorErrorAlertMessages">
-    <item msgid="468830943567116703">"Um über WLAN telefonieren und Nachrichten senden zu können, bitte zuerst deinen Mobilfunkanbieter, diesen Dienst einzurichten. Anschließend kannst du die Option \"WLAN-Telefonie\" über die Einstellungen erneut aktivieren. (Fehlercode: <xliff:g id="CODE">%1$s</xliff:g>)"</item>
+    <item msgid="468830943567116703">"Um über WLAN telefonieren und Nachrichten senden zu können, bitte zuerst deinen Mobilfunkanbieter, diesen Dienst einzurichten. Anschließend kannst du die Option \"Wi-Fi Calling\" über die Einstellungen erneut aktivieren. (Fehlercode: <xliff:g id="CODE">%1$s</xliff:g>)"</item>
   </string-array>
   <string-array name="wfcOperatorErrorNotificationMessages">
-    <item msgid="4795145070505729156">"Probleme beim Registrieren der WLAN-Telefonie bei deinem Mobilfunkanbieter: <xliff:g id="CODE">%1$s</xliff:g>"</item>
+    <item msgid="4795145070505729156">"Probleme beim Registrieren der Wi-Fi Calling bei deinem Mobilfunkanbieter: <xliff:g id="CODE">%1$s</xliff:g>"</item>
   </string-array>
     <!-- no translation found for wfcSpnFormat_spn (2982505428519096311) -->
     <skip />
-    <string name="wfcSpnFormat_spn_wifi_calling" msgid="3165949348000906194">"<xliff:g id="SPN">%s</xliff:g> WLAN-Telefonie"</string>
-    <string name="wfcSpnFormat_spn_wifi_calling_vo_hyphen" msgid="3836827895369365298">"<xliff:g id="SPN">%s</xliff:g> WLAN-Telefonie"</string>
-    <string name="wfcSpnFormat_wlan_call" msgid="4895315549916165700">"WLAN-Anruf"</string>
+    <string name="wfcSpnFormat_spn_wifi_calling" msgid="3165949348000906194">"<xliff:g id="SPN">%s</xliff:g> WiFi Calling"</string>
+    <string name="wfcSpnFormat_spn_wifi_calling_vo_hyphen" msgid="3836827895369365298">"<xliff:g id="SPN">%s</xliff:g> WiFi Calling"</string>
+    <string name="wfcSpnFormat_wlan_call" msgid="4895315549916165700">"WLAN Call"</string>
     <string name="wfcSpnFormat_spn_wlan_call" msgid="255919245825481510">"<xliff:g id="SPN">%s</xliff:g> WLAN-Anruf"</string>
     <string name="wfcSpnFormat_spn_wifi" msgid="7232899594327126970">"<xliff:g id="SPN">%s</xliff:g> WLAN"</string>
-    <string name="wfcSpnFormat_wifi_calling_bar_spn" msgid="8383917598312067365">"WLAN-Telefonie | <xliff:g id="SPN">%s</xliff:g>"</string>
+    <string name="wfcSpnFormat_wifi_calling_bar_spn" msgid="8383917598312067365">"WiFi Calling | <xliff:g id="SPN">%s</xliff:g>"</string>
     <string name="wfcSpnFormat_spn_vowifi" msgid="6865214948822061486">"<xliff:g id="SPN">%s</xliff:g> VoWLAN"</string>
-    <string name="wfcSpnFormat_wifi_calling" msgid="6178935388378661755">"WLAN-Telefonie"</string>
+    <string name="wfcSpnFormat_wifi_calling" msgid="6178935388378661755">"WiFi Calling"</string>
     <string name="wfcSpnFormat_wifi" msgid="1376356951297043426">"WLAN"</string>
-    <string name="wfcSpnFormat_wifi_calling_wo_hyphen" msgid="7178561009225028264">"WLAN-Telefonie"</string>
+    <string name="wfcSpnFormat_wifi_calling_wo_hyphen" msgid="7178561009225028264">"WiFi Calling"</string>
     <string name="wfcSpnFormat_vowifi" msgid="8371335230890725606">"VoWifi"</string>
     <string name="wifi_calling_off_summary" msgid="5626710010766902560">"Aus"</string>
     <string name="wfc_mode_wifi_preferred_summary" msgid="1035175836270943089">"Anruf über WLAN"</string>
     <string name="wfc_mode_cellular_preferred_summary" msgid="4958965609212575619">"Über Mobilfunknetz anrufen"</string>
     <string name="wfc_mode_wifi_only_summary" msgid="104951993894678665">"Nur WLAN"</string>
+    <string name="wfc_mode_ims_preferred_summary">IMS bevorzugt</string>
     <string name="cfTemplateNotForwarded" msgid="862202427794270501">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g>: Nicht weitergeleitet"</string>
     <string name="cfTemplateForwarded" msgid="9132506315842157860">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g>: <xliff:g id="DIALING_NUMBER">{1}</xliff:g>"</string>
     <string name="cfTemplateForwardedTime" msgid="735042369233323609">"<xliff:g id="BEARER_SERVICE_CODE">{0}</xliff:g><xliff:g id="DIALING_NUMBER">{1}</xliff:g> nach <xliff:g id="TIME_DELAY">{2}</xliff:g> Sekunden."</string>
@@ -1413,6 +1414,7 @@
     <string name="deny" msgid="6632259981847676572">"Ablehnen"</string>
     <string name="permission_request_notification_title" msgid="1810025922441048273">"Berechtigung angefordert"</string>
     <string name="permission_request_notification_with_subtitle" msgid="3743417870360129298">"Berechtigung angefordert\nfür Konto <xliff:g id="ACCOUNT">%s</xliff:g>"</string>
+    <string name="permission_request_notification_for_app_with_subtitle" msgid="1298704005732851350">"Berechtigung wurde angefordert von <xliff:g id="APP">%1$s</xliff:g>\nfür das Konto <xliff:g id="ACCOUNT">%2$s</xliff:g>."</string>
     <string name="forward_intent_to_owner" msgid="4620359037192871015">"Du verwendest diese App außerhalb deines Arbeitsprofils"</string>
     <string name="forward_intent_to_work" msgid="3620262405636021151">"Du verwendest diese App in deinem Arbeitsprofil."</string>
     <string name="input_method_binding_label" msgid="1166731601721983656">"Eingabemethode"</string>

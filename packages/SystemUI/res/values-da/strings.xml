@@ -1100,4 +1100,10 @@
     <string name="media_output_dialog_pairing_new" msgid="9099497976087485862">"Par ny enhed"</string>
     <string name="battery_state_unknown_notification_title" msgid="8464703640483773454">"Der er problemer med at aflæse dit batteriniveau"</string>
     <string name="battery_state_unknown_notification_text" msgid="13720937839460899">"Tryk for at få flere oplysninger"</string>
+    <string name="camera_ois_calibration_title1">Du har erstattet dit kamera, godt udført!</string>
+    <string name="camera_ois_calibration_message1">Det skal kalibreres for optimal ydeevne \n Venligst placeres din telefon på en flad overflade. Klik på OK for processen for at starte.</string>
+    <string name="camera_ois_calibration_title2">Kalibreringsbehandling</string>
+    <string name="camera_ois_calibration_message2">Behandling kan tage op til 10 sekunder. Hold venligst telefonen stabil på overfladen. Flyt ikke eller ryst telefonen, mens den behandler.</string>
+    <string name="camera_ois_calibration_title3">Kalibrering lykkedes</string>
+    <string name="camera_ois_calibration_message3">Klik på OK for at begynde at bruge dit nye kamera, nyd!</string>
 </resources>

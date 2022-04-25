@@ -64,6 +64,10 @@ public abstract class DisplayManagerInternal {
      */
     public abstract boolean isProximitySensorAvailable();
 
+    //[AuxiliarySensor]Begin Added by chuanzhi.shao
+    public abstract void requestNoOffByPSensor(boolean noOffByPSensor);
+    //[AuxiliarySensor]End Added by chuanzhi.shao
+
     /**
      * Screenshot for internal system-only use such as rotation, etc.  This method includes
      * secure layers and the result should never be exposed to non-system applications.

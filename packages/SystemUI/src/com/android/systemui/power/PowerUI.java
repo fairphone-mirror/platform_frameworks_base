@@ -57,8 +57,17 @@ import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
+import android.os.SystemProperties;
 import dagger.Lazy;
+import android.os.SystemClock;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.FileOutputStream;
 
 @Singleton
 public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
@@ -226,7 +235,9 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
     final class Receiver extends BroadcastReceiver {
 
         private boolean mHasReceivedBattery = false;
-
+        private String TFT_PROPERTY = "persist.sys.tct.tft.date";
+        private String TFT_PROPERTY_PERSIST = "sys.t2m.tft";
+        private  long lastsystemtime = 0;
         public void init() {
             // Register for Intent broadcasts for...
             IntentFilter filter = new IntentFilter();
@@ -235,7 +246,12 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
             filter.addAction(Intent.ACTION_SCREEN_OFF);
             filter.addAction(Intent.ACTION_SCREEN_ON);
             filter.addAction(Intent.ACTION_USER_SWITCHED);
+            filter.addAction(Intent.ACTION_BATTERY_WARM_TEMP_CHANGED);
+            filter.addAction(Intent.ACTION_SHUTDOWN);
+            filter.addAction("intent.battery.usbntc.temperror");
+            filter.addAction(Intent.ACTION_BOOT_COMPLETED);
             mBroadcastDispatcher.registerReceiverWithHandler(this, filter, mHandler);
+            lastsystemtime = SystemClock.elapsedRealtime();
             // Force get initial values. Relying on Sticky behavior until API for getting info.
             if (!mHasReceivedBattery) {
                 // Get initial state
@@ -258,7 +274,24 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                         mWarnings.dismissLowBatteryWarning();
                     }
                 });
-            } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
+            } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) { 
+                long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                long lastPeristTime = SystemProperties.getLong(TFT_PROPERTY_PERSIST,0);
+                if(lasttime == 0 && lastPeristTime != 0){
+                    SystemProperties.set(TFT_PROPERTY,lastPeristTime + "");
+                }
+                if(SystemClock.elapsedRealtime() - lastsystemtime > 5*60*1000){
+                    lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                    long currentime = 0;
+                    if(lasttime == 0){
+                        currentime = SystemClock.elapsedRealtime();
+                    }else{
+                        currentime = lasttime + SystemClock.elapsedRealtime() - lastsystemtime;
+                    }
+                    lastsystemtime = SystemClock.elapsedRealtime();
+                    SystemProperties.set(TFT_PROPERTY,currentime + "");
+                }
+
                 mHasReceivedBattery = true;
                 final int oldBatteryLevel = mBatteryLevel;
                 mBatteryLevel = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 100);
@@ -322,6 +355,47 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
                 mScreenOffTime = -1;
             } else if (Intent.ACTION_USER_SWITCHED.equals(action)) {
                 mWarnings.userSwitched();
+            } else if (Intent.ACTION_BATTERY_WARM_TEMP_CHANGED.equals(action)) {
+                int batteryHealth = intent.getIntExtra(Intent.EXTRA_BATTERY_HEALTH, 0);
+                int batteryTemperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
+                int batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
+                Log.i(TAG, "receive ACTION_BATTERY_WARM_TEMP_CHANGED:batteryTemperature:"+batteryTemperature+"  batteryStatus:"+batteryStatus);
+                if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
+                    mWarnings.showHighTemp(true,batteryStatus,batteryTemperature,batteryHealth);
+                } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
+                    mWarnings.showLowTemp(true,batteryStatus,batteryTemperature,batteryHealth);
+                } else {
+                    mWarnings.updateOTP();
+                }
+            } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
+                long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                long lastPeristTime = SystemProperties.getLong(TFT_PROPERTY_PERSIST,0);
+                if(lasttime == 0 && lastPeristTime != 0){
+                    SystemProperties.set(TFT_PROPERTY,lastPeristTime + "");
+                    lasttime = lastPeristTime;
+                }
+                long currentime = 0;
+                if(lasttime == 0){
+                    currentime = SystemClock.elapsedRealtime();
+                }else{
+                    currentime = lasttime + SystemClock.elapsedRealtime() - lastsystemtime;
+                }
+                lastsystemtime = SystemClock.elapsedRealtime();
+                SystemProperties.set(TFT_PROPERTY,currentime + "");
+            } else if ("intent.battery.usbntc.temperror".equals(action)) {
+                boolean dismissDialog = intent.getIntExtra("disable",0) != 0;
+                boolean speakerNoise = intent.getIntExtra("speakerNoise",0) != 0;
+                mWarnings.showUsbNTCTemp(dismissDialog,speakerNoise);
+            } else if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
+                boolean cameraOis = SystemProperties.getBoolean("persist.sys.cameraOis", false);
+                boolean systemCamera = SystemProperties.getBoolean("ro.vendor.t2m.camera_change", false);
+                Slog.d("CameraOISTempDialog", "ACTION_BOOT_COMPLETED cameraOis = "+cameraOis + " ; systemCamera = "+systemCamera);
+                if (systemCamera) {
+                    SystemProperties.set("persist.sys.cameraOis", "true");
+                }
+                if (cameraOis || systemCamera) {
+                    mWarnings.cameraOISGryoCali();
+                }
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
             }
@@ -701,6 +775,18 @@ public class PowerUI extends SystemUI implements CommandQueue.Callbacks {
          * @param snapshot object containing relevant values for making battery warning decisions.
          */
         void updateSnapshot(BatteryStateSnapshot snapshot);
+
+
+        void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth);
+
+        void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth);
+
+        void updateOTP();
+
+        void showUsbNTCTemp(boolean isShow,boolean speakerNoise);
+
+        void cameraOISGryoCali();
+
     }
 
     // Skin thermal event received from thermal service manager subsystem

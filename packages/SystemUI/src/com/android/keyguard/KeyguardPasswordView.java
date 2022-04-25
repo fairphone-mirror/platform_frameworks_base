@@ -84,7 +84,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView
     protected void resetState() {
         mPasswordEntry.setTextOperationUser(UserHandle.of(KeyguardUpdateMonitor.getCurrentUser()));
         if (mSecurityMessageDisplay != null) {
-            mSecurityMessageDisplay.setMessage("");
+            mSecurityMessageDisplay.setMessage(R.string.keyguard_enter_your_password);
         }
         final boolean wasDisabled = mPasswordEntry.isEnabled();
         setPasswordEntryEnabled(true);

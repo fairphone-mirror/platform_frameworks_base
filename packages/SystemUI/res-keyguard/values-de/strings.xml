@@ -91,6 +91,11 @@
       <item quantity="other">Falscher PIN-Code der SIM-Karte. Du hast noch <xliff:g id="NUMBER_1">%d</xliff:g> Versuche.</item>
       <item quantity="one">Falscher PIN-Code der SIM-Karte. Du hast noch <xliff:g id="NUMBER_0">%d</xliff:g> Versuch, bevor du das Gerät von deinem Mobilfunkanbieter entsperren lassen musst.</item>
     </plurals>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+      <item quantity="other">Falscher PIN-Code der SIM-Karte<xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuche.</item>
+      <item quantity="one">Falscher PIN-Code der SIM-Karte<xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuch, bevor du das Gerät von deinem Mobilfunkanbieter entsperren lassen musst.</item>
+    </plurals>
+ 
     <string name="kg_password_wrong_puk_code_dead" msgid="3698285357028468617">"Die SIM-Karte kann nicht verwendet werden. Bitte wende dich an deinen Mobilfunkanbieter."</string>
     <plurals name="kg_password_wrong_puk_code" formatted="false" msgid="3937306685604862886">
       <item quantity="other">Falscher PUK-Code der SIM-Karte. Du hast noch <xliff:g id="NUMBER_1">%d</xliff:g> Versuche, bevor deine SIM-Karte endgültig gesperrt wird.</item>
@@ -138,4 +143,9 @@
     <string name="clock_title_default" msgid="6342735240617459864">"Standard"</string>
     <string name="clock_title_bubble" msgid="2204559396790593213">"Bubble"</string>
     <string name="clock_title_analog" msgid="8409262532900918273">"Analog"</string>
+    <plurals name="kg_password_default_pin_message_multi_sim">
+        <item quantity="one">Falscher Pin-Code für SIM<xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuch, danach musst du dich an deinen Netzanbieter wenden, um dein Gerät zu entsperren.</item>
+        <item quantity="other">Falscher Pin-Code für SIM<xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuche.</item>
+    </plurals>
+    <string name="fingerprint_dialog_touch_sensor">Berühre den Fingerabdrucksensor.</string>
 </resources>

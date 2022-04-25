@@ -187,6 +187,9 @@ public abstract class ClientMonitor extends LoggableMonitor implements IBinder.D
         try {
             if (mListener != null && !blacklistContains(acquiredInfo, vendorCode)) {
                 mListener.onAcquired(getHalDeviceId(), acquiredInfo, vendorCode);
+                if (acquiredInfo == BiometricConstants.BIOMETRIC_ACQUIRED_IMAGER_DIRTY) {
+                    vibrateError();
+                }
             }
             return false; // acquisition continues...
         } catch (RemoteException e) {

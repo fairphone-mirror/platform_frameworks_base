@@ -5333,6 +5333,7 @@ public final class Settings {
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_NETWORKS_AVAILABLE_NOTIFICATION_ON);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_NETWORKS_AVAILABLE_REPEAT_DELAY);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_NUM_OPEN_NETWORKS_KEPT);
+            MOVED_TO_GLOBAL.add(Settings.Global.WTFITRACKER_NETWORKINFO);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_ON);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_P2P_DEVICE_NAME);
             MOVED_TO_GLOBAL.add(Settings.Global.WIFI_SUPPLICANT_SCAN_INTERVAL_MS);
@@ -10443,6 +10444,8 @@ public final class Settings {
         */
        @Deprecated
        public static final String WIFI_NUM_OPEN_NETWORKS_KEPT = "wifi_num_open_networks_kept";
+
+       public static final String WTFITRACKER_NETWORKINFO = "wifitracker_networkinfo";
 
        /**
         * Whether the Wi-Fi should be on.  Only the Wi-Fi service should touch this.

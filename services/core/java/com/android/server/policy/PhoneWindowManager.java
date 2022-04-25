@@ -224,6 +224,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.List;
+import com.android.server.display.AuxiliarySensorController;
 
 /**
  * WindowManagerPolicy implementation for the Android phone UI.  This
@@ -381,6 +382,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     // Assigned on main thread, accessed on UI thread
     volatile VrManagerInternal mVrManagerInternal;
+
+    AuxiliarySensorController mAuxiliarySensorController;
 
     // Vibrator pattern for haptic feedback of a long press.
     long[] mLongPressVibePattern;
@@ -1993,6 +1996,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         mWindowManagerFuncs.onKeyguardShowingAndNotOccludedChanged();
                     }
                 });
+
+
+        mAuxiliarySensorController = AuxiliarySensorController.getInstance();
     }
 
     /**
@@ -2593,7 +2599,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         final boolean canceled = event.isCanceled();
         final int displayId = event.getDisplayId();
 
-        if (DEBUG_INPUT) {
+        if (true) {
             Log.d(TAG, "interceptKeyTi keyCode=" + keyCode + " down=" + down + " repeatCount="
                     + repeatCount + " keyguardOn=" + keyguardOn + " canceled=" + canceled);
         }
@@ -2680,6 +2686,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // it handle it, because that gives us the correct 5 second
         // timeout.
         if (keyCode == KeyEvent.KEYCODE_HOME) {
+            if(mDefaultDisplayPolicy.blockKeysForMiniTest(false)) {
+                Log.i(TAG, "home key pressed in mmitest.");
+                return 0;
+            }
             DisplayHomeButtonHandler handler = mDisplayHomeButtonHandlers.get(displayId);
             if (handler == null) {
                 handler = new DisplayHomeButtonHandler(displayId);
@@ -2687,6 +2697,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return handler.handleHomeButton(focusedToken, event);
         } else if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
+                Log.d(TAG, "menu key pressed in mmitest");
+                return 0;
+            }
             // Hijack modified menu keys for debugging features
             final int chordBug = KeyEvent.META_SHIFT_ON;
 
@@ -2713,6 +2727,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
             return 0;
         } else if (keyCode == KeyEvent.KEYCODE_APP_SWITCH) {
+            if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
+                Log.d(TAG, "app switch key pressed in mmitest");
+                return 0;
+            }
             if (!keyguardOn) {
                 if (down && repeatCount == 0) {
                     preloadRecentApps();
@@ -3639,7 +3657,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                                                 isKeyguardShowingAndNotOccluded() :
                                                 mKeyguardDelegate.isShowing()));
 
-        if (DEBUG_INPUT) {
+        if (true) {
             Log.d(TAG, "interceptKeyTq keycode=" + keyCode
                     + " interactive=" + interactive + " keyguardActive=" + keyguardActive
                     + " policyFlags=" + Integer.toHexString(policyFlags));
@@ -3706,6 +3724,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         // Handle special keys.
         switch (keyCode) {
+            // case KeyEvent.KEYCODE_PALM_IN:
+            //     if (mAuxiliarySensorController != null) {
+            //         mAuxiliarySensorController.interceptKeyBeforeQueueing(event);
+            //     }
+            // break;
             case KeyEvent.KEYCODE_BACK: {
                 if (down) {
                     interceptBackKeyDown();
@@ -3863,6 +3886,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             case KeyEvent.KEYCODE_POWER: {
+                if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
+                    Log.d(TAG, "power key pressed in mmitest");
+                    return ACTION_PASS_TO_USER;
+                }
                 EventLogTags.writeInterceptPower(
                         KeyEvent.actionToString(event.getAction()),
                         mPowerKeyHandled ? 1 : 0, mPowerKeyPressCounter);

@@ -64,6 +64,7 @@ import android.os.Handler;
 import android.os.IRemoteCallback;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.Trace;
@@ -145,6 +146,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
             = "com.android.facelock.FACE_UNLOCK_STARTED";
     private static final String ACTION_FACE_UNLOCK_STOPPED
             = "com.android.facelock.FACE_UNLOCK_STOPPED";
+
+
+    public static final String KEY_CONFIRM_SIM_DELETION = "fingerprint_settings";
 
     // Callback messages
     private static final int MSG_TIME_UPDATE = 301;
@@ -291,12 +295,12 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
      * be slightly longer than the time between onFingerprintAuthenticated and
      * setKeyguardGoingAway(true).
      */
-    private static final int FINGERPRINT_CONTINUE_DELAY_MS = 500;
+    private static final int FINGERPRINT_CONTINUE_DELAY_MS = 1000;
 
     // If the HAL dies or is unable to authenticate, keyguard should retry after a short delay
     private int mHardwareFingerprintUnavailableRetryCount = 0;
     private int mHardwareFaceUnavailableRetryCount = 0;
-    private static final int HAL_ERROR_RETRY_TIMEOUT = 500; // ms
+    private static final int HAL_ERROR_RETRY_TIMEOUT = 1000; // ms
     private static final int HAL_ERROR_RETRY_MAX = 10;
 
     private final Runnable mCancelNotReceived = new Runnable() {
@@ -1846,9 +1850,20 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         updateFaceListeningState();
     }
 
+
+    private boolean getFingerPrintBehaviorState() {
+        return Settings.Global.getInt(
+                mContext.getContentResolver(),
+                KEY_CONFIRM_SIM_DELETION,
+                false ? 1 : 0)
+                == 1;
+    }
+
+
     private void updateFingerprintListeningState() {
         // If this message exists, we should not authenticate again until this message is
         // consumed by the handler
+        PowerManager mPm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         if (mHandler.hasMessages(MSG_BIOMETRIC_AUTHENTICATION_CONTINUE)) {
             return;
         }
@@ -1856,11 +1871,26 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         boolean shouldListenForFingerprint = shouldListenForFingerprint();
         boolean runningOrRestarting = mFingerprintRunningState == BIOMETRIC_STATE_RUNNING
                 || mFingerprintRunningState == BIOMETRIC_STATE_CANCELLING_RESTARTING;
-        if (runningOrRestarting && !shouldListenForFingerprint) {
-            stopListeningForFingerprint();
-        } else if (!runningOrRestarting && shouldListenForFingerprint) {
-            startListeningForFingerprint();
+
+        boolean fingerPrintBahaviorState = getFingerPrintBehaviorState();
+
+        if (fingerPrintBahaviorState) { //touch unlock
+
+            if (runningOrRestarting && !shouldListenForFingerprint) {
+                stopListeningForFingerprint();
+            } else if (!runningOrRestarting && shouldListenForFingerprint) {
+                startListeningForFingerprint();
+            }
+
+        } else { //press unlock
+
+            if (!mPm.isScreenOn() || (runningOrRestarting && !shouldListenForFingerprint)) {
+                stopListeningForFingerprint();
+            } else if (!runningOrRestarting && shouldListenForFingerprint) {
+                startListeningForFingerprint();
+            }
         }
+
     }
 
     /**
@@ -2277,6 +2307,9 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
             // We don't need the observer anymore...
             mContext.getContentResolver().unregisterContentObserver(mDeviceProvisionedObserver);
             mDeviceProvisionedObserver = null;
+
+            ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+            am.restartPackage("com.android.settings");
         }
     }
 

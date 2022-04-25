@@ -1100,4 +1100,10 @@
     <string name="media_output_dialog_pairing_new" msgid="9099497976087485862">"Neues Gerät koppeln"</string>
     <string name="battery_state_unknown_notification_title" msgid="8464703640483773454">"Problem beim Lesen des Akkustands"</string>
     <string name="battery_state_unknown_notification_text" msgid="13720937839460899">"Für weitere Informationen tippen"</string>
+    <string name="camera_ois_calibration_title1">Sie haben Ihre Kamera ersetzt, gut gemacht!</string>
+    <string name="camera_ois_calibration_message1">Sie muss für eine optimale Leistung kalibriert werden \n Bitte legen Sie das Telefon auf eine ebene Fläche, sodass der Bildschirm nach oben zeigt. Klicken Sie auf OK, um den Prozess zu starten.</string>
+    <string name="camera_ois_calibration_title2">Kalibrierungsverarbeitung</string>
+    <string name="camera_ois_calibration_message2">Die Verarbeitung kann bis zu 10 Sekunden dauern. Bitte halten Sie das Telefon ruhig. Bewegen oder schütteln Sie das Telefon nicht während der Verarbeitung.</string>
+    <string name="camera_ois_calibration_title3">Kalibrierung erfolgreich</string>
+    <string name="camera_ois_calibration_message3">Klicken Sie auf OK, um Ihre neue Kamera zu benutzen, viel Spaß!</string>
 </resources>
