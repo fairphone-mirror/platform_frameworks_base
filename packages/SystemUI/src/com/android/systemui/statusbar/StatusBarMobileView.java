@@ -229,10 +229,10 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mMobile.setVisibility(state.showTriangle ? View.VISIBLE : View.GONE);
         mMobileRoaming.setVisibility(state.roaming ? View.VISIBLE : View.GONE);
         mMobileRoamingSpace.setVisibility(state.roaming ? View.VISIBLE : View.GONE);
-        mIn.setVisibility(state.activityIn ? View.VISIBLE : View.GONE);
-        mOut.setVisibility(state.activityOut ? View.VISIBLE : View.GONE);
+        mIn.setVisibility(state.activityIn ? View.VISIBLE : View.INVISIBLE);
+        mOut.setVisibility(state.activityOut ? View.VISIBLE : View.INVISIBLE);
         mInoutContainer.setVisibility((state.activityIn || state.activityOut)
-                ? View.VISIBLE : View.GONE);
+                ? View.VISIBLE : View.INVISIBLE);
 
         if (mState.volteId != state.volteId) {
             if (state.volteId != 0) {
