@@ -535,9 +535,10 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
 
     private void initOperatorName() {
         if (getResources().getBoolean(R.bool.config_showOperatorNameInStatusBar)) {
-            ViewStub stub = mStatusBar.findViewById(R.id.operator_name);
+            ViewStub stub = mStatusBar.findViewById(R.id.operator_name_stub);
             mOperatorNameViewController =
-                    mOperatorNameViewControllerFactory.create((OperatorNameView) stub.inflate());
+                    mOperatorNameViewControllerFactory.create((OperatorNameView) stub.inflate()
+                    .findViewById(R.id.operator_name));
             mOperatorNameViewController.init();
         }
     }
