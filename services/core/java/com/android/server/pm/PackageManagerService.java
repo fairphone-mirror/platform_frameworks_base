@@ -25135,6 +25135,11 @@ public class PackageManagerService extends IPackageManager.Stub
                 Slog.wtf(TAG, e);
             }
         }
+
+        @Override
+        public int getInstalledSdkVersion(PackageParser.Package pkg) {
+            return PackageManagerService.this.getSettingsVersionForPackage(pkg).sdkVersion;
+        }
     }
 
     @GuardedBy("mPackages")
