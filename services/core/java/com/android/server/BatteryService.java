@@ -86,6 +86,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
  * <p>BatteryService monitors the charging status, and charge level of the device
@@ -681,6 +685,8 @@ public final class BatteryService extends SystemService {
             // Update the battery LED
             mLed.updateLightsLocked();
 
+            sendUsbNTCMessage();
+
             // This needs to be done after sendIntent() so that we get the lastest battery stats.
             if (logOutlier && dischargeDuration != 0) {
                 logOutlierLocked(dischargeDuration);
@@ -699,6 +705,78 @@ public final class BatteryService extends SystemService {
             mLastBatteryLevelCritical = mBatteryLevelCritical;
             mLastInvalidCharger = mInvalidCharger;
         }
+    }
+
+    private void sendUsbNTCMessage(){
+        int status = mHealthInfo.batteryStatus;
+        boolean isUsbPresent = getUsbPresent();
+        float ntcTemp = getUsbNTCTemp();
+
+        if (isUsbPresent && ntcTemp >= 90){
+            // float ntcTemp = getUsbNTCTemp();
+            Intent intent = new Intent("intent.battery.usbntc.temperror");
+            intent.putExtra("disable",0);
+            if (ntcTemp >= 90 && ntcTemp < 100) {
+                intent.putExtra("speakerNoise",0);
+            }else if (ntcTemp >= 100) {
+                intent.putExtra("speakerNoise",1);
+            }
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
+                }
+            });
+
+        }else if ((isUsbPresent && ntcTemp <= 80) || !isUsbPresent) {
+            Intent intent = new Intent("intent.battery.usbntc.temperror");
+            intent.putExtra("disable",1);
+            intent.putExtra("speakerNoise",0);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
+                }
+            });
+        }
+    }
+
+    private boolean getUsbPresent() {
+        String version = null;
+        try {
+            InputStream is = new FileInputStream("/sys/class/power_supply/usb/present");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            version = reader.readLine();
+            reader.close();
+            is.close();
+            Slog.e(TAG, "getUsbPresent version" + version);
+            return "1".equals(version);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Slog.e(TAG, "getVersion fail" + e);
+        }
+        return false;
+    }
+
+    private float getUsbNTCTemp() {
+        String version = null;
+        float temp = -1f;
+        try {
+            InputStream is = new FileInputStream("/sys/class/power_supply/usb/connector_temp");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            version = reader.readLine();
+            reader.close();
+            is.close();
+
+            int current = Integer.parseInt(version.trim());
+
+            temp = (float)(current / 10.0f);
+            Slog.e(TAG, "getUsbNTCTemp temp" + temp);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Slog.e(TAG, "getVersion fail" + e);
+        }
+        return temp;
     }
 
     private void sendBatteryChangedIntentLocked() {

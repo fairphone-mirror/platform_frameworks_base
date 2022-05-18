@@ -73,6 +73,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import javax.inject.Inject;
+import com.android.systemui.power.UsbNTCTempDialog;
+import android.app.NotificationChannel;
 
 /**
  */
@@ -158,6 +160,8 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     @VisibleForTesting SystemUIDialog mUsbHighTempDialog;
     private BatteryStateSnapshot mCurrentBatterySnapshot;
     private ActivityStarter mActivityStarter;
+    private UsbNTCTempDialog mUsbNTCTemp;
+    private int usbNTCNotificationId = 11241;
 
     /**
      */
@@ -375,6 +379,54 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     private void dismissHighTemperatureWarningInternal() {
         mNoMan.cancelAsUser(TAG_TEMPERATURE, SystemMessage.NOTE_HIGH_TEMP, UserHandle.ALL);
         mHighTempWarning = false;
+    }
+
+    public void showUsbNTCTemp(boolean dismissDialog,boolean speakerNoise) {
+        if (dismissDialog) {
+            if (mUsbNTCTemp != null) {
+                mUsbNTCTemp.onDismissDialog(dismissDialog,speakerNoise);
+                mUsbNTCTemp.dismiss();
+                mUsbNTCTemp = null;
+            }
+            return;
+        }else{
+            if (mUsbNTCTemp != null) {
+                mUsbNTCTemp.onDismissDialog(dismissDialog,speakerNoise);
+            }
+        }
+        if (mUsbNTCTemp != null) return;
+        showUsbNTCNotification();
+        mUsbNTCTemp = new UsbNTCTempDialog(mContext);
+         WindowManager.LayoutParams attributes = mUsbNTCTemp.getWindow().getAttributes();
+        attributes.dimAmount = 0.7f;
+        mUsbNTCTemp.getWindow().setAttributes(attributes);
+        mUsbNTCTemp.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        
+        mUsbNTCTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ERROR/* | WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG*/);
+        mUsbNTCTemp.show();
+        mUsbNTCTemp.onDismissDialog(dismissDialog,speakerNoise);
+    }
+
+
+    private void showUsbNTCNotification() {
+        String id = "notification_usbntc_temp_100";
+        CharSequence name = "notification_usbntc_temp";
+        NotificationChannel channel = new NotificationChannel(id,name, NotificationManager.IMPORTANCE_LOW);
+        mNoMan.createNotificationChannel(channel);
+        final Notification.Builder nb =
+                new Notification.Builder(mContext,id)
+                        .setWhen(System.currentTimeMillis())
+                        .setSmallIcon(R.drawable.ic_power_saver)
+                        .setShowWhen(true)
+                        .setOngoing(false)
+                        .setAutoCancel(true)
+                        .setContentTitle(mContext.getString(R.string.usbntc_temp_notification_title))
+                        .setContentText(mContext.getString(R.string.usbntc_temp_notification_message));
+                        // .setColor(mContext.getColor(
+                        //         com.android.internal.R.color.system_notification_accent_color));
+        Notification n = nb.build();
+        mNoMan.notify(usbNTCNotificationId,n);
+        Slog.d(TAG, "----showUsbNTCNotification----");
     }
 
     @Override
