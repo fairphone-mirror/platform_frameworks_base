@@ -2564,4 +2564,10 @@
     <!-- [CHAR LIMIT=NONE] Le audio broadcast dialog, media app is unknown -->
     <string name="bt_le_audio_broadcast_dialog_unknown_name">Unknown</string>
 
+    <string name="usbntc_temp_message">Your USB NTC temperature is too High,please disconnect the changer!</string>
+    <string name="usbntc_temp_title">Height USB NTC Temperature</string>
+
+    <string name="usbntc_temp_notification_title">Warning</string>
+    <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
+
 </resources>

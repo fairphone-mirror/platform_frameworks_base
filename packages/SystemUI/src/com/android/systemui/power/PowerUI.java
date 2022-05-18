@@ -239,6 +239,7 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
             filter.addAction(Intent.ACTION_SCREEN_ON);
             filter.addAction(Intent.ACTION_USER_SWITCHED);
             filter.addAction(Intent.ACTION_SHUTDOWN);
+            filter.addAction("intent.battery.usbntc.temperror");
             mBroadcastDispatcher.registerReceiverWithHandler(this, filter, mHandler);
             lastsystemtime = SystemClock.elapsedRealtime();
             // Force get initial values. Relying on Sticky behavior until API for getting info.
@@ -349,6 +350,10 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
                 }
                 lastsystemtime = SystemClock.elapsedRealtime();
                 SystemProperties.set(TFT_PROPERTY,currentime + "");
+            } else if ("intent.battery.usbntc.temperror".equals(action)) {
+                boolean dismissDialog = intent.getIntExtra("disable",0) != 0;
+                boolean speakerNoise = intent.getIntExtra("speakerNoise",0) != 0;
+                mWarnings.showUsbNTCTemp(dismissDialog,speakerNoise);
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
             }
@@ -706,6 +711,8 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
         void dump(PrintWriter pw);
 
         void userSwitched();
+
+        void showUsbNTCTemp(boolean isShow,boolean speakerNoise);
 
         /**
          * Updates the snapshot of battery state used for evaluating battery warnings

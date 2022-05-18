@@ -505,6 +505,9 @@
     <protected-broadcast android:name="android.content.action.PERMISSION_RESPONSE_RECEIVED" />
     <protected-broadcast android:name="android.content.action.REQUEST_PERMISSION" />
 
+    <protected-broadcast
+        android:name="intent.battery.usbntc.temperror" />
+
     <protected-broadcast android:name="android.nfc.handover.intent.action.HANDOVER_STARTED" />
     <protected-broadcast android:name="android.nfc.handover.intent.action.TRANSFER_DONE" />
     <protected-broadcast android:name="android.nfc.handover.intent.action.TRANSFER_PROGRESS" />

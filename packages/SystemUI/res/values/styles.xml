@@ -1240,4 +1240,13 @@
         <item name="android:textColor">?androidprv:attr/textColorOnAccent</item>
         <item name="android:textSize">@dimen/broadcast_dialog_btn_text_size</item>
     </style>
+
+    <style name="usbntc_dialog_toast" parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
 </resources>
