@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.UiEventLogger;
@@ -47,6 +48,7 @@ import com.android.systemui.tuner.TunerService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import com.android.systemui.R;
 
 /**
  * Controller for {@link QSPanel}.
@@ -61,8 +63,10 @@ public class QSPanelController extends QSPanelControllerBase<QSPanel> {
     private final QSTileRevealController.Factory mQsTileRevealControllerFactory;
     private final FalsingManager mFalsingManager;
     private final BrightnessController mBrightnessController;
+ 
     private final BrightnessSlider.Factory mBrightnessSliderFactory;
     private final BrightnessSlider mBrightnessSlider;
+    private final ImageView mAuto;
 
     private BrightnessMirrorController mBrightnessMirrorController;
     private boolean mGridContentVisible = true;
@@ -116,7 +120,8 @@ public class QSPanelController extends QSPanelControllerBase<QSPanel> {
         mBrightnessSlider = mBrightnessSliderFactory.create(getContext(), mView);
         mView.setBrightnessView(mBrightnessSlider.getRootView());
 
-        mBrightnessController = brightnessControllerFactory.create(mBrightnessSlider);
+	mAuto = mBrightnessSlider.getRootView().findViewById(R.id.brightness_auto);
+        mBrightnessController = brightnessControllerFactory.create(mBrightnessSlider,mAuto);
     }
 
     @Override
