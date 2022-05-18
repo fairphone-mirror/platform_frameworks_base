@@ -31,8 +31,18 @@
             android:thumb="@null"
             android:background="@null"
             android:paddingStart="0dp"
-            android:paddingEnd="0dp"
+            android:paddingEnd="54dp"
             android:progressDrawable="@drawable/brightness_progress_drawable"
             android:splitTrack="false"
         />
+	<ImageView 
+        android:layout_gravity="end|center" 
+        android:id="@+id/brightness_auto"
+        android:visibility="visible"
+        android:layout_width="34.0dip"
+        android:layout_height="34.0dip"
+        android:src="@drawable/ic_fp4_qs_brightness_auto_off"
+        android:scaleType="centerInside"
+        android:layout_marginStart="-10.0dip" 
+        android:layout_marginEnd="10.0dip"/>
     </com.android.systemui.settings.brightness.BrightnessSliderView>

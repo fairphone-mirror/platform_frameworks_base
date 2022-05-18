@@ -24,6 +24,7 @@ import static com.android.systemui.qs.dagger.QSFragmentModule.QS_USING_MEDIA_PLA
 import android.content.res.Configuration;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.UiEventLogger;
@@ -45,6 +46,7 @@ import com.android.systemui.tuner.TunerService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import com.android.systemui.R;
 
 /**
  * Controller for {@link QSPanel}.
@@ -60,6 +62,7 @@ public class QSPanelController extends QSPanelControllerBase<QSPanel> {
     private final BrightnessSliderController mBrightnessSliderController;
     private final BrightnessMirrorHandler mBrightnessMirrorHandler;
     private final StatusBarKeyguardViewManager mStatusBarKeyguardViewManager;
+    private final ImageView mAuto;
 
     private boolean mGridContentVisible = true;
 
@@ -105,7 +108,8 @@ public class QSPanelController extends QSPanelControllerBase<QSPanel> {
         mBrightnessSliderController = brightnessSliderFactory.create(getContext(), mView);
         mView.setBrightnessView(mBrightnessSliderController.getRootView());
 
-        mBrightnessController = brightnessControllerFactory.create(mBrightnessSliderController);
+        mAuto = mBrightnessSlider.getRootView().findViewById(R.id.brightness_auto);
+        mBrightnessController = brightnessControllerFactory.create(mBrightnessSliderController, mAuto);
         mBrightnessMirrorHandler = new BrightnessMirrorHandler(mBrightnessController);
         mStatusBarKeyguardViewManager = statusBarKeyguardViewManager;
     }
