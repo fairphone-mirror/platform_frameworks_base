@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
@@ -75,8 +76,8 @@ public class BrightnessDialog extends Activity {
         BrightnessSlider controller = mToggleSliderFactory.create(this, frame);
         controller.init();
         frame.addView(controller.getRootView(), MATCH_PARENT, WRAP_CONTENT);
-
-        mBrightnessController = new BrightnessController(this, controller, mBroadcastDispatcher);
+	ImageView autoBrightnessBtn = findViewById(R.id.brightness_auto);
+        mBrightnessController = new BrightnessController(this, controller, mBroadcastDispatcher, autoBrightnessBtn);
     }
 
     @Override
