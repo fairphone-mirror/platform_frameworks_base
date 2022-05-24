@@ -10220,6 +10220,7 @@ package android.content {
     field public static final String ACTION_BATTERY_CHANGED = "android.intent.action.BATTERY_CHANGED";
     field public static final String ACTION_BATTERY_LOW = "android.intent.action.BATTERY_LOW";
     field public static final String ACTION_BATTERY_OKAY = "android.intent.action.BATTERY_OKAY";
+    field public static final String ACTION_BATTERY_WARM_TEMP_CHANGED = "android.intent.action.BATTERY_WARM_TEMP_CHANGED";
     field public static final String ACTION_BOOT_COMPLETED = "android.intent.action.BOOT_COMPLETED";
     field public static final String ACTION_BUG_REPORT = "android.intent.action.BUG_REPORT";
     field public static final String ACTION_CALL = "android.intent.action.CALL";
@@ -10400,6 +10401,7 @@ package android.content {
     field public static final String EXTRA_ASSIST_UID = "android.intent.extra.ASSIST_UID";
     field public static final String EXTRA_ATTRIBUTION_TAGS = "android.intent.extra.ATTRIBUTION_TAGS";
     field public static final String EXTRA_AUTO_LAUNCH_SINGLE_CHOICE = "android.intent.extra.AUTO_LAUNCH_SINGLE_CHOICE";
+    field public static final String EXTRA_BATTERY_HEALTH = "android.intent.extra.BATTERY_HEALTH";
     field public static final String EXTRA_BCC = "android.intent.extra.BCC";
     field public static final String EXTRA_BUG_REPORT = "android.intent.extra.BUG_REPORT";
     field public static final String EXTRA_CC = "android.intent.extra.CC";

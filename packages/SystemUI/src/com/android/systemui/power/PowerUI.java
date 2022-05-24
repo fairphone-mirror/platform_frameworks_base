@@ -240,6 +240,7 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
             filter.addAction(Intent.ACTION_USER_SWITCHED);
             filter.addAction(Intent.ACTION_SHUTDOWN);
             filter.addAction("intent.battery.usbntc.temperror");
+            filter.addAction(Intent.ACTION_BATTERY_WARM_TEMP_CHANGED);
             mBroadcastDispatcher.registerReceiverWithHandler(this, filter, mHandler);
             lastsystemtime = SystemClock.elapsedRealtime();
             // Force get initial values. Relying on Sticky behavior until API for getting info.
@@ -354,6 +355,18 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
                 boolean dismissDialog = intent.getIntExtra("disable",0) != 0;
                 boolean speakerNoise = intent.getIntExtra("speakerNoise",0) != 0;
                 mWarnings.showUsbNTCTemp(dismissDialog,speakerNoise);
+            } else if (Intent.ACTION_BATTERY_WARM_TEMP_CHANGED.equals(action)) {
+                int batteryHealth = intent.getIntExtra(Intent.EXTRA_BATTERY_HEALTH, 0);
+                int batteryTemperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
+                int batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
+                Log.i(TAG, "receive ACTION_BATTERY_WARM_TEMP_CHANGED:batteryTemperature:"+batteryTemperature+"  batteryStatus:"+batteryStatus);
+                if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
+                    mWarnings.showHighTemp(true,batteryStatus,batteryTemperature,batteryHealth);
+                } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
+                    mWarnings.showLowTemp(true,batteryStatus,batteryTemperature,batteryHealth);
+                } else {
+                    mWarnings.updateOTP();
+                }
             } else {
                 Slog.w(TAG, "unknown intent: " + intent);
             }
@@ -719,6 +732,13 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
          * @param snapshot object containing relevant values for making battery warning decisions.
          */
         void updateSnapshot(BatteryStateSnapshot snapshot);
+
+
+        void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth);
+
+        void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth);
+
+        void updateOTP();
     }
 
     // Skin thermal event received from thermal service manager subsystem

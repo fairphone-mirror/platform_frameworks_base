@@ -2570,4 +2570,21 @@
     <string name="usbntc_temp_notification_title">Warning</string>
     <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
 
+    <string name="low_temp_title">Low Battery Temperature</string>
+    <string name="low_temp_message">Your battery temperature is too low,please disconnect the changer!</string>
+    <string name="low_temp_message_notchanging">temperature is too low!</string>
+    <string name="height_temp_title">Height Battery Temperature</string>
+    <string name="height_temp_message">Your battery temperature is too High,please disconnect the changer!</string>
+    <string name="hight_temp_message_notchanging">temperature is too high!</string>
+    <string name="low_temp_alert_dismiss">Dismiss</string>
+    <string name="low_temp_alert_snooze">Snooze</string>
+    <string name="low_temp_message_20">Warning!Battery temperature is too low,your device will be shut down</string>
+    <string name="low_temp_message_5">Battery temperature is too low</string>
+    <string name="height_temp_message_55">Warning!Battery temperature is too high,please close unnecessary applications</string>
+    <string name="height_temp_message_60">Warning!Battery temperature is too high,your device will be shut down</string>
+
+    <string name="battery_error">Battery Error</string>
+    <string name="battery_error_message">Shutdown in 4 second!</string>
+    <string name="battery_otp">Battery Over Temperature</string>
+    <string name="battery_otp_message">Shutdown in 5 seconds!</string>
 </resources>
