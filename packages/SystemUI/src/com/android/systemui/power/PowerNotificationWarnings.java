@@ -51,6 +51,8 @@ import android.util.Log;
 import android.util.Slog;
 import android.view.View;
 import android.view.WindowManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import androidx.annotation.VisibleForTesting;
 
@@ -75,6 +77,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 import com.android.systemui.power.UsbNTCTempDialog;
 import android.app.NotificationChannel;
+import android.os.BatteryManager;
 
 /**
  */
@@ -160,6 +163,10 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     @VisibleForTesting SystemUIDialog mUsbHighTempDialog;
     private BatteryStateSnapshot mCurrentBatterySnapshot;
     private ActivityStarter mActivityStarter;
+
+    private AlertDialog mHighTemp;
+    private AlertDialog mLowTemp;
+    private AlertDialog mShutDown;
     private UsbNTCTempDialog mUsbNTCTemp;
     private int usbNTCNotificationId = 11241;
 
@@ -379,6 +386,109 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
     private void dismissHighTemperatureWarningInternal() {
         mNoMan.cancelAsUser(TAG_TEMPERATURE, SystemMessage.NOTE_HIGH_TEMP, UserHandle.ALL);
         mHighTempWarning = false;
+    }
+
+
+    public void showHighTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth) {
+        String message = "";
+        updateOTP();
+        android.util.Log.i("batteryTemperature","showHighTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature+"  batteryHealth:"+batteryHealth);
+        if (mHighTemp != null || batteryHealth != BatteryManager.BATTERY_HEALTH_OVERHEAT) return;
+
+        if (batteryTemperature >= 550) {
+            message = mContext.getResources().getString(R.string.height_temp_message_55);
+        } else if (batteryTemperature >= 600) {
+            message = mContext.getResources().getString(R.string.height_temp_message_60);
+        }
+
+        if (mHighTemp == null) {
+            mHighTemp = new AlertDialog.Builder(mContext)
+                    .setTitle(mContext.getResources().getString(R.string.height_temp_title))
+                    .setMessage(message)
+                    .setView(R.layout.alert_battery_warn)
+                    .setNegativeButton(mContext.getResources().getString(R.string.low_temp_alert_dismiss), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                            mHighTemp = null;
+                        }
+                    })
+                    .setPositiveButton(mContext.getResources().getString(R.string.low_temp_alert_snooze), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                            mHighTemp = null;
+                        }
+                    }).create();
+            mHighTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            mHighTemp.setCanceledOnTouchOutside(false);
+            if (!message.equals("")) {
+                mHighTemp.show();
+            } else {
+                mHighTemp = null;
+            }
+        }
+
+        if (batteryTemperature >= 600) {
+            mHandler.postDelayed(()-> updateOTP(),3*1000);
+        }
+    }
+
+    public void showLowTemp(boolean charging,int batteryStatus,int batteryTemperature,int batteryHealth) {
+        String message = "";
+        updateOTP();
+        android.util.Log.i("batteryTemperature","showLowTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature+" batteryHealth:"+batteryHealth);
+        if (mLowTemp != null || !charging || batteryHealth != BatteryManager.BATTERY_HEALTH_COLD) return;
+
+        if (batteryTemperature <= 50) {
+            message = mContext.getResources().getString(R.string.low_temp_message_5);
+        } else if (batteryTemperature <= -200) {
+            message = mContext.getResources().getString(R.string.low_temp_message_20);
+        }
+
+        if (mLowTemp == null) {
+            mLowTemp = new AlertDialog.Builder(mContext)
+                    .setTitle(mContext.getResources().getString(R.string.low_temp_title))
+                    .setMessage(message)
+                    .setView(R.layout.alert_battery_warn)
+                    .setNegativeButton(mContext.getResources().getString(R.string.low_temp_alert_dismiss), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                            mLowTemp = null;
+                        }
+                    })
+                    .setPositiveButton(mContext.getResources().getString(R.string.low_temp_alert_snooze), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int i) {
+                            dialog.dismiss();
+                            mLowTemp = null;
+                        }
+                    }).create();
+            mLowTemp.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+            mLowTemp.setCanceledOnTouchOutside(false);
+            if (!message.equals("")) {
+                mLowTemp.show();
+            } else {
+                mLowTemp = null;
+            }
+        }
+
+        if (batteryTemperature <= -200) {
+            mHandler.postDelayed(()-> updateOTP(),3*1000);
+        }
+    }
+
+    public void updateOTP() {
+        if (mHighTemp != null) {
+            mHighTemp.dismiss();
+            mHighTemp = null;
+        }
+
+        if (mLowTemp != null) {
+            mLowTemp.dismiss();
+            mLowTemp = null;
+        }
     }
 
     public void showUsbNTCTemp(boolean dismissDialog,boolean speakerNoise) {

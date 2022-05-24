@@ -156,7 +156,7 @@ public final class BatteryService extends SystemService {
     private android.hardware.health.V2_1.HealthInfo mHealthInfo2p1;
     private boolean mBatteryLevelCritical;
     private int mLastBatteryStatus;
-    private int mLastBatteryHealth;
+    //private int mLastBatteryHealth;
     private boolean mLastBatteryPresent;
     private int mLastBatteryLevel;
     private int mLastBatteryVoltage;
@@ -165,6 +165,9 @@ public final class BatteryService extends SystemService {
     private int mLastMaxChargingCurrent;
     private int mLastMaxChargingVoltage;
     private int mLastChargeCounter;
+
+    private ICustomerBatteryFunc mCustomerBatteryFunc;
+    private ICustomerBatteryFunc.CustomBatteryInfo mCustomBatteryInfo;
 
     private int mSequence = 1;
 
@@ -522,7 +525,7 @@ public final class BatteryService extends SystemService {
         shutdownIfOverTempLocked();
 
         if (force || (mHealthInfo.batteryStatus != mLastBatteryStatus ||
-                mHealthInfo.batteryHealth != mLastBatteryHealth ||
+                //mHealthInfo.batteryHealth != mLastBatteryHealth ||
                 mHealthInfo.batteryPresent != mLastBatteryPresent ||
                 mHealthInfo.batteryLevel != mLastBatteryLevel ||
                 mPlugType != mLastPlugType ||
@@ -578,7 +581,7 @@ public final class BatteryService extends SystemService {
                 }
             }
             if (mHealthInfo.batteryStatus != mLastBatteryStatus ||
-                    mHealthInfo.batteryHealth != mLastBatteryHealth ||
+                   // mHealthInfo.batteryHealth != mLastBatteryHealth ||
                     mHealthInfo.batteryPresent != mLastBatteryPresent ||
                     mPlugType != mLastPlugType) {
                 EventLog.writeEvent(EventLogTags.BATTERY_STATUS,
@@ -685,6 +688,21 @@ public final class BatteryService extends SystemService {
             // Update the battery LED
             mLed.updateLightsLocked();
 
+            //Update the warm UI
+
+            //if (mHealthInfo.batteryHealth != mLastBatteryHealth) {
+            if (mCustomerBatteryFunc == null) {
+                mCustomerBatteryFunc = new Fp4BatteryFuncImpl();
+            }
+            if (mCustomBatteryInfo == null) {
+                mCustomBatteryInfo = new ICustomerBatteryFunc.CustomBatteryInfo();
+            }
+            mCustomerBatteryFunc.notifyBatteryTempWarnChanged(mContext, mCustomBatteryInfo.setHeathInfo(mHealthInfo));
+            //}
+            if (mHealthInfo.batteryTemperature <= -200 || mHealthInfo.batteryTemperature >= 600) {
+                shutDown();
+            }
+
             sendUsbNTCMessage();
 
             // This needs to be done after sendIntent() so that we get the lastest battery stats.
@@ -693,7 +711,7 @@ public final class BatteryService extends SystemService {
             }
 
             mLastBatteryStatus = mHealthInfo.batteryStatus;
-            mLastBatteryHealth = mHealthInfo.batteryHealth;
+            //mLastBatteryHealth = mHealthInfo.batteryHealth;
             mLastBatteryPresent = mHealthInfo.batteryPresent;
             mLastBatteryLevel = mHealthInfo.batteryLevel;
             mLastPlugType = mPlugType;
