@@ -160,6 +160,171 @@ public class CarrierConfigManager {
     public static final String
             ACTION_CARRIER_CONFIG_CHANGED = "android.telephony.action.CARRIER_CONFIG_CHANGED";
 
+    // add by T2M.dengxiangyu for FP4-61 2021-04-14 begin
+    /**
+     * @hide
+     */
+    public static final String KEY_DEFAULT_NETWORK_MODE =
+            "default_network_mode";
+
+    /**
+     * @hide
+     */
+
+    public static final String KEY_PREFERRED_NETWORK_MODE =
+            "preferred_network_mode_choices";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_PREFERRED_NETWORK_VALUE =
+            "preferred_network_mode_values";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_CALLING_TITLE =
+            "wifi_calling_settings_title";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_CALLING_DISPLAY =
+            "status_hint_label_wifi_call";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_VT_IMS_ENABLED_BOOLEAN =
+            "vt_ims_enabled";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_SMS_OVER_IMS_ENABLED_BOOLEAN =
+            "sms_ims_enabled";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_TIME_FORMAT =
+            "time_format";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_BLUETOOTH_DEFAULT_ON =
+            "bluetooth_default_on";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_EXIST =
+            "wifi_network_exist";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_PRECONFIG_AP_DELETE =
+            "wifi_preconfig_ap_delete";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID =
+            "wifi_network_ssid";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE =
+            "wifi_security_mode";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD =
+            "wifi_eap_method";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID_2 =
+            "wifi_network_ssid2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE_2 =
+            "wifi_security_mode2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD_2 =
+            "wifi_eap_method2";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_NETWORK_SSID_3 =
+            "wifi_network_ssid3";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_SECURITY_MODE_3 =
+            "wifi_security_mode3";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WIFI_EAP_METHOD_3 =
+            "wifi_eap_method3";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_GEA_ALGORITHM_INT =
+            "gea_algorithm";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WB_AMR_INT =
+            "wb_amr";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_VOLTE_ROAMING_BOOL =
+            "volte_roaming";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_SMS_CELL_BROADCAST_ENABLED =
+            "sms_cell_broadcast_enabled";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_ECC_NUMBER_LIST =
+            "ecc_num_list_array";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_VT_TOGGLE_SHOW_BOOL =
+            "vt_toggle_show";
+
+    /**
+     * @hide
+     */
+    public static final String KEY_WFC_TOGGLE_SHOW_BOOL =
+            "wfc_toggle_show";
+    // add by T2M.dengxiangyu for FP4-61 2021-04-14 end
+
     // Below are the keys used in carrier config bundles. To add a new variable, define the key and
     // give it a default value in sDefaults. If you need to ship a per-network override in the
     // system image, that can be added in packages/apps/CarrierConfig.
@@ -276,6 +441,10 @@ public class CarrierConfigManager {
     */
     public static final String KEY_CALL_BARRING_VISIBILITY_BOOL =
             "call_barring_visibility_bool";
+
+    /* add by T2M.zhangrenjie for FP4-1811 */
+    public static final String KEY_DISPLAY_WIFI_CALLING_BUTTON_BOOL =
+            "com.google.android.dialer.display_wifi_calling_button_bool";
 
     /**
      * Flag indicating whether or not changing the call barring password via the "Call Barring"
@@ -2087,6 +2256,12 @@ public class CarrierConfigManager {
      * @hide
      */
     public static final String KEY_CDMA_CW_CF_ENABLED_BOOL = "cdma_cw_cf_enabled_bool";
+
+    /**
+     * Boolean to decide whether NR is enabled.
+     * @hide
+     */
+    public static final String KEY_NR_ENABLED_BOOL = "nr_enabled_bool";
 
     /**
      * Boolean to decide whether LTE is enabled.
@@ -8853,6 +9028,7 @@ public class CarrierConfigManager {
 
         sDefaults.putBoolean(KEY_CARRIER_VOLTE_PROVISIONED_BOOL, false);
         sDefaults.putBoolean(KEY_CALL_BARRING_VISIBILITY_BOOL, true);
+        sDefaults.putBoolean(KEY_DISPLAY_WIFI_CALLING_BUTTON_BOOL, true);/* add by T2M.zhangrenjie for FP4-1811 */
         sDefaults.putBoolean(KEY_CALL_BARRING_SUPPORTS_PASSWORD_CHANGE_BOOL, true);
         sDefaults.putBoolean(KEY_CALL_BARRING_SUPPORTS_DEACTIVATE_ALL_BOOL, true);
         sDefaults.putInt(KEY_CALL_BARRING_DEFAULT_SERVICE_CLASS_INT, SERVICE_CLASS_VOICE);
@@ -9833,3 +10009,4 @@ public class CarrierConfigManager {
         }
     }
 }
+
