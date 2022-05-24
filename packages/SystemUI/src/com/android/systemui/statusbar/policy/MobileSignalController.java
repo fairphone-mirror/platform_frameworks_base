@@ -439,13 +439,15 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private int getVolteResId() {
         int resId = 0;
         int voiceNetTye = getVoiceNetworkType();
-        if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                &&  mCurrentState.imsRegistered ) {
-            resId = R.drawable.ic_volte;
-        }else if ( (mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE
-                        || mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE_CA)
-                    && voiceNetTye  == TelephonyManager.NETWORK_TYPE_UNKNOWN) {
-            resId = R.drawable.ic_volte_no_voice;
+        if(!mCurrentState.airplaneMode) {        // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
+            if ((mCurrentState.voiceCapable || mCurrentState.videoCapable)
+                    && mCurrentState.imsRegistered) {
+                resId = R.drawable.ic_volte;
+            } else if ((mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE
+                    || mTelephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE_CA)
+                    && voiceNetTye == TelephonyManager.NETWORK_TYPE_UNKNOWN) {
+                resId = R.drawable.ic_volte_no_voice;
+            }
         }
         return resId;
     }
@@ -604,6 +606,12 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 statusIcon = new IconState(true,
                         mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : -1,
                         statusIcon.contentDescription);
+                // modify by T2M.zhang renjie for FP4-2831 21-9-11 begin
+                if (mCurrentState.enabled && !mCurrentState.airplaneMode) {
+                    Log.d(mTag, "disable volte icon when wfc.");
+                    volteIcon = 0;
+                }
+                // modify by T2M.zhang renjie for FP4-2831 21-9-11 end
             }
             int volteIcon = mConfig.showVolteIcon && isVolteSwitchOn() ? getVolteResId() : 0;
             if (DEBUG) {
@@ -617,6 +625,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                         + " icons.dataType=" + icons.dataType
                         + " mConfig.showVolteIcon=" + mConfig.showVolteIcon
                         + " isVolteSwitchOn=" + isVolteSwitchOn()
+                        + "mCurrentState.airplaneMode="+ mCurrentState.airplaneMode
                         + " volteIcon=" + volteIcon
                         + " mConfig.showVowifiIcon=" + mConfig.showVowifiIcon);
             }
@@ -1186,11 +1195,35 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     private boolean isVowifiAvailable() {
+
+        // modify by T2M.zhang renjie for FP4-3605 22-03-24 begin
+        boolean mVoWiFiSettingEnabled = false;
+        int activeDataSubId = mDefaults.getActiveDataSubId();
+        try {
+            final ImsMmTelManager imsMmTelManager =
+                    ImsMmTelManager.createForSubscriptionId(activeDataSubId);
+            // From CarrierConfig Settings
+            mVoWiFiSettingEnabled = imsMmTelManager.isVoWiFiSettingEnabled();
+        } catch (IllegalArgumentException exception) {
+            Log.w(mTag, "fail to get Wfc settings. subId=" + activeDataSubId, exception);
+        }
+        // read from MMTEL caps.
+        boolean mMMtelVowifi = false;
+        if (mPhone != null) {
+            mMMtelVowifi = mPhone.isWifiCallingAvailable();
+        }
+        Log.i(mTag, "isVowifiAvailable,mVoWiFiSettingEnabled = " + mVoWiFiSettingEnabled + "mMMtelVowifi = "+ mMMtelVowifi);
         return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
-                && getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN;
+                && getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN
+                && mVoWiFiSettingEnabled && mMMtelVowifi;
+        // modify by T2M.zhang renjie for FP4-3605 22-03-24 end
     }
 
     private MobileIconGroup getVowifiIconGroup() {
+        if (mCurrentState.airplaneMode) { // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
+            return null;
+        }
+        // add by T2M.zhangrenjie for FP4-2003 2021-08-09 end
         if ( isVowifiAvailable() && !isCallIdle() ) {
             return TelephonyIcons.VOWIFI_CALLING;
         }else if (isVowifiAvailable()) {
