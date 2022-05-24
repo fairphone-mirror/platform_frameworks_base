@@ -606,14 +606,14 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 statusIcon = new IconState(true,
                         mCurrentState.enabled && !mCurrentState.airplaneMode? statusIcon.icon : -1,
                         statusIcon.contentDescription);
-                // modify by T2M.zhang renjie for FP4-2831 21-9-11 begin
-                if (mCurrentState.enabled && !mCurrentState.airplaneMode) {
-                    Log.d(mTag, "disable volte icon when wfc.");
-                    volteIcon = 0;
-                }
-                // modify by T2M.zhang renjie for FP4-2831 21-9-11 end
             }
             int volteIcon = mConfig.showVolteIcon && isVolteSwitchOn() ? getVolteResId() : 0;
+            // modify by T2M.zhang renjie for FP4-2831 21-9-11 begin
+            if (mCurrentState.enabled && !mCurrentState.airplaneMode) {
+                Log.d(mTag, "disable volte icon when wfc.");
+                volteIcon = 0;
+            }
+            // modify by T2M.zhang renjie for FP4-2831 21-9-11 end
             if (DEBUG) {
                 Log.d(mTag, "notifyListeners mConfig.alwaysShowNetworkTypeIcon="
                         + mConfig.alwaysShowNetworkTypeIcon + "  getNetworkType:" + mTelephonyDisplayInfo.getNetworkType() +
