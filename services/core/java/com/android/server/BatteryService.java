@@ -703,6 +703,19 @@ public final class BatteryService extends SystemService {
         }
     }
 
+    private void shutDown(){
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                intent.putExtra(Intent.EXTRA_KEY_CONFIRM, false);
+                //intent.putExtra(Intent.EXTRA_REASON,PowerManager.SHUTDOWN_BATTERY_THERMAL_STATE);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+            }
+        }, 6 * 1000);
+    }
+
     private void sendUsbNTCMessage(){
         int status = mHealthInfo.batteryStatus;
         boolean isUsbPresent = getUsbPresent();
