@@ -78,7 +78,7 @@ public class KeyguardPinViewController
     @Override
     void resetState() {
         super.resetState();
-        mMessageAreaController.setMessage("");
+        mMessageAreaController.setMessage(R.string.keyguard_enter_your_pin);
     }
 
     @Override
