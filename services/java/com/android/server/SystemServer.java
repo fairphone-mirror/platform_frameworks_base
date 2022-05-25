@@ -247,6 +247,8 @@ public final class SystemServer implements Dumpable {
 
     private static final long SLOW_DISPATCH_THRESHOLD_MS = 100;
     private static final long SLOW_DELIVERY_THRESHOLD_MS = 200;
+    // FP4S-82 [FP4 Dev-372] Hardcode date of phone to launch date 11/11/2021
+    private static final long EARLIEST_SUPPORTED_TIME = 1636599485000L;
 
     /*
      * Implementation class names. TODO: Move them to a codegen class or load
@@ -940,6 +942,12 @@ public final class SystemServer implements Dumpable {
             startCoreServices(t);
             startOtherServices(t);
             startApexServices(t);
+
+            if (System.currentTimeMillis() < EARLIEST_SUPPORTED_TIME ){
+                Slog.w(TAG,"System clock is before 2021-11-11,setting to 2021-11-11");
+                SystemClock.setCurrentTimeMillis(EARLIEST_SUPPORTED_TIME);
+            }
+
         } catch (Throwable ex) {
             Slog.e("System", "******************************************");
             Slog.e("System", "************ Failure starting system services", ex);
