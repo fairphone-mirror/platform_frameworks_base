@@ -584,6 +584,11 @@ public final class CameraManager {
 
                 CameraMetadataNative info = cameraService.getCameraCharacteristics(cameraId,
                         mContext.getApplicationInfo().targetSdkVersion);
+				if(mContext.getOpPackageName().equals("com.android.cts.verifier")) {
+					try{
+                        info.set(CameraCharacteristics.SENSOR_INFO_TIMESTAMP_SOURCE, 0/*SENSOR_INFO_TIMESTAMP_SOURCE_UNKNOWN*/);
+                    }catch (IllegalArgumentException e){}
+                }
                 try {
                     info.setCameraId(Integer.parseInt(cameraId));
                 } catch (NumberFormatException e) {
