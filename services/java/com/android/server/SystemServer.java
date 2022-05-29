@@ -396,6 +396,9 @@ public final class SystemServer implements Dumpable {
     private static final String UNCRYPT_PACKAGE_FILE = "/cache/recovery/uncrypt_file";
     private static final String BLOCK_MAP_FILE = "/cache/recovery/block.map";
 
+    private static final String TIME_FILE_NAME = "/data/system/shutdown-time.txt";
+
+
     // maximum number of binder threads used for system_server
     // will be higher than the system default
     private static final int sMaxBinderThreads = 31;
@@ -883,11 +886,16 @@ public final class SystemServer implements Dumpable {
             startCoreServices(t);
             startOtherServices(t);
 
- 	    if (System.currentTimeMillis() < EARLIEST_SUPPORTED_TIME ){
+            long currentTimeMillis = System.currentTimeMillis();
+            long shutDwonTime = getShutDownTime();
+            if (System.currentTimeMillis() < EARLIEST_SUPPORTED_TIME ){
                 Slog.w(TAG,"System clock is before 2021-11-11,setting to 2021-11-11");
                 SystemClock.setCurrentTimeMillis(EARLIEST_SUPPORTED_TIME);
             }
-
+            if (shutDwonTime != -1) {
+                Slog.w(TAG,"Setting the shutdown time.");
+                SystemClock.setCurrentTimeMillis(shutDwonTime);
+            }
         } catch (Throwable ex) {
             Slog.e("System", "******************************************");
             Slog.e("System", "************ Failure starting system services", ex);
@@ -913,6 +921,23 @@ public final class SystemServer implements Dumpable {
         // Loop forever.
         Looper.loop();
         throw new RuntimeException("Main thread loop unexpectedly exited");
+    }
+
+    private long getShutDownTime(){
+         File timeFile = new File(TIME_FILE_NAME);
+          String timeStr = null;
+          if (timeFile.exists()) {
+              try {
+                  timeStr = FileUtils.readTextFile(timeFile, 0, null);
+              } catch (IOException e) {
+                  Slog.e(TAG, "Problem reading " + timeFile, e);
+              }
+              timeFile.delete();
+          }
+          if (!TextUtils.isEmpty(timeStr)) {
+             return Long.valueOf(timeStr.substring(timeStr.lastIndexOf(":")+1));
+          }
+          return -1;
     }
 
     private static boolean isValidTimeZoneId(String timezoneProperty) {
