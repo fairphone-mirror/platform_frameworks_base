@@ -273,7 +273,7 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
                     SystemProperties.set(TFT_PROPERTY,lastPeristTime + "");
                 }
                 if(SystemClock.elapsedRealtime() - lastsystemtime > 5*60*1000){
-                    long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
+                    lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
                     long currentime = 0;
                     if(lasttime == 0){
                         currentime = SystemClock.elapsedRealtime();
