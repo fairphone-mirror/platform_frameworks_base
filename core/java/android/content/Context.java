@@ -3711,6 +3711,7 @@ public abstract class Context {
             //@hide: SPEECH_RECOGNITION_SERVICE,
             UWB_SERVICE,
             MEDIA_METRICS_SERVICE,
+            MMITEST_SERVICE,
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ServiceName {}
@@ -3947,6 +3948,8 @@ public abstract class Context {
      * you're running long tasks.
      */
     public static final String POWER_SERVICE = "power";
+
+    public static final String MMITEST_SERVICE = "mmitest";
 
     /**
      * Use with {@link #getSystemService(String)} to retrieve a

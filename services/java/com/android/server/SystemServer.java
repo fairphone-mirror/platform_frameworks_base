@@ -226,6 +226,8 @@ import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
+import com.android.server.MmiTestService;
+
 /**
  * Entry point to {@code system_server}.
  */
@@ -1376,6 +1378,7 @@ public final class SystemServer implements Dumpable {
         NetworkTimeUpdateService networkTimeUpdater = null;
         InputManagerService inputManager = null;
         TelephonyRegistry telephonyRegistry = null;
+        MmiTestService mmiTestService = null;
         ConsumerIrService consumerIr = null;
         MmsServiceBroker mmsService = null;
         HardwarePropertiesManagerService hardwarePropertiesService = null;
@@ -1450,6 +1453,11 @@ public final class SystemServer implements Dumpable {
             telephonyRegistry = new TelephonyRegistry(
                     context, new TelephonyRegistry.ConfigurationProvider());
             ServiceManager.addService("telephony.registry", telephonyRegistry);
+            t.traceEnd();
+
+            t.traceBegin("StartMmiTestService");
+            mmiTestService = new MmiTestService(context);
+            ServiceManager.addService(Context.MMITEST_SERVICE, mmiTestService);
             t.traceEnd();
 
             t.traceBegin("StartEntropyMixer");
