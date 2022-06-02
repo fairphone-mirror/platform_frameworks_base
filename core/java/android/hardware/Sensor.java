@@ -811,6 +811,20 @@ public final class Sensor {
     public static final String STRING_TYPE_HEADING = "android.sensor.heading";
 
     /**
+     * A constant describing a light sensor type.
+     * <p>See {@link android.hardware.SensorEvent#values SensorEvent.values}
+     * for more details.
+     */
+    public static final int TYPE_LIGHT_BACK = 33171100;
+
+    /**
+     * A constant string describing a back light sensor type.
+     *
+     * @see #TYPE_LIGHT_BACK
+     */
+    public static final String STRING_TYPE_LIGHT_BACK = "qti.sensor.light.back";
+
+    /**
      * A constant describing all sensor types.
      */
 
@@ -898,10 +912,10 @@ public final class Sensor {
             3, // SENSOR_TYPE_GEOMAGNETIC_FIELD
             3, // SENSOR_TYPE_ORIENTATION
             3, // SENSOR_TYPE_GYROSCOPE
-            1, // SENSOR_TYPE_LIGHT
+            8, // SENSOR_TYPE_LIGHT  //[TCT ROM][IRIS]MODIFIED by bin.liang, 2019-05-13,BUG-7755006
             1, // SENSOR_TYPE_PRESSURE
             1, // SENSOR_TYPE_TEMPERATURE
-            1, // SENSOR_TYPE_PROXIMITY
+            2, // SENSOR_TYPE_PROXIMITY  //[TCT ROM]MODIFIED by caixia.chen for defect 9668567, 2020-08-18
             3, // SENSOR_TYPE_GRAVITY
             3, // SENSOR_TYPE_LINEAR_ACCELERATION
             5, // SENSOR_TYPE_ROTATION_VECTOR
@@ -1328,6 +1342,11 @@ public final class Sensor {
             case TYPE_LIGHT:
                 mStringType = STRING_TYPE_LIGHT;
                 return true;
+            //[TCT-ROM][LightSensor]Begin added by TCTNB.wen.zhuang for TASK-10055399 on 2020/10/14
+            case TYPE_LIGHT_BACK:
+                mStringType = STRING_TYPE_LIGHT_BACK;
+                return true;
+            //[TCT-ROM][LightSensor]End added by TCTNB.wen.zhuang for TASK-10055399 on 2020/10/14
             case TYPE_LINEAR_ACCELERATION:
                 mStringType = STRING_TYPE_LINEAR_ACCELERATION;
                 return true;

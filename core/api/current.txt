@@ -9827,6 +9827,7 @@ package android.content {
     field public static final String MEDIA_ROUTER_SERVICE = "media_router";
     field public static final String MEDIA_SESSION_SERVICE = "media_session";
     field public static final String MIDI_SERVICE = "midi";
+    field public static final String MMITEST_SERVICE = "mmitest";
     field public static final int MODE_APPEND = 32768; // 0x8000
     field public static final int MODE_ENABLE_WRITE_AHEAD_LOGGING = 8; // 0x8
     field @Deprecated public static final int MODE_MULTI_PROCESS = 4; // 0x4
@@ -16969,6 +16970,7 @@ package android.hardware {
     field public static final String STRING_TYPE_HEART_RATE = "android.sensor.heart_rate";
     field public static final String STRING_TYPE_HINGE_ANGLE = "android.sensor.hinge_angle";
     field public static final String STRING_TYPE_LIGHT = "android.sensor.light";
+    field public static final String STRING_TYPE_LIGHT_BACK = "qti.sensor.light.back";
     field public static final String STRING_TYPE_LINEAR_ACCELERATION = "android.sensor.linear_acceleration";
     field public static final String STRING_TYPE_LOW_LATENCY_OFFBODY_DETECT = "android.sensor.low_latency_offbody_detect";
     field public static final String STRING_TYPE_MAGNETIC_FIELD = "android.sensor.magnetic_field";
@@ -17005,6 +17007,7 @@ package android.hardware {
     field public static final int TYPE_HEART_RATE = 21; // 0x15
     field public static final int TYPE_HINGE_ANGLE = 36; // 0x24
     field public static final int TYPE_LIGHT = 5; // 0x5
+    field public static final int TYPE_LIGHT_BACK = 33171100; // 0x1fa269c
     field public static final int TYPE_LINEAR_ACCELERATION = 10; // 0xa
     field public static final int TYPE_LOW_LATENCY_OFFBODY_DETECT = 34; // 0x22
     field public static final int TYPE_MAGNETIC_FIELD = 2; // 0x2
@@ -26556,6 +26559,41 @@ package android.mtp {
     method public long getMaxCapacity();
     method public int getStorageId();
     method @NonNull public String getVolumeIdentifier();
+  }
+
+}
+
+package android.mymodule.mmitest {
+
+  public interface ImmiTestManager extends android.os.IInterface {
+    method public String getNodeString(String) throws android.os.RemoteException;
+    method public int getOpen(String) throws android.os.RemoteException;
+    method public boolean setNodeString(String, String) throws android.os.RemoteException;
+    field public static final String DESCRIPTOR = "android.mymodule.mmitest.ImmiTestManager";
+  }
+
+  public static class ImmiTestManager.Default implements android.mymodule.mmitest.ImmiTestManager {
+    ctor public ImmiTestManager.Default();
+    method public android.os.IBinder asBinder();
+    method public String getNodeString(String) throws android.os.RemoteException;
+    method public int getOpen(String) throws android.os.RemoteException;
+    method public boolean setNodeString(String, String) throws android.os.RemoteException;
+  }
+
+  public abstract static class ImmiTestManager.Stub extends android.os.Binder implements android.mymodule.mmitest.ImmiTestManager {
+    ctor public ImmiTestManager.Stub();
+    method public android.os.IBinder asBinder();
+    method public static android.mymodule.mmitest.ImmiTestManager asInterface(android.os.IBinder);
+    method public static android.mymodule.mmitest.ImmiTestManager getDefaultImpl();
+    method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
+    method public static boolean setDefaultImpl(android.mymodule.mmitest.ImmiTestManager);
+  }
+
+  public class MmiTestManager {
+    ctor public MmiTestManager(android.content.Context, android.mymodule.mmitest.ImmiTestManager);
+    method public String getNodeString(String);
+    method public int getOpen(String);
+    method public boolean setNodeString(String, String);
   }
 
 }

@@ -250,6 +250,9 @@ import com.android.internal.util.Preconditions;
 import java.util.Map;
 import java.util.Objects;
 
+import android.mymodule.mmitest.MmiTestManager;
+import android.mymodule.mmitest.ImmiTestManager;
+
 /**
  * Manages all of the system services that can be returned by {@link Context#getSystemService}.
  * Used by {@link ContextImpl}.
@@ -1525,6 +1528,17 @@ public final class SystemServiceRegistry {
                         IAmbientContextManager manager =
                                 IAmbientContextManager.Stub.asInterface(iBinder);
                         return new AmbientContextManager(ctx.getOuterContext(), manager);
+                    }});
+
+        registerService(Context.MMITEST_SERVICE, MmiTestManager.class,
+                new CachedServiceFetcher<MmiTestManager>() {
+                    @Override
+                    public MmiTestManager createService(ContextImpl ctx)
+                            throws ServiceNotFoundException {
+                                IBinder binder = ServiceManager.getServiceOrThrow(
+                                Context.MMITEST_SERVICE);
+                                ImmiTestManager service = ImmiTestManager.Stub.asInterface(binder);
+                        return new MmiTestManager(ctx, service);
                     }});
 
         sInitializing = true;

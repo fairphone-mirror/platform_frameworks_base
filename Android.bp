@@ -133,6 +133,9 @@ filegroup {
         // For the generated R.java and Manifest.java
         ":framework-res{.aapt.srcjar}",
 
+        //for mmitest
+        ":framework-mmitestservice-source",
+
         // etc.
         ":framework-javastream-protos",
         ":statslog-framework-java-gen", // FrameworkStatsLog.java
@@ -246,6 +249,16 @@ java_library {
     ],
     sdk_version: "core_platform",
     installable: false,
+}
+
+//for mmitest
+filegroup {
+    name: "framework-mmitestservice-source",
+    srcs: [
+        "mmitestservice/java/**/*.java",
+        "mmitestservice/java/**/*.aidl",
+    ],
+    path:"mmitestservice/java",
 }
 
 // NOTE: This filegroup is exposed for vendor libraries to depend on and is referenced in
@@ -507,6 +520,7 @@ metalava_framework_docs_args = "" +
     "--hide Typo " +
     "--hide UnavailableSymbol " +
     "--manifest $(location core/res/AndroidManifest.xml) "
+    "--api-lint-ignore-prefix android.mymodule. " +
 
 packages_to_document = [
     "android",
