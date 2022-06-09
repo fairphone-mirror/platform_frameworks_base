@@ -167,6 +167,12 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ComponentName;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The policy that provides the basic behaviors and states of a display to show UI.
  */
@@ -497,7 +503,9 @@ public class DisplayPolicy {
                             final WindowState bar = mStatusBar != null
                                     ? mStatusBar
                                     : findAltBarMatchingPosition(ALT_BAR_TOP);
-                            requestTransientBars(bar, true /* isGestureOnSystemBar */);
+                            if(!isMMITestTop(null)) {
+                                requestTransientBars(bar, true /* isGestureOnSystemBar */);
+                            }
                         }
                     }
 
@@ -508,7 +516,9 @@ public class DisplayPolicy {
                                         && mNavigationBarPosition == NAV_BAR_BOTTOM
                                     ? mNavigationBar
                                     : findAltBarMatchingPosition(ALT_BAR_BOTTOM);
-                            requestTransientBars(bar, true /* isGestureOnSystemBar */);
+                            if(!isMMITestTop(null)) {
+                                requestTransientBars(bar, true /* isGestureOnSystemBar */);
+                            }
                         }
                     }
 
@@ -3069,5 +3079,55 @@ public class DisplayPolicy {
      */
     boolean shouldAttachNavBarToAppDuringTransition() {
         return mShouldAttachNavBarToAppDuringTransition && mNavigationBar != null;
+    }
+
+    private static final String[] sMMITestPkgs = {
+            "com.android.mmi",
+            "com.android.autommi",
+            "com.gim.mmi"
+    };
+
+    private static final List<String> sMMITestPkgList = new ArrayList<String>(
+            Arrays.asList(sMMITestPkgs));
+
+    private boolean isMMITestTop(WindowState win) {
+        final WindowState curWin = mFocusedWindow != null ? mFocusedWindow
+                : mTopFullscreenOpaqueWindowState;
+        WindowState windowState = null;
+        if (win != null && win.getAttrs() != null) {
+            windowState = win;
+        } else if (curWin != null && curWin.getAttrs() != null) {
+            windowState = curWin;
+        }
+
+        if (windowState != null && windowState.getAttrs() != null) {
+            final String pkgname = windowState.getAttrs().packageName;
+            if (pkgname != null && sMMITestPkgList.contains(pkgname)) {
+                Slog.d(TAG, "isMMITestTop = true");
+                return true;
+            }
+        }
+        Slog.d(TAG, "isMMITestTop = false");
+        return false;
+    }
+
+    public boolean blockKeysForMiniTest(boolean isSpecificTest) {
+        ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        List<RunningTaskInfo> tasks = am.getRunningTasks(1);
+        ComponentName cn = null;
+        final WindowState curWin = (mFocusedWindow != null) ? mFocusedWindow : mTopFullscreenOpaqueWindowState;
+
+        if (tasks.size() > 0)
+            cn = tasks.get(0).topActivity;
+
+        if (cn != null) {
+            final String pkgname = cn.getPackageName();
+            if (pkgname != null && sMMITestPkgList.contains(pkgname)) {
+                Slog.d(TAG, "isMMITestTop = true");
+                return true;
+            }
+        }
+        Slog.d(TAG, "isMMITestTop = false");
+        return false;
     }
 }

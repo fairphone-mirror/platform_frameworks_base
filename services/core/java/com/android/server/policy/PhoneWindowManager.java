@@ -973,6 +973,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             return;
         }
 
+        if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
+            Log.d(TAG, "powerPress power key pressed in mmitest");
+            return;
+        }
+
         final boolean interactive = Display.isOnState(mDefaultDisplay.getState());
 
         Slog.d(TAG, "powerPress: eventTime=" + eventTime + " interactive=" + interactive
@@ -2784,6 +2789,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         switch(keyCode) {
             case KeyEvent.KEYCODE_HOME:
+                if(mDefaultDisplayPolicy.blockKeysForMiniTest(false)) {
+                    Log.i(TAG, "home key pressed in mmitest.");
+                    return 0;
+                }
                 // First we always handle the home key here, so applications
                 // can never break it, although if keyguard is on, we do let
                 // it handle it, because that gives us the correct 5 second
@@ -2795,6 +2804,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 return handler.handleHomeButton(focusedToken, event);
             case KeyEvent.KEYCODE_MENU:
+                if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
+                    Log.d(TAG, "menu key pressed in mmitest");
+                    return 0;
+                }
                 // Hijack modified menu keys for debugging features
                 final int chordBug = KeyEvent.META_SHIFT_ON;
 
@@ -2808,6 +2821,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 break;
             case KeyEvent.KEYCODE_APP_SWITCH:
+                if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
+                    Log.d(TAG, "app switch key pressed in mmitest");
+                    return 0;
+                }
                 if (!keyguardOn) {
                     if (down && repeatCount == 0) {
                         preloadRecentApps();
@@ -3916,6 +3933,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             case KeyEvent.KEYCODE_POWER: {
+                if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
+                    Log.d(TAG, "power key pressed in mmitest");
+                    return ACTION_PASS_TO_USER;
+                }
                 EventLogTags.writeInterceptPower(
                         KeyEvent.actionToString(event.getAction()),
                         mPowerKeyHandled ? 1 : 0,
