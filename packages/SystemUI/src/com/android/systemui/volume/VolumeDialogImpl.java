@@ -232,7 +232,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mDialogView.setAlpha(0);
         mDialog.setCanceledOnTouchOutside(true);
         mDialog.setOnShowListener(dialog -> {
-            if (!isLandscape()) mDialogView.setTranslationX(mDialogView.getWidth() / 2.0f);
+            if (!isLandscape()) mDialogView.setTranslationX(-mDialogView.getWidth() / 2.0f);
             mDialogView.setAlpha(0);
             mDialogView.animate()
                     .alpha(1)
@@ -760,7 +760,7 @@ public class VolumeDialogImpl implements VolumeDialog,
                     tryToRemoveCaptionsTooltip();
                     mIsAnimatingDismiss = false;
                 }, 50));
-        if (!isLandscape()) animator.translationX(mDialogView.getWidth() / 2.0f);
+        if (!isLandscape()) animator.translationX(-mDialogView.getWidth() / 2.0f);
         animator.start();
         checkODICaptionsTooltip(true);
         mController.notifyVisible(false);
