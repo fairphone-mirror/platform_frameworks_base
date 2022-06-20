@@ -1,6 +1,6 @@
 package com.android.server;
 
-import android.mymodule.mmitest.ImmiTestManager;
+import android.mymodule.mmitest.IT2MmiTestManager;
 import android.util.Log;
 import android.content.Context;
 import android.os.RemoteException;
@@ -14,8 +14,8 @@ import java.io.InputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class MmiTestService extends ImmiTestManager.Stub {
-	private static final String TAG = "MmiTestService";
+public class T2MmiTestService extends IT2MmiTestManager.Stub {
+	private static final String TAG = "T2MmiTestService";
 
 	private static final String FTS_TEST_SEATTLE = "/proc/android_touch/self_test";
 	private static final String LCDBACKLIGHT_NODE = "/sys/class/backlight/backlight/brightness";
@@ -50,20 +50,14 @@ public class MmiTestService extends ImmiTestManager.Stub {
 
 	private Context mContext;
 
-	public MmiTestService(Context ctx){
+	public T2MmiTestService(Context ctx){
 		mContext = ctx;
 	}
 
-	@Override
-	public int getOpen(String action){
-		Log.e(TAG,"getOpen action = "+action);
-
-		return 1;
-	}
 
 	@Override
-	public String getNodeString(String action){
-		Log.e(TAG,"getNodeString action = "+action);
+	public String t2GetNodeString(String action){
+		Log.e(TAG,"t2GetNodeString action = "+action);
 		if (RAWDATA_TEST.equals(action)) {
 			return readNodeString(FTS_TEST_SEATTLE);
 		}else if (LCDBACKLIGHT_TEST.equals(action)) {
@@ -90,8 +84,8 @@ public class MmiTestService extends ImmiTestManager.Stub {
 	}
 
 	@Override
-	public boolean setNodeString(String action,String value){
-		Log.e(TAG,"setNodeString action = "+action);
+	public boolean t2SetNodeString(String action,String value){
+		Log.e(TAG,"t2SetNodeString action = "+action);
 		if (LCDBACKLIGHT_TEST.equals(action)) {
 			return writeNodeString(LCDBACKLIGHT_NODE,value);
 		}else if (BackFlash_White_TEST.equals(action)) {
