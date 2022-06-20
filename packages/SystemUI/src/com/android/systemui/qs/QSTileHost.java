@@ -529,7 +529,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
                 }
             }
         }
-        if (featureFlags.isProviderModelSettingEnabled()) {
+        // if (featureFlags.isProviderModelSettingEnabled()) {
             if (!tiles.contains("internet")) {
                 if (tiles.contains("wifi")) {
                     // Replace the WiFi with Internet, and remove the Cell
@@ -543,7 +543,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
                 tiles.remove("wifi");
                 tiles.remove("cell");
             }
-        }
+        // }
         return tiles;
     }
 
