@@ -26565,35 +26565,32 @@ package android.mtp {
 
 package android.mymodule.mmitest {
 
-  public interface ImmiTestManager extends android.os.IInterface {
-    method public String getNodeString(String) throws android.os.RemoteException;
-    method public int getOpen(String) throws android.os.RemoteException;
-    method public boolean setNodeString(String, String) throws android.os.RemoteException;
-    field public static final String DESCRIPTOR = "android.mymodule.mmitest.ImmiTestManager";
+  public interface IT2MmiTestManager extends android.os.IInterface {
+    method public String t2GetNodeString(String) throws android.os.RemoteException;
+    method public boolean t2SetNodeString(String, String) throws android.os.RemoteException;
+    field public static final String DESCRIPTOR = "android.mymodule.mmitest.IT2MmiTestManager";
   }
 
-  public static class ImmiTestManager.Default implements android.mymodule.mmitest.ImmiTestManager {
-    ctor public ImmiTestManager.Default();
+  public static class IT2MmiTestManager.Default implements android.mymodule.mmitest.IT2MmiTestManager {
+    ctor public IT2MmiTestManager.Default();
     method public android.os.IBinder asBinder();
-    method public String getNodeString(String) throws android.os.RemoteException;
-    method public int getOpen(String) throws android.os.RemoteException;
-    method public boolean setNodeString(String, String) throws android.os.RemoteException;
+    method public String t2GetNodeString(String) throws android.os.RemoteException;
+    method public boolean t2SetNodeString(String, String) throws android.os.RemoteException;
   }
 
-  public abstract static class ImmiTestManager.Stub extends android.os.Binder implements android.mymodule.mmitest.ImmiTestManager {
-    ctor public ImmiTestManager.Stub();
+  public abstract static class IT2MmiTestManager.Stub extends android.os.Binder implements android.mymodule.mmitest.IT2MmiTestManager {
+    ctor public IT2MmiTestManager.Stub();
     method public android.os.IBinder asBinder();
-    method public static android.mymodule.mmitest.ImmiTestManager asInterface(android.os.IBinder);
-    method public static android.mymodule.mmitest.ImmiTestManager getDefaultImpl();
+    method public static android.mymodule.mmitest.IT2MmiTestManager asInterface(android.os.IBinder);
+    method public static android.mymodule.mmitest.IT2MmiTestManager getDefaultImpl();
     method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
-    method public static boolean setDefaultImpl(android.mymodule.mmitest.ImmiTestManager);
+    method public static boolean setDefaultImpl(android.mymodule.mmitest.IT2MmiTestManager);
   }
 
-  public class MmiTestManager {
-    ctor public MmiTestManager(android.content.Context, android.mymodule.mmitest.ImmiTestManager);
-    method public String getNodeString(String);
-    method public int getOpen(String);
-    method public boolean setNodeString(String, String);
+  public class T2MmiTestManager {
+    ctor public T2MmiTestManager(android.content.Context, android.mymodule.mmitest.IT2MmiTestManager);
+    method public String t2GetNodeString(String);
+    method public boolean t2SetNodeString(String, String);
   }
 
 }
