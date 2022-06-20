@@ -686,7 +686,8 @@ public class MtpDatabase implements AutoCloseable {
             case MtpConstants.DEVICE_PROPERTY_SYNCHRONIZATION_PARTNER:
             case MtpConstants.DEVICE_PROPERTY_DEVICE_FRIENDLY_NAME:
                 // writable string properties kept in shared preferences
-                value = mDeviceProperties.getString(Integer.toString(property), "");
+                // value = mDeviceProperties.getString(Integer.toString(property), "");
+                value = "Fairphone 4 5G";
                 length = value.length();
                 if (length > 255) {
                     length = 255;
