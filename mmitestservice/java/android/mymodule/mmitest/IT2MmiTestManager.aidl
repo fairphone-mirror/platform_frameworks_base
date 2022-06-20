@@ -21,10 +21,9 @@ import android.content.ComponentName;
 import android.os.Bundle;
 
 
-interface ImmiTestManager {
-	int getOpen(String action);
+interface IT2MmiTestManager {
 
-	String getNodeString(String action);
-	boolean setNodeString(String action,String value);
+	String t2GetNodeString(String action);
+	boolean t2SetNodeString(String action,String value);
 }
 
