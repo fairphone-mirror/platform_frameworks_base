@@ -48,6 +48,7 @@ import java.lang.Exception;
 import java.util.ArrayList;
 import java.lang.ref.WeakReference;
 
+import org.codeaurora.internal.BearerAllocationStatus;//[BUG]-Modify-1 line by shaopan.tang 2022-06-21 [FP4-3736]5G icon not display when roaming
 import org.codeaurora.internal.Client;
 import org.codeaurora.internal.IExtTelephony;
 import org.codeaurora.internal.INetworkCallback;
@@ -354,6 +355,21 @@ public class FiveGServiceClient {
             if (status.get() == Status.SUCCESS) {
                 FiveGServiceState state = getCurrentServiceState(slotId);
                 state.mNrIconType = nrIconType.get();
+                update5GIcon(state, slotId);
+                notifyListenersIfNecessary(slotId);
+            }
+        }
+
+        @Override
+        public void onAnyNrBearerAllocation(int slotId, Token token, Status status,
+                BearerAllocationStatus bearerStatus) throws RemoteException {
+            Log.d(TAG,
+                    "onNrBearerAllocationChange: slotId = " + slotId + " token = " + token + " " +
+                            "status" + status + " bearerStatus = " + bearerStatus);
+
+            if (status.get() == Status.SUCCESS) {
+                FiveGServiceState state = getCurrentServiceState(slotId);
+                state.mNrIconType = bearerStatus.get();
                 update5GIcon(state, slotId);
                 notifyListenersIfNecessary(slotId);
             }
