@@ -624,6 +624,8 @@ class StorageManagerService extends IStorageManager.Stub
     private final Callbacks mCallbacks;
     private final LockPatternUtils mLockPatternUtils;
 
+    private static final long STORAGE_G = 1000*1000*1000L;
+
     private static final String ANR_DELAY_MILLIS_DEVICE_CONFIG_KEY =
             "anr_delay_millis";
 
@@ -1430,7 +1432,21 @@ class StorageManagerService extends IStorageManager.Stub
             synchronized (mLock) {
                 final DiskInfo disk = mDisks.get(diskId);
                 if (disk != null) {
-                    disk.size = sizeBytes;
+                    if(sizeBytes > 1024*STORAGE_G && sizeBytes < 1024*STORAGE_G * 1.1){
+                        disk.size = 1024*STORAGE_G;
+                    }else if(sizeBytes > 512*STORAGE_G && sizeBytes < 512*STORAGE_G * 1.1){
+                        disk.size = 512*STORAGE_G;
+                    }else if(sizeBytes > 256*STORAGE_G && sizeBytes < 256*STORAGE_G * 1.1){
+                        disk.size = 256*STORAGE_G;
+                    }else if(sizeBytes > 128*STORAGE_G && sizeBytes < 128*STORAGE_G * 1.1){
+                        disk.size = 128*STORAGE_G;
+                    }else if(sizeBytes > 64*STORAGE_G && sizeBytes < 64*STORAGE_G * 1.1){
+                        disk.size = 64*STORAGE_G;
+                    }else if(sizeBytes > 32*STORAGE_G && sizeBytes < 32*STORAGE_G * 1.1){
+                        disk.size = 32*STORAGE_G;
+                    }else{
+                        disk.size = sizeBytes;
+                    }
                     disk.label = label;
                     disk.sysPath = sysPath;
                 }
