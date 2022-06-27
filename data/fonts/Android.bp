@@ -45,8 +45,8 @@ prebuilt_font {
 }
 
 prebuilt_font {
-    name: "RadikalRegular.ttf",
-    src: "RadikalRegular.ttf",
+    name: "Radikal-Regular.ttf",
+    src: "Radikal-Regular.ttf",
 }
 
 /////////////////////////////////
