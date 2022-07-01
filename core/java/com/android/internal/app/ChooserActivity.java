@@ -1315,7 +1315,7 @@ public class ChooserActivity extends ResolverActivity implements
         if (shouldNearbyShareBeIncludedAsActionButton()) {
             addActionButton(actionRow, createNearbyButton(targetIntent));
         }
-        addActionButton(actionRow, createEditButton(targetIntent));
+        //addActionButton(actionRow, createEditButton(targetIntent));
 
         mPreviewCoord = new ContentPreviewCoordinator(contentPreviewLayout, false);
 
