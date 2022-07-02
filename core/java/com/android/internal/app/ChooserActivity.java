@@ -1396,7 +1396,7 @@ public class ChooserActivity extends ResolverActivity implements
                 (ViewGroup) contentPreviewLayout.findViewById(R.id.chooser_action_row);
         //TODO: addActionButton(actionRow, createCopyButton());
         addActionButton(actionRow, createNearbyButton(targetIntent));
-        addActionButton(actionRow, createEditButton(targetIntent));
+        // addActionButton(actionRow, createEditButton(targetIntent));
 
         mPreviewCoord = new ContentPreviewCoordinator(contentPreviewLayout, false);
 
