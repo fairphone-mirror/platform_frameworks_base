@@ -3096,7 +3096,9 @@ public class StatusBar extends SystemUI implements DemoMode,
                 mQSPanelController.showDeviceMonitoringDialog();
             }
             else if (ACTION_RESET_VIEW.equals(action)) {
-                mHandler.sendEmptyMessage(MSG_LAUNCH_TRANSITION_TIMEOUT);
+                if (isKeyguardShowing()) {
+                    mHandler.sendEmptyMessage(MSG_LAUNCH_TRANSITION_TIMEOUT);
+                }
             }
             Trace.endSection();
         }
