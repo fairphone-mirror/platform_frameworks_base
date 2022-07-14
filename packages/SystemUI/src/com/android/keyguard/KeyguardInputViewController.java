@@ -60,6 +60,9 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
         }
         @Override
         public void dismiss(boolean securityVerified, int targetUserId) { }
+        /* FP4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM */
+        @Override
+        public void dismiss(boolean securityVerified, int targetUserId, SecurityMode mode) { }
         @Override
         public void dismiss(boolean authenticated, int targetId,
                 boolean bypassSecondaryLockScreen) { }

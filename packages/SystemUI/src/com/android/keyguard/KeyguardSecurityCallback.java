@@ -15,6 +15,8 @@
  */
 package com.android.keyguard;
 
+import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
+
 public interface KeyguardSecurityCallback {
 
     /**
@@ -32,6 +34,11 @@ public interface KeyguardSecurityCallback {
      *                                  if any, during this dismissal.
      */
     void dismiss(boolean securityVerified, int targetUserId, boolean bypassSecondaryLockScreen);
+
+    /*
+     *  FP4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
+     */
+    void dismiss(boolean securityVerified, int targetUserId, SecurityMode mode);
 
     /**
      * Manually report user activity to keep the device awake.

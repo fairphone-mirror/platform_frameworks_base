@@ -69,7 +69,8 @@ public class KeyguardSimPukViewController
             if (simState == TelephonyManager.SIM_STATE_READY) {
                 mRemainingAttempts = -1;
                 mShowDefaultMessage = true;
-                getKeyguardSecurityCallback().dismiss(true, KeyguardUpdateMonitor.getCurrentUser());
+                /* FP4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM */
+                getKeyguardSecurityCallback().dismiss(true, KeyguardUpdateMonitor.getCurrentUser(), getSecurityMode());
             } else {
                 resetState();
             }
@@ -277,8 +278,9 @@ public class KeyguardSimPukViewController
                             mRemainingAttempts = -1;
                             mShowDefaultMessage = true;
 
+                            /* FP4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM */
                             getKeyguardSecurityCallback().dismiss(
-                                    true, KeyguardUpdateMonitor.getCurrentUser());
+                                    true, KeyguardUpdateMonitor.getCurrentUser(), getSecurityMode());
                         } else {
                             mShowDefaultMessage = false;
                             if (result.getResult() == PinResult.PIN_RESULT_TYPE_INCORRECT) {
