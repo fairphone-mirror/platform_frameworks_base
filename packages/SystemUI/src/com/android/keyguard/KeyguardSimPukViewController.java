@@ -60,9 +60,6 @@ public class KeyguardSimPukViewController
     private CheckSimPuk mCheckSimPukThread;
     private ProgressDialog mSimUnlockProgressDialog;
 
-    // P4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
-    private boolean haveDismiss = false;
-
     KeyguardUpdateMonitorCallback mUpdateMonitorCallback = new KeyguardUpdateMonitorCallback() {
         @Override
         public void onSimStateChanged(int subId, int slotId, int simState) {
@@ -72,11 +69,7 @@ public class KeyguardSimPukViewController
             if (simState == TelephonyManager.SIM_STATE_READY) {
                 mRemainingAttempts = -1;
                 mShowDefaultMessage = true;
-		//{ P4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
-		if (!haveDismiss)
-		    getKeyguardSecurityCallback().dismiss(true, KeyguardUpdateMonitor.getCurrentUser());
-		haveDismiss = true;
-		//} P4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
+                getKeyguardSecurityCallback().dismiss(true, KeyguardUpdateMonitor.getCurrentUser());
             } else {
                 resetState();
             }
@@ -117,8 +110,6 @@ public class KeyguardSimPukViewController
     void resetState() {
         super.resetState();
         mStateMachine.reset();
-	// P4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
-	haveDismiss = true;
     }
 
     @Override
@@ -286,12 +277,8 @@ public class KeyguardSimPukViewController
                             mRemainingAttempts = -1;
                             mShowDefaultMessage = true;
 
-			    //{ P4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
-			    if (!haveDismiss)
-				getKeyguardSecurityCallback().dismiss(
+                            getKeyguardSecurityCallback().dismiss(
                                     true, KeyguardUpdateMonitor.getCurrentUser());
-			    haveDismiss = true;
-			    //} P4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
                         } else {
                             mShowDefaultMessage = false;
                             if (result.getResult() == PinResult.PIN_RESULT_TYPE_INCORRECT) {
