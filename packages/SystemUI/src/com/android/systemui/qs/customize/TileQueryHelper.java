@@ -29,6 +29,7 @@ import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.text.TextUtils;
 import android.util.ArraySet;
+import android.util.Log;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
@@ -134,6 +135,7 @@ public class TileQueryHelper {
                 tile.destroy();
                 continue;
             }
+
             tile.setTileSpec(spec);
             tilesToAdd.add(tile);
         }
@@ -226,26 +228,30 @@ public class TileQueryHelper {
 
                 final CharSequence appLabel = info.serviceInfo.applicationInfo.loadLabel(pm);
                 String spec = CustomTile.toSpec(componentName);
-                State state = getState(params, spec);
-                if (state != null) {
-                    addTile(spec, appLabel, state, false);
-                    continue;
+                if(!spec.equals("custom(com.android.settings/.qs.VoWifiTile)")){
+                    State state = getState(params, spec);
+                    if (state != null) {
+                      addTile(spec, appLabel, state, false);
+                      continue;
+                    }
+                    if (info.serviceInfo.icon == 0 && info.serviceInfo.applicationInfo.icon == 0) {
+                        continue;
+                    }
+                    Drawable icon = info.serviceInfo.loadIcon(pm);
+                    if (!permission.BIND_QUICK_SETTINGS_TILE.equals(info.serviceInfo.permission)) {
+                        continue;
+                    }
+                    if (icon == null) {
+                        continue;
+                    }
+                    icon.mutate();
+                    icon.setTint(mContext.getColor(android.R.color.white));
+                    CharSequence label = info.serviceInfo.loadLabel(pm);
+
+                    createStateAndAddTile(spec, icon, label != null ? label.toString() : "null",
+                                        appLabel);
                 }
-                if (info.serviceInfo.icon == 0 && info.serviceInfo.applicationInfo.icon == 0) {
-                    continue;
-                }
-                Drawable icon = info.serviceInfo.loadIcon(pm);
-                if (!permission.BIND_QUICK_SETTINGS_TILE.equals(info.serviceInfo.permission)) {
-                    continue;
-                }
-                if (icon == null) {
-                    continue;
-                }
-                icon.mutate();
-                icon.setTint(mContext.getColor(android.R.color.white));
-                CharSequence label = info.serviceInfo.loadLabel(pm);
-                createStateAndAddTile(spec, icon, label != null ? label.toString() : "null",
-                        appLabel);
+
             }
 
             notifyTilesChanged(true);
