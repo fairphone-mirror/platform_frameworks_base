@@ -91,6 +91,10 @@
       <item quantity="other">Codice PIN della SIM errato. Hai ancora <xliff:g id="NUMBER_1">%d</xliff:g> tentativi a disposizione.</item>
       <item quantity="one">Codice PIN della SIM errato. Hai ancora <xliff:g id="NUMBER_0">%d</xliff:g> tentativo a disposizione, dopodiché dovrai contattare l\'operatore per sbloccare il dispositivo.</item>
     </plurals>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+      <item quantity="other">Codice PIN della SIM<xliff:g id="slotid">%d</xliff:g> errato. Hai ancora <xliff:g id="NUMBER_1">%d</xliff:g> tentativi a disposizione.</item>
+      <item quantity="one">Codice PIN della SIM<xliff:g id="slotid">%d</xliff:g> errato. Hai ancora <xliff:g id="NUMBER_0">%d</xliff:g> tentativo a disposizione, dopodiché dovrai contattare l\'operatore per sbloccare il dispositivo.</item>
+    </plurals>
     <string name="kg_password_wrong_puk_code_dead" msgid="3698285357028468617">"SIM inutilizzabile. Contatta il tuo operatore."</string>
     <plurals name="kg_password_wrong_puk_code" formatted="false" msgid="3937306685604862886">
       <item quantity="other">Codice PUK della SIM errato. Hai ancora <xliff:g id="NUMBER_1">%d</xliff:g> tentativi a disposizione prima che la SIM diventi definitivamente inutilizzabile.</item>

@@ -91,6 +91,10 @@
       <item quantity="other">El código PIN de la tarjeta SIM es incorrecto. Quedan <xliff:g id="NUMBER_1">%d</xliff:g> intentos.</item>
       <item quantity="one">El código PIN de la tarjeta SIM es incorrecto. Queda <xliff:g id="NUMBER_0">%d</xliff:g> intento para tener que ponerte en contacto con tu operador para desbloquear el dispositivo.</item>
     </plurals>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+      <item quantity="other">El código PIN de la tarjeta SIM<xliff:g id="slotid">%d</xliff:g> es incorrecto. Quedan <xliff:g id="NUMBER_1">%d</xliff:g> intentos.</item>
+      <item quantity="one">El código PIN de la tarjeta SIM<xliff:g id="slotid">%d</xliff:g> es incorrecto. Queda <xliff:g id="NUMBER_0">%d</xliff:g> intento para tener que ponerte en contacto con tu operador para desbloquear el dispositivo.</item>
+    </plurals>
     <string name="kg_password_wrong_puk_code_dead" msgid="3698285357028468617">"La tarjeta SIM no se puede utilizar. Ponte en contacto con tu operador."</string>
     <plurals name="kg_password_wrong_puk_code" formatted="false" msgid="3937306685604862886">
       <item quantity="other">El código PUK de la tarjeta SIM es incorrecto. Quedan <xliff:g id="NUMBER_1">%d</xliff:g> intentos paraa que la tarjeta SIM no se pueda utilizar de forma permanente.</item>

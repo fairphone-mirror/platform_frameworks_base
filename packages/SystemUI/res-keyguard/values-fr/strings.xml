@@ -91,6 +91,10 @@
       <item quantity="one">Code PIN de la carte SIM incorrect. Il vous reste <xliff:g id="NUMBER_1">%d</xliff:g> tentative.</item>
       <item quantity="other">Code PIN de la carte SIM incorrect. Il vous reste <xliff:g id="NUMBER_1">%d</xliff:g> tentatives.</item>
     </plurals>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+      <item quantity="one">Code PIN de la carte SIM<xliff:g id="slotid">%d</xliff:g> incorrect. Il vous reste <xliff:g id="NUMBER_1">%d</xliff:g> tentative.</item>
+      <item quantity="other">Code PIN de la carte SIM<xliff:g id="slotid">%d</xliff:g> incorrect. Il vous reste <xliff:g id="NUMBER_1">%d</xliff:g> tentatives.</item>
+    </plurals>
     <string name="kg_password_wrong_puk_code_dead" msgid="3698285357028468617">"La carte SIM est inutilisable. Contactez votre opérateur."</string>
     <plurals name="kg_password_wrong_puk_code" formatted="false" msgid="3937306685604862886">
       <item quantity="one">Clé PUK de la carte SIM incorrecte. Il vous reste <xliff:g id="NUMBER_1">%d</xliff:g> tentative avant que votre carte SIM ne devienne définitivement inutilisable.</item>
