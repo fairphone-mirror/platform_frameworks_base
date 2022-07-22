@@ -13974,6 +13974,7 @@ HSPLandroid/telephony/BinderCacheManager;->lambda$getTracker$0$android-telephony
 HSPLandroid/telephony/CarrierConfigManager;-><init>(Landroid/content/Context;)V
 HSPLandroid/telephony/CarrierConfigManager;->getConfig()Landroid/os/PersistableBundle;
 HSPLandroid/telephony/CarrierConfigManager;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+HSPLandroid/telephony/CarrierConfigManager;->getConfigLocked(I)Landroid/os/PersistableBundle;
 HSPLandroid/telephony/CarrierConfigManager;->getDefaultCarrierServicePackageName()Ljava/lang/String;
 HSPLandroid/telephony/CarrierConfigManager;->getDefaultConfig()Landroid/os/PersistableBundle;
 HSPLandroid/telephony/CarrierConfigManager;->getICarrierConfigLoader()Lcom/android/internal/telephony/ICarrierConfigLoader;

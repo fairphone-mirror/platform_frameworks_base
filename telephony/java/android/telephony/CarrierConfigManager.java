@@ -9740,6 +9740,25 @@ public class CarrierConfigManager {
         return null;
     }
 
+    @SuppressLint("NullableCollection")
+    @RequiresPermission(Manifest.permission.READ_PHONE_STATE)
+    @Nullable
+    public PersistableBundle getConfigLocked() {
+        try {
+            ICarrierConfigLoader loader = getICarrierConfigLoader();
+            if (loader == null) {
+                Rlog.w(TAG, "Error getting config "
+                        + " ICarrierConfigLoader is null");
+                return null;
+            }
+            return loader.getConfigLocked(SubscriptionManager.getDefaultSubscriptionId(), mContext.getOpPackageName());
+        } catch (RemoteException ex) {
+            Rlog.e(TAG, "Error getting config " + ": "
+                    + ex.toString());
+        }
+        return null;
+    }
+
     /**
      * Overrides the carrier config of the provided subscription ID with the provided values.
      *

@@ -38,4 +38,6 @@ interface ICarrierConfigLoader {
 
     String getDefaultCarrierServicePackageName();
 
+    PersistableBundle getConfigLocked(int subId, String callingPackage);
+
 }

@@ -68,7 +68,8 @@ public class AppStateController {
 
     private void updateCarrierAppState() {
         CarrierConfigManager configManager = (CarrierConfigManager) mContext.getSystemService(Context.CARRIER_CONFIG_SERVICE);
-        PersistableBundle config = configManager.getConfig();
+        //PersistableBundle config = configManager.getConfig();
+        PersistableBundle config = configManager.getConfigLocked();
         if (config != null) {
             String[] preInstallApps = config.getStringArray(KEY_CARRIER_PREINSTALL);
             if (preInstallApps != null && preInstallApps.length > 0) {

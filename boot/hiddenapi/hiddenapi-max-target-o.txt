@@ -86697,6 +86697,7 @@ Lcom/android/internal/telephony/IApnSourceService$Stub;->TRANSACTION_getApns:I
 Lcom/android/internal/telephony/IApnSourceService;->getApns()[Landroid/content/ContentValues;
 Lcom/android/internal/telephony/ICarrierConfigLoader$Stub$Proxy;-><init>(Landroid/os/IBinder;)V
 Lcom/android/internal/telephony/ICarrierConfigLoader$Stub$Proxy;->getConfigForSubId(I)Landroid/os/PersistableBundle;
+Lcom/android/internal/telephony/ICarrierConfigLoader$Stub$Proxy;->getConfigLocked()Landroid/os/PersistableBundle;
 Lcom/android/internal/telephony/ICarrierConfigLoader$Stub$Proxy;->getDefaultCarrierServicePackageName()Ljava/lang/String;
 Lcom/android/internal/telephony/ICarrierConfigLoader$Stub$Proxy;->getInterfaceDescriptor()Ljava/lang/String;
 Lcom/android/internal/telephony/ICarrierConfigLoader$Stub$Proxy;->mRemote:Landroid/os/IBinder;
