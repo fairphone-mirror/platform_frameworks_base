@@ -26568,6 +26568,8 @@ package android.mymodule.mmitest {
   public interface IT2MmiTestManager extends android.os.IInterface {
     method public String t2GetNodeString(String) throws android.os.RemoteException;
     method public boolean t2SetNodeString(String, String) throws android.os.RemoteException;
+    method public String t2TestNodeRead(String) throws android.os.RemoteException;
+    method public boolean t2TestNodeWrite(String, String) throws android.os.RemoteException;
     field public static final String DESCRIPTOR = "android.mymodule.mmitest.IT2MmiTestManager";
   }
 
@@ -26576,6 +26578,8 @@ package android.mymodule.mmitest {
     method public android.os.IBinder asBinder();
     method public String t2GetNodeString(String) throws android.os.RemoteException;
     method public boolean t2SetNodeString(String, String) throws android.os.RemoteException;
+    method public String t2TestNodeRead(String) throws android.os.RemoteException;
+    method public boolean t2TestNodeWrite(String, String) throws android.os.RemoteException;
   }
 
   public abstract static class IT2MmiTestManager.Stub extends android.os.Binder implements android.mymodule.mmitest.IT2MmiTestManager {
@@ -26591,6 +26595,8 @@ package android.mymodule.mmitest {
     ctor public T2MmiTestManager(android.content.Context, android.mymodule.mmitest.IT2MmiTestManager);
     method public String t2GetNodeString(String);
     method public boolean t2SetNodeString(String, String);
+    method public String t2TestNodeRead(String);
+    method public boolean t2TestNodeWrite(String, String);
   }
 
 }

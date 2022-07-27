@@ -25,5 +25,7 @@ interface IT2MmiTestManager {
 
 	String t2GetNodeString(String action);
 	boolean t2SetNodeString(String action,String value);
+	String t2TestNodeRead(String node);
+	boolean t2TestNodeWrite(String node,String value);
 }
 
