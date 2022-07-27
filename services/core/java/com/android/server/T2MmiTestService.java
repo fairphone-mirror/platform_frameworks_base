@@ -101,6 +101,18 @@ public class T2MmiTestService extends IT2MmiTestManager.Stub {
 		return false;
 	}
 
+	@Override
+	public String t2TestNodeRead(String node){
+		Log.e(TAG,"t2TestNodeRead node = "+node);
+		return readNodeString(node);
+	}
+
+	@Override
+	public boolean t2TestNodeWrite(String node,String value){
+		Log.e(TAG,"t2TestNodeWrite node = "+node);
+		return writeNodeString(node,value);
+	}
+
 	private String readNodeString(String node){
 		FileInputStream fis = null;
 		try {

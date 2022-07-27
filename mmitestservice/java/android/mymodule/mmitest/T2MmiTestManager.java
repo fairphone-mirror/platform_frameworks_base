@@ -41,4 +41,26 @@ public class T2MmiTestManager{
 		return false;
 	}
 
+	public String t2TestNodeRead(String node){
+		Log.e(TAG,"t2TestNodeRead node = "+node);
+		try{
+			return manager.t2TestNodeRead(node);
+		}catch(RemoteException e){
+			e.printStackTrace();
+		}
+
+		return "null";
+	}
+
+	public boolean t2TestNodeWrite(String node,String value){
+		Log.e(TAG,"t2TestNodeWrite node = "+node);
+		try{
+			return manager.t2TestNodeWrite(node,value);
+		}catch(RemoteException e){
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
 }
