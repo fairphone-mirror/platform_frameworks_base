@@ -224,7 +224,8 @@ public class AssistManager {
     }
 
     protected boolean shouldShowOrb() {
-        return !ActivityManager.isLowRamDeviceStatic();
+        //Remove restrictions !ActivityManager.isLowRamDeviceStatic()
+        return false;
     }
 
     public void startAssist(Bundle args) {
