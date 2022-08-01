@@ -184,6 +184,8 @@ public class UserManagerService extends IUserManager.Stub {
     private static final String TAG_SEED_ACCOUNT_OPTIONS = "seedAccountOptions";
     private static final String TAG_LAST_REQUEST_QUIET_MODE_ENABLED_CALL =
             "lastRequestQuietModeEnabledCall";
+    private static final String TAG_IGNORE_PREPARE_STORAGE_ERRORS =
+            "ignorePrepareStorageErrors";
     private static final String ATTR_KEY = "key";
     private static final String ATTR_VALUE_TYPE = "type";
     private static final String ATTR_MULTIPLE = "m";
@@ -282,12 +284,28 @@ public class UserManagerService extends IUserManager.Stub {
 
         private long mLastRequestQuietModeEnabledMillis;
 
+        /**
+         * {@code true} if the system should ignore errors when preparing the
+         * storage directories for this user. This is {@code false} for all new
+         * users; it will only be {@code true} for users that already existed
+         * on-disk from an older version of Android.
+         */
+        private boolean mIgnorePrepareStorageErrors;
+
         void setLastRequestQuietModeEnabledMillis(long millis) {
             mLastRequestQuietModeEnabledMillis = millis;
         }
 
         long getLastRequestQuietModeEnabledMillis() {
             return mLastRequestQuietModeEnabledMillis;
+        }
+
+        boolean getIgnorePrepareStorageErrors() {
+            return mIgnorePrepareStorageErrors;
+        }
+
+        void setIgnorePrepareStorageErrors() {
+            mIgnorePrepareStorageErrors = true;
         }
 
         void clearSeedAccountData() {
@@ -2439,6 +2457,10 @@ public class UserManagerService extends IUserManager.Stub {
             serializer.endTag(/* namespace */ null, TAG_LAST_REQUEST_QUIET_MODE_ENABLED_CALL);
         }
 
+        serializer.startTag(/* namespace */ null, TAG_IGNORE_PREPARE_STORAGE_ERRORS);
+        serializer.text(String.valueOf(userData.getIgnorePrepareStorageErrors()));
+        serializer.endTag(/* namespace */ null, TAG_IGNORE_PREPARE_STORAGE_ERRORS);
+
         serializer.endTag(null, TAG_USER);
 
         serializer.endDocument();
@@ -2548,6 +2570,7 @@ public class UserManagerService extends IUserManager.Stub {
         Bundle baseRestrictions = null;
         Bundle localRestrictions = null;
         Bundle globalRestrictions = null;
+        boolean ignorePrepareStorageErrors = true; // default is true for old users
 
         XmlPullParser parser = Xml.newPullParser();
         parser.setInput(is, StandardCharsets.UTF_8.name());
@@ -2630,6 +2653,11 @@ public class UserManagerService extends IUserManager.Stub {
                     if (type == XmlPullParser.TEXT) {
                         lastRequestQuietModeEnabledTimestamp = Long.parseLong(parser.getText());
                     }
+                } else if (TAG_IGNORE_PREPARE_STORAGE_ERRORS.equals(tag)) {
+                    type = parser.next();
+                    if (type == XmlPullParser.TEXT) {
+                        ignorePrepareStorageErrors = Boolean.parseBoolean(parser.getText());
+                    }
                 }
             }
         }
@@ -2656,6 +2684,9 @@ public class UserManagerService extends IUserManager.Stub {
         userData.persistSeedData = persistSeedData;
         userData.seedAccountOptions = seedAccountOptions;
         userData.setLastRequestQuietModeEnabledMillis(lastRequestQuietModeEnabledTimestamp);
+        if (ignorePrepareStorageErrors) {
+            userData.setIgnorePrepareStorageErrors();
+        }
 
         synchronized (mRestrictionsLock) {
             if (baseRestrictions != null) {
@@ -4048,6 +4079,9 @@ public class UserManagerService extends IUserManager.Stub {
                             pw.println();
                         }
                     }
+
+                    pw.println("    Ignore errors preparing storage: "
+                            + userData.getIgnorePrepareStorageErrors());
                 }
             }
             pw.println();
@@ -4395,6 +4429,14 @@ public class UserManagerService extends IUserManager.Stub {
                 String value, int callingUid) {
             return UserRestrictionsUtils.isSettingRestrictedForUser(mContext, setting, userId,
                     value, callingUid);
+        }
+
+        @Override
+        public boolean shouldIgnorePrepareStorageErrors(int userId) {
+            synchronized (mUsersLock) {
+                UserData userData = mUsers.get(userId);
+                return userData != null && userData.getIgnorePrepareStorageErrors();
+            }
         }
     }
 
