@@ -1577,6 +1577,8 @@ public class NavigationBar implements View.OnAttachStateChangeListener,
             if (getBarTransitions() != null) {
                 getBarTransitions().setBackgroundOverrideAlpha(1f);
             }
+        } else {
+            updateAssistantEntrypoints();
         }
         updateScreenPinningGestures();
         setAccessibilityFloatingMenuModeIfNeeded();
