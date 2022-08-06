@@ -211,14 +211,6 @@ public class PermissionManagerService extends IPermissionManager.Stub {
             return PackageManager.PERMISSION_DENIED;
         }
 
-        if ("com.google.android.permission.gts".equalsIgnoreCase(callingPackageName)
-                && "de.telekom.tsc".equalsIgnoreCase(pkgName)) {
-            if (Manifest.permission.BLUETOOTH_CONNECT.equalsIgnoreCase(permName) ||
-                    Manifest.permission.BLUETOOTH_ADVERTISE.equalsIgnoreCase(permName)  ||
-                    Manifest.permission.BLUETOOTH_SCAN.equalsIgnoreCase(permName)) {
-                return PackageManager.PERMISSION_DENIED;
-            }
-        }
         final CheckPermissionDelegate checkPermissionDelegate;
         synchronized (mLock) {
             checkPermissionDelegate = mCheckPermissionDelegate;
