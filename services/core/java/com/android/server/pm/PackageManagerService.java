@@ -18391,6 +18391,12 @@ public class PackageManagerService extends IPackageManager.Stub
         }
 
         public void handleStartCopy() {
+            /*Add by T2M.yulin.chen for FP4S-306 2022-08-08 Begin*/
+            //do boost
+            BoostFramework mPerfBoostInstall = new BoostFramework();
+            mPerfBoostInstall.perfHint(BoostFramework.VENDOR_HINT_PACKAGE_INSTALL_BOOST,
+                        null, 10000, -1);
+            /*Add by T2M.yulin.chen for FP4S-306 2022-08-08 End*/
             if ((installFlags & PackageManager.INSTALL_APEX) != 0) {
                 // Apex packages get verified in StagingManager currently.
                 // TODO(b/136257624): Move apex verification logic out of StagingManager
@@ -20329,6 +20335,15 @@ public class PackageManagerService extends IPackageManager.Stub
                     | (isBackupOrRestore ? DexoptOptions.DEXOPT_FOR_RESTORE : 0);
             DexoptOptions dexoptOptions =
                     new DexoptOptions(packageName, compilationReason, dexoptFlags);
+
+            /*Add by T2M.yulin.chen for FP4S-306 2022-08-08 Begin*/
+            File apkFile = new File(pkg.getBaseApkPath());
+            //Very big apk 1000x1024x1024 use INSTALL_FAST
+            if (apkFile.exists() && apkFile.length() > 1048576000) {
+                dexoptOptions =
+                    new DexoptOptions(packageName, PackageManagerService.REASON_INSTALL_FAST, dexoptFlags);
+            }
+            /*Add by T2M.yulin.chen for FP4S-306 2022-08-08 End*/
 
             // Check whether we need to dexopt the app.
             //

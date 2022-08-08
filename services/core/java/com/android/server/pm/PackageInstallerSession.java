@@ -284,7 +284,8 @@ public class PackageInstallerSession extends IPackageInstallerSession.Stub {
     */
     private BoostFramework mPerfBoostInstall = null;
     private boolean mIsPerfLockAcquired = false;
-    private final int MAX_INSTALL_DURATION = 20000;
+    //Mod by T2M.yulin.chen for FP4S-306 2022-08-08
+    private final int MAX_INSTALL_DURATION = 30000;
 
     final int sessionId;
     final int userId;
@@ -1704,6 +1705,11 @@ public class PackageInstallerSession extends IPackageInstallerSession.Stub {
         if (mIsPerfLockAcquired && mPerfBoostInstall != null) {
             mPerfBoostInstall.perfLockRelease();
             mIsPerfLockAcquired = false;
+            /*Add by T2M.yulin.chen for FP4S-306 2022-08-08 Begin*/
+            //do more 5s boost
+            mPerfBoostInstall.perfHint(BoostFramework.VENDOR_HINT_PACKAGE_INSTALL_BOOST,
+                        null, 5000, -1);
+            /*Add by T2M.yulin.chen for FP4S-306 2022-08-08 End*/
         }
         if (hasParentSessionId()) {
             throw new IllegalStateException(
