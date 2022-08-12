@@ -58,6 +58,7 @@ import android.system.OsConstants;
 import android.util.ArrayMap;
 import android.util.ArraySet;
 import android.util.Slog;
+import android.content.ComponentName;
 
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.app.ResolverActivity;
@@ -98,6 +99,9 @@ public final class PinnerService extends SystemService {
     private static final int MATCH_FLAGS = PackageManager.MATCH_DEFAULT_ONLY
             | PackageManager.MATCH_DIRECT_BOOT_AWARE
             | PackageManager.MATCH_DIRECT_BOOT_UNAWARE;
+
+    private static final String MY_FAIRPHONE_PACKAGE_NAME = "com.fairphone.myfairphone";
+    private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.activity.onboarding.DeviceOnboardingActivity";
 
     private static final int KEY_CAMERA = 0;
     private static final int KEY_HOME = 1;
@@ -353,9 +357,18 @@ public final class PinnerService extends SystemService {
                         if (userSetupCompleteUri.equals(uri)) {
                             sendPinAppMessage(KEY_HOME, ActivityManager.getCurrentUser(),
                                     true /* force */);
+                            startMyFairphone();
                         }
                     }
                 }, UserHandle.USER_ALL);
+    }
+
+    private void startMyFairphone() {
+        Intent launchIntent = new Intent(Intent.ACTION_MAIN);
+        launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ComponentName cn = new ComponentName(MY_FAIRPHONE_PACKAGE_NAME, MY_FAIRPHONE_CLASS_NAME);
+        launchIntent.setComponent(cn);
+        mContext.startActivity(launchIntent);
     }
 
     private void registerUidListener() {
