@@ -328,7 +328,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
         }
 
         boolean isBtScoRequested = isBluetoothScoRequested();
-        if (isBtScoRequested && !wasBtScoRequested) {
+        Log.e(TAG, " qcomzhy isBtScoRequested " + isBtScoRequested + " wasBtScoRequested " + wasBtScoRequested);
+        if (isBtScoRequested) {
             if (!mBtHelper.startBluetoothSco(scoAudioMode, eventSource)) {
                 Log.w(TAG, "setCommunicationRouteForClient: failure to start BT SCO for pid: "
                         + pid);
@@ -340,7 +341,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
                 }
                 postBroadcastScoConnectionState(AudioManager.SCO_AUDIO_STATE_DISCONNECTED);
             }
-        } else if (!isBtScoRequested && wasBtScoRequested) {
+        } else if (!isBtScoRequested) {
             mBtHelper.stopBluetoothSco(eventSource);
         }
 
