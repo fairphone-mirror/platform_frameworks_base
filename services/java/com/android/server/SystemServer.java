@@ -1478,6 +1478,13 @@ public final class SystemServer implements Dumpable {
             throw new RuntimeException();
         }
 
+	//+ FP5-564. Disable Android's rescue party. liquan.zhou.t2m. 20230412
+	// For debugging RescueParty
+        if (Build.IS_DEBUGGABLE && SystemProperties.getBoolean("persist.debug.crash_system", false)) {
+            throw new RuntimeException();
+	}
+	//- FP5-564. Disable Android's rescue party. liquan.zhou.t2m. 20230412
+
         try {
             final String SECONDARY_ZYGOTE_PRELOAD = "SecondaryZygotePreload";
             // We start the preload ~1s before the webview factory preparation, to
