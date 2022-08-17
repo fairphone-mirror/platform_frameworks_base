@@ -427,6 +427,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         if (mShowing) {
             // If we were showing the bouncer and then aborting, we need to also clear out any
             // potential actions unless we actually unlocked.
+            mAfterKeyguardGoneAction = null;
             cancelPostAuthActions();
         }
         mBouncer.hide(destroyView);
@@ -915,7 +916,6 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         if (bouncerIsOrWillBeShowing()) {
             return; // allow bouncer to trigger saved actions
         }
-        mAfterKeyguardGoneAction = null;
         mDismissActionWillAnimateOnKeyguard = false;
         if (mKeyguardGoneCancelAction != null) {
             mKeyguardGoneCancelAction.run();
