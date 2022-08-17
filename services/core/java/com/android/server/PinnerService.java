@@ -357,11 +357,7 @@ public final class PinnerService extends SystemService {
                         if (userSetupCompleteUri.equals(uri)) {
                             sendPinAppMessage(KEY_HOME, ActivityManager.getCurrentUser(),
                                     true /* force */);
-                            try{
-                                startMyFairphone();
-                            } catch (Exception e) {
-                                Slog.e(TAG, "Failed find MyFirePhone ", e);
-                            }
+                            startMyFairphone();
                         }
                     }
                 }, UserHandle.USER_ALL);
