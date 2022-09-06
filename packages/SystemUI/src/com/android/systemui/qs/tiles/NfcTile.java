@@ -151,7 +151,7 @@ public class NfcTile extends QSTileImpl<BooleanState> {
     private NfcAdapter getAdapter() {
         if (mAdapter == null) {
             try {
-                mAdapter = NfcAdapter.getDefaultAdapter();
+                mAdapter = NfcAdapter.getDefaultAdapter(mContext);
             } catch (UnsupportedOperationException e) {
                 mAdapter = null;
             }
