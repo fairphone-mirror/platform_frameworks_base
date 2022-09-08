@@ -190,7 +190,7 @@ public class HelpUtils {
             ComponentName component = intent.resolveActivity(context.getPackageManager());
             if (component != null) {
                 return intent;
-            } else if (intent.hasExtra(EXTRA_BACKUP_URI)) {
+            } else if (intent !=null && intent.hasExtra(EXTRA_BACKUP_URI)) {
                 // This extra contains a backup URI for when the intent isn't available.
                 return getHelpIntent(context, intent.getStringExtra(EXTRA_BACKUP_URI),
                         backupContext);
