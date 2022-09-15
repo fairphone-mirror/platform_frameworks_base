@@ -133,7 +133,10 @@ public class InternetAdapter extends RecyclerView.Adapter<InternetAdapter.Intern
         }
 
         void onBind(@NonNull WifiEntry wifiEntry) {
-            mWifiIcon.setImageDrawable(getWifiDrawable(wifiEntry));
+            //Modify by T2M yingyubin for FP4S-563 20220914
+            mWifiIcon.setImageDrawable(
+                    getWifiDrawable(wifiEntry.getLevel(), wifiEntry.shouldShowXLevelIcon()));
+            //Modify by T2M yingyubin for FP4S-563 20220914
             setWifiNetworkLayout(wifiEntry.getTitle(),
                     Html.fromHtml(wifiEntry.getSummary(false), Html.FROM_HTML_MODE_LEGACY));
 
@@ -170,12 +173,14 @@ public class InternetAdapter extends RecyclerView.Adapter<InternetAdapter.Intern
             mWifiSummaryText.setText(summary);
         }
 
-        Drawable getWifiDrawable(@NonNull WifiEntry wifiEntry) {
-            if (wifiEntry.getLevel() == WifiEntry.WIFI_LEVEL_UNREACHABLE) {
+        //Modify by T2M yingyubin for FP4S-563 20220914
+        @Nullable
+        Drawable getWifiDrawable(int level, boolean hasNoInternet) {
+            if (level == WifiEntry.WIFI_LEVEL_UNREACHABLE) {
                 return null;
             }
-            final Drawable drawable = mWifiIconInjector.getIcon(wifiEntry.shouldShowXLevelIcon(),
-                    wifiEntry.getLevel());
+            final Drawable drawable = mWifiIconInjector.getIcon(hasNoInternet, level);
+            //Modify by T2M yingyubin for FP4S-563 20220914
             if (drawable == null) {
                 return null;
             }
