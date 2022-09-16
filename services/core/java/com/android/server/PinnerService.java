@@ -103,6 +103,7 @@ public final class PinnerService extends SystemService {
     private static final String MY_FAIRPHONE_PACKAGE_NAME = "com.fairphone.myfairphone";
     private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.activity.onboarding.DeviceOnboardingActivity";
     private static final int DELAY_START_MY_FAIRPHONE = 5 * 1000;
+    private static final String MY_FAIRPHONE_IS_OPENED = "persist.sys.fairphone.open";
 
     private static final int KEY_CAMERA = 0;
     private static final int KEY_HOME = 1;
@@ -358,7 +359,7 @@ public final class PinnerService extends SystemService {
                         if (userSetupCompleteUri.equals(uri)) {
                             sendPinAppMessage(KEY_HOME, ActivityManager.getCurrentUser(),
                                     true /* force */);
-                            if (isUserSetupCompleted()) {
+                            if (isUserSetupCompleted() && isMyPhoneFirstOpen()) {
                                 mPinnerHandler.postDelayed(new Runnable(){
                                     @Override
                                     public void run(){
@@ -375,6 +376,14 @@ public final class PinnerService extends SystemService {
                 }, UserHandle.USER_ALL);
     }
 
+    private boolean isMyPhoneFirstOpen() {
+        return "0".equals(SystemProperties.get(MY_FAIRPHONE_IS_OPENED,"0"));
+    }
+
+    private void setMyPhoneOpened() {
+        SystemProperties.set(MY_FAIRPHONE_IS_OPENED,"1");
+    }
+
     private boolean isUserSetupCompleted() {
         if (mContext == null) {
             return false;
@@ -383,6 +392,7 @@ public final class PinnerService extends SystemService {
     }
 
     private void startMyFairphone() {
+        setMyPhoneOpened();
         Intent launchIntent = new Intent(Intent.ACTION_MAIN);
         launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ComponentName cn = new ComponentName(MY_FAIRPHONE_PACKAGE_NAME, MY_FAIRPHONE_CLASS_NAME);
