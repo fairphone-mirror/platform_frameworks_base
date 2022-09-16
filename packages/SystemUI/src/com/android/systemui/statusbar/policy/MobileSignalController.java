@@ -610,7 +610,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
                 // modify by T2M.zhang renjie for FP4-2831 21-9-11 begin
                 if (mCurrentState.enabled && !mCurrentState.airplaneMode) {
-                    Log.d(mTag, "disable volte icon when wfc.");
+                    Log.d(mTag, "disable volte icon when vowifi icon display.");
                     volteIcon = 0;
                 }
                 // modify by T2M.zhang renjie for FP4-2831 21-9-11 end
@@ -1213,7 +1213,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         if (mPhone != null) {
             mMMtelVowifi = mPhone.isWifiCallingAvailable();
         }
-        Log.i(mTag, "isVowifiAvailable,mVoWiFiSettingEnabled = " + mVoWiFiSettingEnabled + "mMMtelVowifi = "+ mMMtelVowifi);
+	Log.i(mTag, "isVowifiAvailable,mVoWiFiSettingEnabled = " + mVoWiFiSettingEnabled + " mMMtelVowifi = "+ mMMtelVowifi + " getDataNetworkType() = " 
+		+ getDataNetworkType() + " mCurrentState.voiceCapable = " +mCurrentState.voiceCapable + " mCurrentState.imsRegistered = "+ mCurrentState.imsRegistered);
+
         return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
                 && getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN
                 && mVoWiFiSettingEnabled && mMMtelVowifi;
@@ -1288,7 +1290,10 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 public void onRegistered(int imsTransportType) {
                     Log.d(mTag, "onRegistered imsTransportType=" + imsTransportType);
                     mCurrentState.imsRegistered = true;
-                    notifyListenersIfNecessary();
+		// modify by T2M.zhang renjie for FP4-3917 22-09-16 begin
+                    //notifyListenersIfNecessary();
+		    notifyListeners(); /*Impose refresh when vowifi handover happen*/
+		// modify by T2M.zhang renjie for FP4-3917 22-09-16 end
                 }
 
                 @Override
