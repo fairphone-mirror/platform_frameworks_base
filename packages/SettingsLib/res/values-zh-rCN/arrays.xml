@@ -275,4 +275,11 @@
   </string-array>
   <string-array name="avatar_image_descriptions">
   </string-array>
+  <string-array name="origin_carrier_names">
+    <item>FET</item>
+  </string-array>
+
+  <string-array name="locale_carrier_names">
+    <item>远传电信</item>
+  </string-array>
 </resources>
