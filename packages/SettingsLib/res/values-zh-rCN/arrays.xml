@@ -273,4 +273,11 @@
     <item msgid="8828567335701536560">"音频来源"</item>
     <item msgid="8688681727755534982">"MIDI"</item>
   </string-array>
+  <string-array name="origin_carrier_names">
+    <item>FET</item>
+  </string-array>
+
+  <string-array name="locale_carrier_names">
+    <item>远传电信</item>
+  </string-array>
 </resources>
