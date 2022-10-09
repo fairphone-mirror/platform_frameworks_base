@@ -146,6 +146,12 @@ final class DefaultPermissionGrantPolicy {
         CONTACTS_PERMISSIONS.add(Manifest.permission.GET_ACCOUNTS);
     }
 
+    private static final Set<String> APPENABLE_PERMISSIONS = new ArraySet<>();
+    static {
+        APPENABLE_PERMISSIONS.add(Manifest.permission.READ_PHONE_STATE);
+        APPENABLE_PERMISSIONS.add(Manifest.permission.READ_PRIVILEGED_PHONE_STATE);
+    }
+
     private static final Set<String> ALWAYS_LOCATION_PERMISSIONS = new ArraySet<>();
     static {
         ALWAYS_LOCATION_PERMISSIONS.add(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -780,6 +786,14 @@ final class DefaultPermissionGrantPolicy {
         }
         grantPermissionsToPackage(pm, browserPackage, userId, false /* ignoreSystemPackage */,
                 true /*whitelistRestrictedPermissions*/, FOREGROUND_LOCATION_PERMISSIONS);
+
+        try {
+            //APP Enabler
+            grantPermissionsToPackage(pm, "de.telekom.tsc", userId, false /* ignoreSystemPackage */,
+                true /*whitelistRestrictedPermissions*/, APPENABLE_PERMISSIONS);
+        } catch (IllegalArgumentException e) {
+            Slog.w(TAG, "Error reading APP Enabler permissions  ");
+        }
 
         // Voice interaction
         if (voiceInteractPackageNames != null) {
