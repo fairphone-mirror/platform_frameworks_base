@@ -107,4 +107,8 @@
         <item quantity="other">Incorrecte SIM<xliff:g id="slotid">%d</xliff:g> PIN-code. Je hebt nog <xliff:g id="number">%d</xliff:g> pogingen over.</item>
     </plurals>
     <string name="fingerprint_dialog_touch_sensor">Raak de vingerafdruksensor aan</string>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+         <item quantity="one">Onjuiste pincode voor SIM<xliff:g id="slotid">%d</xliff:g>. Je hebt nog <xliff:g id="number">%d</xliff:g> pogingen over.</item>
+         <item quantity="other">Onjuiste pincode voor SIM<xliff:g id="slotid">%d</xliff:g>. Je hebt nog <xliff:g id="number">%d</xliff:g> pogingen over.</item>
+    </plurals>
 </resources>
