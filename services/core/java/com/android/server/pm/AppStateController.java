@@ -23,7 +23,7 @@ public class AppStateController {
 
     private static final String KEY_CARRIER_PREINSTALL = "carrier_preinstall";
 
-    private static final String CARRIER_PREINSTALL_ARRAY[] = {"de.telekom.tsc", "com.orange.aura.oobe", "com.orange.update"};
+    private static final String CARRIER_PREINSTALL_ARRAY[] = {"de.telekom.tsc", "com.orange.aura.oobe", "com.orange.update","com.gohappy.mobileapp","com.fetself","com.omusic.gPhone","net.fetnet.fetvod","com.fet.fridaywallet"};
 
     private Context mContext;
 
