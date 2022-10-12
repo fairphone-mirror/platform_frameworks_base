@@ -28,6 +28,7 @@ import android.telephony.TelephonyCallback.ActiveDataSubscriptionIdListener;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.content.BroadcastReceiver;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -76,6 +77,7 @@ public class CarrierTextManager {
     private final CharSequence mSeparator;
     private final TelephonyListenerManager mTelephonyListenerManager;
     private final WakefulnessLifecycle mWakefulnessLifecycle;
+    private boolean hasRegistered = false;
     private final WakefulnessLifecycle.Observer mWakefulnessObserver =
             new WakefulnessLifecycle.Observer() {
                 @Override
@@ -273,13 +275,37 @@ public class CarrierTextManager {
                         new CarrierTextCallbackInfo("", null, false, null)
                 ));
             }
+            //Modify by T2M yingyubin for FP4S-619 20221012
+            if(!hasRegistered){
+                IntentFilter localeChangedFilter = new IntentFilter(Intent.ACTION_LOCALE_CHANGED);
+                mContext.registerReceiver(mReceiver, localeChangedFilter);
+                hasRegistered = true;
+            }
+            //Modify by T2M yingyubin for FP4S-619 20221012
         } else {
             mCarrierTextCallback = null;
             mMainExecutor.execute(() -> mKeyguardUpdateMonitor.removeCallback(mCallback));
             mWakefulnessLifecycle.removeObserver(mWakefulnessObserver);
             mTelephonyListenerManager.removeActiveDataSubscriptionIdListener(mPhoneStateListener);
+            //Modify by T2M yingyubin for FP4S-619 20221012
+            if(hasRegistered){
+                mContext.unregisterReceiver(mReceiver);
+                hasRegistered = false;
+            }
+            //Modify by T2M yingyubin for FP4S-619 20221012
         }
     }
+
+    //Modify by T2M yingyubin for FP4S-619 20221012
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_LOCALE_CHANGED.equals(intent.getAction())) {
+                updateCarrierText();
+            }
+        }
+    };
+    //Modify by T2M yingyubin for FP4S-619 20221012
 
     /**
      * Sets the listening status of this controller. If the callback is null, it is set to
