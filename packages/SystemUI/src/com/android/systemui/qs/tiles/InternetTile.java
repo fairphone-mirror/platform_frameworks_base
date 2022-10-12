@@ -561,9 +561,33 @@ public class InternetTile extends QSTileImpl<SignalState> {
         if (TextUtils.isEmpty(current)) {
             return Html.fromHtml((dataType == null ? "" : dataType.toString()), 0);
         }
-        String concat = mContext.getString(R.string.mobile_carrier_text_format, current, dataType);
+        //Modify by T2M yingyubin for FP4S-619 20221012
+        String carrierName = current.toString();
+        boolean showCustomizeName = mContext.getResources().getBoolean(
+                com.android.systemui.R.bool.config_show_customize_carrier_name);
+        if(showCustomizeName) {
+            carrierName = getLocalString(current.toString(),
+                    com.android.systemui.R.array.origin_carrier_names,
+                    com.android.systemui.R.array.locale_carrier_names);
+        }
+        String concat = mContext.getString(R.string.mobile_carrier_text_format, carrierName, dataType);
+        //Modify by T2M yingyubin for FP4S-619 20221012
         return Html.fromHtml(concat, 0);
     }
+
+    //Modify by T2M yingyubin for FP4S-619 20221012
+    private String getLocalString(String originalString,
+            int originNamesId, int localNamesId) {
+        String[] origNames = mContext.getResources().getStringArray(originNamesId);
+        String[] localNames = mContext.getResources().getStringArray(localNamesId);
+        for (int i = 0; i < origNames.length; i++) {
+            if (origNames[i].equalsIgnoreCase(originalString)) {
+                return localNames[i];
+            }
+        }
+        return originalString;
+    }
+    //Modify by T2M yingyubin for FP4S-619 20221012
 
     @Nullable
     private CharSequence getMobileDataContentName(CellularCallbackInfo cb) {

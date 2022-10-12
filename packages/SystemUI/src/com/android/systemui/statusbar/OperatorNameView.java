@@ -70,6 +70,34 @@ public class OperatorNameView extends TextView {
                 displayText = carrierName;
             }
         }
-        setText(displayText);
+        //Modify by T2M yingyubin for FP4S-619 20221012
+        if(displayText != null){
+            String carrierText = displayText.toString();
+            boolean showCustomizeName = mContext.getResources().getBoolean(
+                    com.android.systemui.R.bool.config_show_customize_carrier_name);
+            if(showCustomizeName) {
+                carrierText = getLocalString(displayText.toString(),
+                        com.android.systemui.R.array.origin_carrier_names,
+                        com.android.systemui.R.array.locale_carrier_names);
+            }
+            setText(carrierText);
+        } else {
+            setText(displayText);
+        }
+        //Modify by T2M yingyubin for FP4S-619 20221012
     }
+
+    //Modify by T2M yingyubin for FP4S-619 20221012
+    private String getLocalString(String originalString,
+            int originNamesId, int localNamesId) {
+        String[] origNames = mContext.getResources().getStringArray(originNamesId);
+        String[] localNames = mContext.getResources().getStringArray(localNamesId);
+        for (int i = 0; i < origNames.length; i++) {
+            if (origNames[i].equalsIgnoreCase(originalString)) {
+                return localNames[i];
+            }
+        }
+        return originalString;
+    }
+    //Modify by T2M yingyubin for FP4S-619 20221012
 }
