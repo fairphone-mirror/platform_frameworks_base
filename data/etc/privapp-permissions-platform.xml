@@ -123,6 +123,17 @@ applications that come with the platform
         <permission name="android.permission.PACKAGE_USAGE_STATS"/>
     </privapp-permissions>
 
+    <!-- BEGIN FP4S-659, ISD 2022.2-0 -->
+    <privapp-permissions package="com.aura.oobe.deutsche">
+        <permission name="android.permission.INSTALL_PACKAGES"/>
+        <permission name="android.permission.POST_NOTIFICATIONS"/>
+    </privapp-permissions>
+
+    <privapp-permissions package="de.telekom.appstarter">
+        <permission name="android.permission.POST_NOTIFICATIONS"/>
+    </privapp-permissions>
+    <!-- END FP4S-659, ISD 2022.2-0 -->
+
     <privapp-permissions package="com.android.phone">
         <permission name="android.permission.ACCESS_IMS_CALL_SERVICE"/>
         <permission name="android.permission.BIND_CARRIER_MESSAGING_SERVICE"/>
@@ -558,7 +569,9 @@ applications that come with the platform
         <permission name="android.permission.REAL_GET_TASKS"/>
     </privapp-permissions>
 
+    <!-- FP4S-659, ISD 2022.2-0 add android.permission.POST_NOTIFICATIONS to de.telekom.tsc -->
     <privapp-permissions package="de.telekom.tsc">
+        <permission name="android.permission.POST_NOTIFICATIONS"/>
         <permission name="android.permission.INSTALL_PACKAGES" />
         <permission name="android.permission.READ_PHONE_STATE" />
         <permission name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
