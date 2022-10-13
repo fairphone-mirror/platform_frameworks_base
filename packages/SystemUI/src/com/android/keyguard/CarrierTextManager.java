@@ -798,10 +798,12 @@ public class CarrierTextManager {
                         names[j], com.android.systemui.R.array.origin_carrier_names,
                         com.android.systemui.R.array.locale_carrier_names);
                 if (!TextUtils.isEmpty(names[j])) {
-                    if (!TextUtils.isEmpty(networkClass)) {
-                        names[j] = new StringBuilder().append(names[j]).append(" ")
-                                .append(networkClass).toString();
-                    }
+                    //Modify by T2M yingyubin for FP4S-619 20221013
+                    // if (!TextUtils.isEmpty(networkClass)) {
+                    //     names[j] = new StringBuilder().append(names[j]).append(" ")
+                    //             .append(networkClass).toString();
+                    // }
+                    //Modify by T2M yingyubin for FP4S-619 20221013
                     if (j > 0 && names[j].equals(names[j - 1])) {
                         continue;
                     }
