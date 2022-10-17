@@ -1644,6 +1644,17 @@ public class PhoneNumberUtils {
                  * dialing format.
                  */
                 result = util.format(pn, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+                // modify by T2M.zhangrenjie for FP4S-653 2022/10/17 begin
+            } else if ("TW".equalsIgnoreCase(defaultCountryIso) &&
+                    pn.getCountryCode() == util.getCountryCodeForRegion("TW") &&
+                    (pn.getCountryCodeSource() ==
+                            PhoneNumber.CountryCodeSource.FROM_NUMBER_WITH_PLUS_SIGN)) {
+                /**
+                 * Need to reformat Taiwan phone numbers (when user is in Japan) with the national
+                 * dialing format.
+                 */
+                result = util.format(pn, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+                // modify by T2M.zhangrenjie for FP4S-653 2022/10/17 end
             } else {
                 result = util.formatInOriginalFormat(pn, defaultCountryIso);
             }
