@@ -48,6 +48,8 @@ public class ChooserHelper {
         try {
             activity.startActivityAsCaller(
                     chosenIntent, options, permissionToken, ignoreTargetSecurity, userId);
+        } catch (SecurityException e) {
+            //SecurityException
         } finally {
             StrictMode.enableDeathOnFileUriExposure();
         }
