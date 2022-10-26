@@ -84,6 +84,7 @@ public class QuickStatusBarHeader extends FrameLayout {
     private View mPrivacyContainer;
 
     private BatteryMeterView mBatteryRemainingIcon;
+    private int mLastBatteryWidth = -1;
     private StatusIconContainer mIconContainer;
     private View mPrivacyChip;
 
@@ -196,6 +197,18 @@ public class QuickStatusBarHeader extends FrameLayout {
             mTopViewMeasureHeight = mDatePrivacyView.getMeasuredHeight();
             post(this::updateAnimators);
         }
+        //Modify by T2M yingyubin for FP4S-661 20221025
+        if(mBatteryRemainingIcon.getMeasuredWidth() != mLastBatteryWidth){
+            mLastBatteryWidth = mBatteryRemainingIcon.getMeasuredWidth();
+            int iconWidth = dip2px(11.8f);
+            int textWidth = sp2px(14);
+            if(mBatteryRemainingIcon.getMeasuredWidth() < (iconWidth + 2*textWidth)) {
+                mBatteryRemainingIcon.updatePercentViewVisible(false);
+            } else {
+                mBatteryRemainingIcon.updatePercentViewVisible(true);
+            }
+        }
+        //Modify by T2M yingyubin for FP4S-661 20221025
     }
 
     @Override
@@ -210,6 +223,18 @@ public class QuickStatusBarHeader extends FrameLayout {
         super.onRtlPropertiesChanged(layoutDirection);
         updateResources();
     }
+
+    //Modify by T2M yingyubin for FP4S-661 20221025
+    private int sp2px(float spValue) {
+        final float fontScale = mContext.getResources().getDisplayMetrics().scaledDensity;
+        return (int) (spValue * fontScale + 0.5f);
+    }
+
+    private int dip2px(float dpValue){
+        final float scale = mContext.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+    //Modify by T2M yingyubin for FP4S-661 20221025
 
     private void setDatePrivacyContainersWidth(boolean landscape) {
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mDateContainer.getLayoutParams();

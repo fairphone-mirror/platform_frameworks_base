@@ -219,6 +219,14 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
         updateShowPercent();
     }
 
+    //Modify by T2M yingyubin for FP4S-661 20221025
+    public void updatePercentViewVisible(boolean visible) {
+        if(mBatteryPercentView != null){
+            mBatteryPercentView.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+    //Modify by T2M yingyubin for FP4S-661 20221025
+
     /**
      * Sets the fetcher that should be used to get the estimated time remaining for the user's
      * battery.
