@@ -1216,11 +1216,12 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         if (mPhone != null) {
             mMMtelVowifi = mPhone.isWifiCallingAvailable();
         }
-	Log.i(mTag, "isVowifiAvailable,mVoWiFiSettingEnabled = " + mVoWiFiSettingEnabled + " mMMtelVowifi = "+ mMMtelVowifi + " getDataNetworkType() = " 
-		+ getDataNetworkType() + " mCurrentState.voiceCapable = " +mCurrentState.voiceCapable + " mCurrentState.imsRegistered = "+ mCurrentState.imsRegistered);
+        Log.i(mTag, "isVowifiAvailable,mVoWiFiSettingEnabled = " + mVoWiFiSettingEnabled + " mMMtelVowifi = "+ mMMtelVowifi + " getDataNetworkType() = " 
+            + getDataNetworkType() + " mCurrentState.voiceCapable = " +mCurrentState.voiceCapable + " mCurrentState.imsRegistered = "+ mCurrentState.imsRegistered
+            + " mImsType = " + mImsType);
 
         return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
-                && getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN
+                && ((getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN) || ( mImsType == IMS_TYPE_WLAN))
                 && mVoWiFiSettingEnabled && mMMtelVowifi;
         // modify by T2M.zhang renjie for FP4-3605 22-03-24 end
     }
