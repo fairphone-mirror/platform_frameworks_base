@@ -1432,8 +1432,8 @@ class StorageManagerService extends IStorageManager.Stub
             synchronized (mLock) {
                 final DiskInfo disk = mDisks.get(diskId);
                 if (disk != null) {
-                    if(sizeBytes > 1024*STORAGE_G && sizeBytes < 1024*STORAGE_G * 1.1){
-                        disk.size = 1024*STORAGE_G;
+                    if(sizeBytes > 1000*STORAGE_G && sizeBytes < 1024*STORAGE_G * 1.2){
+                        disk.size = 1000*STORAGE_G;
                     }else if(sizeBytes > 512*STORAGE_G && sizeBytes < 512*STORAGE_G * 1.1){
                         disk.size = 512*STORAGE_G;
                     }else if(sizeBytes > 256*STORAGE_G && sizeBytes < 256*STORAGE_G * 1.1){
