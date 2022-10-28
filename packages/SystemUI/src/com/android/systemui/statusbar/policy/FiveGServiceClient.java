@@ -105,7 +105,6 @@ public class FiveGServiceClient {
     private PhoneStateListener[] mPhoneStateListener = null;
     private static int mRegState = -1;
     private boolean isNSA = false;
-    private Boolean is4GIconShown[] = null;
     private int newNrIconType = -1;
 
     /**
@@ -133,16 +132,20 @@ public class FiveGServiceClient {
             public void onCallStateChanged(int state, String incomingNumber) {
                 boolean isVolteCall = false;
                 int wfcMode = imsManager.getWfcMode();//call mode pref
+                String mccmnc = subInfo.getMccString()+subInfo.getMncString();
                 isVolteCall = (state != TelephonyManager.CALL_STATE_IDLE) && tm.isVolteAvailable() && !tm.isWifiCallingAvailable() && (wfcMode != 0);//if during volte call
                 Log.d(TAG, "newNrIconType: = " + newNrIconType + ", isVolteCall =  " + isVolteCall + ", state = " + state + " , isVolteEnabled = " + tm.isVolteAvailable()
-                    + " , isWifiCallingEnabled = " + tm.isWifiCallingAvailable() + ", isNSA = " + isNSA + ", wfcMode = " + wfcMode );
+                    + " , isWifiCallingEnabled = " + tm.isWifiCallingAvailable() + ", isNSA = " + isNSA + ", wfcMode = " + wfcMode +" mccmnc = " + mccmnc);
 
-                if (isVolteCall  && (newNrIconType == 1) && isNSA) { // during volte call under NSA
-                    is4GIconShown[phoneId] = true;
+                FiveGServiceState states = getCurrentServiceState(phoneId);
+                if (isVolteCall  && (newNrIconType == 1) && isNSA && "46601".equals(mccmnc)) { // during volte call under NSA for FET
+                    states.mNrIconType = 0;
                 } else {
-                    is4GIconShown[phoneId] = false;
+                    states.mNrIconType = newNrIconType;
                 }
-                Log.d(TAG, " registerPhoneStateListener is4GIconShown [" + phoneId + "]= " + is4GIconShown[phoneId]);
+                update5GIcon(states, phoneId);
+                notifyListenersIfNecessary(phoneId);
+                Log.d(TAG, " states.mNrIconType =  " + states.mNrIconType);
             }
             @Override
             public void onServiceStateChanged(ServiceState serviceState) {
@@ -241,7 +244,6 @@ public class FiveGServiceClient {
         subMgr = (SubscriptionManager) mContext.getSystemService(
                   Context.TELEPHONY_SUBSCRIPTION_SERVICE);
         mPhoneStateListener = new PhoneStateListener[tm.getPhoneCount()];
-        is4GIconShown = new Boolean [tm.getPhoneCount()];
         //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 end
 
     }
@@ -453,22 +455,10 @@ public class FiveGServiceClient {
             Log.d(TAG,
                     "onNrIconType: slotId = " + slotId + " token = " + token + " " + "status"
                             + status + " NrIconType = " + nrIconType);
-            //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 begin
-            SubscriptionInfo subInfo =
-                      subMgr.getActiveSubscriptionInfoForSimSlotIndex(slotId);
-            String mccmnc = "";
-            if (subInfo != null) {
-                mccmnc = subInfo.getMccString()+subInfo.getMncString();
-                Log.d(TAG, "onNrIconType: mccmnc = " + mccmnc + ", mcc = " + subInfo.getMccString() + ", mnc = " + subInfo.getMncString());
-                if ("46601".equals(mccmnc)) {
-                    newNrIconType = nrIconType.get();
-                    Log.d(TAG, "mCallback newNrIconType = " + newNrIconType+ " is4GIconShown["+slotId+"]=" + is4GIconShown[slotId]);
-                    if (is4GIconShown[slotId]) {
-                        nrIconType = new NrIconType(0);//volte call under NSA, change when 5G icon shown for FET, change 5G to 4G
-                    }
-                }
-            }
-            //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 end
+
+            //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024
+            newNrIconType = nrIconType.get();
+            Log.d(TAG, "newNrIconType= " + newNrIconType);
             if (status.get() == Status.SUCCESS) {
                 FiveGServiceState state = getCurrentServiceState(slotId);
                 state.mNrIconType = nrIconType.get();
