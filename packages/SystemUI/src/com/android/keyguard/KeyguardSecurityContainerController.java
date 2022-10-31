@@ -160,14 +160,6 @@ public class KeyguardSecurityContainerController extends ViewController<Keyguard
             dismiss(authenticated, targetId, /* bypassSecondaryLockScreen */ false);
         }
 
-        //{ FP4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
-        @Override
-        public void dismiss(boolean authenticated, int targetId, SecurityMode mode) {
-            if (mode == getCurrentSecurityMode())
-                dismiss(authenticated, targetId, /* bypassSecondaryLockScreen */ false);
-        }
-        //{ FP4S-209, guoxing.pei Phone is startingfor too long time after PUK unlock SIM
-
         @Override
         public void dismiss(boolean authenticated, int targetId,
                 boolean bypassSecondaryLockScreen) {
