@@ -11340,8 +11340,10 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
     @Override
     public void enableSystemApp(ComponentName who, String callerPackage, String packageName) {
 
+        android.util.Log.e("xiujuan1"," enableSystemApp: callerPackage:" + callerPackage + " packageName" + packageName);
         if(WORK_PACKAGE_NAME.equals(callerPackage)){
             if (CARRIER_PREINSTALL_LIST.contains(packageName)) {
+                android.util.Log.e("xiujuan2"," enableSystemApp: callerPackage:" + callerPackage + " packageName" + packageName);
                 return;
             }
         }
