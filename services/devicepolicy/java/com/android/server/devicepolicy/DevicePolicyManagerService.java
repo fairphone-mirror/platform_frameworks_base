@@ -384,6 +384,10 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
 
     protected static final String LOG_TAG = "DevicePolicyManager";
 
+    private static final String WORK_PACKAGE_NAME = "com.google.android.apps.work.clouddpc";
+    private static final String CARRIER_PREINSTALL_ARRAY[] = {"de.telekom.tsc","com.aura.oobe.deutsche", "com.orange.aura.oobe", "com.orange.update","com.gohappy.mobileapp","com.fetself","com.omusic.gPhone","net.fetnet.fetvod","com.fet.fridaywallet"};
+    private static final List<String> CARRIER_PREINSTALL_LIST = new ArrayList<String>(Arrays.asList(CARRIER_PREINSTALL_ARRAY));
+
     static final boolean VERBOSE_LOG = false; // DO NOT SUBMIT WITH TRUE
 
     static final String DEVICE_POLICIES_XML = "device_policies.xml";
@@ -11335,6 +11339,13 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
 
     @Override
     public void enableSystemApp(ComponentName who, String callerPackage, String packageName) {
+
+        if(WORK_PACKAGE_NAME.equals(callerPackage)){
+            if (CARRIER_PREINSTALL_LIST.contains(packageName)) {
+                return;
+            }
+        }
+        
         final CallerIdentity caller = getCallerIdentity(who, callerPackage);
         Preconditions.checkCallAuthorization((caller.hasAdminComponent()
                 && (isProfileOwner(caller) || isDeviceOwner(caller)))
