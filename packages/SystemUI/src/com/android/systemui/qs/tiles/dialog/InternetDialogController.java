@@ -502,6 +502,18 @@ public class InternetDialogController implements WifiEntry.DisconnectCallback,
         // If a display name is duplicate, append the final 4 digits of the phone number.
         // Creates a mapping of Subscription id to original display name + phone number display name
         final Supplier<Stream<DisplayInfo>> uniqueInfos = () -> originalInfos.get().map(info -> {
+            //Modify by T2M yingyubin for FP4S-619 20221118
+            String carrierText = null;
+            if(info.originalName != null){
+                boolean showCustomizeName = context.getResources().getBoolean(
+                        com.android.systemui.R.bool.config_show_customize_carrier_name);
+                if(showCustomizeName) {
+                    carrierText = getLocalString(info.originalName.toString(),
+                            com.android.systemui.R.array.origin_carrier_names,
+                            com.android.systemui.R.array.locale_carrier_names);
+                }
+            }
+            //Modify by T2M yingyubin for FP4S-619 20221118
             if (duplicateOriginalNames.contains(info.originalName)) {
                 // This may return null, if the user cannot view the phone number itself.
                 final String phoneNumber = DeviceInfoUtils.getBidiFormattedPhoneNumber(context,
@@ -513,13 +525,29 @@ public class InternetDialogController implements WifiEntry.DisconnectCallback,
                 }
 
                 if (TextUtils.isEmpty(lastFourDigits)) {
-                    info.uniqueName = info.originalName;
+                    //Modify by T2M yingyubin for FP4S-619 20221118
+                    if(carrierText != null){
+                        info.uniqueName = carrierText;
+                    } else {
+                        info.uniqueName = info.originalName;
+                    }
                 } else {
-                    info.uniqueName = info.originalName + " " + lastFourDigits;
+                    if(carrierText != null){
+                        info.uniqueName = carrierText + " " + lastFourDigits;
+                    } else {
+                        info.uniqueName = info.originalName + " " + lastFourDigits;
+                    }
+                    //Modify by T2M yingyubin for FP4S-619 20221118
                 }
 
             } else {
-                info.uniqueName = info.originalName;
+                //Modify by T2M yingyubin for FP4S-619 20221118
+                if(carrierText != null){
+                    info.uniqueName = carrierText;
+                } else {
+                    info.uniqueName = info.originalName;
+                }
+                //Modify by T2M yingyubin for FP4S-619 20221118
             }
             return info;
         });
@@ -543,6 +571,20 @@ public class InternetDialogController implements WifiEntry.DisconnectCallback,
                 info -> info.subscriptionInfo.getSubscriptionId(),
                 info -> info.uniqueName));
     }
+
+    //Modify by T2M yingyubin for FP4S-619 20221118
+    private String getLocalString(String originalString,
+            int originNamesId, int localNamesId) {
+        String[] origNames = mContext.getResources().getStringArray(originNamesId);
+        String[] localNames = mContext.getResources().getStringArray(localNamesId);
+        for (int i = 0; i < origNames.length; i++) {
+            if (origNames[i].equalsIgnoreCase(originalString)) {
+                return localNames[i];
+            }
+        }
+        return originalString;
+    }
+    //Modify by T2M yingyubin for FP4S-619 20221118
 
     CharSequence getMobileNetworkTitle() {
         return getUniqueSubscriptionDisplayName(mDefaultDataSubId, mContext);
