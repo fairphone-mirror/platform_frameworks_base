@@ -61,17 +61,6 @@ import com.qti.extphone.NrIconType;
 import com.qti.extphone.Status;
 import com.qti.extphone.ServiceCallback;
 import com.qti.extphone.Token;
-//add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221026 begin
-import com.android.ims.ImsManager;
-import android.telephony.ServiceState;
-import android.telephony.CellInfo;
-import android.telephony.CellInfoNr;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-import android.telephony.SubscriptionManager;
-import android.telephony.SubscriptionInfo;
-import java.util.List;
-//add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221026 end
 
 public class FiveGServiceClient {
     private static final String TAG = "FiveGServiceClient";
@@ -98,95 +87,6 @@ public class FiveGServiceClient {
     private int mInitRetryTimes = 0;
     private ExtTelephonyManager mExtTelephonyManager;
     private boolean mIsConnectInProgress = false;
-
-    //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 begin
-    private TelephonyManager tm;
-    private SubscriptionManager subMgr;
-    private PhoneStateListener[] mPhoneStateListener = null;
-    private static int mRegState = -1;
-    private boolean isNSA = false;
-    private Boolean is4GIconShown[] = null;
-    private int newNrIconType = -1;
-
-    /**
-    *register PhoneStateLister ,for opertor FET when UE register on NSA and call_mode_pref is not wifi_only
-    * during volte call icon changed from 5G to 4G ,and after call ended, icon change to 5G icon again.
-    **/
-    private void registerPhoneStateListeners(int phoneId) {
-        if (tm == null || subMgr == null ) {
-            Log.e(TAG, "TelephonyManager or SubscriptionManager is null");
-            return;
-        }
-        final SubscriptionInfo subInfo =
-                      subMgr.getActiveSubscriptionInfoForSimSlotIndex(phoneId);
-        if (subInfo == null) {
-            Log.e(TAG, "registerPhoneStateListener subInfo : " + subInfo + " for phone Id: " + phoneId);
-            return;
-        }
-        ImsManager imsManager = ImsManager.getInstance(mContext, phoneId);
-        if (imsManager == null ) return ;
-        int subId = subInfo.getSubscriptionId();
-        tm = tm.createForSubscriptionId(subId);
-
-        mPhoneStateListener[phoneId]  = new PhoneStateListener() {
-            @Override
-            public void onCallStateChanged(int state, String incomingNumber) {
-                boolean isVolteCall = false;
-                int wfcMode = imsManager.getWfcMode();//call mode pref
-                isVolteCall = (state != TelephonyManager.CALL_STATE_IDLE) && tm.isVolteAvailable() && !tm.isWifiCallingAvailable() && (wfcMode != 0);//if during volte call
-                Log.d(TAG, "newNrIconType: = " + newNrIconType + ", isVolteCall =  " + isVolteCall + ", state = " + state + " , isVolteEnabled = " + tm.isVolteAvailable()
-                    + " , isWifiCallingEnabled = " + tm.isWifiCallingAvailable() + ", isNSA = " + isNSA + ", wfcMode = " + wfcMode );
-
-                if (isVolteCall  && (newNrIconType == 1) && isNSA) { // during volte call under NSA
-                    is4GIconShown[phoneId] = true;
-                } else {
-                    is4GIconShown[phoneId] = false;
-                }
-                Log.d(TAG, " registerPhoneStateListener is4GIconShown [" + phoneId + "]= " + is4GIconShown[phoneId]);
-            }
-            @Override
-            public void onServiceStateChanged(ServiceState serviceState) {
-                mRegState = serviceState.getState();
-            }
-
-            @Override
-            public void onCellInfoChanged(List<CellInfo> cellInfo) {
-                if(cellInfo != null && (mRegState == ServiceState.STATE_IN_SERVICE)) {
-                    for (CellInfo cell : cellInfo) {
-                        if(cell instanceof CellInfoNr) {
-                            CellInfoNr nr = (CellInfoNr) cell;
-                            if(nr.isRegistered()) {
-                               isNSA = false;//SA registered
-                            } else {
-                               isNSA = true;//NSA registered
-                            }
-                            Log.d(TAG, "NR Cell Register state: " + nr.isRegistered() + ", isNSA = " + isNSA);
-                        }
-                    }
-                }
-            }
-        };
-        tm.listen(mPhoneStateListener[phoneId], PhoneStateListener.LISTEN_CALL_STATE|PhoneStateListener.LISTEN_SERVICE_STATE | PhoneStateListener.LISTEN_CELL_INFO);
-    }
-
-    private void unRegisterPhoneStateListeners(int phoneId) {
-        if (tm == null || subMgr == null ) {
-            Log.e(TAG, "TelephonyManager or SubscriptionManager is null");
-            return;
-        }
-        if (mPhoneStateListener[phoneId] != null) {
-            final SubscriptionInfo subInfo =
-                        subMgr.getActiveSubscriptionInfoForSimSlotIndex(phoneId);
-            if (subInfo == null) {
-                Log.e(TAG, "registerPhoneStateListener subInfo : " + subInfo +" for phone Id: " + phoneId);
-                return;
-            }
-            tm = tm.createForSubscriptionId(subInfo.getSubscriptionId());
-            tm.listen(mPhoneStateListener[phoneId], PhoneStateListener.LISTEN_NONE);
-            mPhoneStateListener[phoneId] = null;
-        }
-    }
-    //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 end
 
     public static class FiveGServiceState{
         private int mNrIconType;
@@ -236,14 +136,6 @@ public class FiveGServiceClient {
         if (mExtTelephonyManager == null) {
             mExtTelephonyManager = ExtTelephonyManager.getInstance(mContext);
         }
-        //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 begin
-        tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        subMgr = (SubscriptionManager) mContext.getSystemService(
-                  Context.TELEPHONY_SUBSCRIPTION_SERVICE);
-        mPhoneStateListener = new PhoneStateListener[tm.getPhoneCount()];
-        is4GIconShown = new Boolean [tm.getPhoneCount()];
-        //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 end
-
     }
 
     public static FiveGServiceClient getInstance(Context context) {
@@ -268,7 +160,6 @@ public class FiveGServiceClient {
         }else{
             initFiveGServiceState(phoneId);
         }
-        registerPhoneStateListeners(phoneId);// add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221026
     }
 
     private void resetState(int phoneId) {
@@ -287,7 +178,6 @@ public class FiveGServiceClient {
         mStatesListeners.remove(phoneId);
         mCurrentServiceStates.remove(phoneId);
         mLastServiceStates.remove(phoneId);
-        unRegisterPhoneStateListeners(phoneId); // add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221026
     }
 
     public boolean isServiceConnected() {
@@ -396,7 +286,6 @@ public class FiveGServiceClient {
     @VisibleForTesting
     void update5GIcon(FiveGServiceState state,int phoneId) {
         state.mIconGroup = getNrIconGroup(state.mNrIconType, phoneId);
-        Log.d(TAG,"update5GIcon state.mNrIconType = " + state.mNrIconType);
     }
 
     private MobileIconGroup getNrIconGroup(int nrIconType , int phoneId) {
@@ -453,22 +342,6 @@ public class FiveGServiceClient {
             Log.d(TAG,
                     "onNrIconType: slotId = " + slotId + " token = " + token + " " + "status"
                             + status + " NrIconType = " + nrIconType);
-            //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 begin
-            SubscriptionInfo subInfo =
-                      subMgr.getActiveSubscriptionInfoForSimSlotIndex(slotId);
-            String mccmnc = "";
-            if (subInfo != null) {
-                mccmnc = subInfo.getMccString()+subInfo.getMncString();
-                Log.d(TAG, "onNrIconType: mccmnc = " + mccmnc + ", mcc = " + subInfo.getMccString() + ", mnc = " + subInfo.getMncString());
-                if ("46601".equals(mccmnc)) {
-                    newNrIconType = nrIconType.get();
-                    Log.d(TAG, "mCallback newNrIconType = " + newNrIconType+ " is4GIconShown["+slotId+"]=" + is4GIconShown[slotId]);
-                    if (is4GIconShown[slotId]) {
-                        nrIconType = new NrIconType(0);//volte call under NSA, change when 5G icon shown for FET, change 5G to 4G
-                    }
-                }
-            }
-            //add by huan.sun for FP4S-665/666 show 4G icon under volte call at 20221024 end
             if (status.get() == Status.SUCCESS) {
                 FiveGServiceState state = getCurrentServiceState(slotId);
                 state.mNrIconType = nrIconType.get();
