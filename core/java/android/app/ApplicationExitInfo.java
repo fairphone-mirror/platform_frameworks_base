@@ -407,6 +407,7 @@ public final class ApplicationExitInfo implements Parcelable {
      */
     public static final int SUBREASON_PACKAGE_UPDATE = 25;
 
+
     /**
      * The process was killed because of undelivered broadcasts; this would be set only when the
      * reason is {@link #REASON_OTHER}.
