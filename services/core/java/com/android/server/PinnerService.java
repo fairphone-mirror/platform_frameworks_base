@@ -104,6 +104,10 @@ public final class PinnerService extends SystemService {
     private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.activity.onboarding.DeviceOnboardingActivity";
     private static final int DELAY_START_MY_FAIRPHONE = 5 * 1000;
     private static final String MY_FAIRPHONE_IS_OPENED = "persist.sys.fairphone.open";
+    //+FP4S-562, workaround for "mfg_util --do_factoryreset"
+    private static final String T2M_PROP_HAS_SKIP_SETUP = "persist.sys.has_skip_setup";
+    private static final String T2M_PROP_FIRST_SKIP_SETUP = "sys.first_skip_setup";
+    //-FP4S-562, workaround for "mfg_util --do_factoryreset"
 
     private static final int KEY_CAMERA = 0;
     private static final int KEY_HOME = 1;
@@ -371,10 +375,26 @@ public final class PinnerService extends SystemService {
                                     }
                                 },DELAY_START_MY_FAIRPHONE);
                             }
+                            //+FP4S-562, workaround for "mfg_util --do_factoryreset"
+                            if (isUserSetupCompleted() && isFirstSkipSetup()) {
+                                setTheFirstSkipSetup();
+                            }
+                            //-FP4S-562, workaround for "mfg_util --do_factoryreset"
                         }
                     }
                 }, UserHandle.USER_ALL);
     }
+
+    //+FP4S-562, workaround for "mfg_util --do_factoryreset"
+    private void setTheFirstSkipSetup() {
+        SystemProperties.set(T2M_PROP_HAS_SKIP_SETUP,"1");
+        SystemProperties.set(T2M_PROP_FIRST_SKIP_SETUP,"1");
+    }
+
+    private boolean isFirstSkipSetup() {
+        return "0".equals(SystemProperties.get(T2M_PROP_HAS_SKIP_SETUP,"0"));
+    }
+    //-FP4S-562, workaround for "mfg_util --do_factoryreset"
 
     private boolean isMyPhoneFirstOpen() {
         return "0".equals(SystemProperties.get(MY_FAIRPHONE_IS_OPENED,"0"));
