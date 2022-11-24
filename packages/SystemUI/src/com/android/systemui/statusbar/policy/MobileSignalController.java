@@ -49,6 +49,7 @@ import android.telephony.ims.ImsMmTelManager;
 import android.telephony.ims.ImsReasonInfo;
 import android.telephony.ims.ImsRegistrationAttributes;
 import android.telephony.ims.RegistrationManager.RegistrationCallback;
+import android.telephony.ims.stub.ImsRegistrationImplBase;//[BUG]-Modify by huan.sun 2022-11-24 [FP4S-690]VoWifi icon display obnormally
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -607,7 +608,6 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 statusIcon = new IconState(true,
                         mCurrentState.enabled && !mCurrentState.airplaneMode ? statusIcon.icon : -1,
                         statusIcon.contentDescription);
-
                 // modify by T2M.zhang renjie for FP4-2831 21-9-11 begin
                 if (mCurrentState.enabled && !mCurrentState.airplaneMode) {
                     Log.d(mTag, "disable volte icon when vowifi icon display.");
@@ -1216,13 +1216,21 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         if (mPhone != null) {
             mMMtelVowifi = mPhone.isWifiCallingAvailable();
         }
+
+        //[BUG]-Modify-Begin by huan.sun 2022-11-24 [FP4S-690]VoWifi icon display obnormally
+        int regTech = ImsRegistrationImplBase.REGISTRATION_TECH_NONE;
+        if (mPhone != null) {
+            regTech = mPhone.getImsRegTechnologyForMmTel();
+        }
+        //[BUG]-Modify-Begin by huan.sun
+
         Log.i(mTag, "isVowifiAvailable,mVoWiFiSettingEnabled = " + mVoWiFiSettingEnabled + " mMMtelVowifi = "+ mMMtelVowifi + " getDataNetworkType() = " 
             + getDataNetworkType() + " mCurrentState.voiceCapable = " +mCurrentState.voiceCapable + " mCurrentState.imsRegistered = "+ mCurrentState.imsRegistered
-            + " mImsType = " + mImsType);
+            + ", regTech = " + regTech);
 
         return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
-                && ((getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN) || ( mImsType == IMS_TYPE_WLAN))
-                && mVoWiFiSettingEnabled && mMMtelVowifi;
+               // && (getDataNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN)
+               /* && mVoWiFiSettingEnabled*/ && (ImsRegistrationImplBase.REGISTRATION_TECH_IWLAN == regTech);//[BUG]-Modify by huan.sun 2022-11-24 [FP4S-690]VoWifi icon display obnormall
         // modify by T2M.zhang renjie for FP4-3605 22-03-24 end
     }
 
