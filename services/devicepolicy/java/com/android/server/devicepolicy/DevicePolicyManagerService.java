@@ -9847,6 +9847,7 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
     @Override
     public void setApplicationRestrictions(ComponentName who, String callerPackage,
             String packageName, Bundle settings) {
+        android.util.Log.e("xiujuan1"," setApplicationRestrictions: callerPackage:" + callerPackage + " packageName" + packageName);   
         final CallerIdentity caller = getCallerIdentity(who, callerPackage);
         Preconditions.checkCallAuthorization((caller.hasAdminComponent()
                 && (isProfileOwner(caller) || isDeviceOwner(caller)))
@@ -11065,6 +11066,9 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
 
     @Override
     public boolean isPackageSuspended(ComponentName who, String callerPackage, String packageName) {
+
+        android.util.Log.e("xiujuan1"," isPackageSuspended: callerPackage:" + callerPackage + " packageName" + packageName);   
+
         final CallerIdentity caller = getCallerIdentity(who, callerPackage);
         Preconditions.checkCallAuthorization((caller.hasAdminComponent()
                 && (isProfileOwner(caller) || isDeviceOwner(caller)))
@@ -11257,6 +11261,7 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
     @Override
     public boolean setApplicationHidden(ComponentName who, String callerPackage, String packageName,
             boolean hidden, boolean parent) {
+         android.util.Log.e("xiujuan1"," setApplicationHidden: callerPackage:" + callerPackage + " packageName" + packageName);
         final CallerIdentity caller = getCallerIdentity(who, callerPackage);
         Preconditions.checkCallAuthorization((caller.hasAdminComponent()
                 && (isProfileOwner(caller) || isDeviceOwner(caller)))
@@ -11303,6 +11308,7 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
     @Override
     public boolean isApplicationHidden(ComponentName who, String callerPackage,
             String packageName, boolean parent) {
+        android.util.Log.e("xiujuan1"," isApplicationHidden: callerPackage:" + callerPackage + " packageName" + packageName);   
         final CallerIdentity caller = getCallerIdentity(who, callerPackage);
         Preconditions.checkCallAuthorization((caller.hasAdminComponent()
                 && (isProfileOwner(caller) || isDeviceOwner(caller)))
@@ -11577,6 +11583,7 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
     @Override
     public void setUninstallBlocked(ComponentName who, String callerPackage, String packageName,
             boolean uninstallBlocked) {
+        android.util.Log.e("xiujuan1"," setUninstallBlocked: callerPackage:" + callerPackage + " packageName" + packageName); 
         final CallerIdentity caller = getCallerIdentity(who, callerPackage);
         Preconditions.checkCallAuthorization((caller.hasAdminComponent()
                 && (isProfileOwner(caller) || isDeviceOwner(caller)))
@@ -13481,6 +13488,7 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
     public void setPermissionGrantState(ComponentName admin, String callerPackage,
             String packageName, String permission, int grantState, RemoteCallback callback)
             throws RemoteException {
+        android.util.Log.e("xiujuan1"," setPermissionGrantState: callerPackage:" + callerPackage + " packageName" + packageName); 
         Objects.requireNonNull(callback);
 
         final CallerIdentity caller = getCallerIdentity(admin, callerPackage);
@@ -13552,6 +13560,7 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
     @Override
     public int getPermissionGrantState(ComponentName admin, String callerPackage,
             String packageName, String permission) throws RemoteException {
+        android.util.Log.e("xiujuan1"," setPermissionGrantState: callerPackage:" + callerPackage + " packageName" + packageName); 
         final CallerIdentity caller = getCallerIdentity(admin, callerPackage);
         Preconditions.checkCallAuthorization(isSystemUid(caller) || (caller.hasAdminComponent()
                 && (isProfileOwner(caller) || isDeviceOwner(caller)))
