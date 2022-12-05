@@ -297,26 +297,13 @@ public class Camera {
      *   cameras or an error was encountered enumerating them.
      */
     public static int getNumberOfCameras() {
-        boolean exposeAuxCamera = false;
+        boolean exposeAuxCamera = true;
         String packageName = ActivityThread.currentOpPackageName();
         /* Force to expose only two cameras
-         * if the package name does not falls in this bucket
+         * if is xts apk
          */
-        if (packageName.contains("com.android.mmi")) {
-              exposeAuxCamera = true;
-        } else {
-            String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
-                   "org.codeaurora.snapcam,com.android.mmi");
-            if (packageList.length() > 0) {
-                TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                splitter.setString(packageList);
-                for (String str : splitter) {
-                    if (packageName.equals(str)) {
-                        exposeAuxCamera = true;
-                        break;
-                    }
-                }
-            }
+        if(packageName.equals("com.android.cts.verifier") || packageName.equals("android.camera.cts")) {
+            exposeAuxCamera = false;
         }
         int numberOfCameras = _getNumberOfCameras();
         if (exposeAuxCamera == false && (numberOfCameras > 2)) {
