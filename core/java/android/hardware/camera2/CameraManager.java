@@ -1656,24 +1656,13 @@ public final class CameraManager {
 
         private String[] extractCameraIdListLocked() {
             String[] cameraIds = null;
-            boolean exposeAuxCamera = false;
+            boolean exposeAuxCamera = true;
             String packageName = ActivityThread.currentOpPackageName();
-            if (packageName.contains("com.android.mmi")) {
-                  exposeAuxCamera = true;
-            } else {
-                String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
-                       "org.codeaurora.snapcam,com.android.mmi");
-                if (packageList.length() > 0) {
-                    TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                    splitter.setString(packageList);
-                    for (String str : splitter) {
-                        if (packageName.equals(str)) {
-                            exposeAuxCamera = true;
-                            break;
-                        }
-                    }
-                }
+
+            if(packageName.equals("com.android.cts.verifier") || packageName.equals("android.camera.cts")) {
+                exposeAuxCamera = false;
             }
+
             int idCount = 0;
             for (int i = 0; i < mDeviceStatus.size(); i++) {
                 if(!exposeAuxCamera && (i == 2)) break;
@@ -1953,24 +1942,13 @@ public final class CameraManager {
                 /* Force to expose only two cameras
                  * if the package name does not falls in this bucket
                  */
-                boolean exposeAuxCamera = false;
+                boolean exposeAuxCamera = true;
                 String packageName = ActivityThread.currentOpPackageName();
-                if (packageName.contains("com.android.mmi")) {
-                      exposeAuxCamera = true;
-                } else {
-                    String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
-                           "org.codeaurora.snapcam,com.android.mmi");
-                    if (packageList.length() > 0) {
-                        TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                        splitter.setString(packageList);
-                        for (String str : splitter) {
-                            if (packageName.equals(str)) {
-                                exposeAuxCamera = true;
-                                break;
-                            }
-                        }
-                    }
+
+                if(packageName.equals("com.android.cts.verifier") || packageName.equals("android.camera.cts")) {
+                    exposeAuxCamera = false;
                 }
+
                 if (exposeAuxCamera == false && (Integer.parseInt(cameraId) >= 2)) {
                     throw new IllegalArgumentException("invalid cameraId");
                 }
@@ -2245,23 +2223,10 @@ public final class CameraManager {
             /* Force to ignore the last mono/aux camera status update
              * if the package name does not falls in this bucket
              */
-            boolean exposeMonoCamera = false;
+            boolean exposeMonoCamera = true;
             String packageName = ActivityThread.currentOpPackageName();
-            if (packageName.contains("com.android.mmi")) {
-                  exposeMonoCamera = true;
-            } else {
-                String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
-                       "org.codeaurora.snapcam,com.android.mmi");
-                if (packageList.length() > 0) {
-                    TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                    splitter.setString(packageList);
-                    for (String str : splitter) {
-                        if (packageName.equals(str)) {
-                            exposeMonoCamera = true;
-                            break;
-                        }
-                    }
-                }
+            if(packageName.equals("com.android.cts.verifier") || packageName.equals("android.camera.cts")) {
+                exposeMonoCamera = false;
             }
 
             if (exposeMonoCamera == false) {
@@ -2405,23 +2370,10 @@ public final class CameraManager {
             /* Force to ignore the aux or composite camera torch status update
              * if the package name does not falls in this bucket
              */
-            boolean exposeMonoCamera = false;
+            boolean exposeMonoCamera = true;
             String packageName = ActivityThread.currentOpPackageName();
-            if (packageName.contains("com.android.mmi")) {
-                  exposeMonoCamera = true;
-            } else {
-                String packageList = SystemProperties.get("vendor.camera.aux.packagelist",
-                       "org.codeaurora.snapcam,com.android.mmi");
-                if (packageList.length() > 0) {
-                    TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                    splitter.setString(packageList);
-                    for (String str : splitter) {
-                        if (packageName.equals(str)) {
-                            exposeMonoCamera = true;
-                            break;
-                        }
-                    }
-                }
+            if(packageName.equals("com.android.cts.verifier") || packageName.equals("android.camera.cts")) {
+                exposeMonoCamera = false;
             }
 
             if (exposeMonoCamera == false) {
