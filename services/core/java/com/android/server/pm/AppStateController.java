@@ -2,12 +2,14 @@ package com.android.server.pm;
 
 import java.util.ArrayList;
 
+import android.os.UserHandle;
 import android.os.PersistableBundle;
 import android.os.ServiceManager;
 import android.os.Handler;
 import android.content.Context;
 
 import android.content.pm.IPackageManager;
+import android.content.pm.PackageManager;
 import android.content.IntentFilter;
 import android.content.Intent;
 import android.content.BroadcastReceiver;
@@ -145,6 +147,7 @@ public class AppStateController {
 
     private void judgeAndFireSetAppState() {
         if (!mIsCarrierConfigLoaded || mHasSetAppState) {
+            Log.d(TAG, pkg + " judgeAndFireSetAppState mIsCarrierConfigLoaded  " + mIsCarrierConfigLoaded + " mHasSetAppState = " + mHasSetAppState);
             return;
         }
         setPreInstallCarrierApkState();
@@ -161,7 +164,17 @@ public class AppStateController {
     private void updateInstallState(String pkg, boolean isSimAppropriate, IPackageManager ipm) {
         Log.d(TAG, pkg + " updateInstallState sim Appropriate  " + isSimAppropriate + " mUserId = " + mUserId);
         try {
-            ipm.setSystemAppInstallState(pkg, isSimAppropriate, mUserId);
+            boolean success = ipm.setSystemAppInstallState(pkg, isSimAppropriate, mUserId);
+            Log.d(TAG, pkg +" updateInstallState:" + success);
+            if (!success && !isSimAppropriate){
+                int[] userIds = UserManagerService.getInstance().getUserIdsIncludingPreCreated();
+                for (int uid : userIds){
+                    if (uid != UserHandle.USER_SYSTEM){
+                        ipm.setApplicationEnabledSetting(pkg,PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER,PackageManager.UNINSTALL_REASON_UNKNOWN,uid,mContext.getBasePackageName());
+                    }
+               }
+
+            }
         } catch (Exception e) {
             Log.d(TAG, pkg + " updateInstallState error " + e.getMessage());
         }
