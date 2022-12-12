@@ -54,9 +54,11 @@ import com.android.settingslib.SignalIcon.MobileIconGroup;
 import com.android.systemui.R;
 
 import com.qti.extphone.Client;
+import com.qti.extphone.DcParam;
 import com.qti.extphone.ExtTelephonyManager;
 import com.qti.extphone.IExtPhoneCallback;
 import com.qti.extphone.ExtPhoneCallbackBase;
+import com.qti.extphone.NrConfigType;
 import com.qti.extphone.NrIconType;
 import com.qti.extphone.Status;
 import com.qti.extphone.ServiceCallback;
@@ -349,6 +351,39 @@ public class FiveGServiceClient {
                 notifyListenersIfNecessary(slotId);
             }
         }
+
+        // add by T2M.dengxiangyu for GROOT-3314 2022-03-10, update ICON quickly begin
+        private int mNrConfigType = NrConfigType.INVALID;
+
+        @Override
+        public void onNrDcParam(int slotId, Token token, Status status, DcParam dcParam) throws
+                RemoteException {
+            Log.d(TAG, "onNrDcParam: slotId = " + slotId + " token = " + token + " status" +
+                    status + " dcParam = " + dcParam);
+            if (status.get() == Status.SUCCESS) {
+                if (mNrConfigType == NrConfigType.NSA_CONFIGURATION
+                        && dcParam.getEndc() == DcParam.ENDC_UNAVAILABLE) {
+                    Log.d(TAG, "update 5G ICON quickly for NSA configuration");
+                    mNrConfigType = NrConfigType.INVALID;
+                    FiveGServiceState state = getCurrentServiceState(slotId);
+                    state.mNrIconType = NrIconType.TYPE_NONE;
+                    update5GIcon(state, slotId);
+                    notifyListenersIfNecessary(slotId);
+                }
+            }
+        }
+
+        @Override
+        public void on5gConfigInfo(int slotId, Token token, Status status, NrConfigType
+                nrConfigType) throws RemoteException {
+            Log.d(TAG,
+                    "on5gConfigInfo: slotId = " + slotId + " token = " + token + " " + "status"
+                            + status + " NrConfigType = " + nrConfigType);
+            if (status.get() == Status.SUCCESS) {
+                mNrConfigType = nrConfigType.getNrConfigType();
+            }
+        }
+        // add by T2M.dengxiangyu for GROOT-3314 2022-03-10 end
     };
 
     public interface IFiveGStateListener {
