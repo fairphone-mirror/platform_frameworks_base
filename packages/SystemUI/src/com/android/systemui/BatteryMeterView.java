@@ -321,6 +321,10 @@ public class BatteryMeterView extends LinearLayout implements
             mBatteryPercentView.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         }
     }
+
+    public TextView getBatteryPecentView(){
+        return mBatteryPercentView;
+    }
     //Modify by T2M yingyubin for FP4S-661 20221025
 
     private void updatePercentText() {

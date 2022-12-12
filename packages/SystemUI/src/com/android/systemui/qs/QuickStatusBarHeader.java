@@ -190,11 +190,12 @@ public class QuickStatusBarHeader extends FrameLayout {
             post(this::updateAnimators);
         }
         //Modify by T2M yingyubin for FP4S-661 20221025
-        if(mBatteryRemainingIcon.getMeasuredWidth() != mLastBatteryWidth){
-            mLastBatteryWidth = mBatteryRemainingIcon.getMeasuredWidth();
-            int iconWidth = dip2px(11.8f);
-            int textWidth = sp2px(14);
-            if(mBatteryRemainingIcon.getMeasuredWidth() < (iconWidth + 2*textWidth)) {
+        if(mBatteryRemainingIcon.getBatteryPecentView() != null &&
+                mLastBatteryWidth != mBatteryRemainingIcon.getBatteryPecentView().getMeasuredWidth()){
+            float textWidth = mBatteryRemainingIcon.getBatteryPecentView().getPaint().measureText(mBatteryRemainingIcon.getBatteryPecentView().getText().toString());
+            mLastBatteryWidth = mBatteryRemainingIcon.getBatteryPecentView().getMeasuredWidth();
+            int padding = mContext.getResources().getDimensionPixelSize(R.dimen.battery_level_padding_start);
+            if(mLastBatteryWidth - textWidth < padding) {
                 mBatteryRemainingIcon.updatePercentViewVisible(false);
             } else {
                 mBatteryRemainingIcon.updatePercentViewVisible(true);
@@ -217,18 +218,6 @@ public class QuickStatusBarHeader extends FrameLayout {
         super.onRtlPropertiesChanged(layoutDirection);
         updateResources();
     }
-
-    //Modify by T2M yingyubin for FP4S-661 20221025
-    private int sp2px(float spValue) {
-        final float fontScale = mContext.getResources().getDisplayMetrics().scaledDensity;
-        return (int) (spValue * fontScale + 0.5f);
-    }
-
-    private int dip2px(float dpValue){
-        final float scale = mContext.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
-    }
-    //Modify by T2M yingyubin for FP4S-661 20221025
 
     private void setDatePrivacyContainersWidth(boolean landscape) {
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mDateContainer.getLayoutParams();
