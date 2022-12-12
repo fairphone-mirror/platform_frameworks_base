@@ -147,7 +147,7 @@ public class AppStateController {
 
     private void judgeAndFireSetAppState() {
         if (!mIsCarrierConfigLoaded || mHasSetAppState) {
-            Log.d(TAG, pkg + " judgeAndFireSetAppState mIsCarrierConfigLoaded  " + mIsCarrierConfigLoaded + " mHasSetAppState = " + mHasSetAppState);
+            Log.d(TAG, " judgeAndFireSetAppState mIsCarrierConfigLoaded  " + mIsCarrierConfigLoaded + " mHasSetAppState = " + mHasSetAppState);
             return;
         }
         setPreInstallCarrierApkState();
