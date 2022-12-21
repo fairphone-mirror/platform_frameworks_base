@@ -1,5 +1,6 @@
 package com.android.server.pm;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 
 import android.os.UserHandle;
@@ -73,8 +74,9 @@ public class AppStateController {
         //PersistableBundle config = configManager.getConfig();
         PersistableBundle config = configManager.getConfigLocked();
         if (config != null) {
+            Log.d(TAG, "config != null");
             String[] preInstallApps = config.getStringArray(KEY_CARRIER_PREINSTALL);
-            if (preInstallApps != null && preInstallApps.length > 0) {
+            if (preInstallApps != null && preInstallApps.length > 0) { //dsd lock carrier_install is not null
                 Log.d(TAG, "get carrier config preintall count = " + preInstallApps.length);
                 for (String app : preInstallApps) {
                     Log.d(TAG, "get carrier config preintall " + app);
@@ -82,11 +84,37 @@ public class AppStateController {
                         if (appState.pkgName.equals(app)) {
                             appState.installState = true;
                             if (!mIsCarrierConfigLoaded) {
+                                Log.d(TAG, "mIsCarrierConfigLoaded = true");
                                 mIsCarrierConfigLoaded = true;
                             }
                         }
                     }
                 }
+            } else {  //dsd lock carrier_install is null
+
+                config = configManager.getConfig();
+                preInstallApps = config.getStringArray(KEY_CARRIER_PREINSTALL);
+
+                if (preInstallApps != null && preInstallApps.length > 0) { //dsd lock carrier_install is not null
+                    Log.d(TAG, "else get carrier config preintall count = " + preInstallApps.length);
+                    
+                    if("com.gohappy.mobileapp".equals(preInstallApps[0])){
+                        for (String app : preInstallApps) {
+                            Log.d(TAG, "else get carrier config preintall " + app);
+                            for (AppState appState : mAppStateArrayList) {
+                                if (appState.pkgName.equals(app)) {
+                                    appState.installState = true;
+                                    if (!mIsCarrierConfigLoaded) {
+                                        Log.d(TAG, "mIsCarrierConfigLoaded = true");
+                                        mIsCarrierConfigLoaded = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
             }
         }
     }
