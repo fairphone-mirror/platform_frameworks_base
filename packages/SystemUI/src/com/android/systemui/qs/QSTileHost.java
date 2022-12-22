@@ -82,7 +82,7 @@ import javax.inject.Provider;
 @SysUISingleton
 public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, Dumpable {
     private static final String TAG = "QSTileHost";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = Log.isLoggable(TAG, Log.DEBUG);
     private static final int MAX_QS_INSTANCE_ID = 1 << 20;
 
     public static final int POSITION_AT_END = -1;
@@ -566,12 +566,9 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
                     addedDefault = true;
                 }
             } else {
-                if(!tile.equals("custom(com.android.settings/.qs.VoWifiTile)")){
-                    if (!addedSpecs.contains(tile)) {
-                        Log.e(TAG,"SELF  " + tile);
-                        tiles.add(tile);
-                        addedSpecs.add(tile);
-                    }
+                if (!addedSpecs.contains(tile)) {
+                    tiles.add(tile);
+                    addedSpecs.add(tile);
                 }
             }
         }
@@ -589,10 +586,6 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
             tiles.remove("wifi");
             tiles.remove("cell");
         }
-
-        //if(tiles.contains("VoWifiTile")){
-            tiles.remove("custom(com.android.settings/.qs.VoWifiTile)");
-        //}
         return tiles;
     }
 
