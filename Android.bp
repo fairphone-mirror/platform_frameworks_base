@@ -519,8 +519,8 @@ metalava_framework_docs_args = "" +
     "--hide Todo " +
     "--hide Typo " +
     "--hide UnavailableSymbol " +
-    "--manifest $(location core/res/AndroidManifest.xml) "
-    "--api-lint-ignore-prefix android.mymodule. " +
+    "--manifest $(location core/res/AndroidManifest.xml) " +
+    "--api-lint-ignore-prefix android.mymodule. "
 
 packages_to_document = [
     "android",

@@ -669,19 +669,19 @@ public final class BatteryService extends SystemService {
             //Update the warm UI
 
             //if (mHealthInfo.batteryHealth != mLastBatteryHealth) {
-            if (mCustomerBatteryFunc == null) {
-                mCustomerBatteryFunc = new Fp4BatteryFuncImpl();
-            }
-            if (mCustomBatteryInfo == null) {
-                mCustomBatteryInfo = new ICustomerBatteryFunc.CustomBatteryInfo();
-            }
-            mCustomerBatteryFunc.notifyBatteryTempWarnChanged(mContext, mCustomBatteryInfo.setHeathInfo(mHealthInfo));
+            //if (mCustomerBatteryFunc == null) {
+            //    mCustomerBatteryFunc = new Fp4BatteryFuncImpl();
             //}
-            if (mHealthInfo.batteryTemperature <= -200 || mHealthInfo.batteryTemperature >= 600) {
-                shutDown();
-            }
+            //if (mCustomBatteryInfo == null) {
+            //    mCustomBatteryInfo = new ICustomerBatteryFunc.CustomBatteryInfo();
+            //}
+            //mCustomerBatteryFunc.notifyBatteryTempWarnChanged(mContext, mCustomBatteryInfo.setHeathInfo(mHealthInfo));
+            //}
+            //if (mHealthInfo.batteryTemperature <= -200 || mHealthInfo.batteryTemperature >= 600) {
+            //    shutDown();
+            //}
 
-            sendUsbNTCMessage();
+            //sendUsbNTCMessage();
 
             // This needs to be done after sendIntent() so that we get the lastest battery stats.
             if (logOutlier && dischargeDuration != 0) {
