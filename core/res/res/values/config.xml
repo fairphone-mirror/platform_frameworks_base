@@ -6472,4 +6472,7 @@
     <!-- List of protected packages that require biometric authentication for modification
          (Disable, force-stop or uninstalling updates). -->
     <string-array name="config_biometric_protected_package_names" translatable="false" />
+
+    <!-- Whether the swap navbar feature is available -->
+    <bool name="config_navBarButtonSwapAvailable">true</bool>
 </resources>
