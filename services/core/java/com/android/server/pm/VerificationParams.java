@@ -78,6 +78,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import android.util.BoostFramework;
 
 final class VerificationParams extends HandlerParams {
     /**
@@ -163,6 +164,11 @@ final class VerificationParams extends HandlerParams {
     }
 
     public void handleStartCopy() {
+        /*Add by T2M.haibiao.lu for FP4T-13 2023-01-28 Begin*/
+        BoostFramework mPerfBoostInstall = new BoostFramework();
+        mPerfBoostInstall.perfHint(BoostFramework.VENDOR_HINT_PACKAGE_INSTALL_BOOST,
+                null, 10000, -1);
+        /*Add by T2M.haibiao.lu for FP4T-13 2023-01-28 End*/
         PackageInfoLite pkgLite = PackageManagerServiceUtils.getMinimalPackageInfo(mPm.mContext,
                 mPackageLite, mOriginInfo.mResolvedPath, mInstallFlags, mPackageAbiOverride);
 
