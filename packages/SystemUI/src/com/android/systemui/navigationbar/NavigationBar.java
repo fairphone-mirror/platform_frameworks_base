@@ -1876,6 +1876,9 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
                 if (getBarTransitions() != null) {
                     getBarTransitions().setBackgroundOverrideAlpha(1f);
                 }
+            } else {
+                boolean available = mAssistManagerLazy.get().getAssistInfoForUser(UserHandle.USER_CURRENT) != null;
+                updateAssistantEntrypoints(available);
             }
             updateScreenPinningGestures();
 
