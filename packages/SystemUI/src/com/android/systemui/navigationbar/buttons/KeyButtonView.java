@@ -23,6 +23,7 @@ import static android.view.accessibility.AccessibilityNodeInfo.ACTION_LONG_CLICK
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -415,6 +416,8 @@ public class KeyButtonView extends ImageView implements ButtonInterface {
             if (action == MotionEvent.ACTION_UP) {
                 mOverviewProxyService.notifyBackAction((flags & KeyEvent.FLAG_CANCELED) == 0,
                         -1, -1, true /* isButton */, false /* gestureSwipeLeft */);
+                Intent intent = new Intent("com.android.systemui.statusbar.phone.resetview");
+                mContext.sendBroadcast(intent);
             }
         }
         final int repeatCount = (flags & KeyEvent.FLAG_LONG_PRESS) != 0 ? 1 : 0;

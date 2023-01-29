@@ -276,6 +276,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
             "com.android.systemui.statusbar.banner_action_cancel";
     private static final String BANNER_ACTION_SETUP =
             "com.android.systemui.statusbar.banner_action_setup";
+    private static final String ACTION_RESET_VIEW = "com.android.systemui.statusbar.phone.resetview";
 
     private static final int MSG_OPEN_SETTINGS_PANEL = 1002;
     private static final int MSG_LAUNCH_TRANSITION_TIMEOUT = 1003;
@@ -1435,6 +1436,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(ACTION_RESET_VIEW);
         mBroadcastDispatcher.registerReceiver(mBroadcastReceiver, filter, null, UserHandle.ALL);
     }
 
@@ -2685,7 +2687,10 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
                 finishBarAnimations();
                 resetUserExpandedStates();
-            }
+            } else if (ACTION_RESET_VIEW.equals(action)) {
+                if (isKeyguardShowing()) {
+                    mMessageRouter.sendMessage(MSG_LAUNCH_TRANSITION_TIMEOUT);
+                }            }
             Trace.endSection();
         }
     };
