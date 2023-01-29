@@ -1,7 +1,7 @@
 package com.android.server;
 
 import android.content.Intent;
-import android.hardware.health.V1_0.HealthInfo;
+import android.hardware.health.HealthInfo;
 import android.os.BatteryManager;
 import android.os.UserHandle;
 import android.util.Log;
@@ -43,7 +43,7 @@ public class Fp4BatteryFuncImpl implements ICustomerBatteryFunc {
         //if (usbPresent.equals("1")) {
             HealthInfo currentHealthInfo = info.getHealthInfo();
             int currentBatteryHealth = currentHealthInfo.batteryHealth;
-            int currentTemperature = currentHealthInfo.batteryTemperature;
+            int currentTemperature = currentHealthInfo.batteryTemperatureTenthsCelsius;
             int batteryStatus = currentHealthInfo.batteryStatus ;
             if (currentTemperature >= 600) {
                 currentTemperatureState = high_temp_60;

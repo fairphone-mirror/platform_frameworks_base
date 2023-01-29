@@ -669,17 +669,17 @@ public final class BatteryService extends SystemService {
             //Update the warm UI
 
             //if (mHealthInfo.batteryHealth != mLastBatteryHealth) {
-            //if (mCustomerBatteryFunc == null) {
-            //    mCustomerBatteryFunc = new Fp4BatteryFuncImpl();
+            if (mCustomerBatteryFunc == null) {
+               mCustomerBatteryFunc = new Fp4BatteryFuncImpl();
+            }
+            if (mCustomBatteryInfo == null) {
+               mCustomBatteryInfo = new ICustomerBatteryFunc.CustomBatteryInfo();
+            }
+            mCustomerBatteryFunc.notifyBatteryTempWarnChanged(mContext, mCustomBatteryInfo.setHeathInfo(mHealthInfo));
             //}
-            //if (mCustomBatteryInfo == null) {
-            //    mCustomBatteryInfo = new ICustomerBatteryFunc.CustomBatteryInfo();
-            //}
-            //mCustomerBatteryFunc.notifyBatteryTempWarnChanged(mContext, mCustomBatteryInfo.setHeathInfo(mHealthInfo));
-            //}
-            //if (mHealthInfo.batteryTemperature <= -200 || mHealthInfo.batteryTemperature >= 600) {
-            //    shutDown();
-            //}
+            if (mHealthInfo.batteryTemperatureTenthsCelsius <= -200 || mHealthInfo.batteryTemperatureTenthsCelsius >= 600) {
+               shutDown();
+            }
 
             //sendUsbNTCMessage();
 
@@ -701,6 +701,19 @@ public final class BatteryService extends SystemService {
             mLastBatteryLevelCritical = mBatteryLevelCritical;
             mLastInvalidCharger = mInvalidCharger;
         }
+    }
+
+    private void shutDown(){
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(Intent.ACTION_REQUEST_SHUTDOWN);
+                intent.putExtra(Intent.EXTRA_KEY_CONFIRM, false);
+                //intent.putExtra(Intent.EXTRA_REASON,PowerManager.SHUTDOWN_BATTERY_THERMAL_STATE);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivityAsUser(intent, UserHandle.CURRENT);
+            }
+        }, 6 * 1000);
     }
 
     private void sendUsbNTCMessage(){

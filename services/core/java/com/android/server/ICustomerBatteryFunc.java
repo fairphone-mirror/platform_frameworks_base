@@ -1,7 +1,7 @@
 package com.android.server;
 
 import android.content.Context;
-import android.hardware.health.V1_0.HealthInfo;
+import android.hardware.health.HealthInfo;
 
 /**
  * <pre>
