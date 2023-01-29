@@ -2295,6 +2295,14 @@ final class InstallPackageHelper {
             DexoptOptions dexoptOptions =
                     new DexoptOptions(packageName, compilationReason, dexoptFlags);
 
+            /*Add by T2M.haibiao.lu for FP4T-13 2023-01-28 Begin*/
+            File apkFile = new File(pkg.getBaseApkPath());
+            //Very big apk 1000x1024x1024 use INSTALL_FAST
+            if (apkFile.exists() && apkFile.length() > 1048576000) {
+                dexoptOptions =
+                    new DexoptOptions(packageName, PackageManagerService.REASON_INSTALL_FAST, dexoptFlags);
+            }
+            /*Add by T2M.haibiao.lu for FP4T-13 2023-01-28 End*/
             // Check whether we need to dexopt the app.
             //
             // NOTE: it is IMPORTANT to call dexopt:
