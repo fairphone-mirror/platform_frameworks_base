@@ -168,7 +168,10 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.d(mTag, "onRegistered: " + "attributes=" + attributes);
             mCurrentState.imsRegistered = true;
             mCurrentState.imsRegistrationTech = attributes.getRegistrationTechnology();
-            notifyListenersIfNecessary();
+	    // modify by T2M.zhang renjie for FP4-3917 22-09-16 begin
+            //notifyListenersIfNecessary();
+            notifyListeners(); /*Impose refresh when vowifi handover happen*/
+	    // modify by T2M.zhang renjie for FP4-3917 22-09-16 end
             if (!mProviderModelBehavior) {
                 return;
             }
