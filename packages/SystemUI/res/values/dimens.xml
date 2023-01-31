@@ -910,7 +910,7 @@
     <dimen name="keyguard_affordance_fixed_width">48dp</dimen>
 
     <dimen name="keyguard_affordance_horizontal_offset">32dp</dimen>
-    <dimen name="keyguard_affordance_vertical_offset">32dp</dimen>
+    <dimen name="keyguard_affordance_vertical_offset">72dp</dimen>
     <!-- Value should be at least sum of 'keyguard_affordance_width' +
          'keyguard_affordance_horizontal_offset' -->
     <dimen name="keyguard_indication_area_padding">82dp</dimen>
