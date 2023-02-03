@@ -4194,7 +4194,7 @@ public abstract class Context {
             DEVICE_LOCK_SERVICE,
             VIRTUALIZATION_SERVICE,
             GRAMMATICAL_INFLECTION_SERVICE,
-
+            MMITEST_SERVICE,
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ServiceName {}
@@ -4436,6 +4436,8 @@ public abstract class Context {
      * you're running long tasks.
      */
     public static final String POWER_SERVICE = "power";
+
+    public static final String MMITEST_SERVICE = "mmitest";
 
     /**
      * Use with {@link #getSystemService(String)} to retrieve a

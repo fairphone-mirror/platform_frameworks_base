@@ -10491,6 +10491,7 @@ package android.content {
     field public static final String MEDIA_ROUTER_SERVICE = "media_router";
     field public static final String MEDIA_SESSION_SERVICE = "media_session";
     field public static final String MIDI_SERVICE = "midi";
+    field public static final String MMITEST_SERVICE = "mmitest";
     field public static final int MODE_APPEND = 32768; // 0x8000
     field public static final int MODE_ENABLE_WRITE_AHEAD_LOGGING = 8; // 0x8
     field @Deprecated public static final int MODE_MULTI_PROCESS = 4; // 0x4
@@ -28272,6 +28273,42 @@ package android.mtp {
     method public long getMaxCapacity();
     method public int getStorageId();
     method @NonNull public String getVolumeIdentifier();
+  }
+
+}
+
+package android.mymodule.mmitest {
+
+  public interface IT2MmiTestManager extends android.os.IInterface {
+    method public String t2GetNodeString(String) throws android.os.RemoteException;
+    method public boolean t2SetNodeString(String, String) throws android.os.RemoteException;
+    method public String t2TestNodeRead(String) throws android.os.RemoteException;
+    method public boolean t2TestNodeWrite(String, String) throws android.os.RemoteException;
+    field public static final String DESCRIPTOR = "android.mymodule.mmitest.IT2MmiTestManager";
+  }
+
+  public static class IT2MmiTestManager.Default implements android.mymodule.mmitest.IT2MmiTestManager {
+    ctor public IT2MmiTestManager.Default();
+    method public android.os.IBinder asBinder();
+    method public String t2GetNodeString(String) throws android.os.RemoteException;
+    method public boolean t2SetNodeString(String, String) throws android.os.RemoteException;
+    method public String t2TestNodeRead(String) throws android.os.RemoteException;
+    method public boolean t2TestNodeWrite(String, String) throws android.os.RemoteException;
+  }
+
+  public abstract static class IT2MmiTestManager.Stub extends android.os.Binder implements android.mymodule.mmitest.IT2MmiTestManager {
+    ctor public IT2MmiTestManager.Stub();
+    method public android.os.IBinder asBinder();
+    method public static android.mymodule.mmitest.IT2MmiTestManager asInterface(android.os.IBinder);
+    method public boolean onTransact(int, android.os.Parcel, android.os.Parcel, int) throws android.os.RemoteException;
+  }
+
+  public class T2MmiTestManager {
+    ctor public T2MmiTestManager(android.content.Context, android.mymodule.mmitest.IT2MmiTestManager);
+    method public String t2GetNodeString(String);
+    method public boolean t2SetNodeString(String, String);
+    method public String t2TestNodeRead(String);
+    method public boolean t2TestNodeWrite(String, String);
   }
 
 }
