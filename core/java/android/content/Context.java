@@ -3932,6 +3932,7 @@ public abstract class Context {
             //@hide: ATTESTATION_VERIFICATION_SERVICE,
             //@hide: SAFETY_CENTER_SERVICE,
             DISPLAY_HASH_SERVICE,
+            MMITEST_SERVICE,
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ServiceName {}
@@ -4173,6 +4174,8 @@ public abstract class Context {
      * you're running long tasks.
      */
     public static final String POWER_SERVICE = "power";
+
+    public static final String MMITEST_SERVICE = "mmitest";
 
     /**
      * Use with {@link #getSystemService(String)} to retrieve a
