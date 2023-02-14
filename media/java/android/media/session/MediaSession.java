@@ -306,8 +306,10 @@ public final class MediaSession {
     public void setMediaButtonBroadcastReceiver(@Nullable ComponentName broadcastReceiver) {
         try {
             if (broadcastReceiver != null) {
+                boolean userBuild = "user".equals(Build.TYPE);
+                String packageName = userBuild ? mContext.getPackageName() : mContext.getBasePackageName();
                 if (!TextUtils.equals(broadcastReceiver.getPackageName(),
-                        mContext.getPackageName())) {
+                        packageName)) {
                     throw new IllegalArgumentException("broadcastReceiver should belong to the same"
                             + " package as the context given when creating MediaSession.");
                 }
