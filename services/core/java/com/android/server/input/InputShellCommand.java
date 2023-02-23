@@ -342,7 +342,8 @@ public class InputShellCommand extends ShellCommand {
         }
 
         do {
-            final int keycode = KeyEvent.keyCodeFromString(arg);
+            // final int keycode = KeyEvent.keyCodeFromString(arg);
+            final int keycode = KeyEvent.fpKeyCodeFromString(arg);
             sendKeyEvent(inputSource, keycode, longpress, displayId);
         } while ((arg = getNextArg()) != null);
     }

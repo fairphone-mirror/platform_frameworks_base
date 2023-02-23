@@ -3154,6 +3154,29 @@ public class KeyEvent extends InputEvent implements Parcelable {
         return KEYCODE_UNKNOWN;
     }
 
+    /** Workaround for mmitest:fpKeyCodeFromString for adb shell key event.*/
+    /**
+    *@hide
+    */
+    public static int fpKeyCodeFromString(@NonNull String symbolicName) {
+        try {
+            int keyCode = Integer.parseInt(symbolicName);
+            if (keyCode > 0) {
+                return keyCode;
+            }
+        } catch (NumberFormatException ex) {
+        }
+
+        if (symbolicName.startsWith(LABEL_PREFIX)) {
+            symbolicName = symbolicName.substring(LABEL_PREFIX.length());
+        }
+        int keyCode = nativeKeyCodeFromString(symbolicName);
+        if (keyCode > 0) {
+            return keyCode;
+        }
+        return KEYCODE_UNKNOWN;
+    }
+
     private static boolean keyCodeIsValid(int keyCode) {
         return keyCode >= KEYCODE_UNKNOWN && keyCode <= LAST_KEYCODE;
     }
