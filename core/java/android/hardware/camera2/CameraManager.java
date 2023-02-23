@@ -646,9 +646,21 @@ public final class CameraManager {
             }
             try {
                 Size displaySize = getDisplaySize();
-
                 CameraMetadataNative info = cameraService.getCameraCharacteristics(cameraId,
                         mContext.getApplicationInfo().targetSdkVersion, overrideToPortrait);
+/*Begin yuantao.zhu for [Task][FP5-349] FP5 long exposure time cts on 20230223*/
+		if(!(mContext.getOpPackageName().equals("com.fp5.camera")) && 
+		!(mContext.getOpPackageName().equals("org.codeaurora.snapcam"))) {
+		//Don't expose long exposure capability to 3rd party app.
+		Range<Long> exposureTimeRange = info.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
+		long maxExpLimit = 500000000;
+			if(exposureTimeRange.getUpper() > maxExpLimit) {
+			    Range<Long> newRange = new Range<>(exposureTimeRange.getLower(), maxExpLimit);
+			    info.set(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE, newRange);
+			    info.set(CameraCharacteristics.SENSOR_INFO_MAX_FRAME_DURATION, maxExpLimit);
+			}
+		}
+/*End  yuantao.zhu for [Task][FP5-349] FP5 long exposure time cts on 20230223*/
                 try {
                     info.setCameraId(Integer.parseInt(cameraId));
                 } catch (NumberFormatException e) {
