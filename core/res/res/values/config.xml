@@ -5466,10 +5466,10 @@
     <!-- On-device package for providing companion device associations. -->
     <string name="config_systemCompanionDeviceProvider" translatable="false"></string>
 
-    <!-- Whether this device is supporting the software microphone toggle -->
-    <bool name="config_supportsMicToggle">false</bool>
-    <!-- Whether this device is supporting the camera toggle -->
-    <bool name="config_supportsCamToggle">false</bool>
+    <!-- Whether this device is supporting the software microphone toggle, tianlang set to true 2023.2.23 -->
+    <bool name="config_supportsMicToggle">true</bool>
+    <!-- Whether this device is supporting the camera toggle, tianlang set to true 2023.2.23 -->
+    <bool name="config_supportsCamToggle">true</bool>
     <!-- Whether this device is supporting the hardware microphone toggle -->
     <bool name="config_supportsHardwareMicToggle">false</bool>
     <!-- Whether this device is supporting the hardware camera toggle -->
