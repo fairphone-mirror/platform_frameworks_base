@@ -257,7 +257,7 @@ public final class PowerManager {
      * @hide
      */
     @UnsupportedAppUsage
-    public static final int BRIGHTNESS_ON = 255;
+    public static final int BRIGHTNESS_ON = 4095;
 
     /**
      * Brightness value for fully off.
