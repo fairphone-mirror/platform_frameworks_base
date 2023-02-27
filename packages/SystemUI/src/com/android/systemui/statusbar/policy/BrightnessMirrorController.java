@@ -35,6 +35,10 @@ import com.android.systemui.statusbar.phone.NotificationShadeWindowView;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import android.widget.ImageView;
+import android.provider.Settings;
+import android.os.UserHandle;
+
 /**
  * Controls showing and hiding of the brightness mirror.
  */
@@ -52,6 +56,8 @@ public class BrightnessMirrorController
     private FrameLayout mBrightnessMirror;
     private int mBrightnessMirrorBackgroundPadding;
     private int mLastBrightnessSliderWidth = -1;
+
+    private ImageView autoBrightnessBtn;
 
     public BrightnessMirrorController(NotificationShadeWindowView statusBarWindow,
             NotificationPanelViewController notificationPanelViewController,
@@ -157,6 +163,14 @@ public class BrightnessMirrorController
 
         for (int i = 0; i < mBrightnessMirrorListeners.size(); i++) {
             mBrightnessMirrorListeners.valueAt(i).onBrightnessMirrorReinflated(mBrightnessMirror);
+        }
+        boolean isAuto= 0!=  Settings.System.getIntForUser(mBrightnessMirror.getContext().getContentResolver(),
+                Settings.System.SCREEN_BRIGHTNESS_MODE,
+                Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL,
+                UserHandle.USER_CURRENT);
+        autoBrightnessBtn = mBrightnessMirror.findViewById(R.id.brightness_auto);
+        if(autoBrightnessBtn != null){
+            autoBrightnessBtn.setImageResource(isAuto ? R.drawable.ic_fp4_qs_brightness_auto_on : R.drawable.ic_fp4_qs_brightness_auto_off);
         }
     }
 
