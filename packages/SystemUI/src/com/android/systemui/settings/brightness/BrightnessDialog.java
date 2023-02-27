@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
@@ -109,8 +110,10 @@ public class BrightnessDialog extends Activity {
         controller.init();
         frame.addView(controller.getRootView(), MATCH_PARENT, WRAP_CONTENT);
 
+        ImageView autoBrightnessBtn = findViewById(R.id.brightness_auto);
         mBrightnessController = new BrightnessController(
-                this, controller, mUserTracker, mDisplayTracker, mMainExecutor, mBackgroundHandler);
+                this, controller, mUserTracker, mDisplayTracker, mMainExecutor, mBackgroundHandler,autoBrightnessBtn);
+
     }
 
     @Override
