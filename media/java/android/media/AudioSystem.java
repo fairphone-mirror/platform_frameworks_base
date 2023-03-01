@@ -2448,10 +2448,10 @@ public class AudioSystem
     public static int[] DEFAULT_STREAM_VOLUME = new int[] {
         4,  // STREAM_VOICE_CALL
         7,  // STREAM_SYSTEM
-        5,  // STREAM_RING           // configured in AudioService by config_audio_notif_vol_default
-        5, // STREAM_MUSIC
-        6,  // STREAM_ALARM
-        5,  // STREAM_NOTIFICATION   // configured in AudioService by config_audio_ring_vol_default
+        4,  // STREAM_RING           // configured in AudioService by config_audio_notif_vol_default
+        7, // STREAM_MUSIC
+        4,  // STREAM_ALARM
+        4,  // STREAM_NOTIFICATION   // configured in AudioService by config_audio_ring_vol_default
         7,  // STREAM_BLUETOOTH_SCO
         7,  // STREAM_SYSTEM_ENFORCED
         5, // STREAM_DTMF
