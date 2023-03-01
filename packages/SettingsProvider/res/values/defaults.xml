@@ -131,7 +131,7 @@
     <integer name="def_pointer_speed">0</integer>
 
     <!-- Default for DTMF tones enabled -->
-    <bool name="def_dtmf_tones_enabled">true</bool>
+    <bool name="def_dtmf_tones_enabled">false</bool>
     <!-- Default for UI touch sounds enabled -->
     <bool name="def_sound_effects_enabled">true</bool>
     <!-- Default for connected mo call tones enabled -->
