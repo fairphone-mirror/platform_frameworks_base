@@ -56,6 +56,7 @@ import android.os.SystemProperties;
 import android.os.Trace;
 import android.os.UEventObserver;
 import android.os.UserHandle;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.service.battery.BatteryServiceDumpProto;
 import android.sysprop.PowerProperties;
@@ -427,7 +428,9 @@ public final class BatteryService extends SystemService {
         // shut down gracefully if temperature is too high (> 68.0C by default)
         // wait until the system has booted before attempting to display the
         // shutdown dialog.
-        if (mHealthInfo.batteryTemperatureTenthsCelsius > mShutdownBatteryTemperature) {
+        boolean isMini = SystemProperties.getBoolean("dev.tct.MMITest",false);
+        Slog.d(TAG, "shutdownIfOverTempLocked isMini:"+isMini);
+        if (!isMini && (mHealthInfo.batteryTemperatureTenthsCelsius > mShutdownBatteryTemperature)) {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
