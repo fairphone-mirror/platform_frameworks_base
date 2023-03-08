@@ -66,6 +66,7 @@ import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.android.systemui.util.ViewController;
 import com.android.systemui.util.settings.GlobalSettings;
+import android.provider.Settings;
 
 import javax.inject.Inject;
 
@@ -97,6 +98,8 @@ public class KeyguardSecurityContainerController extends ViewController<Keyguard
     private int mLastOrientation = Configuration.ORIENTATION_UNDEFINED;
 
     private SecurityMode mCurrentSecurityMode = SecurityMode.Invalid;
+    public static final String KEY_UNLOCK_FAILED_RESET = "unlock_failed_reset";
+
     private UserSwitcherController.UserSwitchCallback mUserSwitchCallback =
             () -> showPrimarySecurityScreen(false);
 
@@ -195,6 +198,9 @@ public class KeyguardSecurityContainerController extends ViewController<Keyguard
                 SysUiStatsLog.write(SysUiStatsLog.KEYGUARD_BOUNCER_PASSWORD_ENTERED,
                         SysUiStatsLog.KEYGUARD_BOUNCER_PASSWORD_ENTERED__RESULT__FAILURE,
                         bouncerSide);
+                if (resetForFailedUnlock(userId)) {
+                    return;
+                }
                 reportFailedUnlockAttempt(userId, timeoutMs);
             }
             mMetricsLogger.write(new LogMaker(MetricsEvent.BOUNCER)
@@ -600,6 +606,31 @@ public class KeyguardSecurityContainerController extends ViewController<Keyguard
             mView.showTimeoutDialog(userId, timeoutMs, mLockPatternUtils,
                     mSecurityModel.getSecurityMode(userId));
         }
+    }
+
+    private boolean resetForFailedUnlock(int userId) {
+        final int failedAttempts = mLockPatternUtils.getCurrentFailedPasswordAttempts(userId);
+        if (failedAttempts >= 14) {
+            boolean unlockFaileReset = Settings.Global.getInt(
+                    getContext().getContentResolver(),
+                    KEY_UNLOCK_FAILED_RESET, 0) == 1;
+            if (DEBUG) Log.d(TAG, "resetForFailedUnlock: # " + unlockFaileReset);
+            if (unlockFaileReset) {
+                doMasterClear();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void doMasterClear() {
+        Intent intent = new Intent(Intent.ACTION_FACTORY_RESET);
+        intent.setPackage("android");
+        intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+        intent.putExtra(Intent.EXTRA_REASON, "MasterClearConfirm");
+        //        intent.putExtra(Intent.EXTRA_WIPE_EXTERNAL_STORAGE, mEraseSdCard);
+        getContext().sendBroadcast(intent);
+        //  Intent handling is asynchronous -- assume it will happen soon.
     }
 
     private KeyguardInputViewController<KeyguardInputView> getCurrentSecurityController() {
