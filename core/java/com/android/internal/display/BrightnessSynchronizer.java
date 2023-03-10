@@ -55,7 +55,7 @@ public class BrightnessSynchronizer {
 
     // The tolerance within which we consider brightness values approximately equal to eachother.
     // This value is approximately 1/3 of the smallest possible brightness value.
-    public static final float EPSILON = 0.001f;
+    public static final float EPSILON = (float) 1/(PowerManager.BRIGHTNESS_ON * 2);
 
     private static int sBrightnessUpdateCount = 1;
 
