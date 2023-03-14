@@ -18,6 +18,7 @@ package com.android.systemui.qs.external;
 import static android.view.Display.DEFAULT_DISPLAY;
 import static android.view.WindowManager.LayoutParams.TYPE_QS_DIALOG;
 
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -51,6 +52,7 @@ import androidx.annotation.WorkerThread;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
+import com.android.systemui.animation.ActivityLaunchAnimator;
 import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.plugins.ActivityStarter;
@@ -92,6 +94,8 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
     private android.graphics.drawable.Icon mDefaultIcon;
     @Nullable
     private CharSequence mDefaultLabel;
+    @Nullable
+    private View mViewClicked;
 
     private final Context mUserContext;
 
@@ -206,7 +210,7 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
      * Compare two icons, only works for resources.
      */
     private boolean iconEquals(@Nullable android.graphics.drawable.Icon icon1,
-            @Nullable android.graphics.drawable.Icon icon2) {
+                               @Nullable android.graphics.drawable.Icon icon2) {
         if (icon1 == icon2) {
             return true;
         }
@@ -233,7 +237,7 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
 
     /**
      * Custom tile is considered available if there is a default icon (obtained from PM).
-     *
+     * <p>
      * It will return {@code true} before initialization, so tiles are not destroyed prematurely.
      */
     @Override
@@ -266,6 +270,7 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
 
     /**
      * Update state of {@link this#mTile} from a remote {@link TileService}.
+     *
      * @param tile tile populated with state to apply
      */
     public void updateTileState(Tile tile) {
@@ -297,6 +302,7 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
         if (tile.getStateDescription() != null || overwriteNulls) {
             mTile.setStateDescription(tile.getStateDescription());
         }
+        mTile.setActivityLaunchForClick(tile.getActivityLaunchForClick());
         mTile.setState(tile.getState());
     }
 
@@ -328,6 +334,7 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
                     mService.onStartListening();
                 }
             } else {
+                mViewClicked = null;
                 mService.onStopListening();
                 if (mIsTokenGranted && !mIsShowingDialog) {
                     try {
@@ -392,6 +399,7 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
         if (mTile.getState() == Tile.STATE_UNAVAILABLE) {
             return;
         }
+        mViewClicked = view;
         try {
             if (DEBUG) Log.d(TAG, "Adding token");
             mWindowManager.addWindowToken(mToken, TYPE_QS_DIALOG, DEFAULT_DISPLAY,
@@ -404,7 +412,12 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
                 mServiceManager.setBindRequested(true);
                 mService.onStartListening();
             }
-            mService.onClick(mToken);
+
+            if (mTile.getActivityLaunchForClick() != null) {
+                startActivityAndCollapse(mTile.getActivityLaunchForClick());
+            } else {
+                mService.onClick(mToken);
+            }
         } catch (RemoteException e) {
             // Called through wrapper, won't happen here.
         }
@@ -487,6 +500,27 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
         });
     }
 
+    /**
+     * Starts an {@link android.app.Activity}
+     * @param pendingIntent A PendingIntent for an Activity to be launched immediately.
+     */
+    public void startActivityAndCollapse(PendingIntent pendingIntent) {
+        if (!pendingIntent.isActivity()) {
+            Log.i(TAG, "Intent not for activity.");
+        } else if (!mIsTokenGranted) {
+            Log.i(TAG, "Launching activity before click");
+        } else {
+            Log.i(TAG, "The activity is starting");
+            ActivityLaunchAnimator.Controller controller = mViewClicked == null
+                    ? null
+                    : ActivityLaunchAnimator.Controller.fromView(mViewClicked, 0);
+            mUiHandler.post(() ->
+                    mActivityStarter.startPendingIntentDismissingKeyguard(
+                            pendingIntent, null, controller)
+            );
+        }
+    }
+
     public static String toSpec(ComponentName name) {
         return PREFIX + name.flattenToShortString() + ")";
     }
@@ -513,8 +547,8 @@ public class CustomTile extends QSTileImpl<State> implements TileChangeListener 
     /**
      * Create a {@link CustomTile} for a given spec and user.
      *
-     * @param builder including injected common dependencies.
-     * @param spec as provided by {@link CustomTile#toSpec}
+     * @param builder     including injected common dependencies.
+     * @param spec        as provided by {@link CustomTile#toSpec}
      * @param userContext context for the user that is creating this tile.
      * @return a new {@link CustomTile}
      */
