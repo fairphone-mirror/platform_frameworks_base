@@ -327,7 +327,7 @@
     <dimen name="status_bar_icon_padding">0dp</dimen>
 
     <!-- the padding on the start of the statusbar -->
-    <dimen name="status_bar_padding_start">8dp</dimen>
+    <dimen name="status_bar_padding_start">15dp</dimen>
 
     <!-- the padding on the end of the statusbar -->
     <dimen name="status_bar_padding_end">8dp</dimen>
