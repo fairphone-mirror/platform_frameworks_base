@@ -22,6 +22,7 @@ import android.telephony.ServiceState;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -41,6 +42,7 @@ import javax.inject.Inject;
 /** Controller for {@link OperatorNameView}. */
 public class OperatorNameViewController extends ViewController<OperatorNameView> {
     private static final String KEY_SHOW_OPERATOR_NAME = "show_operator_name";
+    private static final String TAG = "OperatorNameViewController";
 
     private final DarkIconDispatcher mDarkIconDispatcher;
     private final NetworkController mNetworkController;
@@ -83,6 +85,10 @@ public class OperatorNameViewController extends ViewController<OperatorNameView>
 
     private void update() {
         SubInfo defaultSubInfo = getDefaultSubInfo();
+        if(defaultSubInfo == null) {
+            Log.e(TAG, "update unable to process due to SubscriptionInfo is null");
+            return;
+        }
         boolean showOperatorName =
                 mCarrierConfigTracker
                         .getShowOperatorNameInStatusBarConfig(defaultSubInfo.getSubId())
@@ -93,6 +99,9 @@ public class OperatorNameViewController extends ViewController<OperatorNameView>
     private SubInfo getDefaultSubInfo() {
         int defaultSubId = SubscriptionManager.getDefaultDataSubscriptionId();
         SubscriptionInfo sI = mKeyguardUpdateMonitor.getSubscriptionInfoForSubId(defaultSubId);
+        if(sI == null) {
+            return null;
+        }
         return new SubInfo(
                 sI.getSubscriptionId(),
                 sI.getCarrierName(),
