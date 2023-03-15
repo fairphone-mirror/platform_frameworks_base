@@ -61,14 +61,6 @@ public class TelephonyIcons {
 
     public static final MobileIconGroup THREE_G_PLUS = new MobileIconGroup(
             "3G+",
-            null,
-            null,
-            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH,
-            0,
-            0,
-            0,
-            0,
-            AccessibilityContentDescriptions.PHONE_SIGNAL_STRENGTH[0],
             R.string.data_connection_3g,
             TelephonyIcons.ICON_3G_PLUS
     );
