@@ -83,7 +83,8 @@ public class HotspotTile extends QSTileImpl<BooleanState> {
         mHotspotController.observe(this, mCallbacks);
         mDataSaverController.observe(this, mCallbacks);
 
-        mSetting = new SettingObserver(globalSettings, mHandler, Global.AIRPLANE_MODE_ON) {
+        int currentUser = host.getUserContext().getUserId();
+        mSetting = new SettingObserver(globalSettings, mHandler, Global.AIRPLANE_MODE_ON, currentUser) {
             @Override
             protected void handleValueChanged(int value, boolean observedChange) {
                 // mHandler is the background handler so calling this is OK
