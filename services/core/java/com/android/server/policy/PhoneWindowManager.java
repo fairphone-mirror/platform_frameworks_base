@@ -2789,6 +2789,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         switch(keyCode) {
             case KeyEvent.KEYCODE_HOME:
+                if(mDefaultDisplayPolicy.blockKeysForMiniTest(false)) {
+                    Log.i(TAG, "home key pressed in mmitest.");
+                    return 0;
+                }
                 // First we always handle the home key here, so applications
                 // can never break it, although if keyguard is on, we do let
                 // it handle it, because that gives us the correct 5 second
