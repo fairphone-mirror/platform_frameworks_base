@@ -4376,6 +4376,8 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
         if (dexUseManager != null) {
             dexUseManager.systemReady();
         }
+
+        new AppStateController(mContext,mHandler);
     }
 
     //TODO: b/111402650

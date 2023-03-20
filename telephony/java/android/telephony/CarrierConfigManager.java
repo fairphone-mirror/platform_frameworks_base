@@ -10905,6 +10905,25 @@ public class CarrierConfigManager {
         return null;
     }
 
+
+     @SuppressLint("NullableCollection")
+     @Nullable
+    public PersistableBundle getConfigLocked() {
+        try {
+            ICarrierConfigLoader loader = getICarrierConfigLoader();
+            if (loader == null) {
+                Rlog.w(TAG, "Error getting config "
+                        + " ICarrierConfigLoader is null");
+                return null;
+            }
+            return loader.getConfigLocked(SubscriptionManager.getDefaultSubscriptionId(), mContext.getOpPackageName());
+        } catch (RemoteException ex) {
+            Rlog.e(TAG, "Error getting config " + ": "
+                    + ex.toString());
+        }
+        return null;
+    }
+
     /**
      * Gets the configuration values of the specified keys for a particular subscription.
      *

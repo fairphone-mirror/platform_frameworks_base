@@ -598,4 +598,28 @@ applications that come with the platform
          <permission name="android.permission.INTERACT_ACROSS_USERS"/>
          <permission name="android.permission.CHANGE_CONFIGURATION"/>
      </privapp-permissions>
+
+    <!-- FP4S-659, ISD 2022.2-0 add android.permission.POST_NOTIFICATIONS to de.telekom.tsc -->
+    <privapp-permissions package="de.telekom.tsc">
+        <permission name="android.permission.POST_NOTIFICATIONS"/>
+        <permission name="android.permission.INSTALL_PACKAGES" />
+        <permission name="android.permission.READ_PHONE_STATE" />
+        <permission name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+        <permission name="android.permission.PACKAGE_VERIFICATION_AGENT"/>
+        <permission name="android.permission.START_ACTIVITIES_FROM_BACKGROUND"/>
+    </privapp-permissions>
+
+    <privapp-permissions package="com.aura.oobe.samsung.gl">
+    <permission name="android.permission.POST_NOTIFICATIONS"/>
+    </privapp-permissions>
+
+    <privapp-permissions package="com.aura.oobe.deutsche">
+        <permission name="android.permission.POST_NOTIFICATIONS"/>
+        <permission name="android.permission.INSTALL_PACKAGES" />
+        <permission name="android.permission.READ_PHONE_STATE" />
+        <permission name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+        <permission name="android.permission.PACKAGE_VERIFICATION_AGENT"/>
+        <permission name="android.permission.START_ACTIVITIES_FROM_BACKGROUND"/>
+    </privapp-permissions>
+
 </permissions>
