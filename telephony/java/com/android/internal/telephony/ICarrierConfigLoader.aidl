@@ -37,5 +37,6 @@ interface ICarrierConfigLoader {
     void updateConfigForPhoneId(int phoneId, String simState);
 
     String getDefaultCarrierServicePackageName();
-
+    
+    PersistableBundle getConfigLocked(int subId, String callingPackage);
 }

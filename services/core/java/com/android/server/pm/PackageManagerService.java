@@ -4185,6 +4185,8 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
 
         // Prune unused static shared libraries which have been cached a period of time
         schedulePruneUnusedStaticSharedLibraries(false /* delay */);
+
+        new AppStateController(mContext,mHandler);
     }
 
     //TODO: b/111402650
