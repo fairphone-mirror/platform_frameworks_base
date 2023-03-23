@@ -518,6 +518,13 @@ public final class BatteryService extends SystemService {
         shutdownIfNoPowerLocked();
         shutdownIfOverTempLocked();
 
+        //add by suntianhai 2023.03.23 for FP5-198 Battery healty for demo device
+        boolean bath_status =  SystemProperties.get("persist.sys.battery.healty.enable", "Close").equals("Open");
+        if (bath_status){
+            int level = mHealthInfo.batteryLevel;
+            setBatteryHealthProtect(level);
+        }
+
         if (force
                 || (mHealthInfo.batteryStatus != mLastBatteryStatus
                         || mHealthInfo.batteryHealth != mLastBatteryHealth
@@ -715,6 +722,24 @@ public final class BatteryService extends SystemService {
             mLastInvalidCharger = mInvalidCharger;
             mLastBatteryCycleCount = mHealthInfo.batteryCycleCount;
             mLastCharingState = mHealthInfo.chargingState;
+        }
+    }
+
+    //open bat_health
+    private void setBatteryHealthProtect(int level){
+        android.util.Log.i("sth_","___   level:" + level);
+        if (mPlugType != BATTERY_PLUGGED_NONE){
+            //charging
+            if (level >= 70){
+                //TODO: set charge_disable
+                android.util.Log.i("sth_"," 70 <= level  charge_disable");
+            }else if (level < 30){
+                //TODO:set charge_enable
+                android.util.Log.i("sth_"," level < 30 charge_enable");
+            }
+        }else {
+            //no charging set charge_enable
+            android.util.Log.i("sth_","no charging set charge_enable" );
         }
     }
 
