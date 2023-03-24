@@ -266,6 +266,16 @@ public class NotificationInterruptStateProviderImpl implements NotificationInter
                     suppressedByDND);
         }
 
+        // If the notification has suppressive BubbleMetadata, block FSI and warn.
+        Notification.BubbleMetadata bubbleMetadata = sbn.getNotification().getBubbleMetadata();
+        if (bubbleMetadata != null && bubbleMetadata.isNotificationSuppressed()) {
+            // b/274759612: Detect and report an event when a notification has both an FSI and a
+            // suppressive BubbleMetadata, and now correctly block the FSI from firing.
+            return getDecisionGivenSuppression(
+                    FullScreenIntentDecision.NO_FSI_BUBBLEMETADATA_MAY_PREVENT_HUN,
+                    suppressedByDND);
+        }
+
         // If the screen is off, then launch the FullScreenIntent
         if (!mPowerManager.isInteractive()) {
             return getDecisionGivenSuppression(FullScreenIntentDecision.FSI_DEVICE_NOT_INTERACTIVE,
@@ -340,6 +350,10 @@ public class NotificationInterruptStateProviderImpl implements NotificationInter
                 mUiEventLogger.log(FSI_SUPPRESSED_SUPPRESSIVE_GROUP_ALERT_BEHAVIOR, uid,
                         packageName);
                 mLogger.logNoFullscreenWarning(entry, "GroupAlertBehavior will prevent HUN");
+                return;
+            case NO_FSI_BUBBLEMETADATA_MAY_PREVENT_HUN:
+                android.util.EventLog.writeEvent(0x534e4554, "274759612", uid, "bubbleMetadata");
+                mLogger.logNoFullscreenWarning(entry, "BubbleMetadata may prevent HUN");
                 return;
             case FSI_DEVICE_NOT_INTERACTIVE:
                 mLogger.logFullscreen(entry, "Device is not interactive");

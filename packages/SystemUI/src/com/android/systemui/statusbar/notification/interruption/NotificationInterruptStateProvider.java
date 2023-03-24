@@ -55,6 +55,10 @@ public interface NotificationInterruptStateProvider {
          */
         NO_FSI_SUPPRESSIVE_GROUP_ALERT_BEHAVIOR(false),
         /**
+         * If the notification has suppressive BubbleMetadata, block FSI and warn.
+         */
+        NO_FSI_BUBBLEMETADATA_MAY_PREVENT_HUN(false),
+        /**
          * Device screen is off, so the FSI should launch.
          */
         FSI_DEVICE_NOT_INTERACTIVE(true),
