@@ -9311,6 +9311,14 @@ public final class Settings {
         @Readable
         public static final String WAKE_GESTURE_ENABLED = "wake_gesture_enabled";
 
+        //add by t2m yingyubin for FP5-189 20230324
+        /**
+         * Whether the device should wake when the pick up gesture sensor detects motion.
+         * @hide
+         */
+        @Readable
+        public static final String PICK_UP_GESTURE_ENABLED = "pick_up_gesture_enabled";
+
         /**
          * Whether the device should doze if configured.
          * @hide
