@@ -66,6 +66,11 @@ applications that come with the platform
         <permission name="android.permission.UPDATE_APP_OPS_STATS"/>
     </privapp-permissions>
 
+    <privapp-permissions package="com.tct.iris">
+        <permission name="android.permission.WRITE_SECURE_SETTINGS"/>
+        <permission name="android.permission.REAL_GET_TASKS"/>
+    </privapp-permissions>
+
     <privapp-permissions package="com.android.managedprovisioning">
         <permission name="android.permission.CHANGE_COMPONENT_ENABLED_STATE"/>
         <permission name="android.permission.CHANGE_CONFIGURATION"/>
