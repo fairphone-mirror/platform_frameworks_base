@@ -498,6 +498,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     boolean mWakeGestureEnabledSetting;
     MyWakeGestureListener mWakeGestureListener;
+    //add by t2m yingyubin for FP5-189 20230324
+    boolean mPickUpGestureEnabledSetting;
+    MyPickUpGestureListener mPickUpGestureListener;
+    //add by t2m yingyubin for FP5-189 20230324
 
     int mLidKeyboardAccessibility;
     int mLidNavigationAccessibility;
@@ -760,6 +764,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(Settings.Secure.getUriFor(
                     Settings.Secure.WAKE_GESTURE_ENABLED), false, this,
                     UserHandle.USER_ALL);
+            //add by t2m yingyubin for FP5-189 20230324
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.Secure.PICK_UP_GESTURE_ENABLED), false, this,
+                    UserHandle.USER_ALL);
+            //add by t2m yingyubin for FP5-189 20230324
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.SCREEN_OFF_TIMEOUT), false, this,
                     UserHandle.USER_ALL);
@@ -813,6 +822,39 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
         }
     }
+
+    //add by t2m yingyubin for FP5-189 20230324
+    class MyPickUpGestureListener extends PickUpGestureListener {
+        MyPickUpGestureListener(Context context, Handler handler) {
+            super(context, handler);
+        }
+
+        @Override
+        public void onWakeUp() {
+            synchronized (mLock) {
+                if (shouldEnablePickUpGestureLp()) {
+                    wakeUp(SystemClock.uptimeMillis(), mAllowTheaterModeWakeFromWakeGesture,
+                            PowerManager.WAKE_REASON_GESTURE, "android.policy:GESTURE");
+                }
+            }
+        }
+    }
+
+    private void updatePickUpGestureListenerLp() {
+        if (shouldEnablePickUpGestureLp()) {
+            mPickUpGestureListener.requestWakeUpTrigger();
+        } else {
+            mPickUpGestureListener.cancelWakeUpTrigger();
+        }
+    }
+
+    private boolean shouldEnablePickUpGestureLp() {
+        return mPickUpGestureEnabledSetting && !mDefaultDisplayPolicy.isAwake()
+                && (getLidBehavior() != LID_BEHAVIOR_SLEEP
+                || mDefaultDisplayPolicy.getLidState() != LID_CLOSED)
+                && mPickUpGestureListener.isSupported();
+    }
+    //add by t2m yingyubin for FP5-189 20230324
 
     final IPersistentVrStateCallbacks mPersistentVrModeListener =
             new IPersistentVrStateCallbacks.Stub() {
@@ -1962,6 +2004,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         mHandler = new PolicyHandler();
         mWakeGestureListener = new MyWakeGestureListener(mContext, mHandler);
+        mPickUpGestureListener = new MyPickUpGestureListener(mContext, mHandler);
         mSettingsObserver = new SettingsObserver(mHandler);
         mSettingsObserver.observe();
         mModifierShortcutManager = new ModifierShortcutManager(context);
@@ -2469,6 +2512,16 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mWakeGestureEnabledSetting = wakeGestureEnabledSetting;
                 updateWakeGestureListenerLp();
             }
+
+            //add by t2m yingyubin for FP5-189 20230324
+            boolean pickUpGestureEnabledSetting = Settings.Secure.getIntForUser(resolver,
+                    Settings.Secure.PICK_UP_GESTURE_ENABLED, 0,
+                    UserHandle.USER_CURRENT) != 0;
+            if (mPickUpGestureEnabledSetting != pickUpGestureEnabledSetting) {
+                mPickUpGestureEnabledSetting = pickUpGestureEnabledSetting;
+                updatePickUpGestureListenerLp();
+            }
+            //add by t2m yingyubin for FP5-189 20230324
 
             // use screen off timeout setting as the timeout for the lockscreen
             mLockScreenTimeout = Settings.System.getIntForUser(resolver,
@@ -4535,6 +4588,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // the wake lock and let the system suspend once this function returns.
         synchronized (mLock) {
             updateWakeGestureListenerLp();
+            //add by t2m yingyubin for FP5-189 20230324
+            updatePickUpGestureListenerLp();
+            //add by t2m yingyubin for FP5-189 20230324
             updateLockScreenTimeout();
         }
         mDefaultDisplayRotation.updateOrientationListener();
@@ -4582,6 +4638,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // may happen in a future call to goToSleep.
         synchronized (mLock) {
             updateWakeGestureListenerLp();
+            //add by t2m yingyubin for FP5-189 20230324
+            updatePickUpGestureListenerLp();
+            //add by t2m yingyubin for FP5-189 20230324
             updateLockScreenTimeout();
         }
         mDefaultDisplayRotation.updateOrientationListener();
@@ -5281,6 +5340,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         synchronized (mLock) {
             updateWakeGestureListenerLp();
+            //add by t2m yingyubin for FP5-189 20230324
+            updatePickUpGestureListenerLp();
+            //add by t2m yingyubin for FP5-189 20230324
         }
     }
 
