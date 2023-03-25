@@ -1137,7 +1137,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     private boolean isVowifiAvailable() {
 
         // modify by T2M.zhang renjie for FP4-3605 22-03-24 begin
-        boolean mVoWiFiSettingEnabled = false;
+        /*boolean mVoWiFiSettingEnabled = false;
         int activeDataSubId = mDefaults.getActiveDataSubId();
         ImsMmTelManager imsMmTelManager;
         try {
@@ -1154,7 +1154,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         boolean mMMtelVowifi = false;
         if (mPhone != null) {
             mMMtelVowifi = mPhone.isWifiCallingAvailable();
-        }
+        }*/
 
         //[BUG]-Modify-Begin by huan.sun 2022-11-24 [FP4S-690]VoWifi icon display obnormally
         int regTech = ImsRegistrationImplBase.REGISTRATION_TECH_NONE;
@@ -1163,7 +1163,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         }
         //[BUG]-Modify-Begin by huan.sun
 
-        Log.i(mTag, "isVowifiAvailable,mVoWiFiSettingEnabled = " + mVoWiFiSettingEnabled + " mMMtelVowifi = "+ mMMtelVowifi + " getDataNetworkType() = "
+        Log.i(mTag, "isVowifiAvailable, getDataNetworkType() = " 
             + getDataNetworkType() + " mCurrentState.voiceCapable = " +mCurrentState.voiceCapable + " mCurrentState.imsRegistered = "+ mCurrentState.imsRegistered
             + ", regTech = " + regTech);
 
