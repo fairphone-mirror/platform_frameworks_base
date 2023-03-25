@@ -1435,6 +1435,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        //add by t2m yingyubin for FP5-186 20230325
+        filter.addAction("intent.action.faceunlock");
+        //add by t2m yingyubin for FP5-186 20230325
         mBroadcastDispatcher.registerReceiver(mBroadcastReceiver, filter, null, UserHandle.ALL);
     }
 
@@ -2685,7 +2688,11 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
                 finishBarAnimations();
                 resetUserExpandedStates();
+            //add by t2m yingyubin for FP5-186 20230325
+            } else if ("intent.action.faceunlock".equals(action)) {
+                mStatusBarKeyguardViewManager.getBouncer().doUnlock();
             }
+            //add by t2m yingyubin for FP5-186 20230325
             Trace.endSection();
         }
     };

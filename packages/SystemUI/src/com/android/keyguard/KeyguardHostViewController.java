@@ -317,6 +317,14 @@ public class KeyguardHostViewController extends ViewController<KeyguardHostView>
         mKeyguardSecurityContainerController.showPrimarySecurityScreen(false);
     }
 
+    //add by t2m yingyubin for FP5-186 20230325
+    public void doUnlock() {
+        final int userId =  KeyguardUpdateMonitor.getCurrentUser();
+        mKeyguardSecurityContainerController.showNextSecurityScreenOrFinish(
+                true, userId, true);
+    }
+    //add by t2m yingyubin for FP5-186 20230325
+
     /**
      * Fades and translates in/out the security screen.
      * Fades in as expansion approaches 0.
