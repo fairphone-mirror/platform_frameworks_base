@@ -1152,7 +1152,7 @@ class Task extends WindowContainer<WindowContainer> {
                     && (newParent == null || !newParent.inPinnedWindowingMode())) {
                 // Notify if a task from the pinned stack is being removed
                 // (or moved depending on the mode).
-                mAtmService.getTaskChangeNotificationController().notifyActivityUnpinned();
+                mRootWindowContainer.notifyActivityPipModeChanged(this, null);
             }
         }
 
@@ -3654,6 +3654,27 @@ class Task extends WindowContainer<WindowContainer> {
     }
 
     /**
+     * Removes the activity info if the activity belongs to a different uid, which is
+     * different from the app that hosts the task.
+     */
+    static void trimIneffectiveInfo(Task task, TaskInfo info) {
+        final ActivityRecord baseActivity = task.getActivity(r -> !r.finishing,
+                false /* traverseTopToBottom */);
+        final int baseActivityUid =
+                baseActivity != null ? baseActivity.getUid() : task.effectiveUid;
+
+        if (info.topActivityInfo != null
+                && task.effectiveUid != info.topActivityInfo.applicationInfo.uid) {
+            info.topActivity = null;
+            info.topActivityInfo = null;
+        }
+
+        if (task.effectiveUid != baseActivityUid) {
+            info.baseActivity = null;
+        }
+    }
+
+    /**
      * Returns a {@link TaskInfo} with information from this task.
      */
     ActivityManager.RunningTaskInfo getTaskInfo() {
@@ -4649,5 +4670,4 @@ class Task extends WindowContainer<WindowContainer> {
     long getProtoFieldId() {
         return TASK;
     }
-
 }
