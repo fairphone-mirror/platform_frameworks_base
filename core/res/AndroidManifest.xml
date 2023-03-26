@@ -850,6 +850,9 @@
     <protected-broadcast android:name="android.app.action.PROVISIONING_COMPLETED" />
     <protected-broadcast android:name="android.app.action.LOST_MODE_LOCATION_UPDATE" />
 
+    <!-- add by t2m yingyubin for FP5-186 20230325 -->
+    <protected-broadcast android:name="intent.action.faceunlock" />
+
     <!-- ====================================================================== -->
     <!--                          RUNTIME PERMISSIONS                           -->
     <!-- ====================================================================== -->

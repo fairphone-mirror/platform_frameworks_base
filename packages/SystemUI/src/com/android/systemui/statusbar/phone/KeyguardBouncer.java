@@ -462,6 +462,12 @@ public class KeyguardBouncer {
         return mKeyguardViewController.getTop();
     }
 
+    //add by t2m yingyubin for FP5-186 20230325
+    public void doUnlock() {
+        mKeyguardViewController.doUnlock();
+    }
+    //add by t2m yingyubin for FP5-186 20230325
+
     protected void ensureView() {
         // Removal of the view might be deferred to reduce unlock latency,
         // in this case we need to force the removal, otherwise we'll

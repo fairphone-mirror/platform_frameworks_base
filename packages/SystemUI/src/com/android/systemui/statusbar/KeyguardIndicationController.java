@@ -95,6 +95,8 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 
 import javax.inject.Inject;
+import android.provider.Settings;
+import com.android.systemui.FaceUnlockUtil;
 
 /**
  * Controls the indications and error messages shown on the Keyguard
@@ -189,6 +191,19 @@ public class KeyguardIndicationController {
                 hideBiometricMessageDelayed(BaseKeyguardCallback.HIDE_DELAY_MS);
                 mMessageToShowOnScreenOn = null;
             }
+            //add by t2m yingyubin for FP5-186 20230325
+            int mainFaceId = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    "enroll_main_face_id", 0,
+                    UserHandle.USER_CURRENT);
+            int secondFaceId = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    "enroll_second_face_id", 0,
+                    UserHandle.USER_CURRENT);
+            int userId = KeyguardUpdateMonitor.getCurrentUser();
+            boolean faceUnlockSupported = FaceUnlockUtil.getInstance().isFaceUnlockSupported(mContext);
+            if((mainFaceId > 0 || secondFaceId >0) && faceUnlockSupported && mKeyguardUpdateMonitor.isUserUnlocked(userId)) {
+                FaceUnlockUtil.getInstance().startFaceUnlock(mContext);
+            }
+            //add by t2m yingyubin for FP5-186 20230325
         }
     };
 
