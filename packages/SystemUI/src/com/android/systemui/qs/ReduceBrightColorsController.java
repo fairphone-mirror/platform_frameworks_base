@@ -66,7 +66,8 @@ public class ReduceBrightColorsController implements
                 final String setting = uri == null ? null : uri.getLastPathSegment();
                 synchronized (mListeners) {
                     if (setting != null && mListeners.size() != 0) {
-                        if (setting.equals(Settings.Secure.REDUCE_BRIGHT_COLORS_ACTIVATED)) {
+                        if (setting.equals(Settings.Secure.REDUCE_BRIGHT_COLORS_ACTIVATED) || 
+                            setting.equals(Settings.Secure.ENABLE_REDUCE_BRIGHT_COLORS)) {
                             for (Listener listener : mListeners) {
                                 listener.onActivated(mManager.isReduceBrightColorsActivated());
                             }
@@ -85,6 +86,10 @@ public class ReduceBrightColorsController implements
                         mSecureSettings.registerContentObserverForUser(
                                 Settings.Secure.REDUCE_BRIGHT_COLORS_ACTIVATED,
                                 false, mContentObserver, newUser);
+                        mSecureSettings.registerContentObserverForUser(
+                                Settings.Secure.getUriFor(
+                                        Settings.Secure.ENABLE_REDUCE_BRIGHT_COLORS),
+                                false, mContentObserver, newUser);
                     }
                 }
             }
@@ -100,6 +105,10 @@ public class ReduceBrightColorsController implements
                 if (mListeners.size() == 1) {
                     mSecureSettings.registerContentObserverForUser(
                             Settings.Secure.REDUCE_BRIGHT_COLORS_ACTIVATED,
+                            false, mContentObserver, mUserTracker.getUserId());
+                    mSecureSettings.registerContentObserverForUser(
+                            Settings.Secure.getUriFor(
+                                    Settings.Secure.ENABLE_REDUCE_BRIGHT_COLORS),
                             false, mContentObserver, mUserTracker.getUserId());
                 }
             }

@@ -8522,6 +8522,15 @@ public final class Settings {
                 "reduce_bright_colors_activated";
 
         /**
+         * Setting that specifies whether Reduce Bright Colors, or brightness dimming by color
+         * adjustment, is enabled.
+         *
+         * @hide
+         */
+        public static final String ENABLE_REDUCE_BRIGHT_COLORS =
+                "enable_reduce_bright_colors";
+
+        /**
          * Setting that specifies the level of Reduce Bright Colors in intensity. The range is
          * [0, 100].
          *

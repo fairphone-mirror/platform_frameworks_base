@@ -45,6 +45,14 @@ import com.android.systemui.qs.tileimpl.QSTileImpl;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import android.hardware.SensorManager;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorEvent;
+import android.content.Context;
+import android.provider.Settings.Secure;
+import android.hardware.Sensor;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 
 /** Quick settings tile: Reduce Bright Colors **/
 public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
@@ -54,6 +62,11 @@ public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
     private final boolean mIsAvailable;
     private final ReduceBrightColorsController mReduceBrightColorsController;
     private boolean mIsListening;
+    private final SensorManager mSensorManager;
+    private int mSmallLuxCounter = 0;
+    private int mLageLuxCounter = 0 ;
+    private final float CAN_ENTRY_EXTRA_DIM_VALUE = 80;
+    private boolean mRegistLightsensor = false;
 
     @Inject
     public ReduceBrightColorsTile(
@@ -74,12 +87,66 @@ public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
         mReduceBrightColorsController = reduceBrightColorsController;
         mReduceBrightColorsController.observe(getLifecycle(), this);
         mIsAvailable = isAvailable;
+        mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager.registerListener(mLightSensorListener,mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT),
+                  SensorManager.SENSOR_DELAY_NORMAL);
+        mRegistLightsensor = true;
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
+        mContext.registerReceiver(mReceiver, filter);
 
     }
+
     @Override
     public boolean isAvailable() {
         return mIsAvailable;
     }
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()) {
+                case Intent.ACTION_SCREEN_ON:
+                  if(!mRegistLightsensor){
+                      mSensorManager.registerListener(mLightSensorListener,mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT),
+                          SensorManager.SENSOR_DELAY_NORMAL);
+                      mRegistLightsensor=true;
+                    }
+                    break;
+                case Intent.ACTION_SCREEN_OFF:
+                    mSensorManager.unregisterListener(mLightSensorListener);
+                    mRegistLightsensor=false;
+                    break;
+            }
+        }
+    };
+
+    private final SensorEventListener mLightSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            final float lux = event.values[0];
+            if(lux <= CAN_ENTRY_EXTRA_DIM_VALUE){
+                mSmallLuxCounter++;
+                mLageLuxCounter = 0;
+            }else {
+                mSmallLuxCounter = 0;
+                mLageLuxCounter++;
+            }
+            if(mLageLuxCounter == 10){
+                mReduceBrightColorsController.setReduceBrightColorsActivated(false);
+                Secure.putInt(mContext.getContentResolver(),Secure.ENABLE_REDUCE_BRIGHT_COLORS,0);
+            }
+            if(mSmallLuxCounter == 10){
+                Secure.putInt(mContext.getContentResolver(),Secure.ENABLE_REDUCE_BRIGHT_COLORS,1);
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // Not used.
+        }
+    };
 
     @Override
     protected void handleDestroy() {
@@ -109,7 +176,12 @@ public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
         state.value = mReduceBrightColorsController.isReduceBrightColorsActivated();
-        state.state = state.value ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
+        boolean isEnableExtraDim = Secure.getInt(mContext.getContentResolver(),Secure.ENABLE_REDUCE_BRIGHT_COLORS,0) == 1;
+        if(isEnableExtraDim){
+            state.state = state.value ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
+        } else {
+            state.state = Tile.STATE_UNAVAILABLE;
+        }
         state.label = mContext.getString(R.string.reduce_bright_colors_feature_name);
         state.expandedAccessibilityClassName = Switch.class.getName();
         state.contentDescription = state.label;
