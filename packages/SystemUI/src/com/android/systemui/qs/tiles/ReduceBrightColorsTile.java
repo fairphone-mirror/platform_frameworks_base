@@ -136,6 +136,8 @@ public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
             if(mLageLuxCounter == 10){
                 mReduceBrightColorsController.setReduceBrightColorsActivated(false);
                 Secure.putInt(mContext.getContentResolver(),Secure.ENABLE_REDUCE_BRIGHT_COLORS,0);
+                Secure.putString(mContext.getContentResolver(),Secure.ACCESSIBILITY_SHORTCUT_TARGET_SERVICE,"");
+                Secure.putString(mContext.getContentResolver(),Secure.ACCESSIBILITY_BUTTON_TARGETS,"");
             }
             if(mSmallLuxCounter == 10){
                 Secure.putInt(mContext.getContentResolver(),Secure.ENABLE_REDUCE_BRIGHT_COLORS,1);
@@ -165,7 +167,10 @@ public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
 
     @Override
     protected void handleClick(@Nullable View view) {
-        mReduceBrightColorsController.setReduceBrightColorsActivated(!mState.value);
+        boolean isEnableExtraDim = Secure.getInt(mContext.getContentResolver(),Secure.ENABLE_REDUCE_BRIGHT_COLORS,0) == 1;
+        if(isEnableExtraDim){
+            mReduceBrightColorsController.setReduceBrightColorsActivated(!mState.value);
+        }
     }
 
     @Override
