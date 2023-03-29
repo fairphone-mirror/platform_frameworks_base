@@ -2564,4 +2564,5 @@
     <!-- [CHAR LIMIT=NONE] Le audio broadcast dialog, media app is unknown -->
     <string name="bt_le_audio_broadcast_dialog_unknown_name">Unknown</string>
 
+    <string name="face_unlocking">Face unlocking in progress</string>
 </resources>
