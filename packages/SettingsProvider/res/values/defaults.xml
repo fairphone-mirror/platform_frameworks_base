@@ -322,4 +322,7 @@
 
     <!-- Whether tilt to bright is enabled by default. -->
     <bool name="def_wearable_tiltToBrightEnabled">false</bool>
+
+    <integer name="def_orientation_timing">2</integer>
+
 </resources>
