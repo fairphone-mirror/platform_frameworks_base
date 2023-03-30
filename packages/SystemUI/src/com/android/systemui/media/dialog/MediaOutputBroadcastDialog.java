@@ -19,7 +19,6 @@ package com.android.systemui.media.dialog;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -74,7 +73,7 @@ public class MediaOutputBroadcastDialog extends MediaOutputBaseDialog {
     MediaOutputBroadcastDialog(Context context, boolean aboveStatusbar,
             BroadcastSender broadcastSender, MediaOutputController mediaOutputController) {
         super(context, broadcastSender, mediaOutputController);
-        mAdapter = new MediaOutputGroupAdapter(mMediaOutputController);
+        mAdapter = new MediaOutputAdapter(mMediaOutputController);
         // TODO(b/226710953): Move the part to MediaOutputBaseDialog for every class
         //  that extends MediaOutputBaseDialog
         if (!aboveStatusbar) {
@@ -122,8 +121,8 @@ public class MediaOutputBroadcastDialog extends MediaOutputBaseDialog {
     }
 
     @Override
-    Drawable getAppSourceIcon() {
-        return mMediaOutputController.getAppSourceIcon();
+    IconCompat getAppSourceIcon() {
+        return mMediaOutputController.getNotificationSmallIcon();
     }
 
     @Override
@@ -346,16 +345,25 @@ public class MediaOutputBroadcastDialog extends MediaOutputBaseDialog {
     }
 
     private void handleUpdateFailedUi() {
-        final Button positiveBtn = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
-        mBroadcastErrorMessage.setVisibility(View.VISIBLE);
+        Button positiveBtn = null;
+        if (mAlertDialog != null) {
+            positiveBtn = mAlertDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        }
+        if (mBroadcastErrorMessage != null) {
+            mBroadcastErrorMessage.setVisibility(View.VISIBLE);
+        }
         if (mRetryCount < MAX_BROADCAST_INFO_UPDATE) {
             if (positiveBtn != null) {
                 positiveBtn.setEnabled(true);
             }
-            mBroadcastErrorMessage.setText(R.string.media_output_broadcast_update_error);
+            if (mBroadcastErrorMessage != null) {
+                mBroadcastErrorMessage.setText(R.string.media_output_broadcast_update_error);
+            }
         } else {
             mRetryCount = 0;
-            mBroadcastErrorMessage.setText(R.string.media_output_broadcast_last_update_error);
+            if (mBroadcastErrorMessage != null) {
+                mBroadcastErrorMessage.setText(R.string.media_output_broadcast_last_update_error);
+            }
         }
     }
 }
