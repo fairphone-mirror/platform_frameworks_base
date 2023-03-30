@@ -5169,4 +5169,9 @@
 
   <java-symbol type="drawable" name="focus_event_pressed_key_background" />
   <java-symbol type="string" name="lockscreen_too_many_failed_attempts_countdown" />
+
+  <java-symbol type="integer" name="config_screen_rotation_fade_out" />
+  <java-symbol type="integer" name="config_screen_rotation_total_90" />
+  <java-symbol type="integer" name="config_screen_rotation_total_180" />
+
 </resources>
