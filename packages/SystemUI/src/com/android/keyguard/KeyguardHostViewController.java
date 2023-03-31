@@ -322,7 +322,8 @@ public class KeyguardHostViewController extends ViewController<KeyguardHostView>
     public void doUnlock() {
         final int userId =  KeyguardUpdateMonitor.getCurrentUser();
         mKeyguardSecurityContainerController.showNextSecurityScreenOrFinish(
-                true, userId, true);
+                true, userId, true,
+                mKeyguardSecurityContainerController.getCurrentSecurityMode());
     }
     //add by t2m yingyubin for FP5-186 20230325
 

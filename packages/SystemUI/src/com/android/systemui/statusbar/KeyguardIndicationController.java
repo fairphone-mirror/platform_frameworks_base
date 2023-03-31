@@ -220,8 +220,8 @@ public class KeyguardIndicationController {
             boolean faceUnlockSupported = FaceUnlockUtil.getInstance().isFaceUnlockSupported(mContext);
             if((mainFaceId > 0 || secondFaceId >0) && faceUnlockSupported && mKeyguardUpdateMonitor.isUserUnlocked(userId)) {
                 FaceUnlockUtil.getInstance().startFaceUnlock(mContext);
-                showBiometricMessage(R.string.face_unlocking);
-                hideBiometricMessageDelayed(BaseKeyguardCallback.HIDE_DELAY_MS);
+                showBiometricMessage(mContext.getString(R.string.face_unlocking));
+                hideBiometricMessageDelayed(DEFAULT_HIDE_DELAY_MS);
             }
             //add by t2m yingyubin for FP5-186 20230325
         }
