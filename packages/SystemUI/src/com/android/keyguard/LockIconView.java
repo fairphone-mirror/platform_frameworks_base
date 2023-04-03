@@ -26,6 +26,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -42,13 +44,14 @@ import java.io.PrintWriter;
  * A view positioned under the notification shade.
  */
 public class LockIconView extends FrameLayout implements Dumpable {
-    @IntDef({ICON_NONE, ICON_LOCK, ICON_FINGERPRINT, ICON_UNLOCK})
+    @IntDef({ICON_NONE, ICON_LOCK, ICON_FINGERPRINT, ICON_UNLOCK, ICON_FACE})
     public @interface IconType {}
 
     public static final int ICON_NONE = -1;
     public static final int ICON_LOCK = 0;
     public static final int ICON_FINGERPRINT = 1;
     public static final int ICON_UNLOCK = 2;
+    public static final int ICON_FACE = 3;
 
     private @IconType int mIconType;
     private boolean mAod;
@@ -175,8 +178,25 @@ public class LockIconView extends FrameLayout implements Dumpable {
         mIconType = icon;
         mAod = aod;
 
-        mLockIcon.setImageState(getLockIconState(mIconType, mAod), true);
+        //add by t2m yingyubin for FP5-186 20230331
+        if(icon == ICON_FACE) {
+            setImageDrawable(getContext().getDrawable(R.drawable.face_dialog_pulse_dark_to_light));
+            shakeFaceView();
+        //add by t2m yingyubin for FP5-186 20230331
+        } else {
+            mLockIcon.setImageState(getLockIconState(mIconType, mAod), true);
+        }
     }
+
+    //add by t2m yingyubin for FP5-186 20230331
+    private void shakeFaceView() {
+        TranslateAnimation transAnim = new TranslateAnimation(0, -10, 0, 0);
+        transAnim.setRepeatCount(10);
+        transAnim.setDuration(150);
+        transAnim.setRepeatMode(Animation.REVERSE);
+        mLockIcon.startAnimation(transAnim);
+    }
+    //add by t2m yingyubin for FP5-186 20230331
 
     private static int[] getLockIconState(@IconType int icon, boolean aod) {
         if (icon == ICON_NONE) {

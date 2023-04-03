@@ -2665,7 +2665,12 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 resetUserExpandedStates();
             //add by t2m yingyubin for FP5-186 20230325
             } else if ("intent.action.faceunlock".equals(action)) {
-                mStatusBarKeyguardViewManager.getBouncer().doUnlock();
+                boolean isFailed = intent.getIntExtra("faceunlock_status", 0) != 0;
+                if(isFailed) {
+                    mKeyguardIndicationController.showFaceUnlockFailed();
+                } else {
+                    mStatusBarKeyguardViewManager.getBouncer().doUnlock();
+                }
             }
             //add by t2m yingyubin for FP5-186 20230325
             Trace.endSection();

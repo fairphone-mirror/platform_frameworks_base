@@ -105,7 +105,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
-import android.provider.Settings;
 import com.android.systemui.FaceUnlockUtil;
 
 /**
@@ -210,15 +209,10 @@ public class KeyguardIndicationController {
                 mBiometricErrorMessageToShowOnScreenOn = null;
             }
             //add by t2m yingyubin for FP5-186 20230325
-            int mainFaceId = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    "enroll_main_face_id", 0,
-                    UserHandle.USER_CURRENT);
-            int secondFaceId = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    "enroll_second_face_id", 0,
-                    UserHandle.USER_CURRENT);
             int userId = KeyguardUpdateMonitor.getCurrentUser();
             boolean faceUnlockSupported = FaceUnlockUtil.getInstance().isFaceUnlockSupported(mContext);
-            if((mainFaceId > 0 || secondFaceId >0) && faceUnlockSupported && mKeyguardUpdateMonitor.isUserUnlocked(userId)) {
+            boolean hasFaceEnrolled = FaceUnlockUtil.getInstance().hasFaceEnrolled(mContext);
+            if(hasFaceEnrolled && faceUnlockSupported && mKeyguardUpdateMonitor.isUserUnlocked(userId)) {
                 FaceUnlockUtil.getInstance().startFaceUnlock(mContext);
                 showBiometricMessage(mContext.getString(R.string.face_unlocking));
                 hideBiometricMessageDelayed(DEFAULT_HIDE_DELAY_MS);
@@ -769,6 +763,13 @@ public class KeyguardIndicationController {
 
         updateTransient();
     }
+
+    //add by t2m yingyubin for FP5-186 20230331
+    public void showFaceUnlockFailed() {
+        showBiometricMessage(
+                mContext.getString(com.android.internal.R.string.faceunlock_multiple_failures));
+    }
+    //add by t2m yingyubin for FP5-186 20230331
 
     private void showBiometricMessage(CharSequence biometricMessage) {
         showBiometricMessage(biometricMessage, null);

@@ -21,6 +21,7 @@ import static android.hardware.biometrics.BiometricSourceType.FINGERPRINT;
 import static com.android.keyguard.LockIconView.ICON_FINGERPRINT;
 import static com.android.keyguard.LockIconView.ICON_LOCK;
 import static com.android.keyguard.LockIconView.ICON_UNLOCK;
+import static com.android.keyguard.LockIconView.ICON_FACE;
 import static com.android.systemui.classifier.Classifier.LOCK_ICON;
 import static com.android.systemui.doze.util.BurnInHelperKt.getBurnInOffset;
 
@@ -67,6 +68,7 @@ import java.io.PrintWriter;
 import java.util.Objects;
 
 import javax.inject.Inject;
+import com.android.systemui.FaceUnlockUtil;
 
 /**
  * Controls when to show the LockIcon affordance (lock/unlocked icon or circle) on lock screen.
@@ -261,10 +263,18 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         mShowUnlockIcon = (mCanDismissLockScreen || mUserUnlockedWithBiometric) && isLockScreen();
         mShowAodUnlockedIcon = mIsDozing && mUdfpsEnrolled && !mRunningFPS && mCanDismissLockScreen;
         mShowAodLockIcon = mIsDozing && mUdfpsEnrolled && !mRunningFPS && !mCanDismissLockScreen;
+        //add by t2m yingyubin for FP5-186 20230331
+        boolean showFaceIcon = mShowLockIcon && !FaceUnlockUtil.getInstance().isRebootView(getContext())
+                && FaceUnlockUtil.getInstance().hasFaceEnrolled(getContext());
 
         final CharSequence prevContentDescription = mView.getContentDescription();
         if (mShowLockIcon) {
-            mView.updateIcon(ICON_LOCK, false);
+            if(showFaceIcon) {
+                mView.updateIcon(ICON_FACE, false);
+                //add by t2m yingyubin for FP5-186 20230331
+            } else {
+                mView.updateIcon(ICON_LOCK, false);
+            }
             mView.setContentDescription(mLockedLabel);
             mView.setVisibility(View.VISIBLE);
         } else if (mShowUnlockIcon) {
