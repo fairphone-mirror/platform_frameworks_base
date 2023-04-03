@@ -492,6 +492,7 @@ public final class DreamManagerService extends SystemService {
         stopDreamLocked(true /*immediate*/, "starting new dream");
 
         Slog.i(TAG, "Entering dreamland.");
+        setDozeRate(true);
 
         final Binder newToken = new Binder();
         mCurrentDreamToken = newToken;
@@ -520,6 +521,7 @@ public final class DreamManagerService extends SystemService {
         if (mCurrentDreamToken != null) {
             if (immediate) {
                 Slog.i(TAG, "Leaving dreamland.");
+                setDozeRate(false);
                 cleanupDreamLocked();
             } else if (mCurrentDreamIsWaking) {
                 return; // already waking
@@ -535,6 +537,35 @@ public final class DreamManagerService extends SystemService {
                     mController.stopDream(immediate, reason);
                 }
             });
+        }
+    }
+
+    /**
+     * setDoze RefreshRate
+     */
+    private void setDozeRate(boolean isDoze){
+        int doze_ = Settings.Secure.getInt(getContext().getContentResolver(), Settings.Secure.DOZE_ALWAYS_ON, -1);
+        Slog.i(TAG,"   ====setDozeRate  doze_ = " + doze_);
+        try {
+            if (!isDoze){
+                String current_rate = SystemProperties.get("persist.sys.current_rate","0");
+                String doze_rate = SystemProperties.get("persist.sys.doze_rate","0");
+                Slog.i(TAG,"  __________>>> current_rate:" + current_rate + "   doze_rate:" + doze_rate);
+                if (!"0".equals(current_rate))
+                    Settings.System.putFloatForUser(mContext.getContentResolver(),
+                            Settings.System.MIN_REFRESH_RATE, Float.parseFloat(current_rate),
+                            UserHandle.myUserId());
+            }else {
+                String current_rate = SystemProperties.get("persist.sys.current_rate","0");
+                String doze_rate = SystemProperties.get("persist.sys.doze_rate","0");
+                Slog.i(TAG,"  <<<__________ current_rate:" + current_rate + "   doze_rate:" + doze_rate);
+                if (!"0".equals(doze_rate))
+                    Settings.System.putFloatForUser(mContext.getContentResolver(),
+                            Settings.System.MIN_REFRESH_RATE, Float.parseFloat(doze_rate),
+                            UserHandle.myUserId());
+            }
+        }catch (Exception e){
+            Slog.i(TAG,"   set doze rate Exception");
         }
     }
 
