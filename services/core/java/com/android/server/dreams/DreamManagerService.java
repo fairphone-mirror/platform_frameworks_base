@@ -68,6 +68,7 @@ import com.android.server.LocalServices;
 import com.android.server.SystemService;
 import com.android.server.wm.ActivityInterceptorCallback;
 import com.android.server.wm.ActivityTaskManagerInternal;
+import android.hardware.display.DisplayManager;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -90,6 +91,8 @@ public final class DreamManagerService extends SystemService {
     private final DreamHandler mHandler;
     private final DreamController mController;
     private final PowerManager mPowerManager;
+    private final DisplayManager mDisplayManager;
+    private final Display mDefaultDisplay;
     private final PowerManagerInternal mPowerManagerInternal;
     private final PowerManager.WakeLock mDozeWakeLock;
     private final ActivityTaskManagerInternal mAtmInternal;
@@ -147,6 +150,8 @@ public final class DreamManagerService extends SystemService {
         mController = new DreamController(context, mHandler, mControllerListener);
 
         mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+        mDisplayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+        mDefaultDisplay = mDisplayManager.getDisplay(Display.DEFAULT_DISPLAY);
         mPowerManagerInternal = getLocalService(PowerManagerInternal.class);
         mAtmInternal = getLocalService(ActivityTaskManagerInternal.class);
         mDozeWakeLock = mPowerManager.newWakeLock(PowerManager.DOZE_WAKE_LOCK, TAG);
@@ -544,25 +549,22 @@ public final class DreamManagerService extends SystemService {
      * setDoze RefreshRate
      */
     private void setDozeRate(boolean isDoze){
-        int doze_ = Settings.Secure.getInt(getContext().getContentResolver(), Settings.Secure.DOZE_ALWAYS_ON, -1);
-        Slog.i(TAG,"   ====setDozeRate  doze_ = " + doze_);
+        float current_refresh_Rate = mDefaultDisplay.getRefreshRate();
         try {
-            if (!isDoze){
-                String current_rate = SystemProperties.get("persist.sys.current_rate","0");
-                String doze_rate = SystemProperties.get("persist.sys.doze_rate","0");
-                Slog.i(TAG,"  __________>>> current_rate:" + current_rate + "   doze_rate:" + doze_rate);
-                if (!"0".equals(current_rate))
-                    Settings.System.putFloatForUser(mContext.getContentResolver(),
-                            Settings.System.MIN_REFRESH_RATE, Float.parseFloat(current_rate),
-                            UserHandle.myUserId());
+            if (isDoze){
+                //setRate to 30Hz
+                SystemProperties.set("persist.sys.current_rate",Float.toString(current_refresh_Rate));
+                Slog.i(TAG,"  __________>>> current_refresh_Rate:" + current_refresh_Rate);
+                Settings.System.putFloatForUser(mContext.getContentResolver(),
+                        Settings.System.MIN_REFRESH_RATE, 30f,
+                        UserHandle.myUserId());
             }else {
+                //restore Rate
                 String current_rate = SystemProperties.get("persist.sys.current_rate","0");
-                String doze_rate = SystemProperties.get("persist.sys.doze_rate","0");
-                Slog.i(TAG,"  <<<__________ current_rate:" + current_rate + "   doze_rate:" + doze_rate);
-                if (!"0".equals(doze_rate))
-                    Settings.System.putFloatForUser(mContext.getContentResolver(),
-                            Settings.System.MIN_REFRESH_RATE, Float.parseFloat(doze_rate),
-                            UserHandle.myUserId());
+                Slog.i(TAG,"  <<<__________ current_rate:" + current_rate );
+                Settings.System.putFloatForUser(mContext.getContentResolver(),
+                        Settings.System.MIN_REFRESH_RATE, Float.parseFloat(current_rate),
+                        UserHandle.myUserId());
             }
         }catch (Exception e){
             Slog.i(TAG,"   set doze rate Exception");
