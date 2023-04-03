@@ -874,6 +874,11 @@
     <protected-broadcast android:name="android.app.admin.action.DEVICE_FINANCING_STATE_CHANGED" />
     <protected-broadcast android:name="android.app.admin.action.DEVICE_POLICY_SET_RESULT" />
     <protected-broadcast android:name="android.app.admin.action.DEVICE_POLICY_CHANGED" />
+    
+    <!-- add by t2m yingyubin for FP5-186 20230325 -->
+    <protected-broadcast android:name="intent.action.faceunlock" />
+    <!-- fp5 high temp low temp warn-->
+    <protected-broadcast android:name="android.intent.action.BATTERY_WARM_TEMP_CHANGED" />
 
     <!-- ====================================================================== -->
     <!--                          RUNTIME PERMISSIONS                           -->
