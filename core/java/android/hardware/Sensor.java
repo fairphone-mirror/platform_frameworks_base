@@ -711,6 +711,21 @@ public final class Sensor {
      */
     public static final String STRING_TYPE_HINGE_ANGLE = "android.sensor.hinge_angle";
 
+ /**
+     * A constant describing a light sensor type.
+     * <p>See {@link android.hardware.SensorEvent#values SensorEvent.values}
+     * for more details.
+     */
+    public static final int TYPE_LIGHT_BACK = 33171100;
+
+    /**
+     * A constant string describing a back light sensor type.
+     *
+     * @see #TYPE_LIGHT_BACK
+     */
+    public static final String STRING_TYPE_LIGHT_BACK = "qti.sensor.light.back";
+
+
     /**
      * A constant describing a head tracker sensor. Note that this sensor type is typically not
      * available for apps to use.
@@ -898,7 +913,7 @@ public final class Sensor {
             3, // SENSOR_TYPE_GEOMAGNETIC_FIELD
             3, // SENSOR_TYPE_ORIENTATION
             3, // SENSOR_TYPE_GYROSCOPE
-            1, // SENSOR_TYPE_LIGHT
+            10, // SENSOR_TYPE_LIGHT
             1, // SENSOR_TYPE_PRESSURE
             1, // SENSOR_TYPE_TEMPERATURE
             2, // SENSOR_TYPE_PROXIMITY
@@ -1327,6 +1342,10 @@ public final class Sensor {
                 return true;
             case TYPE_LIGHT:
                 mStringType = STRING_TYPE_LIGHT;
+                return true;
+
+            case TYPE_LIGHT_BACK:
+                mStringType = STRING_TYPE_LIGHT_BACK;
                 return true;
             case TYPE_LINEAR_ACCELERATION:
                 mStringType = STRING_TYPE_LINEAR_ACCELERATION;
