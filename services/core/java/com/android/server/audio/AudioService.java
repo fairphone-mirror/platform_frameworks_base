@@ -5873,16 +5873,16 @@ public class AudioService extends IAudioService.Stub
 
             if (mode == AudioSystem.MODE_IN_COMMUNICATION) {
                 Log.d(TAG, "plt voipcall setMode(mode=" + mode + ", pid=" + pid + ", uid=" + uid + ", caller=" + callingPackage + ")");
-                if ("us.zoom.videomeetings".equals(callingPackage)) {
+                if ("us.zoom.videomeetings".equals(callingPackage) || (callingPackage != null && callingPackage.contains("zoom"))) {
                     AudioSystem.setParameters("voip_app_type=2");
                     Log.d(TAG, "plt voipcall zoom set voip_app_type=2");
                 } else if ("com.whatsapp".equals(callingPackage)) {
                     AudioSystem.setParameters("voip_app_type=3");
                     Log.d(TAG, "plt voipcall whatsapp set voip_app_type=3");
-                } else if ("com.facebook.katana".equals(callingPackage)) {
+                } else if ("com.facebook.katana".equals(callingPackage) || (callingPackage != null && callingPackage.contains("facebook"))) {
                     AudioSystem.setParameters("voip_app_type=4");
                     Log.d(TAG, "plt voipcall facebook set voip_app_type=4");
-                } else if ("jp.naver.line.android".equals(callingPackage)) {
+                } else if ("jp.naver.line.android".equals(callingPackage) || (callingPackage != null && callingPackage.contains("line"))) {
                     AudioSystem.setParameters("voip_app_type=5");
                     Log.d(TAG, "plt voipcall line set voip_app_type=5");
                 } else if ("5GNR".equals(callingPackage)) {
