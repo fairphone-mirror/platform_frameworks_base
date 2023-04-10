@@ -192,13 +192,14 @@ public class AppStateController {
     private void updateInstallState(String pkg, boolean isSimAppropriate, IPackageManager ipm) {
         Log.d(TAG, pkg + " updateInstallState sim Appropriate  " + isSimAppropriate + " mUserId = " + mUserId);
         try {
-            boolean success = ipm.setSystemAppInstallState(pkg, isSimAppropriate, mUserId);
+           boolean success = ipm.setSystemAppInstallState(pkg, isSimAppropriate, mUserId);
             Log.d(TAG, pkg +" updateInstallState:" + success);
-            if (!success && !isSimAppropriate){
+            if (!isSimAppropriate){
                 int[] userIds = UserManagerService.getInstance().getUserIdsIncludingPreCreated();
                 for (int uid : userIds){
                     if (uid != UserHandle.USER_SYSTEM){
-                        ipm.setApplicationEnabledSetting(pkg,PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER,PackageManager.UNINSTALL_REASON_UNKNOWN,uid,mContext.getBasePackageName());
+                        ipm.setApplicationHiddenSettingAsUser(pkg,true,uid);
+                        ipm.setApplicationEnabledSetting(pkg,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.UNINSTALL_REASON_UNKNOWN,uid,mContext.getBasePackageName());
                     }
                }
 
