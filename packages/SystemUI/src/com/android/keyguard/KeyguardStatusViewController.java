@@ -59,6 +59,9 @@ import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.util.ViewController;
 
 import javax.inject.Inject;
+import android.os.Handler;
+import android.provider.Settings;
+import android.os.SystemProperties;
 
 /**
  * Injectable controller for {@link KeyguardStatusView}.
@@ -84,6 +87,7 @@ public class KeyguardStatusViewController extends ViewController<KeyguardStatusV
     private final FeatureFlags mFeatureFlags;
     private final InteractionJankMonitor mInteractionJankMonitor;
     private final Rect mClipBounds = new Rect();
+    private Handler mHandler;
 
     private Boolean mStatusViewCentered = true;
 
@@ -128,6 +132,7 @@ public class KeyguardStatusViewController extends ViewController<KeyguardStatusV
     @Override
     public void onInit() {
         mKeyguardClockSwitchController.init();
+        mHandler = new Handler();
     }
 
     @Override
@@ -289,6 +294,7 @@ public class KeyguardStatusViewController extends ViewController<KeyguardStatusV
     private KeyguardUpdateMonitorCallback mInfoCallback = new KeyguardUpdateMonitorCallback() {
         @Override
         public void onTimeChanged() {
+            setViewPaddingTop();
             refreshTime();
         }
 
@@ -474,5 +480,27 @@ public class KeyguardStatusViewController extends ViewController<KeyguardStatusV
         public String[] getTransitionProperties() {
             return TRANSITION_PROPERTIES;
         }
+
+     * set View padding top when in doze
+     */
+    private void setViewPaddingTop(){
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int doze_ = Settings.Secure.getInt(getContext().getContentResolver(), Settings.Secure.DOZE_ALWAYS_ON, -1);
+                int padTop = mView.getPaddingTop();
+                String in_doze = SystemProperties.get("persist.sys.in_doze");
+                Slog.v(TAG, "   dozeTimeTick  doze_ = " + doze_  + "     padTop =" + padTop + "      in_doze=" + in_doze);
+                if (doze_ == 1 && "1".equals(in_doze)){
+                    if (padTop > 1500)
+                        padTop = 0;
+                    mView.setPadding( mView.getPaddingLeft(),  padTop + 100,
+                            mView.getPaddingRight(),  mView.getPaddingBottom());
+                }else if (doze_ == 1 && padTop != 0){
+                    mView.setPadding( mView.getPaddingLeft(),  0,
+                            mView.getPaddingRight(),  mView.getPaddingBottom());
+                }
+            }
+        },50);
     }
 }

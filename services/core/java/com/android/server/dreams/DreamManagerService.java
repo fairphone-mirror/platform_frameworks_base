@@ -742,9 +742,12 @@ public final class DreamManagerService extends SystemService {
      * setDoze RefreshRate
      */
     private void setDozeRate(boolean isDoze){
-        float current_refresh_Rate = mDefaultDisplay.getRefreshRate();
-        try {
+        int doze_ = Settings.Secure.getInt(getContext().getContentResolver(), Settings.Secure.DOZE_ALWAYS_ON, -1);
+        if (doze_ == 1)
+            try {
+            float current_refresh_Rate = mDefaultDisplay.getRefreshRate();
             if (isDoze){
+                SystemProperties.set("persist.sys.in_doze","1");
                 //setRate to 30Hz
                 SystemProperties.set("persist.sys.current_rate",Float.toString(current_refresh_Rate));
                 Slog.i(TAG,"  __________>>> current_refresh_Rate:" + current_refresh_Rate);
@@ -752,6 +755,7 @@ public final class DreamManagerService extends SystemService {
                         Settings.System.MIN_REFRESH_RATE, 30f,
                         UserHandle.myUserId());
             }else {
+                SystemProperties.set("persist.sys.in_doze","0");
                 //restore Rate
                 String current_rate = SystemProperties.get("persist.sys.current_rate","0");
                 Slog.i(TAG,"  <<<__________ current_rate:" + current_rate );
