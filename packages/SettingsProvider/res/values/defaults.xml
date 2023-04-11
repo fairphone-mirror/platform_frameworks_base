@@ -168,6 +168,9 @@
     <!-- Default for Settings.Secure.LOCK_SCREEN_SHOW_ONLY_UNSEEN_NOTIFICATIONS -->
     <bool name="def_lock_screen_show_only_unseen_notifications">false</bool>
 
+    <!-- Default for Settings.Secure.LOCKSCREEN_USE_DOUBLE_LINE_CLOCK -->
+    <bool name="def_lock_screen_show_double_line_clock">true</bool>
+
     <!-- Default for Settings.Global.HEADS_UP_NOTIFICATIONS_ENABLED, 1==on -->
     <integer name="def_heads_up_enabled">1</integer>
 

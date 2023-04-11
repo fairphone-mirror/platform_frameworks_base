@@ -3631,7 +3631,7 @@ public class SettingsProvider extends ContentProvider {
         }
 
         private final class UpgradeController {
-            private static final int SETTINGS_VERSION = 212;
+            private static final int SETTINGS_VERSION = 213;
 
             private final int mUserId;
 
@@ -5545,6 +5545,25 @@ public class SettingsProvider extends ContentProvider {
                     }
 
                     currentVersion = 212;
+                }
+                if (currentVersion == 212) {
+                    // Version 212: Set default value for
+                    // Secure#LOCKSCREEN_USE_DOUBLE_LINE_CLOCK
+                    final SettingsState secureSettings = getSecureSettingsLocked(userId);
+                    final Setting lockScreenDoubleLineSetting = secureSettings
+                            .getSettingLocked(Secure.LOCKSCREEN_USE_DOUBLE_LINE_CLOCK);
+                    if (lockScreenDoubleLineSetting.isNull()) {
+                        final boolean defSetting = getContext().getResources()
+                                .getBoolean(R.bool.def_lock_screen_show_double_line_clock);
+                        secureSettings.insertSettingOverrideableByRestoreLocked(
+                                Secure.LOCKSCREEN_USE_DOUBLE_LINE_CLOCK,
+                                defSetting ? "1" : "0",
+                                null /* tag */,
+                                true /* makeDefault */,
+                                SettingsState.SYSTEM_PACKAGE_NAME);
+                    }
+
+                    currentVersion = 213;
                 }
 
                 // vXXX: Add new settings above this point.
