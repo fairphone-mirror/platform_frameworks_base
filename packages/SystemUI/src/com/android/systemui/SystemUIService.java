@@ -83,6 +83,13 @@ public class SystemUIService extends Service {
             throw new RuntimeException();
         }
 
+        //+ FP5-564. Disable Android's rescue party. liquan.zhou.t2m. 20230412
+        // For debugging RescueParty
+        if (Build.IS_DEBUGGABLE && SystemProperties.getBoolean("persist.debug.crash_sysui", false)) {
+            throw new RuntimeException();
+        }
+        //- FP5-564. Disable Android's rescue party. liquan.zhou.t2m. 20230412
+
         if (Build.IS_DEBUGGABLE) {
             // b/71353150 - looking for leaked binder proxies
             BinderInternal.nSetBinderProxyCountEnabled(true);
