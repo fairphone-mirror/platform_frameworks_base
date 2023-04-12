@@ -743,15 +743,15 @@ public final class BatteryService extends SystemService {
         boolean isUsbPresent = getUsbPresent();
         float ntcTemp = getUsbNTCTemp();
 
-        if (isUsbPresent && ntcTemp >= 90){
+        if (isUsbPresent && ntcTemp >= 80){
             // float ntcTemp = getUsbNTCTemp();
             Intent intent = new Intent("intent.battery.usbntc.temperror");
             intent.putExtra("disable",0);
-            if (ntcTemp >= 90 && ntcTemp < 100) {
-                intent.putExtra("speakerNoise",0);
-            }else if (ntcTemp >= 100) {
+            // if (ntcTemp >= 90 && ntcTemp < 100) {
+            //     intent.putExtra("speakerNoise",0);
+            // }else if (ntcTemp >= 100) {
                 intent.putExtra("speakerNoise",1);
-            }
+            // }
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -759,7 +759,7 @@ public final class BatteryService extends SystemService {
                 }
             });
 
-        }else if ((isUsbPresent && ntcTemp <= 80) || !isUsbPresent) {
+        }else if ((isUsbPresent && ntcTemp <= 70) || !isUsbPresent) {
             Intent intent = new Intent("intent.battery.usbntc.temperror");
             intent.putExtra("disable",1);
             intent.putExtra("speakerNoise",0);

@@ -3036,7 +3036,7 @@
     <!-- Message to describe "Wi-Fi scan always available feature" when Wi-Fi is off and Wi-Fi scanning is on. [CHAR LIMIT=NONE] -->
     <string name="wifi_scan_notify_message">To improve device experience, apps and services can still scan for Wi\u2011Fi networks at any time, even when Wi\u2011Fi is off. You can change this in Wi\u2011Fi scanning settings. <annotation id="link">Change</annotation></string>
 
-    <string name="usbntc_temp_message">Your USB NTC temperature is too High,please disconnect the changer!</string>
+    <string name="usbntc_temp_message">High temperature at USB connector. Do not touch the phone and disconnect the charger and cable immediately!</string>
     <string name="usbntc_temp_title">Height USB NTC Temperature</string>
 
     <string name="usbntc_temp_notification_title">Warning</string>
