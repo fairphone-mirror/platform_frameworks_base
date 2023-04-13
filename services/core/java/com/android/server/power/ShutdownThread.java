@@ -117,6 +117,8 @@ public final class ShutdownThread extends Thread {
 
     // File to use for saving shutdown metrics
     private static final String METRICS_FILE_BASENAME = "/data/system/shutdown-metrics";
+    // File to use for save ShutdownTime
+    private static final String TIME_FILE_BASENAME = "/data/system/shutdown-time";
     // File to use for saving shutdown check points
     private static final String CHECK_POINTS_FILE_BASENAME =
             "/data/system/shutdown-checkpoints/checkpoints";
@@ -586,6 +588,7 @@ public final class ShutdownThread extends Thread {
 
         shutdownTimingLog.traceEnd(); // SystemServerShutdown
         metricEnded(METRIC_SYSTEM_SERVER);
+        saveShutDownTime();
         saveMetrics(mReboot, mReason);
         // Remaining work will be done by init, including vold shutdown
         rebootOrShutdown(mContext, mReboot, mReason);
@@ -780,6 +783,24 @@ public final class ShutdownThread extends Thread {
         // Shutdown power
         Log.i(TAG, "Performing low-level shutdown...");
         PowerManagerService.lowLevelShutdown(reason);
+    }
+
+    private static void saveShutDownTime() {
+        StringBuilder timeValue = new StringBuilder();
+        timeValue.append("shutdown_time:");
+        long shutdownTime = System.currentTimeMillis();
+        timeValue.append(shutdownTime);
+        File tmp = new File(TIME_FILE_BASENAME + ".tmp");
+        boolean saved = false;
+        try (FileOutputStream fos = new FileOutputStream(tmp)) {
+            fos.write(timeValue.toString().getBytes(StandardCharsets.UTF_8));
+            saved = true;
+        } catch (IOException e) {
+            Log.e(TAG,"Cannot save shutdown time", e);
+        }
+        if (saved) {
+            tmp.renameTo(new File(TIME_FILE_BASENAME + ".txt"));
+        }
     }
 
     private static void saveMetrics(boolean reboot, String reason) {

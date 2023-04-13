@@ -447,6 +447,8 @@ public final class SystemServer implements Dumpable {
     private static final String UNCRYPT_PACKAGE_FILE = "/cache/recovery/uncrypt_file";
     private static final String BLOCK_MAP_FILE = "/cache/recovery/block.map";
 
+    private static final String TIME_FILE_NAME = "/data/system/shutdown-time.txt";
+
     // maximum number of binder threads used for system_server
     // will be higher than the system default
     private static final int sMaxBinderThreads = 31;
@@ -949,6 +951,13 @@ public final class SystemServer implements Dumpable {
             // Only update the timeout after starting all the services so that we use
             // the default timeout to start system server.
             updateWatchdogTimeout(t);
+
+            long currentTimeMillis = System.currentTimeMillis();
+            long shutDwonTime = getShutDownTime();
+            if (shutDwonTime != -1 && currentTimeMillis < shutDwonTime) {
+                Slog.w(TAG,"Setting the shutdown time.");
+                SystemClock.setCurrentTimeMillis(shutDwonTime);
+            }
         } catch (Throwable ex) {
             Slog.e("System", "******************************************");
             Slog.e("System", "************ Failure starting system services", ex);
@@ -975,6 +984,23 @@ public final class SystemServer implements Dumpable {
         Looper.loop();
         throw new RuntimeException("Main thread loop unexpectedly exited");
     }
+
+    private long getShutDownTime(){
+        File timeFile = new File(TIME_FILE_NAME);
+         String timeStr = null;
+         if (timeFile.exists()) {
+             try {
+                 timeStr = FileUtils.readTextFile(timeFile, 0, null);
+             } catch (IOException e) {
+                 Slog.e(TAG, "Problem reading " + timeFile, e);
+             }
+             timeFile.delete();
+         }
+         if (!TextUtils.isEmpty(timeStr)) {
+            return Long.valueOf(timeStr.substring(timeStr.lastIndexOf(":")+1));
+         }
+         return -1;
+   }
 
     private static boolean isValidTimeZoneId(String timezoneProperty) {
         return timezoneProperty != null
