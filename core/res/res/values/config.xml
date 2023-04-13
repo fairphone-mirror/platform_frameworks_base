@@ -5098,7 +5098,7 @@
 
     <!-- Default refresh rate in the zone defined by brightness and ambient thresholds.
          If non-positive, then the refresh rate is unchanged even if thresholds are configured. -->
-    <integer name="config_defaultRefreshRateInZone">0</integer>
+    <integer name="config_defaultRefreshRateInZone">30</integer>
 
     <!-- The display uses different gamma curves for different refresh rates. It's hard for panel
          vendors to tune the curves to have exact same brightness for different refresh rate. So
