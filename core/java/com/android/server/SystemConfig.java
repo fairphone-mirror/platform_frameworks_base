@@ -101,6 +101,9 @@ public class SystemConfig {
     // property for runtime configuration differentiation in vendor
     private static final String VENDOR_SKU_PROPERTY = "ro.boot.product.vendor.sku";
 
+    // property for runtime configuration differentiation based on baseband type
+    private static final String NO_RIL_PROPERTY = "ro.radio.noril";
+
     private static final ArrayMap<String, ArraySet<String>> EMPTY_PERMISSIONS =
             new ArrayMap<>();
 
@@ -339,6 +342,8 @@ public class SystemConfig {
     // A map from package name of vendor APEXes that can be updated to an installer package name
     // allowed to install updates for it.
     private final ArrayMap<String, String> mAllowedVendorApexes = new ArrayMap<>();
+    // A set of package names that are allowed to use <install-constraints> manifest tag.
+    private final Set<String> mInstallConstraintsAllowlist = new ArraySet<>();
 
     private String mModulesInstallerPackageName;
 
@@ -535,6 +540,10 @@ public class SystemConfig {
         return mAllowedVendorApexes;
     }
 
+    public Set<String> getInstallConstraintsAllowlist() {
+        return mInstallConstraintsAllowlist;
+    }
+
     public String getModulesInstallerPackageName() {
         return mModulesInstallerPackageName;
     }
@@ -633,6 +642,17 @@ public class SystemConfig {
                     vendorPermissionFlag);
             readPermissions(parser, Environment.buildPath(
                     Environment.getVendorDirectory(), "etc", "permissions", vendorSkuDir),
+                    vendorPermissionFlag);
+        }
+
+        boolean noRilSupport = SystemProperties.getBoolean(NO_RIL_PROPERTY, false);
+        if (noRilSupport) {
+            String noRilDir = "noRil";
+            readPermissions(parser, Environment.buildPath(
+                    Environment.getVendorDirectory(), "etc", "sysconfig", noRilDir),
+                    vendorPermissionFlag);
+            readPermissions(parser, Environment.buildPath(
+                    Environment.getVendorDirectory(), "etc", "permissions", noRilDir),
                     vendorPermissionFlag);
         }
 
@@ -1449,6 +1469,20 @@ public class SystemConfig {
                             }
                             if (pkgName != null && installerPkgName != null) {
                                 mAllowedVendorApexes.put(pkgName, installerPkgName);
+                            }
+                        } else {
+                            logNotAllowedInPartition(name, permFile, parser);
+                        }
+                        XmlUtils.skipCurrentTag(parser);
+                    } break;
+                    case "install-constraints-allowed": {
+                        if (allowAppConfigs) {
+                            String packageName = parser.getAttributeValue(null, "package");
+                            if (packageName == null) {
+                                Slog.w(TAG, "<" + name + "> without package in " + permFile
+                                        + " at " + parser.getPositionDescription());
+                            } else {
+                                mInstallConstraintsAllowlist.add(packageName);
                             }
                         } else {
                             logNotAllowedInPartition(name, permFile, parser);

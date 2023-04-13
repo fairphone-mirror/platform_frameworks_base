@@ -32,6 +32,7 @@ import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.util.AndroidRuntimeException;
 import android.util.ArraySet;
+import android.util.BoostFramework.ScrollOptimizer;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
@@ -81,6 +82,11 @@ public final class WindowManagerGlobal {
      * consumed, so the app is treated like there is no virtual system bars at all.
      */
     public static final int RELAYOUT_RES_CONSUME_ALWAYS_SYSTEM_BARS = 1 << 3;
+
+    /**
+     * The window manager has told the window it cannot draw this frame and should retry again.
+     */
+    public static final int RELAYOUT_RES_CANCEL_AND_REDRAW = 1 << 4;
 
     /**
      * Flag for relayout: the client will be later giving
@@ -357,10 +363,12 @@ public final class WindowManagerGlobal {
                 // The previous removeView() had not completed executing. Now it has.
             }
 
+            boolean isSubWindow = false;
             // If this is a panel window, then find the window it is being
             // attached to for future reference.
             if (wparams.type >= WindowManager.LayoutParams.FIRST_SUB_WINDOW &&
                     wparams.type <= WindowManager.LayoutParams.LAST_SUB_WINDOW) {
+                isSubWindow = true;
                 final int count = mViews.size();
                 for (int i = 0; i < count; i++) {
                     if (mRoots.get(i).mWindow.asBinder() == wparams.token) {
@@ -386,10 +394,23 @@ public final class WindowManagerGlobal {
                 root = new ViewRootImpl(view.getContext(), display);
             } else {
                 root = new ViewRootImpl(view.getContext(), display,
-                        windowlessSession);
+                        windowlessSession, new WindowlessWindowLayout());
             }
 
             view.setLayoutParams(wparams);
+
+            int visibleRootCount = 0;
+            if (!isSubWindow) {
+                for (int i = mRoots.size() - 1; i >= 0; --i) {
+                    View root_view = mRoots.get(i).getView();
+                    if (root_view != null && root_view.getVisibility() == View.VISIBLE) {
+                        visibleRootCount++;
+                    }
+                }
+            }
+            if (isSubWindow || visibleRootCount > 1) {
+                ScrollOptimizer.disableOptimizer(true);
+            }
 
             mViews.add(view);
             mRoots.add(root);
@@ -399,9 +420,10 @@ public final class WindowManagerGlobal {
             try {
                 root.setView(view, wparams, panelParentView, userId);
             } catch (RuntimeException e) {
+                final int viewIndex = (index >= 0) ? index : (mViews.size() - 1);
                 // BadTokenException or InvalidDisplayException, clean up.
-                if (index >= 0) {
-                    removeViewLocked(index, true);
+                if (viewIndex >= 0) {
+                    removeViewLocked(viewIndex, true);
                 }
                 throw e;
             }
@@ -516,6 +538,18 @@ public final class WindowManagerGlobal {
                 final View view = mViews.remove(index);
                 mDyingViews.remove(view);
             }
+
+            int visibleRootCount = 0;
+            for (int i = mRoots.size() - 1; i >= 0; --i) {
+                View root_view = mRoots.get(i).getView();
+                if (root_view != null && root_view.getVisibility() == View.VISIBLE) {
+                    visibleRootCount++;
+                }
+            }
+            if (visibleRootCount == 1) {
+                ScrollOptimizer.disableOptimizer(false);
+            }
+
             allViewsRemoved = mRoots.isEmpty();
         }
         if (ThreadedRenderer.sTrimForeground) {

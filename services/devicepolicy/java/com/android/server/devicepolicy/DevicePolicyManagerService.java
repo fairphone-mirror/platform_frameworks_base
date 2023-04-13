@@ -8182,7 +8182,8 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
         }
 
         final CallerIdentity caller = getCallerIdentity(who);
-        Preconditions.checkCallAuthorization(hasFullCrossUsersPermission(caller, userHandle));
+        Preconditions.checkCallAuthorization(hasFullCrossUsersPermission(caller, userHandle)
+                || isCameraServerUid(caller));
 
         if (parent) {
             Preconditions.checkCallAuthorization(
@@ -9691,6 +9692,10 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
 
     private boolean isShellUid(CallerIdentity caller) {
         return UserHandle.isSameApp(caller.getUid(), Process.SHELL_UID);
+    }
+
+    private boolean isCameraServerUid(CallerIdentity caller) {
+        return UserHandle.isSameApp(caller.getUid(), Process.CAMERASERVER_UID);
     }
 
     private @UserIdInt int getCurrentForegroundUserId() {
@@ -12553,8 +12558,8 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
                 .setContentIntent(locationSettingsIntent)
                 .setAutoCancel(true)
                 .build();
-        mInjector.getNotificationManager().notify(SystemMessage.NOTE_LOCATION_CHANGED,
-                notification);
+        mHandler.post(() -> mInjector.getNotificationManager().notify(
+                SystemMessage.NOTE_LOCATION_CHANGED, notification));
     }
 
     private String getLocationChangedTitle() {
