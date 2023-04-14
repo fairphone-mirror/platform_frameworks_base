@@ -1374,6 +1374,10 @@ public class WindowManagerService extends IWindowManager.Stub
         mBlurController = new BlurController(mContext, mPowerManager);
         mTaskFpsCallbackController = new TaskFpsCallbackController(mContext);
         mAccessibilityController = new AccessibilityController(this);
+
+        Settings.System.putFloatForUser(mContext.getContentResolver(),
+                Settings.System.MIN_REFRESH_RATE, 60f,
+                UserHandle.myUserId());
     }
 
     DisplayAreaPolicy.Provider getDisplayAreaPolicyProvider() {
