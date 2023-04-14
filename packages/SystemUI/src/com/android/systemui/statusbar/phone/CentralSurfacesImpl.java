@@ -3710,6 +3710,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
             }
             updateScrimController();
+            mKeyguardIndicationController.startAncFaceUnlock();
         }
     };
 

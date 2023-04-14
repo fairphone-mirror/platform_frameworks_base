@@ -208,16 +208,6 @@ public class KeyguardIndicationController {
                 hideBiometricMessageDelayed(DEFAULT_HIDE_DELAY_MS);
                 mBiometricErrorMessageToShowOnScreenOn = null;
             }
-            //add by t2m yingyubin for FP5-186 20230325
-            int userId = KeyguardUpdateMonitor.getCurrentUser();
-            boolean faceUnlockSupported = FaceUnlockUtil.getInstance().isFaceUnlockSupported(mContext);
-            boolean hasFaceEnrolled = FaceUnlockUtil.getInstance().hasFaceEnrolled(mContext);
-            if(hasFaceEnrolled && faceUnlockSupported && mKeyguardUpdateMonitor.isUserUnlocked(userId)) {
-                FaceUnlockUtil.getInstance().startFaceUnlock(mContext);
-                showBiometricMessage(mContext.getString(R.string.face_unlocking));
-                hideBiometricMessageDelayed(DEFAULT_HIDE_DELAY_MS);
-            }
-            //add by t2m yingyubin for FP5-186 20230325
         }
     };
 
@@ -765,6 +755,19 @@ public class KeyguardIndicationController {
     }
 
     //add by t2m yingyubin for FP5-186 20230331
+    public void startAncFaceUnlock() {
+        int userId = KeyguardUpdateMonitor.getCurrentUser();
+        boolean faceUnlockSupported = FaceUnlockUtil.getInstance().isFaceUnlockSupported(mContext);
+        boolean hasFaceEnrolled = FaceUnlockUtil.getInstance().hasFaceEnrolled(mContext);
+        android.util.Log.d(TAG,"faceUnlockSupported:"+faceUnlockSupported+" hasFaceEnrolled:"+hasFaceEnrolled+
+                ",mKeyguardUpdateMonitor.isUserUnlocked(userId):"+mKeyguardUpdateMonitor.isUserUnlocked(userId));
+        if(hasFaceEnrolled && faceUnlockSupported && mKeyguardUpdateMonitor.isUserUnlocked(userId)) {
+            FaceUnlockUtil.getInstance().startFaceUnlock(mContext);
+            showBiometricMessage(mContext.getString(R.string.face_unlocking));
+            hideBiometricMessageDelayed(DEFAULT_HIDE_DELAY_MS);
+        }
+    }
+
     public void showFaceUnlockFailed() {
         showBiometricMessage(
                 mContext.getString(com.android.internal.R.string.faceunlock_multiple_failures));

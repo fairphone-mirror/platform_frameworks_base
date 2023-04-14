@@ -128,6 +128,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
 
     private boolean mShowUnlockIcon;
     private boolean mShowLockIcon;
+    private boolean mShowFaceIcon;
 
     // for udfps when strong auth is required or unlocked on AOD
     private boolean mShowAodLockIcon;
@@ -266,6 +267,10 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         //add by t2m yingyubin for FP5-186 20230331
         boolean showFaceIcon = mShowLockIcon && !FaceUnlockUtil.getInstance().isRebootView(getContext())
                 && FaceUnlockUtil.getInstance().hasFaceEnrolled(getContext());
+        if(!showFaceIcon && mShowLockIcon != showFaceIcon) {
+            mView.setImageDrawable(mIcon);
+        }
+        mShowFaceIcon = showFaceIcon;
 
         final CharSequence prevContentDescription = mView.getContentDescription();
         if (mShowLockIcon) {
