@@ -70,6 +70,7 @@ class HighBrightnessModeController {
     private final Handler mHandler;
     private final Runnable mHbmChangeCallback;
     private final Runnable mRecalcRunnable;
+    private final Runnable mUpdateInAllowedAmbientRangeRunnable;
     private final Clock mClock;
     private final SkinThermalStatusObserver mSkinThermalStatusObserver;
     private final Context mContext;
@@ -98,6 +99,7 @@ class HighBrightnessModeController {
     private boolean mIsHdrLayerPresent = false;
     private boolean mIsThermalStatusWithinLimit = true;
     private boolean mIsBlockedByLowPowerMode = false;
+    private boolean mIsSunLightModeEnabled = false;
     private int mWidth;
     private int mHeight;
     private float mAmbientLux;
@@ -140,6 +142,7 @@ class HighBrightnessModeController {
         mSkinThermalStatusObserver = new SkinThermalStatusObserver(mInjector, mHandler);
         mSettingsObserver = new SettingsObserver(mHandler);
         mRecalcRunnable = this::recalculateTimeAllowance;
+        mUpdateInAllowedAmbientRangeRunnable = this::updateInAllowedAmbientRange;
         mHdrListener = new HdrListener();
 
         resetHbmData(width, height, displayToken, displayUniqueId, hbmData, hdrBrightnessCfg);
@@ -205,11 +208,30 @@ class HighBrightnessModeController {
         }
 
         final boolean isHighLux = (ambientLux >= mHbmData.minimumLux);
+        //Add by t2m yingyubin for FP5-565 20230414
+        if(mIsInAllowedAmbientRange){
+            if(mAmbientLux <= 10000){
+                mHandler.postDelayed(mUpdateInAllowedAmbientRangeRunnable, 2000);
+            } else {
+                mHandler.removeCallbacks(mUpdateInAllowedAmbientRangeRunnable);
+            }
+        } else {
+            if(isHighLux){
+                mHandler.postDelayed(mUpdateInAllowedAmbientRangeRunnable, 2000);
+            } else {
+                mHandler.removeCallbacks(mUpdateInAllowedAmbientRangeRunnable);
+            }
+        }
+    }
+
+    private void updateInAllowedAmbientRange(){
+        final boolean isHighLux = (mAmbientLux >= mHbmData.minimumLux);
         if (isHighLux != mIsInAllowedAmbientRange) {
             mIsInAllowedAmbientRange = isHighLux;
             recalculateTimeAllowance();
         }
     }
+    //Add-End by t2m yingyubin
 
     void onBrightnessChanged(float brightness, float unthrottledBrightness,
             @BrightnessInfo.BrightnessMaxReason int throttlingReason) {
@@ -356,7 +378,7 @@ class HighBrightnessModeController {
         // See {@link #getHdrBrightnessValue}.
         return !mIsHdrLayerPresent
                 && (mIsAutoBrightnessEnabled && mIsTimeAvailable && mIsInAllowedAmbientRange
-                && mIsThermalStatusWithinLimit && !mIsBlockedByLowPowerMode);
+                && mIsThermalStatusWithinLimit && !mIsBlockedByLowPowerMode && mIsSunLightModeEnabled);
     }
 
     private boolean deviceSupportsHbm() {
@@ -702,6 +724,8 @@ class HighBrightnessModeController {
     private final class SettingsObserver extends ContentObserver {
         private final Uri mLowPowerModeSetting = Settings.Global.getUriFor(
                 Settings.Global.LOW_POWER_MODE);
+        private final Uri mSunLightModeSetting = Settings.Secure.getUriFor(
+                Settings.Secure.SUNLIGHT_MODE_ENABLED);
         private boolean mStarted;
 
         SettingsObserver(Handler handler) {
@@ -710,15 +734,26 @@ class HighBrightnessModeController {
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            updateLowPower();
+            //Add by t2m yingyubin for FP5-565 20230414
+            if(mLowPowerModeSetting.equals(uri)){
+                updateLowPower();
+            } else if (mSunLightModeSetting.equals(uri)){
+                updateSunLightMode();
+            }
+            //Add-End by t2m yingyubin
         }
 
         void startObserving() {
             if (!mStarted) {
                 mContext.getContentResolver().registerContentObserver(mLowPowerModeSetting,
                         false /*notifyForDescendants*/, this, UserHandle.USER_ALL);
+                //Add by t2m yingyubin for FP5-565 20230414
+                mContext.getContentResolver().registerContentObserver(mSunLightModeSetting,
+                        false /*notifyForDescendants*/, this, UserHandle.USER_ALL);
+                //Add-End by t2m yingyubin
                 mStarted = true;
                 updateLowPower();
+                updateSunLightMode();
             }
         }
 
@@ -743,10 +778,28 @@ class HighBrightnessModeController {
             updateHbmMode();
         }
 
+        //Add by t2m yingyubin for FP5-565 20230414
+        private void updateSunLightMode() {
+            final boolean isSunLightMode = isSunLightModeEnabled();
+            if (isSunLightMode == mIsSunLightModeEnabled) {
+                return;
+            }
+            mIsSunLightModeEnabled = isSunLightMode;
+            updateHbmMode();
+        }
+        //Add-End by t2m yingyubin
+
         private boolean isLowPowerMode() {
             return Settings.Global.getInt(
                     mContext.getContentResolver(), Settings.Global.LOW_POWER_MODE, 0) != 0;
         }
+
+        //Add by t2m yingyubin for FP5-565 20230414
+        private boolean isSunLightModeEnabled(){
+            return Settings.Secure.getInt(
+                mContext.getContentResolver(), Settings.Secure.SUNLIGHT_MODE_ENABLED, 0) != 0;
+        }
+        //Add-End by t2m yingyubin
     }
 
     public static class Injector {

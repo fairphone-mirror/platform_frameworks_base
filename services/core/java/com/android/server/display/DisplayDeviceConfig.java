@@ -738,9 +738,23 @@ public class DisplayDeviceConfig {
      * @return high brightness mode configuration data for the display.
      */
     public HighBrightnessModeData getHighBrightnessModeData() {
-        if (!mIsHighBrightnessModeEnabled || mHbmData == null) {
-            return null;
+        //Add by t2m yingyubin for FP5-565 20230414
+        // if (!mIsHighBrightnessModeEnabled || mHbmData == null) {
+        //     return null;
+        // }
+        if(mHbmData == null) {
+            mHbmData = new HighBrightnessModeData();
+            mHbmData.minimumLux = 20000f;
+            mHbmData.transitionPoint = 0.499f;
+            mHbmData.timeWindowMillis = Integer.MAX_VALUE;
+            mHbmData.timeMaxMillis = Integer.MAX_VALUE;
+            mHbmData.timeMinMillis = 1 * 1000;
+            mHbmData.allowInLowPowerMode = false;
+            mHbmData.thermalStatusLimit = PowerManager.THERMAL_STATUS_NONE;
+            mHbmData.minimumHdrPercentOfScreen = 0.5f;
+            mIsHighBrightnessModeEnabled = true;
         }
+        //Add-End by yingyubin
 
         HighBrightnessModeData hbmData = new HighBrightnessModeData();
         mHbmData.copyTo(hbmData);
