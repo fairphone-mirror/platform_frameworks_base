@@ -9328,6 +9328,14 @@ public final class Settings {
         @Readable
         public static final String PICK_UP_GESTURE_ENABLED = "pick_up_gesture_enabled";
 
+        //add by t2m yingyubin for FP5-565 20230414
+        /**
+         * Whether the device set sunlight mode enabled
+         * @hide
+         */
+        @Readable
+        public static final String SUNLIGHT_MODE_ENABLED = "sunlight_mode_enabled";
+
         /**
          * Whether the device should doze if configured.
          * @hide
