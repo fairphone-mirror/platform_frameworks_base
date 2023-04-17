@@ -1345,7 +1345,7 @@ public class DisplayDeviceConfig {
         if(mHbmData == null) {
             mHbmData = new HighBrightnessModeData();
             mHbmData.minimumLux = 20000f;
-            mHbmData.transitionPoint = 0.499f;
+            mHbmData.transitionPoint = 0.599f;
             mHbmData.timeWindowMillis = Integer.MAX_VALUE;
             mHbmData.timeMaxMillis = Integer.MAX_VALUE;
             mHbmData.timeMinMillis = 1 * 1000;
