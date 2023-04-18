@@ -1852,8 +1852,14 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
                 mLogicalDisplay.getPrimaryDisplayDeviceLocked().getDisplayTokenLocked();
         final String displayUniqueId =
                 mLogicalDisplay.getPrimaryDisplayDeviceLocked().getUniqueId();
-        final DisplayDeviceConfig.HighBrightnessModeData hbmData =
-                ddConfig != null ? ddConfig.getHighBrightnessModeData() : null;
+        //Modify by t2m yingyubin for FP5-659 20230418
+        final DisplayDeviceConfig.HighBrightnessModeData hbmData;
+        if(mDisplayId == Display.DEFAULT_DISPLAY) {
+            hbmData = ddConfig != null ? ddConfig.getHighBrightnessModeData() : null;
+        } else {
+            hbmData = null;
+        }
+        //Modify by t2m yingyubin for FP5-659 20230418
         final DisplayDeviceInfo info = device.getDisplayDeviceInfoLocked();
         return new HighBrightnessModeController(mHandler, info.width, info.height, displayToken,
                 displayUniqueId, PowerManager.BRIGHTNESS_MIN, PowerManager.BRIGHTNESS_MAX, hbmData,
