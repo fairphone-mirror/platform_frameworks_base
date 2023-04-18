@@ -332,4 +332,7 @@
 
     <integer name="def_orientation_timing">2</integer>
 
+    <!-- DCDimming is enabled by default. -->
+    <bool name="def_dcdimming_enabled">false</bool>
+    <bool name="def_dcdimming_is_UI_finish">true</bool>
 </resources>

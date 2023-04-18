@@ -41,6 +41,8 @@ import android.view.DisplayEventReceiver;
 import android.view.DisplayShape;
 import android.view.RoundedCorners;
 import android.view.SurfaceControl;
+import android.provider.Settings;
+import android.database.ContentObserver;
 
 import com.android.internal.R;
 import com.android.internal.annotations.VisibleForTesting;
@@ -81,6 +83,11 @@ final class LocalDisplayAdapter extends DisplayAdapter {
     private final boolean mIsBootDisplayModeSupported;
 
     private Context mOverlayContext;
+
+    private int oldBrightness = -1;
+    private static final String DCDIMMING_ENABLED = "def_dcdimming_enabled";
+    private static final int TRANSITION_POINT = 1475;
+    private boolean isDCDimmingOpen = false;
 
     // Called with SyncRoot lock held.
     public LocalDisplayAdapter(DisplayManagerService.SyncRoot syncRoot,
@@ -894,14 +901,42 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                                 + "id=" + physicalDisplayId + ", brightnessState="
                                 + brightnessState + ", sdrBrightnessState=" + sdrBrightnessState
                                 + ")");
+                        int currentBrightness = -1;
+                        final float backlight = brightnessToBacklight(brightnessState);
+                        final float sdrBacklight = brightnessToBacklight(sdrBrightnessState);
+
+                        final float nits = backlightToNits(backlight);
+                        final float sdrNits = backlightToNits(sdrBacklight);
                         try {
-                            final float backlight = brightnessToBacklight(brightnessState);
-                            final float sdrBacklight = brightnessToBacklight(sdrBrightnessState);
-
-                            final float nits = backlightToNits(backlight);
-                            final float sdrNits = backlightToNits(sdrBacklight);
-
-                            mBacklightAdapter.setBacklight(sdrBacklight, sdrNits, backlight, nits);
+                            currentBrightness = BrightnessSynchronizer.brightnessFloatToInt(brightnessState);
+                            if (oldBrightness < 0) {
+                                oldBrightness = currentBrightness;
+                            }
+                            int dcDimmingEnabled = Settings.Secure.getInt(getOverlayContext().getContentResolver(), DCDIMMING_ENABLED);
+                            int isUIfinished = Settings.Secure.getInt(getOverlayContext().getContentResolver(), "def_dcdimming_is_UI_finish");
+                            android.util.Log.d(TAG, "iris :dcDimmingEnabled:"+dcDimmingEnabled);
+                            if (1 == dcDimmingEnabled) {
+                                if (currentBrightness <= TRANSITION_POINT) {
+                                        android.util.Log.d(TAG, "iris :DCDimming opened and currentBrightness is lower than transition point set brightness to 1475:" + currentBrightness);
+                                        float transitionBrightnessStateDCDimmingOpened=  BrightnessSynchronizer.brightnessIntToFloat(TRANSITION_POINT);
+                                        float transitionSdrBrightnessStateDCDimmingOpened =  BrightnessSynchronizer.brightnessIntToFloat(TRANSITION_POINT);
+                                        float transitionBacklightDCDimmingOpened = brightnessToBacklight(transitionBrightnessStateDCDimmingOpened);
+                                        float transitionSdrBacklightDCDimmingOpened = brightnessToBacklight(transitionSdrBrightnessStateDCDimmingOpened);
+                                        float transitionNitsDCDimmingOpened = backlightToNits(transitionBacklightDCDimmingOpened);
+                                        float transitionSdrNitsDCDimmingOpened = backlightToNits(transitionSdrBacklightDCDimmingOpened);
+                                        mBacklightAdapter.setBacklight(transitionSdrBacklightDCDimmingOpened, transitionSdrNitsDCDimmingOpened, transitionBacklightDCDimmingOpened, transitionNitsDCDimmingOpened);
+                                } else {
+                                    android.util.Log.d(TAG, "iris :DCDimming opened but currentBrightness is higher than transition point:" + currentBrightness);
+                                    mBacklightAdapter.setBacklight(sdrBacklight, sdrNits, backlight, nits);
+                                }
+                            } else {
+                                android.util.Log.d(TAG, "iris :other scenarios-DCDimming is closed and current brightness higher than transition point -currentBrightness:" + currentBrightness +"    oldBrightness:" +oldBrightness+"    isUIfinished:"+isUIfinished);
+                                if (1 == isUIfinished) {
+                                    mBacklightAdapter.setBacklight(sdrBacklight, sdrNits, backlight, nits);
+                                } else {
+                                    android.util.Log.d(TAG, "iris :other scenarios-DCDimming is closing, drop this brightness -currentBrightness:" + currentBrightness +"    oldBrightness:" +oldBrightness+"    isUIfinished:"+isUIfinished);
+                                }
+                            }
                             Trace.traceCounter(Trace.TRACE_TAG_POWER,
                                     "ScreenBrightness",
                                     BrightnessSynchronizer.brightnessFloatToInt(brightnessState));
@@ -914,6 +949,12 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                                 handleHdrSdrNitsChanged(nits, sdrNits);
                             }
 
+                        } catch (NullPointerException e) {
+                            mBacklightAdapter.setBacklight(sdrBacklight, sdrNits, backlight, nits);
+                            e.printStackTrace();
+                        } catch (Settings.SettingNotFoundException e) {
+                            mBacklightAdapter.setBacklight(sdrBacklight, sdrNits, backlight, nits);
+                            e.printStackTrace();
                         } finally {
                             Trace.traceEnd(Trace.TRACE_TAG_POWER);
                         }

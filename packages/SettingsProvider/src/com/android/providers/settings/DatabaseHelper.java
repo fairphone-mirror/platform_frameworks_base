@@ -2384,6 +2384,11 @@ class DatabaseHelper extends SQLiteOpenHelper {
             loadIntegerSetting(stmt, "def_orientation_timing",
                     R.integer.def_orientation_timing);
 
+            loadBooleanSetting(stmt, "def_dcdimming_enabled",
+                    R.bool.def_dcdimming_enabled);
+
+            loadBooleanSetting(stmt, "def_dcdimming_is_UI_finish",
+                    R.bool.def_dcdimming_enabled);
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,
              * secure, and system settings are no longer stored in a database
