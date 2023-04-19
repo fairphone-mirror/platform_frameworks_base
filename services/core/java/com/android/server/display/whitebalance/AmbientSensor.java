@@ -249,7 +249,7 @@ abstract class AmbientSensor {
         AmbientBrightnessSensor(@NonNull Handler handler, @NonNull SensorManager sensorManager,
                 int rate) {
             super(TAG, handler, sensorManager, rate);
-            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+            mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT_BACK);
             if (mSensor == null) {
                 throw new IllegalStateException("cannot find light sensor");
             }
