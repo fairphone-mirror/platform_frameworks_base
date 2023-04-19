@@ -1789,7 +1789,7 @@ public class DisplayModeDirector {
                 }
 
                 if (lightSensor == null) {
-                    lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+                    lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT_BACK);
                 }
 
                 if (lightSensor != null) {

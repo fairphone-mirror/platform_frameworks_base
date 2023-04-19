@@ -85,7 +85,7 @@ public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
         mReduceBrightColorsController.observe(getLifecycle(), this);
         mIsAvailable = isAvailable;
         mSensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
-        mSensorManager.registerListener(mLightSensorListener,mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT),
+        mSensorManager.registerListener(mLightSensorListener,mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT_BACK),
                   SensorManager.SENSOR_DELAY_NORMAL);
         mRegistLightsensor = true;
         IntentFilter filter = new IntentFilter();
@@ -106,7 +106,7 @@ public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
             switch (intent.getAction()) {
                 case Intent.ACTION_SCREEN_ON:
                   if(!mRegistLightsensor){
-                      mSensorManager.registerListener(mLightSensorListener,mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT),
+                      mSensorManager.registerListener(mLightSensorListener,mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT_BACK),
                           SensorManager.SENSOR_DELAY_NORMAL);
                       mRegistLightsensor=true;
                     }

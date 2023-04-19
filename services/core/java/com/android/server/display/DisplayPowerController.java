@@ -2005,7 +2005,7 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
     private void loadAmbientLightSensor() {
         DisplayDeviceConfig.SensorData lightSensor = mDisplayDeviceConfig.getAmbientLightSensor();
         final int fallbackType = mDisplayId == Display.DEFAULT_DISPLAY
-                ? Sensor.TYPE_LIGHT : SensorUtils.NO_FALLBACK;
+                ? Sensor.TYPE_LIGHT_BACK : SensorUtils.NO_FALLBACK;
         mLightSensor = SensorUtils.findSensor(mSensorManager, lightSensor.type, lightSensor.name,
                 fallbackType);
     }
