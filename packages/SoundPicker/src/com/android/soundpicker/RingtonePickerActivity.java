@@ -53,6 +53,7 @@ import com.android.internal.app.AlertController;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
+import android.content.ContentUris;
 
 /**
  * The {@link RingtonePickerActivity} allows the user to choose one from all of the
@@ -291,7 +292,7 @@ public final class RingtonePickerActivity extends AlertActivity implements
                 @Override
                 protected void onPostExecute(Uri ringtoneUri) {
                     if (ringtoneUri != null) {
-                        requeryForAdapter();
+                        requeryForAdapter(ringtoneUri);
                     } else {
                         // Ringtone was not added, display error Toast
                         Toast.makeText(RingtonePickerActivity.this, R.string.unable_to_add_ringtone,
@@ -391,25 +392,58 @@ public final class RingtonePickerActivity extends AlertActivity implements
         registerForContextMenu(listView);
     }
 
+    //Modify by T2M yingyubin for FP5-666 20230420 begin
+    private int getRingtonePosition(Uri ringtoneUri, Cursor cursor) {
+        if (ringtoneUri == null)
+            return -1;
+
+        if (RingtoneManager.isDefault(ringtoneUri))
+            return -1;
+
+        try {
+            final long ringtoneId = ContentUris.parseId(ringtoneUri);
+            final String title = Ringtone.getTitle(mTargetContext, ringtoneUri, false, true);
+
+            if (cursor != null) {
+                cursor.moveToPosition(-1);
+            }
+
+            while (cursor.moveToNext()) {
+                if (ringtoneId == cursor.getLong(RingtoneManager.ID_COLUMN_INDEX) &&
+                        title.equals(cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX))) {
+                    return cursor.getPosition();
+                }
+            }
+        } catch (Exception exception) {
+            Log.e(TAG, "getRingtonePosition error", exception);
+            return -1;
+        }
+        return -1;
+    }
+    //Modify by T2M yingyubin for FP5-666 20230420
+
     /**
      * Re-query RingtoneManager for the most recent set of installed ringtones. May move the
      * selected item position to match the new position of the chosen sound.
      *
      * This should only need to happen after adding or removing a ringtone.
      */
-    private void requeryForAdapter() {
+    private void requeryForAdapter(Uri ringtoneUri) {
         // Refresh and set a new cursor, closing the old one.
         initRingtoneManager();
         mAdapter.changeCursor(mCursor);
 
         // Update checked item location.
         int checkedPosition = POS_UNKNOWN;
-        for (int i = 0; i < mAdapter.getCount(); i++) {
-            if (mAdapter.getItemId(i) == mCheckedItemId) {
-                checkedPosition = getListPosition(i);
-                break;
-            }
-        }
+        //Modify by T2M yingyubin for FP5-666 20230420 begin
+        checkedPosition = getListPosition(getRingtonePosition(ringtoneUri,mCursor));
+        // for (int i = 0; i < mAdapter.getCount(); i++) {
+        //     if (mAdapter.getItemId(i) == mCheckedItemId) {
+        //         checkedPosition = getListPosition(i);
+        //         break;
+        //     }
+        // }
+        //Modify by T2M yingyubin for FP5-666 20230420
         if (mHasSilentItem && checkedPosition == POS_UNKNOWN) {
             checkedPosition = mSilentPos;
         }
