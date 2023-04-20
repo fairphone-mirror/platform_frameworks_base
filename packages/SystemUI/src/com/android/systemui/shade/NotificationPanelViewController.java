@@ -1376,7 +1376,10 @@ public final class NotificationPanelViewController implements ShadeSurface, Dump
         EmergencyButton emergencyButton =
                 mKeyguardBottomArea.findViewById(R.id.emergency_call_button);
         mEmergencyButtonController = mEmergencyButtonControllerFactory.create(emergencyButton);
-        mEmergencyButtonController.init();
+        //Modify by t2m yingyubin for FP5-694 20230420
+        //mEmergencyButtonController.init();
+        emergencyButton.setVisibility(View.GONE);
+        //Modify by t2m yingyubin for FP5-694 20230420
     }
 
     @VisibleForTesting
