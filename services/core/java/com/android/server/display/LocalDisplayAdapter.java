@@ -935,8 +935,19 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                                     mBacklightAdapter.setBacklight(sdrBacklight, sdrNits, backlight, nits);
                                 } else {
                                     android.util.Log.d(TAG, "iris :other scenarios-DCDimming is closing, drop this brightness -currentBrightness:" + currentBrightness +"    oldBrightness:" +oldBrightness+"    isUIfinished:"+isUIfinished);
+                                    if (currentBrightness < 1475) {
+                                        android.util.Log.d(TAG, "iris :other scenarios-DCDimming is closing, currentBrightness < 1475 setBrightness to 1475 -currentBrightness:" + currentBrightness +"    oldBrightness:" +oldBrightness+"    isUIfinished:"+isUIfinished);
+                                        float transitionBrightnessStateDCDimmingOpened=  BrightnessSynchronizer.brightnessIntToFloat(TRANSITION_POINT);
+                                        float transitionSdrBrightnessStateDCDimmingOpened =  BrightnessSynchronizer.brightnessIntToFloat(TRANSITION_POINT);
+                                        float transitionBacklightDCDimmingOpened = brightnessToBacklight(transitionBrightnessStateDCDimmingOpened);
+                                        float transitionSdrBacklightDCDimmingOpened = brightnessToBacklight(transitionSdrBrightnessStateDCDimmingOpened);
+                                        float transitionNitsDCDimmingOpened = backlightToNits(transitionBacklightDCDimmingOpened);
+                                        float transitionSdrNitsDCDimmingOpened = backlightToNits(transitionSdrBacklightDCDimmingOpened);
+                                        mBacklightAdapter.setBacklight(transitionSdrBacklightDCDimmingOpened, transitionSdrNitsDCDimmingOpened, transitionBacklightDCDimmingOpened, transitionNitsDCDimmingOpened);
+                                    }
                                 }
                             }
+                            oldBrightness = currentBrightness;
                             Trace.traceCounter(Trace.TRACE_TAG_POWER,
                                     "ScreenBrightness",
                                     BrightnessSynchronizer.brightnessFloatToInt(brightnessState));
