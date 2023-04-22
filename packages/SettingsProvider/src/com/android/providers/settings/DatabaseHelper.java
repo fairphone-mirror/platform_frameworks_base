@@ -2598,6 +2598,9 @@ class DatabaseHelper extends SQLiteOpenHelper {
 	    loadStringSetting(stmt, Settings.Global.NTP_SERVER_2,
                     R.string.def_ntp_server_2);
 
+	    loadStringSetting(stmt, Settings.Global.SET_BATTERY_CHARGING_MODE,
+                R.string.def_set_battery_charging_mode);
+
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,
              * secure, and system settings are no longer stored in a database

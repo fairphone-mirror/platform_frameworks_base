@@ -64,6 +64,11 @@ import dagger.Lazy;
 import android.os.SystemProperties;
 import android.os.SystemClock;
 
+import android.view.WindowManager;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+
 @SysUISingleton
 public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
 
@@ -199,8 +204,43 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                         doUsbThermalEventListenerRegistration();
                     }
                 });
+
+        resolver.registerContentObserver(
+                Settings.Global.getUriFor(Settings.Global.SET_BATTERY_CHARGING_MODE),
+                false /*notifyForDescendants*/,
+                new ContentObserver(mHandler) {
+                    @Override
+                    public void onChange(boolean selfChange) {
+                        setBatteryChargingMode();
+                    }
+                });
+
         initThermalEventListeners();
         mCommandQueue.addCallback(this);
+    }
+
+    private void setBatteryChargingMode(){
+        String[] charging_mode = {mContext.getResources().getString(R.string.charging_slow),
+                mContext.getResources().getString(R.string.charging_normal)};
+        AlertDialog alert = new AlertDialog.Builder(mContext)
+                .setTitle(R.string.charging_state)
+                .setSingleChoiceItems(charging_mode, 1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which == 0){
+                            Log.i("sth__","    which = 0   Slow mode");
+                            //TODO:Slow mode
+                            dialog.dismiss();
+                        }else if (which == 1){
+                            Log.i("sth__","  which = 1   Normal mode");
+                            //TODO:Normal mode
+                            dialog.dismiss();
+                        }
+                    }
+                })
+                .create();
+        alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alert.show();
     }
 
     @Override

@@ -1278,6 +1278,13 @@ public final class SystemServer implements Dumpable {
         }
 
         mFirstBoot = mPackageManagerService.isFirstBoot();
+        if (mFirstBoot){
+            Slog.i("sth__", "is_first_boot");
+            SystemProperties.set("persist.sys.is_first_boot","1");
+        } else {
+            Slog.i("sth__", "is_first_boot");
+            SystemProperties.set("persist.sys.is_first_boot","0");
+        }
         mPackageManager = mSystemContext.getPackageManager();
         t.traceEnd();
 

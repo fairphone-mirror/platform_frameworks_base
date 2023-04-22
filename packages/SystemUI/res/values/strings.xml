@@ -3184,4 +3184,8 @@
     <string name="battery_error_message">Shutdown in 4 second!</string>
     <string name="battery_otp">Battery Over Temperature</string>
     <string name="battery_otp_message">Shutdown in 5 seconds!</string>
+
+    <string name="charging_slow">Slow mode</string>
+    <string name="charging_normal">Normal mode</string>
+    <string name="charging_state">Charging mode</string>
 </resources>
