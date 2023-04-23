@@ -42,6 +42,7 @@ import android.telecom.TelecomManager;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.nfc.NfcAdapter;
 
 import androidx.lifecycle.Observer;
 
@@ -123,6 +124,7 @@ public class PhoneStatusBarPolicy
     private final String mSlotCamera;
     private final String mSlotSensorsOff;
     private final String mSlotScreenRecord;
+    private final String mSlotNfc;
     private final int mDisplayId;
     private final SharedPreferences mSharedPreferences;
     private final DateFormatUtil mDateFormatUtil;
@@ -233,6 +235,7 @@ public class PhoneStatusBarPolicy
         mSlotSensorsOff = resources.getString(com.android.internal.R.string.status_bar_sensors_off);
         mSlotScreenRecord = resources.getString(
                 com.android.internal.R.string.status_bar_screen_record);
+        mSlotNfc = resources.getString(com.android.internal.R.string.status_bar_nfc);
 
         mDisplayId = displayId;
         mSharedPreferences = sharedPreferences;
@@ -250,6 +253,7 @@ public class PhoneStatusBarPolicy
         filter.addAction(Intent.ACTION_MANAGED_PROFILE_AVAILABLE);
         filter.addAction(Intent.ACTION_MANAGED_PROFILE_UNAVAILABLE);
         filter.addAction(Intent.ACTION_MANAGED_PROFILE_REMOVED);
+        filter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
         mBroadcastDispatcher.registerReceiverWithHandler(mIntentReceiver, filter, mHandler);
         Observer<Integer> observer = ringer -> mHandler.post(this::updateVolumeZen);
 
@@ -741,6 +745,9 @@ public class PhoneStatusBarPolicy
                 case AudioManager.ACTION_HEADSET_PLUG:
                     updateHeadsetPlug(intent);
                     break;
+                case NfcAdapter.ACTION_ADAPTER_STATE_CHANGED:
+                    updateNfc(intent);
+                    break;
             }
         }
     };
@@ -816,6 +823,24 @@ public class PhoneStatusBarPolicy
         } else {
             mIconController.setIcon(mSlotHotspot, R.drawable.stat_sys_hotspot,
                 mResources.getString(R.string.accessibility_status_bar_hotspot));
+        }
+    }
+    private final void updateNfc(Intent intent) {
+        final int state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, NfcAdapter.STATE_OFF);
+        Log.v(TAG, "Nfc state = "+ state);
+        switch (state) {
+            case NfcAdapter.STATE_OFF:
+                mIconController.setIconVisibility(mSlotNfc, false);
+                break;
+            case NfcAdapter.STATE_TURNING_OFF:
+                break;
+            case NfcAdapter.STATE_ON:
+                mIconController.setIcon(mSlotNfc, R.drawable.ic_nfc,
+                    mResources.getString(R.string.quick_settings_nfc_on));
+                mIconController.setIconVisibility(mSlotNfc, true);
+                break;
+            case NfcAdapter.STATE_TURNING_ON:
+                break;
         }
     }
 }
