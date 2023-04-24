@@ -13,6 +13,9 @@ import java.io.InputStream;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.util.concurrent.TimeUnit;
+import java.io.InputStreamReader;
 
 public class T2MmiTestService extends IT2MmiTestManager.Stub {
 	private static final String TAG = "T2MmiTestService";
@@ -57,7 +60,7 @@ public class T2MmiTestService extends IT2MmiTestManager.Stub {
 
 	@Override
 	public String t2GetNodeString(String action){
-		Log.e(TAG,"t2GetNodeString action = "+action);
+		Log.d(TAG,"t2GetNodeString action = "+action);
 		if (RAWDATA_TEST.equals(action)) {
 			return readNodeString(FTS_TEST_SEATTLE);
 		}else if (LCDBACKLIGHT_TEST.equals(action)) {
@@ -85,7 +88,7 @@ public class T2MmiTestService extends IT2MmiTestManager.Stub {
 
 	@Override
 	public boolean t2SetNodeString(String action,String value){
-		Log.e(TAG,"t2SetNodeString action = "+action);
+		Log.d(TAG,"t2SetNodeString action = "+action);
 		if (LCDBACKLIGHT_TEST.equals(action)) {
 			return writeNodeString(LCDBACKLIGHT_NODE,value);
 		}else if (BackFlash_White_TEST.equals(action)) {
@@ -103,13 +106,13 @@ public class T2MmiTestService extends IT2MmiTestManager.Stub {
 
 	@Override
 	public String t2TestNodeRead(String node){
-		Log.e(TAG,"t2TestNodeRead node = "+node);
+		Log.d(TAG,"t2TestNodeRead node = "+node);
 		return readNodeString(node);
 	}
 
 	@Override
 	public boolean t2TestNodeWrite(String node,String value){
-		Log.e(TAG,"t2TestNodeWrite node = "+node);
+		Log.d(TAG,"t2TestNodeWrite node = "+node+" ; value = "+value);
 		return writeNodeString(node,value);
 	}
 
@@ -203,7 +206,41 @@ public class T2MmiTestService extends IT2MmiTestManager.Stub {
         }
     }
 
+	@Override
+	public String t2RunShellCmd(String cmd){
+		Log.d(TAG,"t2RunShellCmd cmd = "+cmd);
+		return runShellCmd(cmd);
+	}
 
+	private String runShellCmd(String command) {
+        StringBuilder sb = new StringBuilder();
+        Runtime r = Runtime.getRuntime();
+        Process p;
+        try {
+            String line;
+            Log.d(TAG, command);
+            p = r.exec(command);
+            BufferedReader buffReader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while( (line = buffReader.readLine()) != null ) {
+                sb.append(line);
+                Log.d(TAG, line);
+            }
+            buffReader.close();
+            if(p.waitFor(2, TimeUnit.SECONDS)) {
+                Log.d(TAG, "process exit value="+p.exitValue());
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return sb.toString();
+    }
 
 
 
