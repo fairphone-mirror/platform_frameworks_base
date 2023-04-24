@@ -630,20 +630,9 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
             }
         }
 
-        if (!tiles.contains("internet")) {
-            if (tiles.contains("wifi")) {
-                // Replace the WiFi with Internet, and remove the Cell
-                tiles.set(tiles.indexOf("wifi"), "internet");
-                tiles.remove("cell");
-            } else if (tiles.contains("cell")) {
-                // Replace the Cell with Internet
-                tiles.set(tiles.indexOf("cell"), "internet");
-            }
-        } else {
-            tiles.remove("wifi");
-            tiles.remove("cell");
-        }
-        return tiles;
+        ArrayList<String> finalTiles = new ArrayList<String>();
+        finalTiles = replaceWifiOrCell(tiles);
+        return finalTiles;
     }
 
     /**
@@ -662,7 +651,26 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
                 && GarbageMonitor.ADD_MEMORY_TILE_TO_DEFAULT_ON_DEBUGGABLE_BUILDS) {
             tiles.add(GarbageMonitor.MemoryTile.TILE_SPEC);
         }
-        return tiles;
+        ArrayList<String> finalTiles = new ArrayList<String>();
+        finalTiles = replaceWifiOrCell(tiles);
+        return finalTiles;
+    }
+
+    private static ArrayList<String> replaceWifiOrCell (ArrayList<String> list){
+        if (!list.contains("internet")) {
+            if (list.contains("wifi")) {
+                // Replace the WiFi with Internet, and remove the Cell
+                list.set(list.indexOf("wifi"), "internet");
+                list.remove("cell");
+            } else if (list.contains("cell")) {
+                // Replace the Cell with Internet
+                list.set(list.indexOf("cell"), "internet");
+            }
+        } else {
+            list.remove("wifi");
+            list.remove("cell");
+        }
+        return list;
     }
 
     @Override
