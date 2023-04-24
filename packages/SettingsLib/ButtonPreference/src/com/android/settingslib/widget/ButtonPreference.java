@@ -111,11 +111,15 @@ public class ButtonPreference extends Preference {
         setIcon(mIcon);
         setGravity(mGravity);
         setOnClickListener(mClickListener);
-
         if (mButton != null) {
             final boolean selectable = isSelectable();
             mButton.setFocusable(selectable);
             mButton.setClickable(selectable);
+            if (mTitle != null) {
+                mButton.setVisibility(View.VISIBLE);
+            } else {
+                mButton.setVisibility(View.GONE);
+            }
 
             mButton.setEnabled(isEnabled());
         }
