@@ -20,7 +20,7 @@ public class T2MmiTestManager{
 	}
 
 	public String t2GetNodeString(String action){
-		Log.e(TAG,"t2GetNodeString action = "+action);
+		Log.d(TAG,"t2GetNodeString action = "+action);
 		try{
 			return manager.t2GetNodeString(action);
 		}catch(RemoteException e){
@@ -31,7 +31,7 @@ public class T2MmiTestManager{
 	}
 
 	public boolean t2SetNodeString(String action,String value){
-		Log.e(TAG,"t2SetNodeString action = "+action);
+		Log.d(TAG,"t2SetNodeString action = "+action);
 		try{
 			return manager.t2SetNodeString(action,value);
 		}catch(RemoteException e){
@@ -42,7 +42,7 @@ public class T2MmiTestManager{
 	}
 
 	public String t2TestNodeRead(String node){
-		Log.e(TAG,"t2TestNodeRead node = "+node);
+		Log.d(TAG,"t2TestNodeRead node = "+node);
 		try{
 			return manager.t2TestNodeRead(node);
 		}catch(RemoteException e){
@@ -53,7 +53,7 @@ public class T2MmiTestManager{
 	}
 
 	public boolean t2TestNodeWrite(String node,String value){
-		Log.e(TAG,"t2TestNodeWrite node = "+node);
+		Log.d(TAG,"t2TestNodeWrite node = "+node+" ; value = "+value);
 		try{
 			return manager.t2TestNodeWrite(node,value);
 		}catch(RemoteException e){
@@ -61,6 +61,17 @@ public class T2MmiTestManager{
 		}
 
 		return false;
+	}
+
+	public String t2RunShellCmd(String cmd){
+		Log.d(TAG,"t2RunShellCmd cmd = "+cmd);
+		try{
+			return manager.t2RunShellCmd(cmd);
+		}catch(RemoteException e){
+			e.printStackTrace();
+		}
+
+		return "fail";
 	}
 
 }
