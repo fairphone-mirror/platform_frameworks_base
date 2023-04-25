@@ -86,6 +86,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import android.os.ServiceManager;
+import android.os.Parcel;
 
 /**
  * Service api for managing dreams.
@@ -109,6 +111,7 @@ public final class DreamManagerService extends SystemService {
     private static final int DREAM_ON_DOCK_OR_CHARGE = 0x3;
 
     private final Object mLock = new Object();
+    private final IBinder mSurfaceFlinger;
 
     private final Context mContext;
     private final DreamHandler mHandler;
@@ -218,6 +221,7 @@ public final class DreamManagerService extends SystemService {
         mHandler = new DreamHandler(FgThread.get().getLooper());
         mController = new DreamController(context, mHandler, mControllerListener);
 
+        mSurfaceFlinger = ServiceManager.getService("SurfaceFlinger");
         mPowerManager = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
         mDisplayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         mDefaultDisplay = mDisplayManager.getDisplay(Display.DEFAULT_DISPLAY);
@@ -746,22 +750,35 @@ public final class DreamManagerService extends SystemService {
         if (doze_ == 1)
             try {
             float current_refresh_Rate = mDefaultDisplay.getRefreshRate();
+            boolean shouldShowRate = "1".equals(SystemProperties.get("sys.show_refresh_rate","0"));
+            if (shouldShowRate){
+                if (mSurfaceFlinger != null) {
+                    final Parcel data = Parcel.obtain();
+                    data.writeInterfaceToken("android.ui.ISurfaceComposer");
+                    final int showRefreshRate = isDoze ? 0 : 1;
+                    data.writeInt(showRefreshRate);
+                    mSurfaceFlinger.transact(1034, data,
+                            null /* reply */, 0 /* flags */);
+                    data.recycle();
+                }
+            }
+
             if (isDoze){
                 SystemProperties.set("persist.sys.in_doze","1");
                 //setRate to 30Hz
-                SystemProperties.set("persist.sys.current_rate",Float.toString(current_refresh_Rate));
-                Slog.i(TAG,"  __________>>> current_refresh_Rate:" + current_refresh_Rate);
-                Settings.System.putFloatForUser(mContext.getContentResolver(),
-                        Settings.System.MIN_REFRESH_RATE, 30f,
-                        UserHandle.myUserId());
+//                SystemProperties.set("persist.sys.current_rate",Float.toString(current_refresh_Rate));
+//                Slog.i(TAG,"  __________>>> current_refresh_Rate:" + current_refresh_Rate);
+//                Settings.System.putFloatForUser(mContext.getContentResolver(),
+//                        Settings.System.MIN_REFRESH_RATE, 30f,
+//                        UserHandle.myUserId());
             }else {
                 SystemProperties.set("persist.sys.in_doze","0");
                 //restore Rate
-                String current_rate = SystemProperties.get("persist.sys.current_rate","0");
-                Slog.i(TAG,"  <<<__________ current_rate:" + current_rate );
-                Settings.System.putFloatForUser(mContext.getContentResolver(),
-                        Settings.System.MIN_REFRESH_RATE, Float.parseFloat(current_rate),
-                        UserHandle.myUserId());
+//                String current_rate = SystemProperties.get("persist.sys.current_rate","0");
+//                Slog.i(TAG,"  <<<__________ current_rate:" + current_rate );
+//                Settings.System.putFloatForUser(mContext.getContentResolver(),
+//                        Settings.System.MIN_REFRESH_RATE, Float.parseFloat(current_rate),
+//                        UserHandle.myUserId());
             }
         }catch (Exception e){
             Slog.i(TAG,"   set doze rate Exception");
