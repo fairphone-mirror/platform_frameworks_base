@@ -106,6 +106,10 @@ public class GlobalActionsImpl implements GlobalActions, CommandQueue.Callbacks 
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         // Inflate the decor view, so the attributes below are not overwritten by the theme.
         window.getDecorView();
+        window.getDecorView().setSystemUiVisibility(
+                   View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                       | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                       | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         window.getAttributes().width = ViewGroup.LayoutParams.MATCH_PARENT;
         window.getAttributes().height = ViewGroup.LayoutParams.MATCH_PARENT;
         window.getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
