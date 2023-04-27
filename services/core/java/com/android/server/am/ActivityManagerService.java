@@ -7997,7 +7997,7 @@ public class ActivityManagerService extends IActivityManager.Stub
         lp.type = WindowManager.LayoutParams.TYPE_SECURE_SYSTEM_OVERLAY;
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.gravity = Gravity.BOTTOM | Gravity.START;
+        lp.gravity = Gravity.BOTTOM | Gravity.CENTER;
         lp.format = v.getBackground().getOpacity();
         lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
