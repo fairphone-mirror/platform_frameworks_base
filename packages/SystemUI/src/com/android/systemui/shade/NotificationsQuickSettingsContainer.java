@@ -63,6 +63,7 @@ public class NotificationsQuickSettingsContainer extends ConstraintLayout
      */
     private final Rect mUpperRect = new Rect();
     private final Rect mBoundingBoxRect = new Rect();
+    private int mPaddingBottom = -1;
 
     @Nullable
     private Consumer<Configuration> mConfigurationChangedListener;
@@ -88,6 +89,9 @@ public class NotificationsQuickSettingsContainer extends ConstraintLayout
         // some special Configuration change, so we apply the last known padding (this will be
         // correct even if it has changed while the fragment was destroyed and re-created).
         setQSContainerPaddingBottom(mLastQSPaddingBottom);
+        if (mPaddingBottom != -1) {
+            setQSContainerPaddingBottom(mPaddingBottom);
+        }
     }
 
     @Override
@@ -115,6 +119,7 @@ public class NotificationsQuickSettingsContainer extends ConstraintLayout
 
     public void setQSContainerPaddingBottom(int paddingBottom) {
         mLastQSPaddingBottom = paddingBottom;
+        mPaddingBottom = paddingBottom;
         if (mQSContainer != null) {
             mQSContainer.setPadding(
                     mQSContainer.getPaddingLeft(),
