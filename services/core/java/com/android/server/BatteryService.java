@@ -81,6 +81,10 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 /**
  * <p>BatteryService monitors the charging status, and charge level of the device
  * battery.  When these values change this service broadcasts the new values
@@ -214,6 +218,9 @@ public final class BatteryService extends SystemService {
             .toBundle();
 
     private MetricsLogger mMetricsLogger;
+
+    private boolean isHealtyEnW = false;
+    private boolean isHealtyL70 = false;
 
     public BatteryService(Context context) {
         super(context);
@@ -757,19 +764,50 @@ public final class BatteryService extends SystemService {
 
     //open bat_health
     private void setBatteryHealthProtect(int level){
-        android.util.Log.i("sth_","___   level:" + level);
         if (mPlugType != BATTERY_PLUGGED_NONE){
+            isHealtyEnW = false;
             //charging
             if (level >= 70){
                 //TODO: set charge_disable
-                android.util.Log.i("sth_"," 70 <= level  charge_disable");
-            }else if (level < 30){
+                if (!isHealtyL70){
+                    writeBatEn("0");
+                    isHealtyL70 = true;
+                }
+
+            }else if (level == 30){
                 //TODO:set charge_enable
-                android.util.Log.i("sth_"," level < 30 charge_enable");
+                writeBatEn("6000000");
+                isHealtyL70 = false;
             }
         }else {
             //no charging set charge_enable
-            android.util.Log.i("sth_","no charging set charge_enable" );
+            if (!isHealtyEnW) {
+                writeBatEn("6000000");
+                isHealtyEnW = true;
+                isHealtyL70 = false;
+            }
+        }
+    }
+
+    private void writeBatEn(String value) {
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter("/sys/class/power_supply/battery/user_fcc");
+            bw = new BufferedWriter(fw, 256);
+            bw.write(value);
+            bw.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{
+                if (bw != null)
+                    bw.close();
+                if (fw != null)
+                    fw.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 
