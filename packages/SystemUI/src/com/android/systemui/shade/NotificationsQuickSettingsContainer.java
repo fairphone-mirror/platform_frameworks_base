@@ -55,6 +55,7 @@ public class NotificationsQuickSettingsContainer extends ConstraintLayout
     private Consumer<QS> mQSFragmentAttachedListener = qs -> {};
     private QS mQs;
     private View mQSContainer;
+    private int mPaddingBottom = -1;
 
     @Nullable
     private Consumer<Configuration> mConfigurationChangedListener;
@@ -76,6 +77,9 @@ public class NotificationsQuickSettingsContainer extends ConstraintLayout
         mQs = (QS) fragment;
         mQSFragmentAttachedListener.accept(mQs);
         mQSContainer = mQs.getView().findViewById(R.id.quick_settings_container);
+        if (mPaddingBottom != -1) {
+            setQSContainerPaddingBottom(mPaddingBottom);
+        }
     }
 
     @Override
@@ -102,6 +106,7 @@ public class NotificationsQuickSettingsContainer extends ConstraintLayout
     }
 
     public void setQSContainerPaddingBottom(int paddingBottom) {
+        mPaddingBottom = paddingBottom;
         if (mQSContainer != null) {
             mQSContainer.setPadding(
                     mQSContainer.getPaddingLeft(),
