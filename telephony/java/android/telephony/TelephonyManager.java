@@ -15425,6 +15425,9 @@ public class TelephonyManager {
         setSystemSelectionChannelsInternal(specifiers, null, null);
     }
 
+    private boolean isSetSystemSelectionChannelsSupported() {
+        return false;
+    }
 
     private void setSystemSelectionChannelsInternal(@NonNull List<RadioAccessSpecifier> specifiers,
             @Nullable @CallbackExecutor Executor executor,
@@ -15444,7 +15447,11 @@ public class TelephonyManager {
         try {
             ITelephony service = getITelephony();
             if (service != null) {
-                service.setSystemSelectionChannels(specifiers, getSubId(), aidlConsumer);
+                if(isSetSystemSelectionChannelsSupported()) {
+                    service.setSystemSelectionChannels(specifiers, getSubId(), aidlConsumer);
+                } else if(executor != null && callback != null) {
+                        executor.execute(() -> callback.accept(true));
+                }
             }
         } catch (RemoteException ex) {
             Rlog.e(TAG, "Telephony#setSystemSelectionChannels RemoteException" + ex);
