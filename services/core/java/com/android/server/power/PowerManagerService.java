@@ -2589,9 +2589,11 @@ public final class PowerManagerService extends SystemService
 
             for (int idx = 0; idx < mPowerGroups.size(); idx++) {
                 final PowerGroup powerGroup = mPowerGroups.valueAt(idx);
-                final int wakeLockSummary = adjustWakeLockSummary(powerGroup.getWakefulnessLocked(),
+                if(powerGroup.getGroupId() == Display.INVALID_DISPLAY_GROUP){
+                    final int wakeLockSummary = adjustWakeLockSummary(powerGroup.getWakefulnessLocked(),
                         invalidGroupWakeLockSummary | powerGroup.getWakeLockSummaryLocked());
-                powerGroup.setWakeLockSummaryLocked(wakeLockSummary);
+                    powerGroup.setWakeLockSummaryLocked(wakeLockSummary);
+                }
             }
 
             mWakeLockSummary = adjustWakeLockSummary(getGlobalWakefulnessLocked(),
@@ -2612,6 +2614,7 @@ public final class PowerManagerService extends SystemService
     }
 
     private static int adjustWakeLockSummary(int wakefulness, int wakeLockSummary) {
+        
         // Cancel wake locks that make no sense based on the current state.
         if (wakefulness != WAKEFULNESS_DOZING) {
             wakeLockSummary &= ~(WAKE_LOCK_DOZE | WAKE_LOCK_DRAW);
@@ -2770,6 +2773,7 @@ public final class PowerManagerService extends SystemService
                         }
                     }
                 }
+
                 if (groupUserActivitySummary == 0 && lastUserActivityTimeNoChangeLights
                         >= powerGroup.getLastWakeTimeLocked()) {
                     groupNextTimeout = lastUserActivityTimeNoChangeLights + screenOffTimeout;
@@ -2815,6 +2819,7 @@ public final class PowerManagerService extends SystemService
                 if ((groupUserActivitySummary & USER_ACTIVITY_SCREEN_BRIGHT) != 0
                         && (powerGroup.getWakeLockSummaryLocked()
                         & WAKE_LOCK_STAY_AWAKE) == 0) {
+                    
                     groupNextTimeout = mAttentionDetector.updateUserActivity(groupNextTimeout,
                             screenDimDuration);
                 }
@@ -2831,12 +2836,13 @@ public final class PowerManagerService extends SystemService
                 } else if (groupNextTimeout != -1) {
                     nextTimeout = Math.min(nextTimeout, groupNextTimeout);
                 }
+
             }
 
             powerGroup.setUserActivitySummaryLocked(groupUserActivitySummary);
 
             if (DEBUG_SPEW) {
-                Slog.d(TAG, "updateUserActivitySummaryLocked: groupId=" + powerGroup.getGroupId()
+                Slog.d(TAG , "updateUserActivitySummaryLocked: groupId=" + powerGroup.getGroupId()
                         + ", mWakefulness=" + wakefulnessToString(wakefulness)
                         + ", mUserActivitySummary=0x" + Integer.toHexString(
                         groupUserActivitySummary)
@@ -2852,6 +2858,7 @@ public final class PowerManagerService extends SystemService
         if (hasUserActivitySummary && nextTimeout >= 0) {
             scheduleUserInactivityTimeout(nextTimeout);
         }
+
     }
 
     private void scheduleUserInactivityTimeout(long timeMs) {
@@ -2968,7 +2975,6 @@ public final class PowerManagerService extends SystemService
             if (DEBUG_SPEW) {
                 Slog.d(TAG, "handleUserActivityTimeout");
             }
-
             mDirty |= DIRTY_USER_ACTIVITY;
             updatePowerStateLocked();
         }
@@ -3063,6 +3069,7 @@ public final class PowerManagerService extends SystemService
         final long time = mClock.uptimeMillis();
         for (int idx = 0; idx < mPowerGroups.size(); idx++) {
             final PowerGroup powerGroup = mPowerGroups.valueAt(idx);
+
             if (!(powerGroup.getWakefulnessLocked() == WAKEFULNESS_AWAKE
                     && isItBedTimeYetLocked(powerGroup))) {
                 continue;
@@ -3073,7 +3080,7 @@ public final class PowerManagerService extends SystemService
             }
             if (isAttentiveTimeoutExpired(powerGroup, time)) {
                 if (DEBUG) {
-                    Slog.i(TAG, "Going to sleep now due to long user inactivity");
+                    Slog.i(TAG, "updateWakefulnessLocked Going to sleep now due to long user inactivity");
                 }
                 changed = sleepPowerGroupLocked(powerGroup, time,
                         PowerManager.GO_TO_SLEEP_REASON_INATTENTIVE, Process.SYSTEM_UID);
@@ -3108,12 +3115,12 @@ public final class PowerManagerService extends SystemService
         if (!mBootCompleted) {
             return false;
         }
-
         long now = mClock.uptimeMillis();
         if (isAttentiveTimeoutExpired(powerGroup, now)) {
             return !isBeingKeptFromInattentiveSleepLocked();
         } else {
-            return !isBeingKeptAwakeLocked(powerGroup);
+            boolean isBegin = !isBeingKeptAwakeLocked(powerGroup);
+            return isBegin;
         }
     }
 
