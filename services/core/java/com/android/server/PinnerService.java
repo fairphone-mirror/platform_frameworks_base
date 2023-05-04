@@ -83,6 +83,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import android.content.ComponentName;
+
 /**
  * <p>PinnerService pins important files for key processes in memory.</p>
  * <p>Files to pin are specified in the config_defaultPinnerServiceFiles
@@ -103,6 +105,11 @@ public final class PinnerService extends SystemService {
     private static final String T2M_PROP_HAS_SKIP_SETUP = "persist.sys.has_skip_setup";
     private static final String T2M_PROP_FIRST_SKIP_SETUP = "sys.first_skip_setup";
     //-FP4S-562, workaround for "mfg_util --do_factoryreset"
+
+    private static final String MY_FAIRPHONE_PACKAGE_NAME = "com.fairphone.myfairphone";
+    private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.compose.activity.FairphoneOnboardingActivity";
+    private static final int DELAY_START_MY_FAIRPHONE = 5 * 1000;
+    private static final String MY_FAIRPHONE_IS_OPENED = "persist.sys.fairphone.open";
 
     private static final int KEY_CAMERA = 0;
     private static final int KEY_HOME = 1;
@@ -358,6 +365,19 @@ public final class PinnerService extends SystemService {
                         if (userSetupCompleteUri.equals(uri)) {
                             sendPinAppMessage(KEY_HOME, ActivityManager.getCurrentUser(),
                                     true /* force */);
+
+                            if (isUserSetupCompleted() && isMyPhoneFirstOpen()) {
+                                mPinnerHandler.postDelayed(new Runnable(){
+                                    @Override
+                                    public void run(){
+                                        try {
+                                            startMyFairphone();
+                                        } catch (Exception e) {
+                                            Slog.e(TAG, "Failed find MyFirePhone ", e);
+                                        }
+                                    }
+                                },DELAY_START_MY_FAIRPHONE);
+                            }
                             //+FP4S-562, workaround for "mfg_util --do_factoryreset"
                             if (isUserSetupCompleted() && isFirstSkipSetup()) {
                                 setTheFirstSkipSetup();
@@ -386,6 +406,22 @@ public final class PinnerService extends SystemService {
         return Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.USER_SETUP_COMPLETE, 0) != 0;
     }
 
+    private boolean isMyPhoneFirstOpen() {
+        return "0".equals(SystemProperties.get(MY_FAIRPHONE_IS_OPENED,"0"));
+    }
+
+    private void setMyPhoneOpened() {
+        SystemProperties.set(MY_FAIRPHONE_IS_OPENED,"1");
+    }
+
+    private void startMyFairphone() {
+        setMyPhoneOpened();
+        Intent launchIntent = new Intent(Intent.ACTION_MAIN);
+        launchIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        ComponentName cn = new ComponentName(MY_FAIRPHONE_PACKAGE_NAME, MY_FAIRPHONE_CLASS_NAME);
+        launchIntent.setComponent(cn);
+        mContext.startActivity(launchIntent);
+    }
 
     private void registerUidListener() {
         try {
