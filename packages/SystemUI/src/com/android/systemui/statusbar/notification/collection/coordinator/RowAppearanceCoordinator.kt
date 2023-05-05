@@ -27,6 +27,8 @@ import com.android.systemui.statusbar.notification.collection.provider.SectionSt
 import com.android.systemui.statusbar.notification.collection.render.NotifRowController
 import javax.inject.Inject
 
+import java.util.concurrent.TimeUnit
+
 /**
  * A small coordinator which updates the notif rows with data related to the current shade after
  * they are fully attached.
@@ -66,6 +68,11 @@ class RowAppearanceCoordinator @Inject internal constructor(
         // Show/hide the feedback icon
         controller.setFeedbackIcon(mAssistantFeedbackController.getFeedbackIcon(entry))
         // Show the "alerted" bell icon
-        controller.setLastAudiblyAlertedMs(entry.lastAudiblyAlertedMs)
+        if("com.android.stk".equals(entry.getSbn().getPackageName())){
+            //safe way to not show the "alerted" bell icon
+            controller.setLastAudiblyAlertedMs(System.currentTimeMillis()-TimeUnit.SECONDS.toMillis(31))//Add by renjie.zhang for FP4T-227 FP4-2257
+        }else{
+            controller.setLastAudiblyAlertedMs(entry.lastAudiblyAlertedMs)
+        }
     }
 }
