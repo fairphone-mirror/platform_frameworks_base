@@ -838,7 +838,7 @@ public class PhoneStatusBarPolicy
             case NfcAdapter.STATE_TURNING_OFF:
                 break;
             case NfcAdapter.STATE_ON:
-                mIconController.setIcon(mSlotNfc, R.drawable.ic_nfc,
+                mIconController.setIcon(mSlotNfc, R.drawable.ic_nfc_fp4,
                     mResources.getString(R.string.quick_settings_nfc_on));
                 mIconController.setIconVisibility(mSlotNfc, true);
                 break;
