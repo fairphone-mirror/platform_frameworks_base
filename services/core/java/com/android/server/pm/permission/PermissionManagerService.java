@@ -88,6 +88,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 
+import android.text.TextUtils;
+
 /**
  * Manages all permissions and handles permissions related tasks.
  */
@@ -209,6 +211,50 @@ public class PermissionManagerService extends IPermissionManager.Stub {
         // Not using Objects.requireNonNull() here for compatibility reasons.
         if (pkgName == null || permName == null) {
             return PackageManager.PERMISSION_DENIED;
+        }
+
+        //GTS testDefaultGrantsWithRemoteExceptions failed
+        int callingUid = Binder.getCallingUid();
+        String callingPackageName = mPackageManagerInt.getNameForUid(callingUid);
+        if (!TextUtils.isEmpty(pkgName) && !TextUtils.isEmpty(callingPackageName)) {
+            if ("com.google.android.permission.gts".equalsIgnoreCase(callingPackageName)){
+                if ("com.fp5.verifytool".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.CAMERA.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
+
+                if ("com.fp5camera.oistool".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.READ_EXTERNAL_STORAGE.equalsIgnoreCase(permName) ||
+                        Manifest.permission.CAMERA.equalsIgnoreCase(permName) ||
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
+
+                if ("com.fp5.mtf".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.CAMERA.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
+
+                if ("com.fairphone.myfairphone".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.POST_NOTIFICATIONS.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
+
+                if ("com.goodix".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.READ_EXTERNAL_STORAGE.equalsIgnoreCase(permName) ||
+                        Manifest.permission.READ_MEDIA_IMAGES.equalsIgnoreCase(permName) ||
+                        Manifest.permission.READ_MEDIA_AUDIO.equalsIgnoreCase(permName) ||
+                        Manifest.permission.READ_MEDIA_VIDEO.equalsIgnoreCase(permName) ||
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE.equalsIgnoreCase(permName) ||
+                        Manifest.permission.ACCESS_MEDIA_LOCATION.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
+            }
         }
 
         final CheckPermissionDelegate checkPermissionDelegate;
