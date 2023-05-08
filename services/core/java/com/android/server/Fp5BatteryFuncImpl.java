@@ -76,7 +76,7 @@ public class Fp5BatteryFuncImpl implements ICustomerBatteryFunc {
     private String getUsbPresent() {
         String version = null;
         try {
-            InputStream is = new FileInputStream("/sys/class/power_supply/usb/present");
+            InputStream is = new FileInputStream("/sys/class/power_supply/usb/online");
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             version = reader.readLine();
             reader.close();
