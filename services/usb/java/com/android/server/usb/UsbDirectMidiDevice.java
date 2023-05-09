@@ -79,7 +79,7 @@ public final class UsbDirectMidiDevice implements Closeable {
 
     // Timeout for sending a packet to a device.
     // If bulkTransfer times out, retry sending the packet up to 20 times.
-    private static final int BULK_TRANSFER_TIMEOUT_MILLISECONDS = 50;
+    private static final int BULK_TRANSFER_TIMEOUT_MILLISECONDS = 100;
     private static final int BULK_TRANSFER_NUMBER_OF_RETRIES = 20;
 
     // Arbitrary number for timeout when closing a thread
