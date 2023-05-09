@@ -2642,4 +2642,5 @@
     <string name="charging_slow">Slow mode</string>
     <string name="charging_normal">Normal mode</string>
     <string name="charging_state">Charging mode</string>
+    <string name="face_unlock_failed">No match.Touch icon to use face unlock.</string>
 </resources>

@@ -269,6 +269,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
                 && FaceUnlockUtil.getInstance().hasFaceEnrolled(getContext());
         if(!showFaceIcon && mShowLockIcon != showFaceIcon) {
             mView.setImageDrawable(mIcon);
+            mView.setOnClickListener(null);
         }
         mShowFaceIcon = showFaceIcon;
 
@@ -276,6 +277,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         if (mShowLockIcon) {
             if(showFaceIcon) {
                 mView.updateIcon(ICON_FACE, false);
+                mView.setOnClickListener(mFaceIconClickListener);
                 //add by t2m yingyubin for FP5-186 20230331
             } else {
                 mView.updateIcon(ICON_LOCK, false);
@@ -310,6 +312,13 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
             mView.announceForAccessibility(mView.getContentDescription());
         }
     }
+
+    private final View.OnClickListener mFaceIconClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            FaceUnlockUtil.getInstance().startFaceUnlock(getContext());
+        }
+    };
 
     private final View.AccessibilityDelegate mAccessibilityDelegate =
             new View.AccessibilityDelegate() {

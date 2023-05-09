@@ -770,7 +770,7 @@ public class KeyguardIndicationController {
 
     public void showFaceUnlockFailed() {
         showBiometricMessage(
-                mContext.getString(com.android.internal.R.string.faceunlock_multiple_failures));
+                mContext.getString(R.string.face_unlock_failed));
     }
     //add by t2m yingyubin for FP5-186 20230331
 
