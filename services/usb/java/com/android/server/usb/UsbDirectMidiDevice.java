@@ -79,7 +79,8 @@ public final class UsbDirectMidiDevice implements Closeable {
     // Arbitrary number for timeout to not continue sending to
     // an inactive device. This number tries to balances the number
     // of cycles and not being permanently stuck.
-    private static final int BULK_TRANSFER_TIMEOUT_MILLISECONDS = 10;
+    //[CTSV-Audio]Java MIDI Test&Native MIDI test should change 10 to 100
+    private static final int BULK_TRANSFER_TIMEOUT_MILLISECONDS = 100;
 
     // Arbitrary number for timeout when closing a thread
     private static final int THREAD_JOIN_TIMEOUT_MILLISECONDS = 200;
