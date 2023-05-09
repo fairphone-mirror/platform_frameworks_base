@@ -68,6 +68,7 @@ import android.view.WindowManager;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.hardware.usb.UsbManager;
 
 @SysUISingleton
 public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
@@ -104,6 +105,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     private final int[] mLowBatteryReminderLevels = new int[2];
 
     private long mScreenOffTime = -1;
+    protected int position = 2;
 
     @VisibleForTesting boolean mLowWarningShownThisChargeCycle;
     @VisibleForTesting boolean mSevereWarningShownThisChargeCycle;
@@ -211,7 +213,12 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 new ContentObserver(mHandler) {
                     @Override
                     public void onChange(boolean selfChange) {
-                        setBatteryChargingMode();
+                        if ("isBoot".equals(Settings.Global.getString(mContext.getContentResolver(),
+                                Settings.Global.SET_BATTERY_CHARGING_MODE))){
+                            Log.i(TAG,"------ isBoot");
+                        }else {
+                            setBatteryChargingMode();
+                        }
                     }
                 });
 
@@ -224,20 +231,19 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 mContext.getResources().getString(R.string.charging_normal)};
         AlertDialog alert = new AlertDialog.Builder(mContext)
                 .setTitle(R.string.charging_state)
-                .setSingleChoiceItems(charging_mode, 1, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(which == 0){
-                            Log.i("sth__","    which = 0   Slow mode");
-                            //TODO:Slow mode
-                            dialog.dismiss();
-                        }else if (which == 1){
-                            Log.i("sth__","  which = 1   Normal mode");
-                            //TODO:Normal mode
-                            dialog.dismiss();
-                        }
-                    }
+                .setSingleChoiceItems(charging_mode, 1, (dialog,id)->{
+                    position = id;
+                    Log.i(TAG," setSingleChoiceItems   id=" + id + "      position=" + position);
                 })
+                .setPositiveButton(R.string.save, (dialog,id)->{
+                    Log.i(TAG," setPositiveButton   id=" + id + "      position=" + position);
+                    //TODO: 0 slow mode  1 normal mode  2 default mode
+                })
+                .setNegativeButton(R.string.cancel, (dialog,id)->{
+                    Log.i(TAG,"  setPositiveButton  id=" + id + "      position=" + position);
+                    //TODO: default mode choice
+                })
+                .setCancelable(false)
                 .create();
         alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         alert.show();
@@ -307,6 +313,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
         public void init() {
             // Register for Intent broadcasts for...
             IntentFilter filter = new IntentFilter();
+            filter.addAction(UsbManager.ACTION_USB_STATE);
             filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);
             filter.addAction(Intent.ACTION_SHUTDOWN);
@@ -329,7 +336,21 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (PowerManager.ACTION_POWER_SAVE_MODE_CHANGED.equals(action)) {
+            if (UsbManager.ACTION_USB_STATE.equals(action)){
+                boolean connected = intent.getExtras().getBoolean("connected");
+                boolean isBoot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
+                boolean isFirstBoot = "1".equals(SystemProperties.get("persist.sys.is_first_boot"));
+                Log.e(TAG, "USB   connect  isBoot = " + isBoot);
+
+                if (connected && isBoot && isFirstBoot){
+                    Log.e(TAG, "USB  connected ");
+                    Settings.Global.putStringForUser(context.getContentResolver(),
+                            Settings.Global.SET_BATTERY_CHARGING_MODE, "first_insert_usb",
+                            UserHandle.myUserId());
+                }else {
+                    Log.e(TAG, "USB  break ");
+                }
+            }else if (PowerManager.ACTION_POWER_SAVE_MODE_CHANGED.equals(action)) {
                 ThreadUtils.postOnBackgroundThread(() -> {
                     if (mPowerManager.isPowerSaveMode()) {
                         mWarnings.dismissLowBatteryWarning();
@@ -410,6 +431,19 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                             plugged, bucket);
                 });
 
+                Log.e(TAG, "ACTION_BATTERY_CHANGED  oldPlugType：" + oldPlugType  +
+                        "    mPlugType:" + mPlugType);
+                if (oldPlugged && (mPlugType == 1)){
+                    Log.e(TAG, " -------------------->>>> ");
+                    boolean isBoot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
+                    boolean isFirstBoot = "1".equals(SystemProperties.get("persist.sys.is_first_boot"));
+                    if (isBoot && isFirstBoot){
+                        Log.e(TAG, " battery ");
+                        Settings.Global.putStringForUser(context.getContentResolver(),
+                                Settings.Global.SET_BATTERY_CHARGING_MODE, "first_insert_usb",
+                                UserHandle.myUserId());
+                    }
+                }
             } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
                 long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
                 long lastPeristTime = SystemProperties.getLong(TFT_PROPERTY_PERSIST,0);
