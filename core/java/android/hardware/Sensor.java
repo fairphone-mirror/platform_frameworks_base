@@ -913,7 +913,7 @@ public final class Sensor {
             3, // SENSOR_TYPE_GEOMAGNETIC_FIELD
             3, // SENSOR_TYPE_ORIENTATION
             3, // SENSOR_TYPE_GYROSCOPE
-            10, // SENSOR_TYPE_LIGHT
+            15, // SENSOR_TYPE_LIGHT
             1, // SENSOR_TYPE_PRESSURE
             1, // SENSOR_TYPE_TEMPERATURE
             2, // SENSOR_TYPE_PROXIMITY
