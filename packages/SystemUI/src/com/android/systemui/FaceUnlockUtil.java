@@ -14,6 +14,7 @@ import com.android.keyguard.KeyguardUpdateMonitor;
 
 public class FaceUnlockUtil {
     private static FaceUnlockUtil mInstance;
+    private int mFailTimes = 0;
 
     private FaceUnlockUtil(){
 
@@ -71,5 +72,13 @@ public class FaceUnlockUtil {
         }catch(NameNotFoundException e){
             return false;
         }
+    }
+
+    public void setFailTimes(int failTimes){
+        this.mFailTimes = failTimes;
+    }
+
+    public int getFailTimes(){
+        return this.mFailTimes;
     }
 }

@@ -967,4 +967,5 @@
     <string name="mobile_data_summary_not_allowed_to_disable_data">其它SIM卡通话期间，不可用</string>
     <string name="face_unlocking">正在人脸解锁</string>
     <string name="face_unlock_failed">不匹配。触摸图标使用面部解锁。</string>
+    <string name="too_many_face_unlock_failed">错误的尝试太多。使用图案/密码/pin解锁</string>
 </resources>

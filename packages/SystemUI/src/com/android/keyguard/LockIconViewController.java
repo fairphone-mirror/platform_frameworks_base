@@ -246,6 +246,10 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         return mView.getLocationTop();
     }
 
+    public void updateFaceFail(){
+        updateVisibility();
+    }
+
     private void updateVisibility() {
         if (mCancelDelayedUpdateVisibilityRunnable != null) {
             mCancelDelayedUpdateVisibilityRunnable.run();
@@ -266,7 +270,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         mShowAodLockIcon = mIsDozing && mUdfpsEnrolled && !mRunningFPS && !mCanDismissLockScreen;
         //add by t2m yingyubin for FP5-186 20230331
         boolean showFaceIcon = mShowLockIcon && !FaceUnlockUtil.getInstance().isRebootView(getContext())
-                && FaceUnlockUtil.getInstance().hasFaceEnrolled(getContext());
+                && FaceUnlockUtil.getInstance().hasFaceEnrolled(getContext()) && FaceUnlockUtil.getInstance().getFailTimes() < 3;
         if(!showFaceIcon && mShowLockIcon != showFaceIcon) {
             mView.setImageDrawable(mIcon);
             mView.setOnClickListener(null);
