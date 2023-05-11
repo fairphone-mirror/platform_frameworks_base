@@ -24,6 +24,7 @@ import android.telephony.CarrierConfigManager;
 import android.telephony.SubscriptionManager;
 import android.telephony.TelephonyDisplayInfo;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import com.android.settingslib.R;
 import com.android.settingslib.SignalIcon.MobileIconGroup;
@@ -35,6 +36,9 @@ import java.util.Map;
  * Holds the utility functions to create the RAT to MobileIconGroup mappings.
  */
 public class MobileMappings {
+
+    static final String TAG = "MobileMappings";
+    private static final String SHOW_VOLTE_ICON = "config_update_volte_icon";
 
     /**
      * Generates the RAT key from the TelephonyDisplayInfo.
@@ -257,14 +261,21 @@ public class MobileMappings {
                         CarrierConfigManager.KEY_SHOW_4G_FOR_3G_DATA_ICON_BOOL);
                 config.hideLtePlus = b.getBoolean(
                         CarrierConfigManager.KEY_HIDE_LTE_PLUS_DATA_ICON_BOOL);
+
+                // add for FP5-856 volte/vowifi icon in status bar for carriers begin
+                config.showVolteIcon = b.getBoolean(SHOW_VOLTE_ICON);
+                Log.d(TAG, "update showVolteIcon: " + config.showVolteIcon);
+                config.showVowifiIcon = b.getBoolean(CarrierConfigManager.KEY_SHOW_WIFI_CALLING_ICON_IN_STATUS_BAR_BOOL);
+                Log.d(TAG, "update showVowifiIcon: " + config.showVowifiIcon);
+                // add for FP5-856 volte/vowifi icon in status bar for carriers end
             }
 
             config.alwaysShowNetworkTypeIcon = res.getBoolean(R.bool.config_alwaysShowTypeIcon);
             config.showRsrpSignalLevelforLTE =
                     res.getBoolean(R.bool.config_showRsrpSignalLevelforLTE);
             config.hideNoInternetState = res.getBoolean(R.bool.config_hideNoInternetState);
-            config.showVolteIcon = res.getBoolean(R.bool.config_display_volte);
-            config.showVowifiIcon = res.getBoolean(R.bool.config_display_vowifi);
+            //config.showVolteIcon = res.getBoolean(R.bool.config_display_volte);
+            //config.showVowifiIcon = res.getBoolean(R.bool.config_display_vowifi);
             if ( config.alwaysShowNetworkTypeIcon ) {
                 config.hideLtePlus = false;
             }

@@ -270,6 +270,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
     void setConfiguration(Config config) {
         mConfig = config;
+        Log.d(mTag, "setConfiguration");
+        Log.d(mTag, "mConfig.showVolteIcon: " + mConfig.showVolteIcon);
+        Log.d(mTag, "mConfig.showVowifiIcon: " + mConfig.showVowifiIcon);
         updateInflateSignalStrength();
         mNetworkToIconLookup = mapIconSets(mConfig);
         mDefaultIcons = getDefaultIcons(mConfig);
@@ -304,6 +307,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
      * Start listening for phone state changes.
      */
     public void registerListener() {
+        Log.d(mTag, "registerListener");
         mMobileStatusTracker.setListening(true);
         mContext.getContentResolver().registerContentObserver(Global.getUriFor(Global.MOBILE_DATA),
                 true, mObserver);
@@ -317,14 +321,14 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 true, mObserver);
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
-        if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
+        //if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
             try {
                 mImsMmTelManager.registerImsStateCallback(mContext.getMainExecutor(),
                         mImsStateCallback);
             }catch (ImsException exception) {
                 Log.e(mTag, "failed to call registerImsStateCallback ", exception);
             }
-        }
+        //}
     }
 
     /**
@@ -334,9 +338,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mMobileStatusTracker.setListening(false);
         mContext.getContentResolver().unregisterContentObserver(mObserver);
         mContext.unregisterReceiver(mVolteSwitchObserver);
-        if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
+        //if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
             mImsMmTelManager.unregisterImsStateCallback(mImsStateCallback);
-        }
+        //}
     }
 
     private void updateInflateSignalStrength() {
@@ -384,6 +388,10 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     private int getVolteResId() {
+        Log.d(mTag, "getVolteResId");
+        Log.d(mTag, "mCurrentState.voiceCapable: " + mCurrentState.voiceCapable);
+        Log.d(mTag, "mCurrentState.imsRegistered: " + mCurrentState.imsRegistered);
+
         int resId = 0;
         int voiceNetTye = mCurrentState.getVoiceNetworkType();
         if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
@@ -461,6 +469,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         final SbInfo sbInfo = getSbInfo(contentDescription, icons.dataType);
 
         int volteIcon = mConfig.showVolteIcon ? getVolteResId() : 0;
+        Log.d(mTag, "volteIcon: " + volteIcon);
         MobileDataIndicators mobileDataIndicators = new MobileDataIndicators(
                 sbInfo.icon,
                 qsInfo.icon,
