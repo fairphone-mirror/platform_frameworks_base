@@ -768,9 +768,14 @@ public class KeyguardIndicationController {
         }
     }
 
-    public void showFaceUnlockFailed() {
-        showBiometricMessage(
+    public void showFaceUnlockFailed(int failTimes) {
+        if(failTimes >= 3) {
+            showBiometricMessage(
+                mContext.getString(R.string.too_many_face_unlock_failed));
+        } else {
+            showBiometricMessage(
                 mContext.getString(R.string.face_unlock_failed));
+        }
     }
     //add by t2m yingyubin for FP5-186 20230331
 

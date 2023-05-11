@@ -255,6 +255,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.Lazy;
+import com.android.systemui.FaceUnlockUtil;
 
 /**
  * A class handling initialization and coordination between some of the key central surfaces in
@@ -2665,12 +2666,15 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 resetUserExpandedStates();
             //add by t2m yingyubin for FP5-186 20230325
             } else if ("intent.action.faceunlock".equals(action)) {
-                boolean isFailed = intent.getIntExtra("faceunlock_status", 0) != 0;
+                int failTimes = intent.getIntExtra("faceunlock_status", 0);
+                boolean isFailed = failTimes != 0;
+                FaceUnlockUtil.getInstance().setFailTimes(failTimes);
                 if(isFailed) {
-                    mKeyguardIndicationController.showFaceUnlockFailed();
+                    mKeyguardIndicationController.showFaceUnlockFailed(failTimes);
                 } else {
                     mStatusBarKeyguardViewManager.getBouncer().doUnlock();
                 }
+                mCentralSurfacesComponent.getLockIconViewController().updateFaceFail();
             }
             //add by t2m yingyubin for FP5-186 20230325
             Trace.endSection();
@@ -3213,6 +3217,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
      */
     @Override
     public void finishKeyguardFadingAway() {
+        FaceUnlockUtil.getInstance().setFailTimes(0);
+        mCentralSurfacesComponent.getLockIconViewController().updateFaceFail();
         mKeyguardStateController.notifyKeyguardDoneFading();
         mScrimController.setExpansionAffectsAlpha(true);
 
@@ -3710,7 +3716,11 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
             }
             updateScrimController();
-            mKeyguardIndicationController.startAncFaceUnlock();
+            if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
+                mKeyguardIndicationController.startAncFaceUnlock();
+            } else {
+                mKeyguardIndicationController.showFaceUnlockFailed(3);
+            }
         }
     };
 
