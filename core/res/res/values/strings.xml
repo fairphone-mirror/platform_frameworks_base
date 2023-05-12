@@ -328,6 +328,7 @@
         <item>@string/wfcSpnFormat_vowifi</item>
         <item>@string/wfcSpnFormat_spn_wifi_calling_vo_hyphen</item>
         <item>@string/wfcSpnFormat_wifi_call</item>
+        <item>Vodafone WiFi Calling</item>
     </string-array>
 
     <!-- Spn during Wi-Fi Calling: "<operator>" -->
