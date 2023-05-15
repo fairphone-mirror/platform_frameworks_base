@@ -54,6 +54,7 @@ import android.provider.Settings;
 import android.system.ErrnoException;
 import android.system.Os;
 import android.system.OsConstants;
+import android.telephony.TelephonyManager;
 import android.util.ArrayMap;
 import android.util.ArraySet;
 import android.util.Slog;
@@ -103,6 +104,8 @@ public final class PinnerService extends SystemService {
     private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.activity.onboarding.DeviceOnboardingActivity";
     private static final int DELAY_START_MY_FAIRPHONE = 5 * 1000;
     private static final String MY_FAIRPHONE_IS_OPENED = "persist.sys.fairphone.open";
+
+    private static final String IS_DT_CARRIER = "persist.sys.isdtcarrier";
     //+FP4S-562, workaround for "mfg_util --do_factoryreset"
     private static final String T2M_PROP_HAS_SKIP_SETUP = "persist.sys.has_skip_setup";
     private static final String T2M_PROP_FIRST_SKIP_SETUP = "sys.first_skip_setup";
@@ -331,7 +334,7 @@ public final class PinnerService extends SystemService {
                         if (userSetupCompleteUri.equals(uri)) {
                             sendPinAppMessage(KEY_HOME, ActivityManager.getCurrentUser(),
                                     true /* force */);
-                            if (isUserSetupCompleted() && isMyPhoneFirstOpen()) {
+                            if (isUserSetupCompleted() && isMyPhoneFirstOpen() && !isDtCarrier()) {
                                 mPinnerHandler.postDelayed(new Runnable(){
                                     @Override
                                     public void run(){
@@ -364,8 +367,25 @@ public final class PinnerService extends SystemService {
     }
     //-FP4S-562, workaround for "mfg_util --do_factoryreset"
 
+    //FP4S-957
+    private boolean isDtCarrier() {
+       TelephonyManager telphonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        String imsi = telphonyManager.getSubscriberId();
+        boolean isDtCarrier = false;
+        if(imsi != null){
+            isDtCarrier = imsi.startsWith("26201")|| imsi.startsWith("26206");
+        }
+
+        setIsDtCarrier(isDtCarrier);
+        return isDtCarrier;
+    }
+
     private boolean isMyPhoneFirstOpen() {
         return "0".equals(SystemProperties.get(MY_FAIRPHONE_IS_OPENED,"0"));
+    }
+
+     private void setIsDtCarrier(boolean isDtCarrier) {
+        SystemProperties.set(IS_DT_CARRIER,isDtCarrier?"1":"0");
     }
 
     private void setMyPhoneOpened() {

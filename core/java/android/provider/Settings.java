@@ -5175,6 +5175,12 @@ public final class Settings {
          */
         @Readable
         public static final String MULTI_AUDIO_FOCUS_ENABLED = "multi_audio_focus_enabled";
+        /**
+         * @hide
+         */
+        @Readable
+        @SuppressLint("NoSettingsProvider")
+        public static final String IS_FAIRPHONE_FIRST_OPEN = "is_fairphone_first_open";
 
         /**
          * IMPORTANT: If you add a new public settings you also have to add it to
@@ -5194,6 +5200,7 @@ public final class Settings {
          */
         public static final String[] LEGACY_RESTORE_SETTINGS = {
         };
+
 
         /**
          * These are all public system settings
@@ -5252,6 +5259,7 @@ public final class Settings {
             PUBLIC_SETTINGS.add(HAPTIC_FEEDBACK_ENABLED);
             PUBLIC_SETTINGS.add(SHOW_WEB_SUGGESTIONS);
             PUBLIC_SETTINGS.add(VIBRATE_WHEN_RINGING);
+            PUBLIC_SETTINGS.add(IS_FAIRPHONE_FIRST_OPEN);
         }
 
         /**
