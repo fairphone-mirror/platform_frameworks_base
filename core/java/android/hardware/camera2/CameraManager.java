@@ -647,20 +647,23 @@ public final class CameraManager {
             try {
                 Size displaySize = getDisplaySize();
                 CameraMetadataNative info = cameraService.getCameraCharacteristics(cameraId,
+
                         mContext.getApplicationInfo().targetSdkVersion, overrideToPortrait);
-/*Begin yuantao.zhu for [Task][FP5-349] FP5 long exposure time cts on 20230223*/
-		if(!(mContext.getOpPackageName().equals("com.fp5.camera")) && 
-		!(mContext.getOpPackageName().equals("org.codeaurora.snapcam"))) {
-		//Don't expose long exposure capability to 3rd party app.
-		Range<Long> exposureTimeRange = info.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
-		long maxExpLimit = 500000000;
-			if(exposureTimeRange.getUpper() > maxExpLimit) {
-			    Range<Long> newRange = new Range<>(exposureTimeRange.getLower(), maxExpLimit);
-			    info.set(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE, newRange);
-			    info.set(CameraCharacteristics.SENSOR_INFO_MAX_FRAME_DURATION, maxExpLimit);
-			}
-		}
-/*End  yuantao.zhu for [Task][FP5-349] FP5 long exposure time cts on 20230223*/
+
+                /*Begin yuantao.zhu for [Task][FP5-349] FP5 long exposure time cts on 20230223*/
+                if(!(mContext.getOpPackageName().equals("com.fp5.camera")) &&
+                !(mContext.getOpPackageName().equals("org.codeaurora.snapcam"))) {
+                //Don't expose long exposure capability to 3rd party app.
+                    Range<Long> exposureTimeRange = info.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
+                    long maxExpLimit = 500000000;
+                    if(exposureTimeRange.getUpper() > maxExpLimit) {
+                        Range<Long> newRange = new Range<>(exposureTimeRange.getLower(), maxExpLimit);
+                        info.set(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE, newRange);
+                        info.set(CameraCharacteristics.SENSOR_INFO_MAX_FRAME_DURATION, maxExpLimit);
+                    }
+                }
+                /*End  yuantao.zhu for [Task][FP5-349] FP5 long exposure time cts on 20230223*/
+
                 try {
                     info.setCameraId(Integer.parseInt(cameraId));
                 } catch (NumberFormatException e) {
@@ -1959,19 +1962,24 @@ public final class CameraManager {
             }
         }
 
+        //should be same with Camera.java/CameraDeviceImpl.java/CameraManager.java/CameraDeviceClient.cpp
+        private static final String[] TctCameraPrivilegedAppList = {
+            "org.codeaurora.snapcam",
+            "com.fp5.camera",
+            "com.fp5.mtf",
+            "com.fp5.verifytool",
+            "com.android.mmi",
+            "foundation.e.camera"
+        };
+
         private String[] extractCameraIdListLocked() {
             String[] cameraIds = null;
             boolean exposeAuxCamera = false;
             String packageName = ActivityThread.currentOpPackageName();
-            String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-            if (packageList.length() > 0) {
-                TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                splitter.setString(packageList);
-                for (String str : splitter) {
-                    if (packageName.equals(str)) {
-                        exposeAuxCamera = true;
-                        break;
-                    }
+            for (String str : TctCameraPrivilegedAppList) {
+                if (packageName.equals(str)) {
+                    exposeAuxCamera = true;
+                    break;
                 }
             }
             int idCount = 0;
@@ -2255,15 +2263,10 @@ public final class CameraManager {
                  */
                 boolean exposeAuxCamera = false;
                 String packageName = ActivityThread.currentOpPackageName();
-                String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-                if (packageList.length() > 0) {
-                    TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                    splitter.setString(packageList);
-                    for (String str : splitter) {
-                        if (packageName.equals(str)) {
-                            exposeAuxCamera = true;
-                            break;
-                        }
+                for (String str : TctCameraPrivilegedAppList) {
+                    if (packageName.equals(str)) {
+                        exposeAuxCamera = true;
+                        break;
                     }
                 }
                 if (exposeAuxCamera == false && (Integer.parseInt(cameraId) >= 2)) {
@@ -2543,15 +2546,10 @@ public final class CameraManager {
              */
             boolean exposeMonoCamera = false;
             String packageName = ActivityThread.currentOpPackageName();
-            String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-            if (packageList.length() > 0) {
-                TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                splitter.setString(packageList);
-                for (String str : splitter) {
-                    if (packageName.equals(str)) {
-                        exposeMonoCamera = true;
-                        break;
-                    }
+            for (String str : TctCameraPrivilegedAppList) {
+                if (packageName.equals(str)) {
+                    exposeMonoCamera = true;
+                    break;
                 }
             }
 
@@ -2713,15 +2711,10 @@ public final class CameraManager {
              */
             boolean exposeMonoCamera = false;
             String packageName = ActivityThread.currentOpPackageName();
-            String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-            if (packageList.length() > 0) {
-                TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-                splitter.setString(packageList);
-                for (String str : splitter) {
-                    if (packageName.equals(str)) {
-                        exposeMonoCamera = true;
-                        break;
-                    }
+            for (String str : TctCameraPrivilegedAppList) {
+                if (packageName.equals(str)) {
+                    exposeMonoCamera = true;
+                    break;
                 }
             }
 

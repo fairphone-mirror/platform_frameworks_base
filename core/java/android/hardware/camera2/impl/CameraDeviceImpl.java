@@ -1539,17 +1539,22 @@ public class CameraDeviceImpl extends CameraDevice
         return false;
     }
 
+    //should be same with Camera.java/CameraDeviceImpl.java/CameraManager.java/CameraDeviceClient.cpp
+    private static final String[] TctCameraPrivilegedAppList = {
+        "org.codeaurora.snapcam",
+        "com.fp5.camera",
+        "com.fp5.mtf",
+        "com.fp5.verifytool",
+        "com.android.mmi",
+        "foundation.e.camera"
+    };
+
     private boolean checkPrivilegedAppList() {
         String packageName = ActivityThread.currentOpPackageName();
-        String packageList = SystemProperties.get("persist.vendor.camera.privapp.list");
 
-        if (packageList.length() > 0) {
-            TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-            splitter.setString(packageList);
-            for (String str : splitter) {
-                if (packageName.equals(str)) {
-                    return true;
-                }
+        for (String str : TctCameraPrivilegedAppList) {
+            if (packageName.equals(str)) {
+                return true;
             }
         }
 
