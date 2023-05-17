@@ -47,6 +47,7 @@ import android.os.Process;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.provider.DeviceConfig;
+import android.provider.Settings;
 import android.telecom.TelecomManager;
 import android.telephony.AccessNetworkConstants;
 import android.telephony.Annotation;
@@ -2204,9 +2205,20 @@ public class TelephonyRegistry extends ITelephonyRegistry.Stub {
                     if (internetConnections.containsKey(s)) {
                         state = s;
                         networkType = internetConnections.get(s).getNetworkType();
+                        log("state is : " + state + " , networkType = " + networkType);
                         break;
                     }
                 }
+                //Add for FP5-1074 [FP5 #25]SVFT DE DT: NW status shows disconnected when VoWiFi registered in Airplane mode
+                TelephonyManager telephonyManager = new TelephonyManager(mContext, subId);
+                boolean isAirplaneMode = Settings.System.getInt(mContext.getContentResolver(),Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+                log("isAirplaneMode is : " + isAirplaneMode + " , telephonyManager.isWifiCallingAvailable() = "
+                    + telephonyManager.isWifiCallingAvailable() + " , preciseState.getState() = " + preciseState.getState()
+                    + " ,preciseState.getNetworkType() = " + preciseState.getNetworkType());
+                if (isAirplaneMode && telephonyManager.isWifiCallingAvailable()) {
+                    state = TelephonyManager.DATA_CONNECTED;
+                }
+                //Add for FP5-1074 [FP5 #25]SVFT DE DT: NW status shows disconnected when VoWiFi registered in Airplane mode
 
                 if (mDataConnectionState[phoneId] != state
                         || mDataConnectionNetworkType[phoneId] != networkType) {
