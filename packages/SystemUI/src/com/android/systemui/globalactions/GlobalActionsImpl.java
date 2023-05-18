@@ -28,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.graphics.Typeface;
 
 import com.android.internal.R;
 import com.android.settingslib.Utils;
@@ -143,6 +144,10 @@ public class GlobalActionsImpl implements GlobalActions, CommandQueue.Callbacks 
 
         TextView reasonView = d.findViewById(R.id.text1);
         TextView messageView = d.findViewById(R.id.text2);
+
+        Typeface typefase = mContext.getResources().getFont(com.android.systemui.R.font.nootype_radikalbold);
+        reasonView.setTypeface(typefase);
+        messageView.setTypeface(typefase);
 
         reasonView.setTextColor(color);
         messageView.setTextColor(color);
