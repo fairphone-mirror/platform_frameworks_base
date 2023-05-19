@@ -3218,6 +3218,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
     @Override
     public void finishKeyguardFadingAway() {
         FaceUnlockUtil.getInstance().setFailTimes(0);
+        FaceUnlockUtil.getInstance().setCountDownUnlock(mContext, 0);
         mCentralSurfacesComponent.getLockIconViewController().updateFaceFail();
         mKeyguardStateController.notifyKeyguardDoneFading();
         mScrimController.setExpansionAffectsAlpha(true);
