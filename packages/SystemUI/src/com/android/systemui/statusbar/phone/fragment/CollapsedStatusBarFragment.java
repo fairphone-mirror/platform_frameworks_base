@@ -117,6 +117,7 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     private View mClockView;
     private View mOngoingCallChip;
     private View mNotificationIconAreaInner;
+    private View mOperatorNameFrame;
     private int mDisabled1;
     private int mDisabled2;
     private DarkIconManager mDarkIconManager;
@@ -560,14 +561,14 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     public void hideOperatorName(boolean animate) {
-        if (mOperatorNameViewController != null) {
-            animateHide(mOperatorNameViewController.getView(), animate);
+        if (mOperatorNameViewController != null && mOperatorNameFrame != null) {//fix SystemUI crash renjie.zhang FP5-1156
+            animateHide(mOperatorNameFrame, animate);
         }
     }
 
     public void showOperatorName(boolean animate) {
-        if (mOperatorNameViewController != null) {
-            animateShow(mOperatorNameViewController.getView(), animate);
+        if (mOperatorNameViewController != null && mOperatorNameFrame != null) {//fix SystemUI crash renjie.zhang FP5-1156
+            animateShow(mOperatorNameFrame, animate);
         }
     }
 
@@ -649,8 +650,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         if (mCarrierConfigTracker.getShowOperatorNameInStatusBarConfig(subId)) {
             ViewStub stub = mStatusBar.findViewById(R.id.operator_name);
             //fix SystemUI crash renjie.zhang FP5-1156
+            mOperatorNameFrame = stub.inflate();
             mOperatorNameViewController =
-                    mOperatorNameViewControllerFactory.create((OperatorNameView) (stub.inflate().findViewById(R.id.operator_name)));
+                    mOperatorNameViewControllerFactory.create((OperatorNameView) (mOperatorNameFrame.findViewById(R.id.operator_name)));
             mOperatorNameViewController.init();
             // This view should not be visible on lock-screen
             if (mKeyguardStateController.isShowing()) {
