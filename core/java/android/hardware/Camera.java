@@ -281,6 +281,16 @@ public class Camera {
      */
     private static final int CAMERA_FACE_DETECTION_SW = 1;
 
+    //should be same with Camera.java/CameraDeviceImpl.java/CameraManager.java/CameraDeviceClient.cpp
+    private static final String[] TctCameraPrivilegedAppList = {
+        "org.codeaurora.snapcam",
+        "com.fp5.camera",
+        "com.fp5.mtf",
+        "com.fp5.verifytool",
+        "com.android.mmi",
+        "foundation.e.camera"
+    };
+
     /**
      * Returns the number of physical cameras available on this device.
      * The return value of this method might change dynamically if the device
@@ -302,15 +312,10 @@ public class Camera {
         /* Force to expose only two cameras
          * if the package name does not falls in this bucket
          */
-        String packageList = SystemProperties.get("vendor.camera.aux.packagelist");
-        if (packageList.length() > 0) {
-            TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(',');
-            splitter.setString(packageList);
-            for (String str : splitter) {
-                if (packageName.equals(str)) {
-                    exposeAuxCamera = true;
-                    break;
-                }
+        for (String str : TctCameraPrivilegedAppList) {
+            if (packageName.equals(str)) {
+                exposeAuxCamera = true;
+                break;
             }
         }
         int numberOfCameras = _getNumberOfCameras();
