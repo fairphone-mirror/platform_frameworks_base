@@ -2643,5 +2643,7 @@
     <string name="charging_normal">Normal mode</string>
     <string name="charging_state">Charging mode</string>
     <string name="face_unlock_failed">No match.Touch icon to use face unlock.</string>
-    <string name="too_many_face_unlock_failed">Too many incorrect attempts.Use pattern/password/pin to unlock</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">Too many incorrect attempts.Use pattern to unlock</string>
+    <string name="too_many_face_unlock_failed_to_use_password">Too many incorrect attempts.Use password to unlock</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">Too many incorrect attempts.Use pin to unlock</string>
 </resources>

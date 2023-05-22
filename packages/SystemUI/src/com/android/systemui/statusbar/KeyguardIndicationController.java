@@ -772,8 +772,25 @@ public class KeyguardIndicationController {
 
     public void showFaceUnlockFailed(int failTimes) {
         if(failTimes >= 3) {
-            showBiometricMessage(
-                mContext.getString(R.string.too_many_face_unlock_failed));
+            final int security = whitelistIpcs(() ->
+                    mLockPatternUtils.getActivePasswordQuality(KeyguardUpdateMonitor.getCurrentUser()));
+            switch(security){
+                case DevicePolicyManager.PASSWORD_QUALITY_SOMETHING:
+                    showBiometricMessage(
+                        mContext.getString(R.string.too_many_face_unlock_failed_to_use_pattern));
+                    break;
+                case DevicePolicyManager.PASSWORD_QUALITY_ALPHABETIC:
+                case DevicePolicyManager.PASSWORD_QUALITY_ALPHANUMERIC:
+                case DevicePolicyManager.PASSWORD_QUALITY_COMPLEX:
+                case DevicePolicyManager.PASSWORD_QUALITY_MANAGED:
+                    showBiometricMessage(
+                        mContext.getString(R.string.too_many_face_unlock_failed_to_use_password));
+                    break;
+                default:
+                    showBiometricMessage(
+                        mContext.getString(R.string.too_many_face_unlock_failed_to_use_pin));
+                    break;
+            }
         } else {
             showBiometricMessage(
                 mContext.getString(R.string.face_unlock_failed));
