@@ -3717,10 +3717,12 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
             }
             updateScrimController();
-            if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
-                mKeyguardIndicationController.startAncFaceUnlock();
-            } else {
-                mKeyguardIndicationController.showFaceUnlockFailed(3);
+            if(!mKeyguardUpdateMonitor.isSecureCameraLaunchedOverKeyguard()){
+                if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
+                    mKeyguardIndicationController.startAncFaceUnlock();
+                } else {
+                    mKeyguardIndicationController.showFaceUnlockFailed(3);
+                }
             }
         }
     };
