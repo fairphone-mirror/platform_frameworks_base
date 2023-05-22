@@ -390,7 +390,6 @@ public class KeyguardPatternViewController
             @Override
             public void onFinish() {
                 mLockPatternView.setEnabled(true);
-                FaceUnlockUtil.getInstance().setCountDownUnlock(getContext(), 0);
                 displayDefaultSecurityMessage();
             }
 

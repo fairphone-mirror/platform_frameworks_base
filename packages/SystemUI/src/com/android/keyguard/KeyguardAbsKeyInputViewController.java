@@ -171,7 +171,6 @@ public abstract class KeyguardAbsKeyInputViewController<T extends KeyguardAbsKey
             public void onFinish() {
                 mMessageAreaController.setMessage("");
                 resetState();
-                FaceUnlockUtil.getInstance().setCountDownUnlock(getContext(), 0);
             }
         }.start();
     }
