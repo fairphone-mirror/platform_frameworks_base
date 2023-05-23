@@ -756,14 +756,7 @@ public class KeyguardIndicationController {
 
     //add by t2m yingyubin for FP5-186 20230331
     public void startAncFaceUnlock() {
-        int userId = KeyguardUpdateMonitor.getCurrentUser();
-        boolean faceUnlockSupported = FaceUnlockUtil.getInstance().isFaceUnlockSupported(mContext);
-        boolean hasFaceEnrolled = FaceUnlockUtil.getInstance().hasFaceEnrolled(mContext);
-        boolean isCounDown = FaceUnlockUtil.getInstance().getCountDownUnlock(mContext);
-        android.util.Log.d(TAG,"faceUnlockSupported:"+faceUnlockSupported+" hasFaceEnrolled:"+hasFaceEnrolled+
-                ",mKeyguardUpdateMonitor.isUserUnlocked(userId):"+mKeyguardUpdateMonitor.isUserUnlocked(userId)+
-                ",isCounDown:"+isCounDown);
-        if(hasFaceEnrolled && faceUnlockSupported && mKeyguardUpdateMonitor.isUserUnlocked(userId) && !isCounDown) {
+        if(FaceUnlockUtil.getInstance().isFaceUnlockEnable(mContext)) {
             FaceUnlockUtil.getInstance().startFaceUnlock(mContext);
             showBiometricMessage(mContext.getString(R.string.face_unlocking));
             hideBiometricMessageDelayed(DEFAULT_HIDE_DELAY_MS);

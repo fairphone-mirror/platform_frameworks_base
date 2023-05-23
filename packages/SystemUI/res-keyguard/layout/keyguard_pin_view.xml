@@ -26,8 +26,11 @@
     android:clipChildren="false"
     android:clipToPadding="false"
     android:orientation="vertical"
+    android:gravity="center_horizontal"
     androidprv:layout_maxWidth="@dimen/keyguard_security_width">
 <include layout="@layout/keyguard_bouncer_message_area"/>
+
+<include layout="@layout/keyguard_bouncer_face_unlock"/>
 
 <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pin_container"

@@ -24,6 +24,7 @@ import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
 import com.android.systemui.R;
 import com.android.systemui.classifier.FalsingCollector;
 import com.android.systemui.statusbar.policy.DevicePostureController;
+import com.android.systemui.FaceUnlockUtil;
 
 public class KeyguardPinViewController
         extends KeyguardPinBasedInputViewController<KeyguardPINView> {
@@ -79,6 +80,9 @@ public class KeyguardPinViewController
     void resetState() {
         super.resetState();
         mMessageAreaController.setMessage("");
+        if(mIvFaceUnlock != null){
+            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().isFaceUnlockEnable(getContext()) ? View.VISIBLE : View.GONE);
+        }
     }
 
     @Override

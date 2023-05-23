@@ -29,9 +29,12 @@
     android:layout_height="match_parent"
     androidprv:layout_maxWidth="@dimen/keyguard_security_width"
     android:layout_gravity="center_horizontal|bottom"
+    android:gravity="center_horizontal"
     android:clipChildren="false"
     android:clipToPadding="false">
     <include layout="@layout/keyguard_bouncer_message_area"/>
+
+    <include layout="@layout/keyguard_bouncer_face_unlock"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pattern_container"

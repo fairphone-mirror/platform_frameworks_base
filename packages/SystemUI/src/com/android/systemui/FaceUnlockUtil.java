@@ -20,6 +20,7 @@ public class FaceUnlockUtil {
     private static final String SECOND_FACE_ID_SETTING_KEY = "enroll_second_face_id";
     private static final String COUNT_DOWN_TIME_UNLOCK = "count_down_time_unlock";
     private int mFailTimes = 0;
+    private FaceUnlockCallback mCallback;
 
     private FaceUnlockUtil(){
 
@@ -36,7 +37,7 @@ public class FaceUnlockUtil {
         return mInstance;
     }
 
-    public boolean isRebootView(Context context){
+    private boolean isRebootView(Context context){
         if(isFaceUnlockSupported(context)) {
             int userId = KeyguardUpdateMonitor.getCurrentUser();
             UserManager userManager = context.getSystemService(UserManager.class);
@@ -52,7 +53,7 @@ public class FaceUnlockUtil {
                 UserHandle.USER_CURRENT);
     }
 
-    public boolean hasFaceEnrolled(Context context) {
+    private boolean hasFaceEnrolled(Context context) {
         if(isFaceUnlockSupported(context)) {
             int mainFaceId = getIntSettingValue(context, MAIN_FACE_ID_SETTING_KEY, 0);
             int secondFaceId = getIntSettingValue(context, SECOND_FACE_ID_SETTING_KEY, 0);
@@ -68,7 +69,7 @@ public class FaceUnlockUtil {
                 UserHandle.USER_CURRENT);
     }
 
-    public boolean getCountDownUnlock(Context context){
+    private boolean getCountDownUnlock(Context context){
         return getIntSettingValue(context, COUNT_DOWN_TIME_UNLOCK,0) > 0;
     }
 
@@ -89,7 +90,7 @@ public class FaceUnlockUtil {
     }
     
 
-    public boolean isFaceUnlockSupported(Context context){
+    private boolean isFaceUnlockSupported(Context context){
         PackageManager packageManager =  context.getPackageManager();
         try{
             packageManager.getPackageInfo("com.fp.faceunlock",PackageManager.GET_ACTIVITIES);
@@ -99,11 +100,38 @@ public class FaceUnlockUtil {
         }
     }
 
-    public void setFailTimes(int failTimes){
+    public boolean isFaceUnlockEnable(Context context){
+        int userId = KeyguardUpdateMonitor.getCurrentUser();
+        boolean faceUnlockSupported = isFaceUnlockSupported(context);
+        boolean hasFaceEnrolled = hasFaceEnrolled(context);
+        boolean isCounDown = getCountDownUnlock(context);
+        boolean isRebootView = isRebootView(context);
+        Log.d(TAG, "isFaceUnlockEnable faceUnlockSupported: " + faceUnlockSupported +
+                ",hasFaceEnrolled:" + hasFaceEnrolled + ",isCounDown:" + isCounDown +
+                ",isRebootView:" +isRebootView+",mFailTimes:"+mFailTimes);
+        return !isRebootView && faceUnlockSupported && hasFaceEnrolled && !isCounDown && mFailTimes < 3;
+    }
+
+    public void setFailTimes(int failTimes,boolean isFinishKeyguard){
         this.mFailTimes = failTimes;
+        if(!isFinishKeyguard && mCallback != null){
+            mCallback.onFaceAuthResult(failTimes);
+        }
     }
 
     public int getFailTimes(){
         return this.mFailTimes;
+    }
+
+    public void addCallback(FaceUnlockCallback callback) {
+        this.mCallback = callback;
+    }
+
+    public void removeCallback() {
+        this.mCallback = null;
+    }
+
+    public interface FaceUnlockCallback{
+        void onFaceAuthResult(int failTimes);
     }
 }

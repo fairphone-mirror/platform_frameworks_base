@@ -2668,7 +2668,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
             } else if ("intent.action.faceunlock".equals(action)) {
                 int failTimes = intent.getIntExtra("faceunlock_status", 0);
                 boolean isFailed = failTimes != 0;
-                FaceUnlockUtil.getInstance().setFailTimes(failTimes);
+                FaceUnlockUtil.getInstance().setFailTimes(failTimes,false);
                 if(isFailed) {
                     mKeyguardIndicationController.showFaceUnlockFailed(failTimes);
                 } else {
@@ -3217,7 +3217,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
      */
     @Override
     public void finishKeyguardFadingAway() {
-        FaceUnlockUtil.getInstance().setFailTimes(0);
+        FaceUnlockUtil.getInstance().setFailTimes(0, true);
         FaceUnlockUtil.getInstance().setCountDownUnlock(mContext, 0);
         mCentralSurfacesComponent.getLockIconViewController().updateFaceFail();
         mKeyguardStateController.notifyKeyguardDoneFading();

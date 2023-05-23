@@ -44,6 +44,7 @@ import com.android.systemui.R;
 import com.android.systemui.classifier.FalsingCollector;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.util.concurrency.DelayableExecutor;
+import com.android.systemui.FaceUnlockUtil;
 
 import java.util.List;
 
@@ -208,6 +209,9 @@ public class KeyguardPasswordViewController
             showInput();
         }
         mMessageAreaController.setMessageIfEmpty(R.string.keyguard_enter_your_password);
+        if(mIvFaceUnlock != null){
+            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().isFaceUnlockEnable(getContext()) ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void showInput() {
