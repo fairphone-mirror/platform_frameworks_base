@@ -1,0 +1,24 @@
+diff a/packages/SystemUI/src/com/android/systemui/pip/phone/PipMenuActivity.java b/packages/SystemUI/src/com/android/systemui/pip/phone/PipMenuActivity.java	(rejected hunks)
+@@ -560,11 +561,17 @@ public class PipMenuActivity extends Activity {
+                     final RemoteAction action = mActions.get(i);
+                     final ImageButton actionView = (ImageButton) mActionsGroup.getChildAt(i);
+ 
+-                    // TODO: Check if the action drawable has changed before we reload it
+-                    action.getIcon().loadDrawableAsync(this, d -> {
+-                        d.setTint(Color.WHITE);
+-                        actionView.setImageDrawable(d);
+-                    }, mHandler);
++                    final int iconType = action.getIcon().getType();
++                    if (iconType == Icon.TYPE_URI || iconType == Icon.TYPE_URI_ADAPTIVE_BITMAP) {
++                        // Disallow loading icon from content URI
++                        actionView.setImageDrawable(null);
++                    } else {
++                        // TODO: Check if the action drawable has changed before we reload it
++                        action.getIcon().loadDrawableAsync(this, d -> {
++                              d.setTint(Color.WHITE);
++                              actionView.setImageDrawable(d);
++                        }, mHandler);
++                    }
+                     actionView.setContentDescription(action.getContentDescription());
+                     if (action.isEnabled()) {
+                         actionView.setOnClickListener(v -> {
