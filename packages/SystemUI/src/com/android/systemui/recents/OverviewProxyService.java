@@ -40,6 +40,8 @@ import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_S
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_TRACING_ENABLED;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_VOICE_INTERACTION_WINDOW_SHOWING;
 import static com.android.systemui.shared.system.QuickStepContract.SYSUI_STATE_WAKEFULNESS_TRANSITION;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
+import static android.provider.Settings.Global.DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT;
 
 import android.annotation.FloatRange;
 import android.app.ActivityTaskManager;
@@ -53,6 +55,8 @@ import android.content.pm.ResolveInfo;
 import android.graphics.Region;
 import android.hardware.input.InputManager;
 import android.hardware.input.InputManagerGlobal;
+import android.hardware.display.DisplayManager;
+import android.view.Display;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -112,6 +116,7 @@ import com.android.systemui.unfold.progress.UnfoldTransitionProgressForwarder;
 import com.android.wm.shell.sysui.ShellInterface;
 
 import dagger.Lazy;
+import android.provider.Settings;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -161,6 +166,8 @@ public class OverviewProxyService implements CallbackController<OverviewProxyLis
     private final Optional<UnfoldTransitionProgressForwarder> mUnfoldTransitionProgressForwarder;
     private final UiEventLogger mUiEventLogger;
     private final DisplayTracker mDisplayTracker;
+    //ADD by T2M yingyubin for Desktop mode
+    private final DisplayManager mDisplayManager;
 
     private Region mActiveNavBarRegion;
     private SurfaceControl mNavigationBarSurface;
@@ -278,7 +285,19 @@ public class OverviewProxyService implements CallbackController<OverviewProxyLis
                     KeyEvent.FLAG_FROM_SYSTEM | KeyEvent.FLAG_VIRTUAL_HARD_KEY,
                     InputDevice.SOURCE_KEYBOARD);
 
-            ev.setDisplayId(mContext.getDisplay().getDisplayId());
+            //ADD by T2M yingyubin for Desktop mode
+            boolean desktopOn = Settings.Global.getInt(mContext.getContentResolver(),
+                    DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS,0) == 1
+                    && Settings.Global.getInt(mContext.getContentResolver(),
+                    DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, 0) ==1;
+            int length = mDisplayManager.getDisplays().length;
+            if(desktopOn && length > 1){
+                Display display = mDisplayManager.getDisplays()[length -1];
+                ev.setDisplayId(display.getDisplayId());
+            } else {
+                ev.setDisplayId(mContext.getDisplay().getDisplayId());
+            }
+            //ADD by T2M yingyubin for Desktop mode
             return InputManagerGlobal.getInstance()
                     .injectInputEvent(ev, InputManager.INJECT_INPUT_EVENT_MODE_ASYNC);
         }
@@ -590,6 +609,8 @@ public class OverviewProxyService implements CallbackController<OverviewProxyLis
         mDisplayTracker = displayTracker;
         mUnfoldTransitionProgressForwarder = unfoldTransitionProgressForwarder;
         mSysuiUnlockAnimationController = sysuiUnlockAnimationController;
+        //ADD by T2M yingyubin for Desktop mode
+        mDisplayManager = mContext.getSystemService(DisplayManager.class);
 
         dumpManager.registerDumpable(getClass().getSimpleName(), this);
 
