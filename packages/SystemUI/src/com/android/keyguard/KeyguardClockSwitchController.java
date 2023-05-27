@@ -531,6 +531,10 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
             });
         }
     }
+    
+    public boolean isShowDoubleLine(){
+        return mCanShowDoubleLineClock;
+    }
 
     /**
      * Sets the clipChildren property on relevant views, to allow the smartspace to draw out of
