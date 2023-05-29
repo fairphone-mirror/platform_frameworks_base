@@ -198,7 +198,8 @@ public class AppStateController {
                 int[] userIds = UserManagerService.getInstance().getUserIdsIncludingPreCreated();
                 for (int uid : userIds){
                     if (uid != UserHandle.USER_SYSTEM){
-                        ipm.setApplicationEnabledSetting(pkg,PackageManager.COMPONENT_ENABLED_STATE_DISABLED_USER,PackageManager.UNINSTALL_REASON_UNKNOWN,uid,mContext.getBasePackageName());
+                        ipm.setApplicationHiddenSettingAsUser(pkg,true,uid);
+                        ipm.setApplicationEnabledSetting(pkg,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.UNINSTALL_REASON_UNKNOWN,uid,mContext.getBasePackageName());
                     }
                }
 
