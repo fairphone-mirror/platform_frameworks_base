@@ -51,6 +51,8 @@ import static com.android.systemui.statusbar.phone.BarTransitions.TransitionMode
 import static com.android.systemui.statusbar.phone.CentralSurfaces.DEBUG_WINDOW_STATE;
 import static com.android.systemui.statusbar.phone.CentralSurfaces.dumpBarTransitions;
 import static com.android.systemui.util.Utils.isGesturalModeOnDefaultDisplay;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
+import static android.provider.Settings.Global.DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT;
 
 import android.annotation.IdRes;
 import android.annotation.NonNull;
@@ -98,6 +100,7 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.inputmethod.InputMethodManager;
+import android.provider.Settings;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -680,7 +683,7 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
         mView.updateRotationButton();
 
         mView.setVisibility(
-                mStatusBarKeyguardViewManager.isNavBarVisible() ? View.VISIBLE : View.INVISIBLE);
+                mStatusBarKeyguardViewManager.isNavBarVisible() && !isSecondaryDisplay() ? View.VISIBLE : View.INVISIBLE);
 
         if (DEBUG) Log.v(TAG, "addNavigationBar: about to add " + mView);
 
@@ -719,6 +722,17 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
         mNotificationShadeDepthController.addListener(mDepthListener);
         mTaskStackChangeListeners.registerTaskStackListener(mTaskStackListener);
     }
+
+    //ADD by T2M yingyubin for Desktop mode
+    private boolean isSecondaryDisplay(){
+        boolean desktopOn = Settings.Global.getInt(mContext.getContentResolver(),
+                DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS,0) == 1
+                && Settings.Global.getInt(mContext.getContentResolver(),
+                DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, 0) == 1;
+        boolean isSecondaryDisplay = desktopOn && !mIsOnDefaultDisplay;
+        return isSecondaryDisplay;
+    }
+    //ADD by T2M yingyubin for Desktop mode
 
     public void destroyView() {
         setAutoHideController(/* autoHideController */ null);
@@ -1693,9 +1707,11 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
                         | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
                         | WindowManager.LayoutParams.FLAG_SLIPPERY,
                 PixelFormat.TRANSLUCENT);
+        if(isSecondaryDisplay()){
+            lp.flags |= WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
+        }
         lp.gravity = gravity;
         lp.providedInsets = getInsetsFrameProvider(insetsHeight, userContext);
-
         lp.token = new Binder();
         lp.accessibilityTitle = userContext.getString(R.string.nav_bar);
         lp.privateFlags |= WindowManager.LayoutParams.PRIVATE_FLAG_COLOR_SPACE_AGNOSTIC
