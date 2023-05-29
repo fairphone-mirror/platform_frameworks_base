@@ -5508,6 +5508,13 @@ public final class Settings {
         public static final String MULTI_AUDIO_FOCUS_ENABLED = "multi_audio_focus_enabled";
 
         /**
+         * @hide
+         */
+        @Readable
+        @SuppressLint("NoSettingsProvider")
+        public static final String IS_FAIRPHONE_FIRST_OPEN = "is_fairphone_first_open";
+
+        /**
          * Whether desktop mode is enabled or not.
          * 0 = off
          * 1 = on
@@ -5592,6 +5599,7 @@ public final class Settings {
             PUBLIC_SETTINGS.add(HAPTIC_FEEDBACK_ENABLED);
             PUBLIC_SETTINGS.add(SHOW_WEB_SUGGESTIONS);
             PUBLIC_SETTINGS.add(VIBRATE_WHEN_RINGING);
+            PUBLIC_SETTINGS.add(IS_FAIRPHONE_FIRST_OPEN);
             PUBLIC_SETTINGS.add(APPLY_RAMPING_RINGER);
         }
 
