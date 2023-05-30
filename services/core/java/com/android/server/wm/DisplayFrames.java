@@ -20,6 +20,7 @@ import static android.view.InsetsState.ITYPE_BOTTOM_DISPLAY_CUTOUT;
 import static android.view.InsetsState.ITYPE_LEFT_DISPLAY_CUTOUT;
 import static android.view.InsetsState.ITYPE_RIGHT_DISPLAY_CUTOUT;
 import static android.view.InsetsState.ITYPE_TOP_DISPLAY_CUTOUT;
+import static android.view.Display.DEFAULT_DISPLAY;
 
 import android.annotation.NonNull;
 import android.graphics.Rect;
@@ -55,9 +56,12 @@ public class DisplayFrames {
 
     public int mRotation;
 
+    private int mDisplayId;
+
     public DisplayFrames(InsetsState insetsState, DisplayInfo info, DisplayCutout cutout,
             RoundedCorners roundedCorners, PrivacyIndicatorBounds indicatorBounds) {
         mInsetsState = insetsState;
+        mDisplayId = info.displayId;
         update(info.rotation, info.logicalWidth, info.logicalHeight, cutout, roundedCorners,
                 indicatorBounds);
     }
@@ -99,8 +103,10 @@ public class DisplayFrames {
             state.removeSource(ITYPE_LEFT_DISPLAY_CUTOUT);
         }
         if (safe.top > unrestricted.top) {
-            state.getSource(ITYPE_TOP_DISPLAY_CUTOUT).setFrame(
-                    unrestricted.left, unrestricted.top, unrestricted.right, safe.top);
+            if(mDisplayId == DEFAULT_DISPLAY) {
+                state.getSource(ITYPE_TOP_DISPLAY_CUTOUT).setFrame(
+                        unrestricted.left, unrestricted.top, unrestricted.right, safe.top);
+            }
         } else {
             state.removeSource(ITYPE_TOP_DISPLAY_CUTOUT);
         }
