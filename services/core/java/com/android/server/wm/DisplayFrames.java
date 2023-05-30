@@ -18,7 +18,7 @@ package com.android.server.wm;
 
 import static android.view.InsetsSource.createId;
 import static android.view.WindowInsets.Type.displayCutout;
-
+import static android.view.Display.DEFAULT_DISPLAY;
 import android.annotation.NonNull;
 import android.graphics.Rect;
 import android.util.proto.ProtoOutputStream;
@@ -60,10 +60,13 @@ public class DisplayFrames {
 
     public int mRotation;
 
+    private int mDisplayId;
+
     public DisplayFrames(InsetsState insetsState, DisplayInfo info, DisplayCutout cutout,
             RoundedCorners roundedCorners, PrivacyIndicatorBounds indicatorBounds,
             DisplayShape displayShape) {
         mInsetsState = insetsState;
+        mDisplayId = info.displayId;
         update(info.rotation, info.logicalWidth, info.logicalHeight, cutout, roundedCorners,
                 indicatorBounds, displayShape);
     }
@@ -107,8 +110,10 @@ public class DisplayFrames {
             state.removeSource(ID_DISPLAY_CUTOUT_LEFT);
         }
         if (safe.top > unrestricted.top) {
-            state.getOrCreateSource(ID_DISPLAY_CUTOUT_TOP, displayCutout()).setFrame(
+            if(mDisplayId == DEFAULT_DISPLAY) {
+                state.getOrCreateSource(ID_DISPLAY_CUTOUT_TOP, displayCutout()).setFrame(
                     unrestricted.left, unrestricted.top, unrestricted.right, safe.top);
+            }
         } else {
             state.removeSource(ID_DISPLAY_CUTOUT_TOP);
         }
