@@ -665,6 +665,16 @@ public class DisplayRotation {
             mDisplayRotationCoordinator.onDefaultDisplayRotationChanged(rotation);
         }
 
+        if (oldRotation != rotation){
+            if (rotation == 0){
+                SystemProperties.set("persist.sys.screen_mode","0");
+            }else if (rotation == 1){
+                SystemProperties.set("persist.sys.screen_mode","1");
+            }else if (rotation == 3){
+                SystemProperties.set("persist.sys.screen_mode","2");
+            }
+        }
+
         // Preemptively cancel the running recents animation -- SysUI can't currently handle this
         // case properly since the signals it receives all happen post-change. We do this earlier
         // in the rotation flow, since DisplayContent.updateDisplayOverrideConfigurationLocked seems
