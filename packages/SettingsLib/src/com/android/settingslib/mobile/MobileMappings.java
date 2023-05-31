@@ -267,7 +267,7 @@ public class MobileMappings {
                 // modify by T2M.zhang renjie for FP4-923 2021-06-21
 
                 config.showVolteIcon = b.getBoolean(SHOW_VOLTE_ICON, false);
-                Log.d(TAG, "show VoLTE icon: " + config.showVowifiIcon);
+                Log.d(TAG, "show VoLTE icon: " + config.showVolteIcon);
                 config.showVowifiIcon = b.getBoolean(
                         CarrierConfigManager.KEY_SHOW_WIFI_CALLING_ICON_IN_STATUS_BAR_BOOL);
                 Log.d(TAG, "show VoWifi icon: " + config.showVowifiIcon);

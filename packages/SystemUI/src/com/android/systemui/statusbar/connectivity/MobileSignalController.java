@@ -322,14 +322,14 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 true, mObserver);
         mContext.registerReceiver(mVolteSwitchObserver,
                 new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
-        if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
+        //if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
             try {
                 mImsMmTelManager.registerImsStateCallback(mContext.getMainExecutor(),
                         mImsStateCallback);
             }catch (ImsException exception) {
                 Log.e(mTag, "failed to call registerImsStateCallback ", exception);
             }
-        }
+        //}
     }
 
     /**
@@ -339,9 +339,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         mMobileStatusTracker.setListening(false);
         mContext.getContentResolver().unregisterContentObserver(mObserver);
         mContext.unregisterReceiver(mVolteSwitchObserver);
-        if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
+        //if (mConfig.showVolteIcon || mConfig.showVowifiIcon) {
             mImsMmTelManager.unregisterImsStateCallback(mImsStateCallback);
-        }
+        //}
     }
 
     private void updateInflateSignalStrength() {
