@@ -61,7 +61,7 @@
     <!-- Terminology for wifi with unknown PSK type -->
     <string name="wifi_security_psk_generic" translatable="false">@string/wifi_security_wpa_wpa2</string>
     <!-- Concise terminology for wifi with 802.1x EAP security [CHAR LIMIT=40] -->
-    <string name="wifi_security_eap">WPA/WPA2-Enterprise</string>
+    <string name="wifi_security_eap">WPA/WPA2/WPA3-Enterprise</string>
     <!-- Concise terminology for wifi with WPA 802.1x EAP security [CHAR LIMIT=40] -->
     <string name="wifi_security_eap_wpa">WPA-Enterprise</string>
     <!-- Concise terminology for wifi with 802.1x EAP security [CHAR LIMIT=40] -->
