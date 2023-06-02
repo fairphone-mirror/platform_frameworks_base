@@ -85,6 +85,7 @@ public class QuickStatusBarHeader extends FrameLayout {
 
     private BatteryMeterView mBatteryRemainingIcon;
     private int mLastBatteryWidth = -1;
+    private int mBatteryIconWidth = -1;
     private StatusIconContainer mIconContainer;
     private View mPrivacyChip;
 
@@ -207,6 +208,15 @@ public class QuickStatusBarHeader extends FrameLayout {
                 mBatteryRemainingIcon.updatePercentViewVisible(false);
             } else {
                 mBatteryRemainingIcon.updatePercentViewVisible(true);
+            }
+        }
+        if(mBatteryIconWidth != mBatteryRemainingIcon.getMeasuredWidth()) {
+            mBatteryIconWidth = mBatteryRemainingIcon.getMeasuredWidth();
+            int iconWidth = mContext.getResources().getDimensionPixelSize(R.dimen.status_bar_battery_icon_width);
+            if(mBatteryIconWidth < iconWidth) {
+                mBatteryRemainingIcon.setVisibility(View.INVISIBLE);
+            } else {
+                mBatteryRemainingIcon.setVisibility(View.VISIBLE);
             }
         }
         //Modify by T2M yingyubin for FP4S-661 20221025
@@ -398,6 +408,11 @@ public class QuickStatusBarHeader extends FrameLayout {
         mExpanded = expanded;
         quickQSPanelController.setExpanded(expanded);
         updateEverything();
+        //Modify by T2M yingyubin for FP4S-661 20230321
+        if(!expanded){
+            mBatteryRemainingIcon.updatePercentView();
+        }
+        //Modify by T2M yingyubin for FP4S-661 20230321
     }
 
     /**
