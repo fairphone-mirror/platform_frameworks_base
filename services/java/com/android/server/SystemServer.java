@@ -952,7 +952,7 @@ public final class SystemServer implements Dumpable {
                 Slog.w(TAG,"System clock is before 2021-11-11,setting to 2021-11-11");
                 SystemClock.setCurrentTimeMillis(EARLIEST_SUPPORTED_TIME);
             }
-            if (shutDwonTime != -1) {
+            if (shutDwonTime != -1  && currentTimeMillis < shutDwonTime) {
                 Slog.w(TAG,"Setting the shutdown time.");
                 SystemClock.setCurrentTimeMillis(shutDwonTime);
             }
