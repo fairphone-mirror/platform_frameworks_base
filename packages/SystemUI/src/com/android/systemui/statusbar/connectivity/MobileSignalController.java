@@ -79,6 +79,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 
+import android.telephony.ims.stub.ImsRegistrationImplBase;//[BUG]-Modify by huan.sun 2022-11-24 [FP4S-690]VoWifi icon display obnormally
 /**
  * Monitors the mobile signal changes and update the SysUI icons.
  */
@@ -162,7 +163,10 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             Log.d(mTag, "onRegistered: " + "attributes=" + attributes);
             mCurrentState.imsRegistered = true;
             mCurrentState.imsRegistrationTech = attributes.getRegistrationTechnology();
-            notifyListenersIfNecessary();
+	    // modify by T2M.zhang renjie for FP4-3917 22-09-16 begin
+            //notifyListenersIfNecessary();
+            notifyListeners(); /*Impose refresh when vowifi handover happen*/
+	    // modify by T2M.zhang renjie for FP4-3917 22-09-16 end
             if (!mProviderModelBehavior) {
                 return;
             }
@@ -366,7 +370,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             if (mInflateSignalStrengths) {
                 level++;
             }
-
+	    checkDefaultData();// modify by T2M.zhang renjie for FP4-2991 21-12-3
             boolean dataDisabled = mCurrentState.userSetup
                     && (mCurrentState.iconGroup == TelephonyIcons.DATA_DISABLED
                     || (mCurrentState.iconGroup == TelephonyIcons.NOT_DEFAULT_DATA
@@ -396,6 +400,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
         int resId = 0;
         int voiceNetTye = mCurrentState.getVoiceNetworkType();
+	if(!mCurrentState.airplaneMode) {        // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
         if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
                 &&  mCurrentState.imsRegistered ) {
             resId = R.drawable.ic_volte;
@@ -404,6 +409,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                         TelephonyManager.NETWORK_TYPE_LTE_CA)
                     && voiceNetTye  == TelephonyManager.NETWORK_TYPE_UNKNOWN) {
             resId = R.drawable.ic_volte_no_voice;
+            }
         }
         return resId;
     }
@@ -469,9 +475,15 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
         final QsInfo qsInfo = getQsInfo(contentDescription, icons.dataType);
         final SbInfo sbInfo = getSbInfo(contentDescription, icons.dataType);
+	// modify by T2M.zhang renjie for FP4S-78 23-1-29 begin
+	boolean hideVolteIcon = false;
 
-        int volteIcon = mConfig.showVolteIcon ? getVolteResId() : 0;
-        Log.d(mTag, "volteIcon: " + volteIcon);
+        if (mConfig.showVowifiIcon && getVowifiIconGroup() != null && mCurrentState.enabled && !mCurrentState.airplaneMode) {
+	    hideVolteIcon = true;
+	    Log.d(mTag, "disable volte icon when vowifi icon display.");
+	}
+        int volteIcon = mConfig.showVolteIcon && !hideVolteIcon ? getVolteResId() : 0;
+	// modify by T2M.zhang renjie for FP4S-78 23-1-29 end
         MobileDataIndicators mobileDataIndicators = new MobileDataIndicators(
                 sbInfo.icon,
                 qsInfo.icon,
@@ -947,8 +959,18 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     private boolean isVowifiAvailable() {
-        return mCurrentState.voiceCapable
-                && mCurrentState.imsRegistrationTech == REGISTRATION_TECH_IWLAN;
+        // modify by T2M.zhang renjie for FP4-3605 22-03-24 begin
+        int regTech = ImsRegistrationImplBase.REGISTRATION_TECH_NONE;
+        if (mPhone != null) {
+            regTech = mPhone.getImsRegTechnologyForMmTel();
+        }
+        //[BUG]-Modify-Begin by huan.sun
+        Log.i(mTag, "isVowifiAvailable, getDataNetworkType() = " 
+            + getDataNetworkType() + " mCurrentState.voiceCapable = " +mCurrentState.voiceCapable + " mCurrentState.imsRegistered = "+ mCurrentState.imsRegistered
+            + ", regTech = " + regTech);
+        return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
+               && (ImsRegistrationImplBase.REGISTRATION_TECH_IWLAN == regTech);//[BUG]-Modify by huan.sun 2022-11-24 [FP4S-690]VoWifi icon display obnormall
+        // modify by T2M.zhang renjie for FP4-3605 22-03-24 end
     }
 
     private MobileIconGroup getVowifiIconGroup() {
@@ -1087,3 +1109,4 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         }
     }
 }
+
