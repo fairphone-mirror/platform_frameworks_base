@@ -79,7 +79,7 @@ public class FaceUnlockUtil {
         }
         try{
             Intent faceIntent = new Intent()
-                .setComponent(new ComponentName("com.fp.faceunlock","com.fp.faceunlock.anc.unlock.UnlockActivity"))
+                .setComponent(new ComponentName("com.android.settings","com.android.settings.anc.unlock.UnlockActivity"))
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
                     | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -91,13 +91,7 @@ public class FaceUnlockUtil {
     
 
     private boolean isFaceUnlockSupported(Context context){
-        PackageManager packageManager =  context.getPackageManager();
-        try{
-            packageManager.getPackageInfo("com.fp.faceunlock",PackageManager.GET_ACTIVITIES);
-            return true;
-        }catch(NameNotFoundException e){
-            return false;
-        }
+        return true;
     }
 
     public boolean isFaceUnlockEnable(Context context){
