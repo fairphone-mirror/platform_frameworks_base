@@ -164,6 +164,10 @@ applications that come with the platform
     <privapp-permissions package="com.aura.oobe.deutsche">
         <permission name="android.permission.INSTALL_PACKAGES"/>
         <permission name="android.permission.POST_NOTIFICATIONS"/>
+        <permission name="android.permission.READ_PHONE_STATE" />
+        <permission name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+        <permission name="android.permission.PACKAGE_VERIFICATION_AGENT"/>
+        <permission name="android.permission.START_ACTIVITIES_FROM_BACKGROUND"/>
     </privapp-permissions>
 
     <privapp-permissions package="de.telekom.appstarter">
