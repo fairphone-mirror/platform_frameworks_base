@@ -2111,13 +2111,13 @@
     <integer name="config_audio_notif_vol_steps">7</integer>
 
     <!-- The default volume for the notification stream -->
-    <integer name="config_audio_notif_vol_default">5</integer>
+    <integer name="config_audio_notif_vol_default">4</integer>
 
     <!-- The number of volume steps for the ring stream -->
     <integer name="config_audio_ring_vol_steps">7</integer>
 
     <!-- The default volume for the ring stream -->
-    <integer name="config_audio_ring_vol_default">5</integer>
+    <integer name="config_audio_ring_vol_default">4</integer>
 
     <!-- The default value for whether head tracking for
          spatial audio is enabled for a newly connected audio device -->
