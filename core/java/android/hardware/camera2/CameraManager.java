@@ -589,10 +589,10 @@ public final class CameraManager {
 
                 /*Begin yuantao.zhu for [Task][FP5-349] FP5 long exposure time cts on 20230223*/
                 if(!(mContext.getOpPackageName().equals("com.fp5.camera")) &&
-                !(mContext.getOpPackageName().equals("org.codeaurora.snapcam"))) {
-                //Don't expose long exposure capability to 3rd party app.
+                    !(mContext.getOpPackageName().equals("org.codeaurora.snapcam"))) {
+                    //Don't expose long exposure capability to 3rd party app.
                     Range<Long> exposureTimeRange = info.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE);
-                    long maxExpLimit = 500000000;
+                    long maxExpLimit = 250000000;
                     if(exposureTimeRange.getUpper() > maxExpLimit) {
                         Range<Long> newRange = new Range<>(exposureTimeRange.getLower(), maxExpLimit);
                         info.set(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE, newRange);
