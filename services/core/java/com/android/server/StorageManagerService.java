@@ -1449,6 +1449,14 @@ class StorageManagerService extends IStorageManager.Stub
                         disk.size = 64*STORAGE_G;
                     }else if(sizeBytes > 32*STORAGE_G && sizeBytes < 32*STORAGE_G * 1.1){
                         disk.size = 32*STORAGE_G;
+                    }else if(sizeBytes > 16*STORAGE_G && sizeBytes < 16*STORAGE_G * 1.1){
+                        disk.size = 16*STORAGE_G;
+                    }else if(sizeBytes > 8*STORAGE_G && sizeBytes < 8*STORAGE_G * 1.1){
+                        disk.size = 8*STORAGE_G;
+                    }else if(sizeBytes > 4*STORAGE_G && sizeBytes < 4*STORAGE_G * 1.1){
+                        disk.size = 4*STORAGE_G;
+                    }else if(sizeBytes > 2*STORAGE_G && sizeBytes < 2*STORAGE_G * 1.1){
+                        disk.size = 2*STORAGE_G;
                     }else{
                         disk.size = sizeBytes;
                     }
