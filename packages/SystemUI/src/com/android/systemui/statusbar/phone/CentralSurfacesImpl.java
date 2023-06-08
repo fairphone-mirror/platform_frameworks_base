@@ -3717,7 +3717,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
             }
             updateScrimController();
-            if(!mKeyguardUpdateMonitor.isSecureCameraLaunchedOverKeyguard()){
+            if(!mKeyguardUpdateMonitor.isSecureCameraLaunchedOverKeyguard() &&
+                    mStatusBarStateController.getState() == StatusBarState.KEYGUARD){
                 if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
                     mKeyguardIndicationController.startAncFaceUnlock();
                 } else {
