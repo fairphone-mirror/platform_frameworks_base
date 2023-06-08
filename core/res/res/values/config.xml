@@ -2477,8 +2477,9 @@
     <!-- SNTP client config: NTP servers to use to obtain an accurate time.
          Items must be in the form: "ntp://<host>[:port]"
          This is not a registered IANA URI scheme. -->
+    <!-- Modified by chuanzhi.shao for FP5-1558 2023-06-08 -->
     <string-array translatable="false" name="config_ntpServers">
-        <item>ntp://time.android.com</item>
+        <item>ntp://asia.pool.ntp.org</item>
     </string-array>
     <!-- SNTP client config: Timeout to wait for an NTP server response in milliseconds. -->
     <integer name="config_ntpTimeout">5000</integer>
