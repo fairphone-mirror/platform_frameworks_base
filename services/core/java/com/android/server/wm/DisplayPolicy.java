@@ -75,6 +75,8 @@ import static com.android.server.policy.WindowManagerPolicy.WindowManagerFuncs.L
 import static com.android.server.wm.WindowManagerDebugConfig.DEBUG_LAYOUT;
 import static com.android.server.wm.WindowManagerDebugConfig.TAG_WITH_CLASS_NAME;
 import static com.android.server.wm.WindowManagerDebugConfig.TAG_WM;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
+import static android.provider.Settings.Global.DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT;
 
 import android.annotation.NonNull;
 import android.annotation.Nullable;
@@ -123,6 +125,7 @@ import android.view.WindowManager.LayoutParams;
 import android.view.WindowManagerGlobal;
 import android.view.accessibility.AccessibilityManager;
 import android.window.ClientWindowFrames;
+import android.provider.Settings;
 
 import com.android.internal.R;
 import com.android.internal.annotations.VisibleForTesting;
@@ -1086,6 +1089,9 @@ public class DisplayPolicy {
                             + attrs.getFitInsetsTypes()
                             + " attrs=" + attrs);
                 }
+                if(isSecondaryDisplay()) {
+                    attrs.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+                }
                 break;
         }
 
@@ -1120,6 +1126,14 @@ public class DisplayPolicy {
         }
     }
 
+    private boolean isSecondaryDisplay(){
+        boolean desktopOn = Settings.Global.getInt(mContext.getContentResolver(),
+                DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS,0) == 1
+                && Settings.Global.getInt(mContext.getContentResolver(),
+                DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, 0) == 1;
+        boolean isSecondaryDisplay = desktopOn && !mDisplayContent.isDefaultDisplay;
+        return isSecondaryDisplay;
+    }
     /**
      * Add additional policy if needed to ensure the window or its children should not receive any
      * input.
