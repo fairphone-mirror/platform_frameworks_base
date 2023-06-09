@@ -261,6 +261,13 @@ public class PermissionManagerService extends IPermissionManager.Stub {
                        return PackageManager.PERMISSION_DENIED;
                     }
                 }
+
+                if ("com.android.wallpaper".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.READ_EXTERNAL_STORAGE.equalsIgnoreCase(permName) ||
+                        Manifest.permission.READ_MEDIA_IMAGES.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
             }
         }
 
