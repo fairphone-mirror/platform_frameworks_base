@@ -328,7 +328,8 @@
         <item>@string/wfcSpnFormat_vowifi</item>
         <item>@string/wfcSpnFormat_spn_wifi_calling_vo_hyphen</item>
         <item>@string/wfcSpnFormat_wifi_call</item>
-        <item>Vodafone WiFi Calling</item>
+        <item>@string/wfcSpnFormat_vdf_wifi_calling</item>
+        <item>@string/wfcSpnFormat_spn_wifi_wo_hyphen</item>
     </string-array>
 
     <!-- Spn during Wi-Fi Calling: "<operator>" -->
@@ -357,6 +358,10 @@
     <string name="wfcSpnFormat_vowifi">VoWifi</string>
     <!-- Spn during Wi_Fi Calling: "WiFi Call" (without hyphen).  This string is shown in the call banner for calls which take place over a WiFi network. -->
     <string name="wfcSpnFormat_wifi_call">WiFi Call</string>
+    <!-- Spn during Wi-Fi Calling: "Vodafone WiFi Calling" -->
+    <string name="wfcSpnFormat_vdf_wifi_calling">Vodafone WiFi Calling</string>
+    <!-- Spn during Wi-Fi Calling: "<operator> Wifi" -->
+    <string name="wfcSpnFormat_spn_wifi_wo_hyphen"><xliff:g id="spn" example="Operator">%s</xliff:g> Wifi</string>
 
     <!-- WFC, summary for Disabled -->
     <string name="wifi_calling_off_summary">Off</string>
