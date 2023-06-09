@@ -1836,6 +1836,9 @@ public class CarrierConfigManager {
      * <li>  9: WiFi Calling</li>
      * <li> 10: VoWifi</li>
      * <li> 11: %s WiFi Calling</li>
+     * <li> 12: Vodafone WiFi Calling</li>
+     * <li> 13: %s  Wifi</li>
+     * <li> 14: WiFi Call</li>
      * @hide
      */
     public static final String KEY_WFC_SPN_FORMAT_IDX_INT = "wfc_spn_format_idx_int";
