@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 
 import androidx.annotation.IntDef;
@@ -181,7 +182,6 @@ public class LockIconView extends FrameLayout implements Dumpable {
         //add by t2m yingyubin for FP5-186 20230331
         if(icon == ICON_FACE) {
             setImageDrawable(getContext().getDrawable(R.drawable.face_dialog_pulse_dark_to_light));
-            shakeFaceView();
         //add by t2m yingyubin for FP5-186 20230331
         } else {
             mLockIcon.setImageState(getLockIconState(mIconType, mAod), true);
@@ -189,12 +189,28 @@ public class LockIconView extends FrameLayout implements Dumpable {
     }
 
     //add by t2m yingyubin for FP5-186 20230331
-    private void shakeFaceView() {
+    public void scaleFaceView() {
+        stopFaceViewAnim();
+        ScaleAnimation scaleAnim = new ScaleAnimation(1.0f,0.75f,1.0f,0.75f,
+            ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+            ScaleAnimation.RELATIVE_TO_SELF,0.5f);
+        scaleAnim.setRepeatCount(10);
+        scaleAnim.setDuration(200);
+        scaleAnim.setRepeatMode(Animation.REVERSE);
+        mLockIcon.startAnimation(scaleAnim);
+    }
+
+    public void shakeFaceView() {
+        stopFaceViewAnim();
         TranslateAnimation transAnim = new TranslateAnimation(0, -10, 0, 0);
         transAnim.setRepeatCount(10);
         transAnim.setDuration(150);
         transAnim.setRepeatMode(Animation.REVERSE);
         mLockIcon.startAnimation(transAnim);
+    }
+
+    public void stopFaceViewAnim() {
+        mLockIcon.clearAnimation();
     }
     //add by t2m yingyubin for FP5-186 20230331
 

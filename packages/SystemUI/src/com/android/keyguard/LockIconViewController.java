@@ -215,6 +215,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         mAccessibilityManager.addAccessibilityStateChangeListener(
                 mAccessibilityStateChangeListener);
         updateAccessibility();
+        FaceUnlockUtil.getInstance().addCallback(mCallback);
     }
 
     private void updateAccessibility() {
@@ -240,7 +241,24 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
 
         mAccessibilityManager.removeAccessibilityStateChangeListener(
                 mAccessibilityStateChangeListener);
+        FaceUnlockUtil.getInstance().removeCallback(mCallback);
     }
+
+    private final FaceUnlockUtil.FaceUnlockCallback mCallback = new FaceUnlockUtil.FaceUnlockCallback() {
+        @Override
+        public void onFaceAuthResult(int failTimes){
+            if(failTimes >= 3) {
+                mView.stopFaceViewAnim();
+            } else if(failTimes >0) {
+                mView.shakeFaceView();
+            }
+        }
+
+        @Override
+        public void onStartFaceUnlock(){
+            mView.scaleFaceView();
+        }
+    };
 
     public float getTop() {
         return mView.getLocationTop();
@@ -273,6 +291,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         if(!showFaceIcon && mShowFaceIcon != showFaceIcon) {
             mView.setImageDrawable(mIcon);
             mView.setOnClickListener(null);
+            mView.stopFaceViewAnim();
         }
         mShowFaceIcon = showFaceIcon;
 

@@ -10,6 +10,8 @@ import android.util.Log;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.provider.Settings;
+import java.util.List;
+import java.util.ArrayList;
 
 import com.android.keyguard.KeyguardUpdateMonitor;
 
@@ -20,7 +22,7 @@ public class FaceUnlockUtil {
     private static final String SECOND_FACE_ID_SETTING_KEY = "enroll_second_face_id";
     private static final String COUNT_DOWN_TIME_UNLOCK = "count_down_time_unlock";
     private int mFailTimes = 0;
-    private FaceUnlockCallback mCallback;
+    private List<FaceUnlockCallback> mCallbackList = new ArrayList<>();
 
     private FaceUnlockUtil(){
 
@@ -84,6 +86,13 @@ public class FaceUnlockUtil {
                     | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
                     | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             context.startActivityAsUser(faceIntent, UserHandle.CURRENT);
+            if(!mCallbackList.isEmpty()){
+                for(FaceUnlockCallback callback : mCallbackList){
+                    if(callback != null){
+                        callback.onStartFaceUnlock();
+                    }
+                }
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -108,8 +117,12 @@ public class FaceUnlockUtil {
 
     public void setFailTimes(int failTimes,boolean isFinishKeyguard){
         this.mFailTimes = failTimes;
-        if(!isFinishKeyguard && mCallback != null){
-            mCallback.onFaceAuthResult(failTimes);
+        if(!isFinishKeyguard && !mCallbackList.isEmpty()){
+            for(FaceUnlockCallback callback : mCallbackList){
+                if(callback != null){
+                    callback.onFaceAuthResult(failTimes);
+                }
+            }
         }
     }
 
@@ -118,14 +131,22 @@ public class FaceUnlockUtil {
     }
 
     public void addCallback(FaceUnlockCallback callback) {
-        this.mCallback = callback;
+        if(callback == null || mCallbackList.contains(callback)){
+            return;
+        }
+        mCallbackList.add(callback);
     }
 
-    public void removeCallback() {
-        this.mCallback = null;
+    public void removeCallback(FaceUnlockCallback callback) {
+        if(callback == null || !mCallbackList.contains(callback)){
+            return;
+        }
+        mCallbackList.remove(callback);
     }
 
     public interface FaceUnlockCallback{
         void onFaceAuthResult(int failTimes);
+
+        void onStartFaceUnlock();
     }
 }

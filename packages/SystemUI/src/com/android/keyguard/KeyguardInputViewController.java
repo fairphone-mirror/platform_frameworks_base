@@ -26,6 +26,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 
 import com.android.internal.util.LatencyTracker;
 import com.android.internal.widget.LockPatternUtils;
@@ -147,17 +150,55 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
                             mTvFaceUnlockMsg.setText(R.string.too_many_face_unlock_failed_to_use_pin);
                             break;
                     }
+                    stopFaceViewAnim();
                     mIvFaceUnlock.setVisibility(View.GONE);
                 } else if(failTimes > 0) {
                     mTvFaceUnlockMsg.setText(R.string.face_unlock_failed);
+                    shakeFaceView();
                 } else {
+                    stopFaceViewAnim();
                     mIvFaceUnlock.setVisibility(View.GONE);
                     mTvFaceUnlockMsg.setVisibility(View.GONE);
                 }
                 mTvFaceUnlockMsg.postDelayed(mHideRunnable, 2000);
             }
         }
+
+        @Override
+        public void onStartFaceUnlock(){
+            scaleFaceView();
+        }
     };
+
+    private void scaleFaceView() {
+        if(mIvFaceUnlock != null) {
+            stopFaceViewAnim();
+            ScaleAnimation scaleAnim = new ScaleAnimation(1.0f,0.75f,1.0f,0.75f,
+                ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
+                ScaleAnimation.RELATIVE_TO_SELF,0.5f);
+            scaleAnim.setRepeatCount(10);
+            scaleAnim.setDuration(200);
+            scaleAnim.setRepeatMode(Animation.REVERSE);
+            mIvFaceUnlock.startAnimation(scaleAnim);
+        }
+    }
+
+    private void shakeFaceView() {
+        if(mIvFaceUnlock != null) {
+            stopFaceViewAnim();
+            TranslateAnimation transAnim = new TranslateAnimation(0, -10, 0, 0);
+            transAnim.setRepeatCount(10);
+            transAnim.setDuration(150);
+            transAnim.setRepeatMode(Animation.REVERSE);
+            mIvFaceUnlock.startAnimation(transAnim);
+        }
+    }
+
+    private void stopFaceViewAnim() {
+        if(mIvFaceUnlock != null) {
+            mIvFaceUnlock.clearAnimation();
+        }
+    }
 
     @Override
     protected void onInit() {
@@ -180,7 +221,7 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
         if(mTvFaceUnlockMsg != null){
             mTvFaceUnlockMsg.setVisibility(View.GONE);
         }
-        FaceUnlockUtil.getInstance().removeCallback();
+        FaceUnlockUtil.getInstance().removeCallback(mCallback);
     }
 
     SecurityMode getSecurityMode() {
