@@ -314,6 +314,7 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
 
                 if (connected && isBoot && isFirstBoot){
                     Log.e(TAG, "USB  connected ");
+                    SystemProperties.set("persist.sys.is_first_boot","0");
                     Settings.Global.putStringForUser(context.getContentResolver(),
                             Settings.Global.SET_BATTERY_CHARGING_MODE, "first_insert_usb",
                             UserHandle.myUserId());
@@ -404,11 +405,10 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
                 Log.e(TAG, "ACTION_BATTERY_CHANGED  oldPlugType：" + oldPlugType  +
                         "    mPlugType:" + mPlugType);
                 if (oldPlugged && (mPlugType == 1)){
-                    Log.e(TAG, " -------------------->>>> ");
                     boolean isBoot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
                     boolean isFirstBoot = "1".equals(SystemProperties.get("persist.sys.is_first_boot"));
                     if (isBoot && isFirstBoot){
-                        Log.e(TAG, " battery ");
+                        SystemProperties.set("persist.sys.is_first_boot","0");
                         Settings.Global.putStringForUser(context.getContentResolver(),
                                 Settings.Global.SET_BATTERY_CHARGING_MODE, "first_insert_usb",
                                 UserHandle.myUserId());
