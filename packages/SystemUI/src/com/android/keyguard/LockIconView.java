@@ -194,7 +194,7 @@ public class LockIconView extends FrameLayout implements Dumpable {
         ScaleAnimation scaleAnim = new ScaleAnimation(1.0f,0.75f,1.0f,0.75f,
             ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
             ScaleAnimation.RELATIVE_TO_SELF,0.5f);
-        scaleAnim.setRepeatCount(10);
+        scaleAnim.setRepeatCount(20);
         scaleAnim.setDuration(200);
         scaleAnim.setRepeatMode(Animation.REVERSE);
         mLockIcon.startAnimation(scaleAnim);

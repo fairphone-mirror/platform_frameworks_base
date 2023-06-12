@@ -115,6 +115,14 @@ public class FaceUnlockUtil {
         return !isRebootView && faceUnlockSupported && hasFaceEnrolled && !isCounDown && mFailTimes < 3;
     }
 
+    public boolean hasFaceUnlock(Context context){
+        int userId = KeyguardUpdateMonitor.getCurrentUser();
+        boolean faceUnlockSupported = isFaceUnlockSupported(context);
+        boolean hasFaceEnrolled = hasFaceEnrolled(context);
+        boolean isRebootView = isRebootView(context);
+        return !isRebootView && faceUnlockSupported && hasFaceEnrolled;
+    }
+
     public void setFailTimes(int failTimes,boolean isFinishKeyguard){
         this.mFailTimes = failTimes;
         if(!isFinishKeyguard && !mCallbackList.isEmpty()){

@@ -970,4 +970,7 @@
     <string name="too_many_face_unlock_failed_to_use_pattern">错误的尝试太多。使用图案解锁。</string>
     <string name="too_many_face_unlock_failed_to_use_password">错误的尝试太多。使用密码解锁。</string>
     <string name="too_many_face_unlock_failed_to_use_pin">错误的尝试太多。使用pin解锁。</string>
+    <string name="required_to_use_pattern">需要图案以增加安全性</string>
+    <string name="required_to_use_password">需要密码以增加安全性</string>
+    <string name="required_to_use_pin">需要PIN以增加安全性</string>
 </resources>

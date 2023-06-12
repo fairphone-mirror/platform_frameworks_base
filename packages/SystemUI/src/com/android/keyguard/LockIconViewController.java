@@ -241,6 +241,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
 
         mAccessibilityManager.removeAccessibilityStateChangeListener(
                 mAccessibilityStateChangeListener);
+        mView.stopFaceViewAnim();
         FaceUnlockUtil.getInstance().removeCallback(mCallback);
     }
 
@@ -249,14 +250,23 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         public void onFaceAuthResult(int failTimes){
             if(failTimes >= 3) {
                 mView.stopFaceViewAnim();
-            } else if(failTimes >0) {
+                mView.setOnClickListener(null);
+            } else if(failTimes > 0) {
                 mView.shakeFaceView();
+                mView.setOnClickListener(mFaceIconClickListener);
             }
+            mVibrator.vibrate(
+                Process.myUid(),
+                getContext().getOpPackageName(),
+                UdfpsController.EFFECT_CLICK,
+                "face-unlock-fail",
+                TOUCH_VIBRATION_ATTRIBUTES);
         }
 
         @Override
         public void onStartFaceUnlock(){
             mView.scaleFaceView();
+            mView.setOnClickListener(null);
         }
     };
 
@@ -299,7 +309,6 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         if (mShowLockIcon) {
             if(showFaceIcon) {
                 mView.updateIcon(ICON_FACE, false);
-                mView.setOnClickListener(mFaceIconClickListener);
                 //add by t2m yingyubin for FP5-186 20230331
             } else {
                 mView.updateIcon(ICON_LOCK, false);

@@ -210,7 +210,7 @@ public class KeyguardPasswordViewController
         }
         mMessageAreaController.setMessageIfEmpty(R.string.keyguard_enter_your_password);
         if(mIvFaceUnlock != null){
-            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().isFaceUnlockEnable(getContext()) ? View.VISIBLE : View.GONE);
+            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().hasFaceUnlock(getContext()) ? View.VISIBLE : View.GONE);
         }
     }
 

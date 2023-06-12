@@ -11,16 +11,4 @@
         android:gravity="center"
         android:contentDescription="@null" />
 
-    <TextView
-        android:id="@+id/tv_face_unlock_msg"
-        style="@style/Keyguard.TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/face_unlocking"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:gravity="center"
-        android:singleLine="true"/>
 </merge>

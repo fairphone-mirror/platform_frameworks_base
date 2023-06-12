@@ -55,7 +55,6 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
     private boolean mPaused;
     protected KeyguardMessageAreaController<BouncerKeyguardMessageArea> mMessageAreaController;
     protected ImageView mIvFaceUnlock;
-    protected TextView mTvFaceUnlockMsg;
 
     // The following is used to ignore callbacks from SecurityViews that are no longer current
     // (e.g. face unlock). This avoids unwanted asynchronous events from messing with the
@@ -103,8 +102,6 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
         }
         try{
             mIvFaceUnlock = view.requireViewById(R.id.iv_face_unlock);
-            mTvFaceUnlockMsg = view.requireViewById(R.id.tv_face_unlock_msg);
-            mIvFaceUnlock.setOnClickListener(mFaceIconClickListener);
         }catch (Exception e){
             Log.e("KeyguardInputViewController", "init face unlock view error");
         }
@@ -115,20 +112,9 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
         public void onClick(View v) {
             if(FaceUnlockUtil.getInstance().isFaceUnlockEnable(getContext())){
                 FaceUnlockUtil.getInstance().startFaceUnlock(getContext());
-                if(mTvFaceUnlockMsg != null) {
-                    mTvFaceUnlockMsg.setText(R.string.face_unlocking);
-                    mTvFaceUnlockMsg.setVisibility(View.VISIBLE);
-                    mTvFaceUnlockMsg.postDelayed(mHideRunnable, 2000);
+                if(mMessageAreaController != null){
+                    mMessageAreaController.setMessage(R.string.face_unlocking);
                 }
-            }
-        }
-    };
-
-    private final Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if(mTvFaceUnlockMsg != null){
-                mTvFaceUnlockMsg.setVisibility(View.GONE);
             }
         }
     };
@@ -136,31 +122,32 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
     private final FaceUnlockUtil.FaceUnlockCallback mCallback = new FaceUnlockUtil.FaceUnlockCallback() {
         @Override
         public void onFaceAuthResult(int failTimes){
-            if(mTvFaceUnlockMsg != null) {
-                mTvFaceUnlockMsg.setVisibility(View.VISIBLE);
+            if(mMessageAreaController != null){
                 if(failTimes >= 3) {
                     switch(getSecurityMode()){
                         case Pattern:
-                            mTvFaceUnlockMsg.setText(R.string.too_many_face_unlock_failed_to_use_pattern);
+                            mMessageAreaController.setMessage(R.string.required_to_use_pattern);
                             break;
                         case Password:
-                            mTvFaceUnlockMsg.setText(R.string.too_many_face_unlock_failed_to_use_password);
+                            mMessageAreaController.setMessage(R.string.required_to_use_password);
                             break;
                         default:
-                            mTvFaceUnlockMsg.setText(R.string.too_many_face_unlock_failed_to_use_pin);
+                            mMessageAreaController.setMessage(R.string.required_to_use_pin);
                             break;
                     }
                     stopFaceViewAnim();
-                    mIvFaceUnlock.setVisibility(View.GONE);
+                    if(mIvFaceUnlock != null) {
+                        mIvFaceUnlock.setImageDrawable(getContext().getDrawable(R.drawable.ic_lock));
+                    }
                 } else if(failTimes > 0) {
-                    mTvFaceUnlockMsg.setText(R.string.face_unlock_failed);
+                    mMessageAreaController.setMessage(R.string.face_unlock_failed);
                     shakeFaceView();
                 } else {
                     stopFaceViewAnim();
-                    mIvFaceUnlock.setVisibility(View.GONE);
-                    mTvFaceUnlockMsg.setVisibility(View.GONE);
+                    if(mIvFaceUnlock != null) {
+                        mIvFaceUnlock.setVisibility(View.GONE);
+                    }
                 }
-                mTvFaceUnlockMsg.postDelayed(mHideRunnable, 2000);
             }
         }
 
@@ -172,11 +159,12 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
 
     private void scaleFaceView() {
         if(mIvFaceUnlock != null) {
+            mIvFaceUnlock.setImageDrawable(getContext().getDrawable(R.drawable.face_dialog_pulse_dark_to_light));
             stopFaceViewAnim();
             ScaleAnimation scaleAnim = new ScaleAnimation(1.0f,0.75f,1.0f,0.75f,
                 ScaleAnimation.RELATIVE_TO_SELF, 0.5f,
                 ScaleAnimation.RELATIVE_TO_SELF,0.5f);
-            scaleAnim.setRepeatCount(10);
+            scaleAnim.setRepeatCount(20);
             scaleAnim.setDuration(200);
             scaleAnim.setRepeatMode(Animation.REVERSE);
             mIvFaceUnlock.startAnimation(scaleAnim);
@@ -185,7 +173,9 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
 
     private void shakeFaceView() {
         if(mIvFaceUnlock != null) {
+            mIvFaceUnlock.setImageDrawable(getContext().getDrawable(R.drawable.face_dialog_pulse_dark_to_light));
             stopFaceViewAnim();
+            mIvFaceUnlock.setOnClickListener(mFaceIconClickListener);
             TranslateAnimation transAnim = new TranslateAnimation(0, -10, 0, 0);
             transAnim.setRepeatCount(10);
             transAnim.setDuration(150);
@@ -197,6 +187,7 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
     private void stopFaceViewAnim() {
         if(mIvFaceUnlock != null) {
             mIvFaceUnlock.clearAnimation();
+            mIvFaceUnlock.setOnClickListener(null);
         }
     }
 
@@ -218,9 +209,7 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
             mIvFaceUnlock.setVisibility(View.GONE);
             mIvFaceUnlock.setOnClickListener(null);
         }
-        if(mTvFaceUnlockMsg != null){
-            mTvFaceUnlockMsg.setVisibility(View.GONE);
-        }
+        stopFaceViewAnim();
         FaceUnlockUtil.getInstance().removeCallback(mCallback);
     }
 
@@ -249,7 +238,7 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
     public void onResume(int reason) {
         mPaused = false;
         if(mIvFaceUnlock != null){
-            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().isFaceUnlockEnable(getContext()) ? View.VISIBLE : View.GONE);
+            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().hasFaceUnlock(getContext()) ? View.VISIBLE : View.GONE);
         }
     }
 

@@ -81,7 +81,7 @@ public class KeyguardPinViewController
         super.resetState();
         mMessageAreaController.setMessage("");
         if(mIvFaceUnlock != null){
-            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().isFaceUnlockEnable(getContext()) ? View.VISIBLE : View.GONE);
+            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().hasFaceUnlock(getContext()) ? View.VISIBLE : View.GONE);
         }
     }
 
