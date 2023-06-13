@@ -714,6 +714,7 @@ public final class NotificationPanelViewController extends PanelViewController {
     private final CameraGestureHelper mCameraGestureHelper;
     private final KeyguardBottomAreaViewModel mKeyguardBottomAreaViewModel;
     private final KeyguardBottomAreaInteractor mKeyguardBottomAreaInteractor;
+    private EmergencyButton emergencyButton;
 
     @Inject
     public NotificationPanelViewController(NotificationPanelView view,
@@ -1291,7 +1292,7 @@ public final class NotificationPanelViewController extends PanelViewController {
 
     private void initBottomArea() {
         mKeyguardBottomArea.init(mKeyguardBottomAreaViewModel, mFalsingManager);
-        EmergencyButton emergencyButton =
+        emergencyButton =
                 mKeyguardBottomArea.findViewById(R.id.emergency_call_button);
         mEmergencyButtonController = mEmergencyButtonControllerFactory.create(emergencyButton);
         mEmergencyButtonController.init();
@@ -2370,6 +2371,13 @@ public final class NotificationPanelViewController extends PanelViewController {
     @VisibleForTesting
     void setQsExpanded(boolean expanded) {
         boolean changed = mQsExpanded != expanded;
+        if (emergencyButton != null) {
+            if (expanded) {
+                emergencyButton.setVisibility(View.GONE);
+            } else {
+                emergencyButton.setVisibility(View.VISIBLE);
+            }
+        }
         if (changed) {
             mQsExpanded = expanded;
             updateQsState();
