@@ -3685,6 +3685,13 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
 
             });
+            if(mStatusBarStateController.getState() == StatusBarState.KEYGUARD) {
+                if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
+                    mKeyguardIndicationController.startAncFaceUnlock();
+                } else {
+                    mKeyguardIndicationController.showFaceUnlockFailed(3);
+                }
+            }
             DejankUtils.stopDetectingBlockingIpcs(tag);
         }
 
@@ -3717,13 +3724,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
             }
             updateScrimController();
-            if(!mKeyguardUpdateMonitor.isSecureCameraLaunchedOverKeyguard() &&
-                    mStatusBarStateController.getState() == StatusBarState.KEYGUARD){
-                if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
-                    mKeyguardIndicationController.startAncFaceUnlock();
-                } else {
-                    mKeyguardIndicationController.showFaceUnlockFailed(3);
-                }
+            if(mKeyguardUpdateMonitor.isSecureCameraLaunchedOverKeyguard()){
+                FaceUnlockUtil.getInstance().stopFaceUnlock(mContext);
             }
         }
     };

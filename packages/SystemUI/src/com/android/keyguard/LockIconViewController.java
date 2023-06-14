@@ -253,7 +253,6 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
                 mView.setOnClickListener(null);
             } else if(failTimes > 0) {
                 mView.shakeFaceView();
-                mView.setOnClickListener(mFaceIconClickListener);
             }
             mVibrator.vibrate(
                 Process.myUid(),
@@ -266,7 +265,6 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         @Override
         public void onStartFaceUnlock(){
             mView.scaleFaceView();
-            mView.setOnClickListener(null);
         }
     };
 
@@ -309,6 +307,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         if (mShowLockIcon) {
             if(showFaceIcon) {
                 mView.updateIcon(ICON_FACE, false);
+                mView.setOnClickListener(mFaceIconClickListener);
                 //add by t2m yingyubin for FP5-186 20230331
             } else {
                 mView.updateIcon(ICON_LOCK, false);

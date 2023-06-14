@@ -98,6 +98,22 @@ public class FaceUnlockUtil {
         }
     }
     
+    public void stopFaceUnlock(Context context){
+        if(!isFaceUnlockEnable(context)){
+            return;
+        }
+        try{
+            Intent faceIntent = new Intent()
+                    .setComponent(new ComponentName("com.android.settings","com.android.settings.anc.unlock.UnlockActivity"))
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                        | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            faceIntent.putExtra("stop_unlock", true);
+            context.startActivityAsUser(faceIntent, UserHandle.CURRENT);
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
     private boolean isFaceUnlockSupported(Context context){
         return true;
