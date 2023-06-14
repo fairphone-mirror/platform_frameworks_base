@@ -42,6 +42,7 @@ import com.android.systemui.qs.logging.QSLogger;
 import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.DataSaverController;
 import com.android.systemui.statusbar.policy.HotspotController;
+import com.android.systemui.util.settings.GlobalSettings;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -65,6 +66,8 @@ public class HotspotTileTest extends SysuiTestCase {
     private HotspotController mHotspotController;
     @Mock
     private DataSaverController mDataSaverController;
+    @Mock
+    private GlobalSettings mGlobalSettings;
 
     private TestableLooper mTestableLooper;
     private HotspotTile mTile;
@@ -87,7 +90,8 @@ public class HotspotTileTest extends SysuiTestCase {
                 mock(ActivityStarter.class),
                 mock(QSLogger.class),
                 mHotspotController,
-                mDataSaverController
+                mDataSaverController,
+                mGlobalSettings
         );
 
         mTile.initialize();
