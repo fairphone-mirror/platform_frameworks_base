@@ -98,6 +98,8 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.Executor;
+import android.provider.Settings;
+import android.os.SystemProperties;
 
 /**
  * Allows trusted components to control the properties of physical USB ports
@@ -179,6 +181,11 @@ public class UsbPortManager implements IBinder.DeathRecipient {
     private UsbPortHal mUsbPortHal;
 
     private long mTransactionId;
+
+    private int mLastAdbStatus = 0;
+    private boolean mLoopOut = false;
+    private UsbManager mUsbManager;
+    private long mLastUSBPreferences;
 
     public UsbPortManager(Context context) {
         mContext = context;
@@ -262,6 +269,7 @@ public class UsbPortManager implements IBinder.DeathRecipient {
             Notification notification = builder.build();
             mNotificationManager.notifyAsUser(null, mIsPortContaminatedNotificationId, notification,
                     UserHandle.ALL);
+            setUSBPreferencesAndAdbStatus(false);
         // No contaminant is detected but contaminant detection notification is displayed.
         // Remove contaminant detection notification and push safe to use USB port notification.
         } else if (contaminantStatus != UsbPortStatus.CONTAMINANT_DETECTION_DETECTED
@@ -296,9 +304,35 @@ public class UsbPortManager implements IBinder.DeathRecipient {
                 Notification notification = builder.build();
                 mNotificationManager.notifyAsUser(null, mIsPortContaminatedNotificationId,
                         notification, UserHandle.ALL);
+                setUSBPreferencesAndAdbStatus(true);
             }
         }
     }
+
+    private void setUSBPreferencesAndAdbStatus(boolean safeUSB){
+        if (mUsbManager == null) {
+            mUsbManager = mContext.getSystemService(UsbManager.class);
+        }
+        if (safeUSB) {
+            mLoopOut = false;
+            SystemProperties.set("debug.usbport.safe", "false");
+            Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.ADB_ENABLED, mLastAdbStatus);
+            mUsbManager.setCurrentFunctions(mLastUSBPreferences);
+        }else{
+            if (!mLoopOut) {
+                mLoopOut = true;
+                SystemProperties.set("debug.usbport.safe", "true");
+                mLastAdbStatus = Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.ADB_ENABLED, 0);
+                if (mLastAdbStatus == 1) {
+                    Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.ADB_ENABLED, 0);            
+                }
+                mLastUSBPreferences = mUsbManager.getCurrentFunctions();
+                mUsbManager.setCurrentFunctions(UsbManager.FUNCTION_NONE);
+            }
+        }
+    }
+
+
 
     public UsbPort[] getPorts() {
         synchronized (mLock) {
