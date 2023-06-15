@@ -400,7 +400,14 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
         int resId = 0;
         int voiceNetTye = mCurrentState.getVoiceNetworkType();
-	if(!mCurrentState.airplaneMode) {        // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
+        
+        int regTech = ImsRegistrationImplBase.REGISTRATION_TECH_NONE;
+        if (mPhone != null) {
+            regTech = mPhone.getImsRegTechnologyForMmTel();
+        }
+        Log.d(mTag, "regTech: " + regTech);
+
+        if(!mCurrentState.airplaneMode && (ImsRegistrationImplBase.REGISTRATION_TECH_IWLAN != regTech)) {        // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
         if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
                 &&  mCurrentState.imsRegistered ) {
             resId = R.drawable.ic_volte;
@@ -478,7 +485,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 	// modify by T2M.zhang renjie for FP4S-78 23-1-29 begin
 	boolean hideVolteIcon = false;
 
-        if (mConfig.showVowifiIcon && getVowifiIconGroup() != null && mCurrentState.enabled && !mCurrentState.airplaneMode) {
+        if (mConfig.showVowifiIcon && getVowifiIconGroup() != null) {
 	    hideVolteIcon = true;
 	    Log.d(mTag, "disable volte icon when vowifi icon display.");
 	}
