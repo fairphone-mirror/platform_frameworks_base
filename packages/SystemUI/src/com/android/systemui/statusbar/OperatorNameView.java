@@ -46,7 +46,6 @@ public class OperatorNameView extends TextView {
             OperatorNameViewController.SubInfo sub
     ) {
         setVisibility(showOperatorName ? VISIBLE : GONE);
-
         boolean airplaneMode = WirelessUtils.isAirplaneModeOn(mContext);
         if (!hasMobile || airplaneMode) {
             setText(null);
@@ -72,4 +71,10 @@ public class OperatorNameView extends TextView {
         }
         setText(displayText);
     }
+
+    @Override
+    public boolean isFocused() {
+        return true;
+    }
+
 }
