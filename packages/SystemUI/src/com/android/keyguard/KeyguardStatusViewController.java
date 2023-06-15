@@ -493,9 +493,9 @@ public class KeyguardStatusViewController extends ViewController<KeyguardStatusV
                 Slog.v(TAG, "   dozeTimeTick  doze_ = " + doze_  + "     padTop =" + padTop +
                         "      in_doze=" + in_doze + "     isShowDoubleLine :" + mKeyguardClockSwitchController.isShowDoubleLine() );
                 if (doze_ == 1 && "1".equals(in_doze)){
-                    if (mKeyguardClockSwitchController.isShowDoubleLine() && padTop > 800){
+                    if (mKeyguardClockSwitchController.isShowDoubleLine() && padTop > 600){
                         padTop = 0;
-                    }else if (padTop > 1500){
+                    }else if (padTop > 1200){
                         padTop = 0;
                     }
                     mView.setPadding( mView.getPaddingLeft(),  padTop + 100,
