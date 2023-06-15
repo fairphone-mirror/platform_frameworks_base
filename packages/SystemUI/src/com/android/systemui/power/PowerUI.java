@@ -217,6 +217,8 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                                 Settings.Global.SET_BATTERY_CHARGING_MODE))){
                             Log.i(TAG,"------ isBoot");
                         }else {
+                            Log.i(TAG,"------ SET_BATTERY_CHARGING_MODE :" + Settings.Global.getString(mContext.getContentResolver(),
+                                    Settings.Global.SET_BATTERY_CHARGING_MODE));
                             setBatteryChargingMode();
                         }
                     }
@@ -227,6 +229,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     }
 
     private void setBatteryChargingMode(){
+        SystemProperties.set("persist.sys.is_first_boot","0");
         String[] charging_mode = {mContext.getResources().getString(R.string.charging_slow),
                 mContext.getResources().getString(R.string.charging_normal)};
         AlertDialog alert = new AlertDialog.Builder(mContext)
@@ -340,13 +343,11 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 boolean connected = intent.getExtras().getBoolean("connected");
                 boolean isBoot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
                 boolean isFirstBoot = "1".equals(SystemProperties.get("persist.sys.is_first_boot"));
-                Log.e(TAG, "USB   connect  isBoot = " + isBoot);
+                Log.e(TAG, "USB   connect  isBoot = " + isBoot );
 
                 if (connected && isBoot && isFirstBoot){
                     Log.e(TAG, "USB  connected ");
-                    Settings.Global.putStringForUser(context.getContentResolver(),
-                            Settings.Global.SET_BATTERY_CHARGING_MODE, "first_insert_usb",
-                            UserHandle.myUserId());
+                    setBatteryChargingMode();
                 }else {
                     Log.e(TAG, "USB  break ");
                 }
@@ -434,14 +435,11 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 Log.e(TAG, "ACTION_BATTERY_CHANGED  oldPlugType：" + oldPlugType  +
                         "    mPlugType:" + mPlugType);
                 if (oldPlugged && (mPlugType == 1)){
-                    Log.e(TAG, " -------------------->>>> ");
                     boolean isBoot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
                     boolean isFirstBoot = "1".equals(SystemProperties.get("persist.sys.is_first_boot"));
                     if (isBoot && isFirstBoot){
                         Log.e(TAG, " battery ");
-                        Settings.Global.putStringForUser(context.getContentResolver(),
-                                Settings.Global.SET_BATTERY_CHARGING_MODE, "first_insert_usb",
-                                UserHandle.myUserId());
+                        setBatteryChargingMode();
                     }
                 }
             } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
