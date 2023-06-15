@@ -2670,7 +2670,7 @@ class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private String getDefaultDeviceName() {
-        return mContext.getResources().getString(R.string.def_device_name_simple, "Fairphone5");
+        return mContext.getResources().getString(R.string.def_device_name_simple, "Fairphone 5 5G");
     }
 
     private TelephonyManager getTelephonyManager() {
