@@ -424,8 +424,10 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         if ((diff1 & DISABLE_CLOCK) != 0 || mClockView.getVisibility() != clockHiddenMode()) {
             if ((state1 & DISABLE_CLOCK) != 0) {
                 hideClock(animate);
+                hideOperatorName(animate);
             } else {
                 showClock(animate);
+                showOperatorName(animate);
             }
         }
     }
