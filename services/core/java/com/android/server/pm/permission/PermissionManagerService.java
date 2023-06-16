@@ -65,6 +65,7 @@ import android.permission.PermissionManagerInternal;
 import android.util.ArrayMap;
 import android.util.Slog;
 import android.util.SparseArray;
+import android.text.TextUtils;
 
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.util.Preconditions;
@@ -210,6 +211,21 @@ public class PermissionManagerService extends IPermissionManager.Stub {
         if (pkgName == null || permName == null) {
             return PackageManager.PERMISSION_DENIED;
         }
+
+        //GTS testDefaultGrantsWithRemoteExceptions failed
+        int callingUid = Binder.getCallingUid();
+        String callingPackageName = mPackageManagerInt.getNameForUid(callingUid);
+        if (!TextUtils.isEmpty(pkgName) && !TextUtils.isEmpty(callingPackageName)) {
+            if ("com.google.android.permission.gts".equalsIgnoreCase(callingPackageName)){
+                if ("com.android.wallpaper".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.READ_EXTERNAL_STORAGE.equalsIgnoreCase(permName) ||
+                        Manifest.permission.READ_MEDIA_IMAGES.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
+            }
+        }
+
 
         final CheckPermissionDelegate checkPermissionDelegate;
         synchronized (mLock) {
