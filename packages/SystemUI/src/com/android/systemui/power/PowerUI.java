@@ -105,7 +105,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     private final int[] mLowBatteryReminderLevels = new int[2];
 
     private long mScreenOffTime = -1;
-    protected int position = 2;
+    protected int position = 1;
 
     @VisibleForTesting boolean mLowWarningShownThisChargeCycle;
     @VisibleForTesting boolean mSevereWarningShownThisChargeCycle;
@@ -234,22 +234,45 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 mContext.getResources().getString(R.string.charging_normal)};
         AlertDialog alert = new AlertDialog.Builder(mContext)
                 .setTitle(R.string.charging_state)
-                .setSingleChoiceItems(charging_mode, 1, (dialog,id)->{
+                .setSingleChoiceItems(charging_mode, getChargeMode(), (dialog,id)->{
                     position = id;
                     Log.i(TAG," setSingleChoiceItems   id=" + id + "      position=" + position);
                 })
                 .setPositiveButton(R.string.save, (dialog,id)->{
                     Log.i(TAG," setPositiveButton   id=" + id + "      position=" + position);
                     //TODO: 0 slow mode  1 normal mode  2 default mode
+                    setChargeMode(position);
                 })
                 .setNegativeButton(R.string.cancel, (dialog,id)->{
                     Log.i(TAG,"  setPositiveButton  id=" + id + "      position=" + position);
                     //TODO: default mode choice
+                    setChargeMode(position);
                 })
                 .setCancelable(false)
                 .create();
         alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         alert.show();
+    }
+
+    private int getChargeMode(){
+        String charge_mode = SystemProperties.get("persist.sys.charge_mode");
+        Log.i(TAG,"   charge_mode="+ charge_mode);
+        if (charge_mode != null && "1".equals(charge_mode)){
+            return 0;
+        }else if (charge_mode != null && "0".equals(charge_mode)){
+            return 1;
+        }else {
+            return 1;
+        }
+    }
+
+    private void setChargeMode(int position){
+        Log.i(TAG,"   setChargeMode  " + position);
+    if (position == 0){
+            SystemProperties.set("persist.sys.charge_mode","1");
+        }else if (position == 1){
+            SystemProperties.set("persist.sys.charge_mode","0");
+        }
     }
 
     @Override
