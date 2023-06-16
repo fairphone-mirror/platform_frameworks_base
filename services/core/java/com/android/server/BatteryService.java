@@ -371,10 +371,6 @@ public final class BatteryService extends SystemService {
     }
 
     private boolean shouldShutdownLocked() {
-        //add for FP5-1595
-        if(mHealthInfo.batteryVoltageMillivolts <= 3400){
-            return true;
-        }
         if (mHealthInfo.batteryCapacityLevel != BatteryCapacityLevel.UNSUPPORTED) {
             return (mHealthInfo.batteryCapacityLevel == BatteryCapacityLevel.CRITICAL);
         }
