@@ -128,6 +128,8 @@ import static com.android.server.wm.WindowContainerChildProto.TASK;
 import static com.android.server.wm.WindowManagerDebugConfig.DEBUG_ROOT_TASK;
 import static com.android.server.wm.WindowManagerDebugConfig.DEBUG_TASK_MOVEMENT;
 import static com.android.server.wm.WindowManagerDebugConfig.TAG_WM;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
+import static android.provider.Settings.Global.DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT;
 
 import static java.lang.Integer.MAX_VALUE;
 
@@ -4626,10 +4628,21 @@ class Task extends TaskFragment {
             mAtmService.continueWindowLayout();
         }
 
+        if(isDesktopModeOn() && isOnHomeDisplay()){
+            setBounds(null);
+        }
         if (!mTaskSupervisor.isRootVisibilityUpdateDeferred()) {
             mRootWindowContainer.ensureActivitiesVisible(null, 0, PRESERVE_WINDOWS);
             mRootWindowContainer.resumeFocusedTasksTopActivities();
         }
+    }
+
+    private boolean isDesktopModeOn(){
+        boolean desktopOn = Settings.Global.getInt(mAtmService.mContext.getContentResolver(),
+                DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS,0) == 1
+                && Settings.Global.getInt(mAtmService.mContext.getContentResolver(),
+                DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, 0) == 1;
+        return desktopOn;
     }
 
     void resumeNextFocusAfterReparent() {
