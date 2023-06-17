@@ -5888,6 +5888,12 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
                 callingPackage = Integer.toString(Binder.getCallingUid());
             }
 
+            if(componentName.getPackageName().contains("com.orange.update") && newState == COMPONENT_ENABLED_STATE_DISABLED){
+                String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
+                if("20801".equals(mccmnc) || "21403".equals(mccmnc) || "20610".equals(mccmnc)){
+                    return;
+                }
+            }
             setEnabledSettings(List.of(new PackageManager.ComponentEnabledSetting(componentName, newState, flags)),
                     userId, callingPackage);
         }
