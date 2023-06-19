@@ -3188,4 +3188,10 @@
     <string name="charging_slow">Slow mode</string>
     <string name="charging_normal">Normal mode</string>
     <string name="charging_state">Charging mode</string>
+
+    <string name="usbntc_temp_message">High temperature at USB connector. Do not touch the phone and disconnect the charger and cable immediately!</string>
+    <string name="usbntc_temp_title">Height USB NTC Temperature</string>
+
+    <string name="usbntc_temp_notification_title">Warning</string>
+    <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
 </resources>

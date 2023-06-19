@@ -1415,6 +1415,14 @@
 
     <style name="LongPressLockScreenAnimation">
         <item name="android:windowEnterAnimation">@anim/long_press_lock_screen_popup_enter</item>
-        <item name="android:windowExitAnimation">@anim/long_press_lock_screen_popup_exit</item>
+	<item name="android:windowExitAnimation">@anim/long_press_lock_screen_popup_exit</item>
+    </style>
+
+    <style name="usbntc_dialog_toast" parent="@style/Theme.AppCompat.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
     </style>
 </resources>

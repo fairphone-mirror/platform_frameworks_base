@@ -348,6 +348,10 @@
 
     <protected-broadcast android:name="android.net.nsd.STATE_CHANGED" />
 
+    <!-- For USB NTC -->
+    <protected-broadcast
+        android:name="intent.battery.usbntc.temperror" />
+
     <!-- For OMAPI -->
     <protected-broadcast android:name="android.se.omapi.action.SECURE_ELEMENT_STATE_CHANGED" />
 
