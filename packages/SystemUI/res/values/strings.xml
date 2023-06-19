@@ -2649,4 +2649,10 @@
     <string name="required_to_use_pattern">Pattern required for addtional security</string>
     <string name="required_to_use_password">Password required for addtional security</string>
     <string name="required_to_use_pin">PIN required for addtional security</string>
+
+    <string name="usbntc_temp_message">High temperature at USB connector. Do not touch the phone and disconnect the charger and cable immediately!</string>
+    <string name="usbntc_temp_title">Height USB NTC Temperature</string>
+
+    <string name="usbntc_temp_notification_title">Warning</string>
+    <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
 </resources>
