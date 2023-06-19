@@ -3026,6 +3026,13 @@ public class CentralSurfacesImpl extends CoreStartable implements
             mStatusBarStateController.setState(StatusBarState.KEYGUARD);
         }
         updatePanelExpansionForKeyguard();
+        if(isWakingOrAwake() && mStatusBarStateController.getState() == StatusBarState.KEYGUARD) {
+            if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
+                mKeyguardIndicationController.startAncFaceUnlock();
+            } else {
+                mKeyguardIndicationController.showFaceUnlockFailed(3);
+            }
+        }
         Trace.endSection();
     }
 
@@ -3685,13 +3692,6 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
 
             });
-            if(mStatusBarStateController.getState() == StatusBarState.KEYGUARD) {
-                if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
-                    mKeyguardIndicationController.startAncFaceUnlock();
-                } else {
-                    mKeyguardIndicationController.showFaceUnlockFailed(3);
-                }
-            }
             DejankUtils.stopDetectingBlockingIpcs(tag);
         }
 
