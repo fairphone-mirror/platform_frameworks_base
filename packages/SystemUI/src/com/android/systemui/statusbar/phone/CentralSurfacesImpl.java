@@ -2626,6 +2626,13 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
             mStatusBarStateController.setState(StatusBarState.KEYGUARD);
         }
         updatePanelExpansionForKeyguard();
+        if(isWakingOrAwake() && mStatusBarStateController.getState() == StatusBarState.KEYGUARD) {
+            if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
+                mKeyguardIndicationController.startAncFaceUnlock();
+            } else {
+                mKeyguardIndicationController.showFaceUnlockFailed(3);
+            }
+        }
         Trace.endSection();
     }
 
