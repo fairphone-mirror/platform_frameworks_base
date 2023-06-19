@@ -5888,9 +5888,9 @@ public class PackageManagerService implements PackageSender, TestUtilityService 
                 callingPackage = Integer.toString(Binder.getCallingUid());
             }
 
-            if(componentName.getPackageName().contains("com.orange.update") && newState == COMPONENT_ENABLED_STATE_DISABLED){
+            if(componentName != null && componentName.getPackageName() != null && componentName.getPackageName().contains("com.orange.update") && newState == COMPONENT_ENABLED_STATE_DISABLED){
                 String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
-                if("20801".equals(mccmnc) || "21403".equals(mccmnc) || "20610".equals(mccmnc)){
+                if("20801".equals(mccmnc) || "21403".equals(mccmnc) || "20610".equals(mccmnc) || "20800".equals(mccmnc) || "20802".equals(mccmnc)){
                     return;
                 }
             }
