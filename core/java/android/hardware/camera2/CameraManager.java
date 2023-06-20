@@ -632,10 +632,13 @@ public final class CameraManager {
                         CameraCharacteristics.Key<Byte> skipAECompensationKey = new CameraCharacteristics.Key<>("com.tct.hal.skip_aecomp", Byte.class);
                         CameraCharacteristics.Key<Byte> skipFDKey = new CameraCharacteristics.Key<>("com.tct.hal.skip_fd", Byte.class);
                         CameraCharacteristics.Key<Byte> disablePerFrameControlKey = new CameraCharacteristics.Key<>("com.tct.hal.disablepfc", Byte.class);
+                        CameraCharacteristics.Key<Byte> skipZoomKey = new CameraCharacteristics.Key<>("com.tct.hal.skip_zoom", Byte.class);
+
                         Byte skipFusion = 0;
                         Byte skipAECompensation = 0;
                         Byte disablePerFrameControl = 0;
                         Byte skipFD = 0;
+                        Byte skipZoom = 0;
                         Object crKey = CameraCharacteristics.Key.class;
                         Class<CameraCharacteristics.Key<?>> crKeyTyped = (Class<CameraCharacteristics.Key<?>>)crKey;
                         ArrayList<CameraCharacteristics.Key<?>> vendorKeys = info.getAllVendorKeys(crKeyTyped);
@@ -656,12 +659,15 @@ public final class CameraManager {
                                 } else if (keyName.equals(skipFDKey.getName())) {
                                     skipFD = info.get(skipFDKey);
                                     Log.i(TAG, "skipFD "+skipFD);
+                                } else if (keyName.equals(skipZoomKey.getName())) {
+                                    skipZoom = info.get(skipZoomKey);
+                                    Log.i(TAG, "skipZoom "+skipZoom);
                                 }
                             }
                         }
 
                         Log.v(TAG, "skipFusion "+skipFusion+". skipAECompensation "+skipAECompensation+
-                                        ". disablePerFrameControl "+disablePerFrameControl+". skipFD "+skipFD);
+                                        ". disablePerFrameControl "+disablePerFrameControl+". skipFD "+skipFD+". skipZoom"+skipZoom);
 
                         if(skipFusion != null && skipFusion == 1) {
                             info.set(CameraCharacteristics.SENSOR_INFO_TIMESTAMP_SOURCE, 0/*SENSOR_INFO_TIMESTAMP_SOURCE_UNKNOWN*/);
@@ -677,6 +683,10 @@ public final class CameraManager {
                         }
                         if(disablePerFrameControl != null && disablePerFrameControl == 1) {
                             info.set(CameraCharacteristics.SYNC_MAX_LATENCY,-1/*SYNC_MAX_LATENCY_UNKNOWN*/);
+                        }
+                        if(skipZoom != null && skipZoom == 1) {
+                            Range<Float> zoomRange = new Range<Float>(1.0f, 1.0f);
+                            info.set(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE, zoomRange);
                         }
                         if(SystemProperties.getBoolean("debug.camera.its.skipzoom", false)) {
                             //workaround for Android 12 ITS test_zoom due to opencv case failed. add by hongzhang
