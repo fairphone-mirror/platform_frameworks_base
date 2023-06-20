@@ -134,6 +134,7 @@ public class DisplayModeDirector {
     private DesiredDisplayModeSpecsListener mDesiredDisplayModeSpecsListener;
 
     private boolean mAlwaysRespectAppRequest;
+    private boolean mFirstUpdateFlashRate = false;
 
     private final boolean mSupportsFrameRateOverride;
 
@@ -1206,8 +1207,13 @@ public class DisplayModeDirector {
 
         private void updateRefreshRateSettingLocked() {
             final ContentResolver cr = mContext.getContentResolver();
-            float minRefreshRate = Settings.System.getFloatForUser(cr,
+            float minRefreshRate = 60f;
+            if(mFirstUpdateFlashRate == false){
+                mFirstUpdateFlashRate = true;
+            }else {
+                minRefreshRate = Settings.System.getFloatForUser(cr,
                     Settings.System.MIN_REFRESH_RATE, 0f, cr.getUserId());
+            }
             float peakRefreshRate = Settings.System.getFloatForUser(cr,
                     Settings.System.PEAK_REFRESH_RATE, mDefaultPeakRefreshRate, cr.getUserId());
             updateRefreshRateSettingLocked(minRefreshRate, peakRefreshRate, mDefaultRefreshRate);
