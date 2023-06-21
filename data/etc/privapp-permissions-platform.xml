@@ -635,4 +635,9 @@ applications that come with the platform
         <permission name="android.permission.INTERNET"/>
         <permission name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     </privapp-permissions>
+
+    <privapp-permissions package="com.android.systemui">
+        <permission name="android.permission.READ_PHONE_STATE"/>
+        <permission name="android.permission.ACCESS_FINE_LOCATION"/>
+    </privapp-permissions>
 </permissions>

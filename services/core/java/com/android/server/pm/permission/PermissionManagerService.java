@@ -268,6 +268,13 @@ public class PermissionManagerService extends IPermissionManager.Stub {
                        return PackageManager.PERMISSION_DENIED;
                     }
                 }
+
+                if ("com.android.systemui".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.READ_PHONE_STATE.equalsIgnoreCase(permName) ||
+                        Manifest.permission.ACCESS_FINE_LOCATION.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
             }
         }
 
