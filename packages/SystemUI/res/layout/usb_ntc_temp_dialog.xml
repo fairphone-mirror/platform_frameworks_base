@@ -11,16 +11,16 @@
         android:orientation="vertical"
         android:layout_centerInParent="true"
         android:gravity="center_vertical"
-        android:layout_height="172dp">
+        android:layout_height="300dp">
 
         <TextView
             android:id="@+id/tips_title"
             android:text="@string/usbntc_temp_title"
             android:textSize="24sp"
             android:textColor="#de000000"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
             android:fontFamily="sans-serif"
             />
 
