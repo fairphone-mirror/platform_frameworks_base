@@ -19,6 +19,8 @@ package com.android.server.input;
 import static android.provider.DeviceConfig.NAMESPACE_INPUT_NATIVE_BOOT;
 import static android.view.KeyEvent.KEYCODE_UNKNOWN;
 import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+import static android.provider.Settings.Global.DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS;
+import static android.provider.Settings.Global.DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT;
 
 import android.Manifest;
 import android.annotation.EnforcePermission;
@@ -570,8 +572,13 @@ public class InputManagerService extends IInputManager.Stub
 
     private void setDisplayViewportsInternal(List<DisplayViewport> viewports) {
         final DisplayViewport[] vArray = new DisplayViewport[viewports.size()];
+        int displayId = 0;
         for (int i = viewports.size() - 1; i >= 0; --i) {
             vArray[i] = viewports.get(i);
+            int tmp = viewports.get(i).displayId;
+            if(tmp > displayId){
+                displayId = tmp;
+            }
         }
         mNative.setDisplayViewports(vArray);
 
@@ -580,9 +587,21 @@ public class InputManagerService extends IInputManager.Stub
         final int pointerDisplayId = mWindowManagerCallbacks.getPointerDisplayId();
         synchronized (mAdditionalDisplayInputPropertiesLock) {
             if (mOverriddenPointerDisplayId == Display.INVALID_DISPLAY) {
-                updatePointerDisplayIdLocked(pointerDisplayId);
+                if(isDesktopModeOn() && displayId != Display.DEFAULT_DISPLAY && displayId != pointerDisplayId){
+                    updatePointerDisplayIdLocked(displayId);
+                } else {
+                    updatePointerDisplayIdLocked(pointerDisplayId);
+                }
             }
         }
+    }
+
+    private boolean isDesktopModeOn() {
+        boolean desktopOn = Settings.Global.getInt(mContext.getContentResolver(),
+                DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS,0) == 1
+                && Settings.Global.getInt(mContext.getContentResolver(),
+                DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, 0) == 1;
+        return desktopOn;
     }
 
     /**
