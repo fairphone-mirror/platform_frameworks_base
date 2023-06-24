@@ -70,6 +70,12 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.hardware.usb.UsbManager;
 
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.FileReader;
+
 @SysUISingleton
 public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
 
@@ -246,7 +252,6 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 .setNegativeButton(R.string.cancel, (dialog,id)->{
                     Log.i(TAG,"  setPositiveButton  id=" + id + "      position=" + position);
                     //TODO: default mode choice
-                    setChargeMode(position);
                 })
                 .setCancelable(false)
                 .create();
@@ -256,8 +261,9 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
 
     private int getChargeMode(){
         String charge_mode = SystemProperties.get("persist.sys.charge_mode");
-        Log.i(TAG,"   charge_mode="+ charge_mode);
-        if (charge_mode != null && "1".equals(charge_mode)){
+        String chargeMode = readChargeMode();
+        Log.i(TAG,"   charge_mode="+ charge_mode + "     ChargeMode:" + chargeMode);
+        if (charge_mode != null &&( "1".equals(charge_mode) || "2000000".equals(charge_mode))){
             return 0;
         }else if (charge_mode != null && "0".equals(charge_mode)){
             return 1;
@@ -269,12 +275,58 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     private void setChargeMode(int position){
         Log.i(TAG,"   setChargeMode  " + position);
     if (position == 0){
-            SystemProperties.set("persist.sys.charge_mode","1");
+        SystemProperties.set("persist.sys.charge_mode","1");
+        writeChargeMode("2000000");
         }else if (position == 1){
-            SystemProperties.set("persist.sys.charge_mode","0");
+        SystemProperties.set("persist.sys.charge_mode","0");
+        writeChargeMode("6000000");
         }
     }
 
+    private void writeChargeMode(String value) {
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter("/sys/class/power_supply/battery/chgmode_fcc");
+            bw = new BufferedWriter(fw, 256);
+            bw.write(value);
+            bw.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{
+                if (bw != null)
+                    bw.close();
+                if (fw != null)
+                    fw.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String readChargeMode(){
+        String value = "0";
+        BufferedReader reader = null;
+        FileReader fr = null;
+        try {
+            fr = new FileReader("/sys/class/power_supply/battery/chgmode_fcc");
+            reader = new BufferedReader(fr);
+            value = reader.readLine();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try {
+                if (reader != null)
+                    reader.close();
+                if (fr != null)
+                    fr.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return value;
+    }
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         final int mask = ActivityInfo.CONFIG_MCC | ActivityInfo.CONFIG_MNC;
@@ -341,6 +393,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
             IntentFilter filter = new IntentFilter();
             filter.addAction(UsbManager.ACTION_USB_STATE);
             filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
+            filter.addAction(Intent.ACTION_BOOT_COMPLETED);
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);
             filter.addAction(Intent.ACTION_SHUTDOWN);
             filter.addAction(Intent.ACTION_BATTERY_WARM_TEMP_CHANGED);
@@ -381,7 +434,14 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                         mWarnings.dismissLowBatteryWarning();
                     }
                 });
-            } else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
+            } else if (Intent.ACTION_BOOT_COMPLETED.equals(action)){
+                Log.e(TAG, "   ACTION_BOOT_COMPLETED ");
+                if (0 == getChargeMode()){
+                    setChargeMode(0);
+                }else {
+                    setChargeMode(1);
+                }
+            }else if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
                 long lasttime = SystemProperties.getLong(TFT_PROPERTY,0);
                 long lastPeristTime = SystemProperties.getLong(TFT_PROPERTY_PERSIST,0);
                 if(lasttime == 0 && lastPeristTime != 0){
