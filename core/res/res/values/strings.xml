@@ -6354,6 +6354,6 @@ ul.</string>
 
     <!-- Title for preference of the system default locale. [CHAR LIMIT=50]-->
     <string name="system_locale_title">System default</string>
-    <string name="subscription_displayname">CARD </string>
+    <string name="subscription_displayname">"CARD "</string>
 
 </resources>

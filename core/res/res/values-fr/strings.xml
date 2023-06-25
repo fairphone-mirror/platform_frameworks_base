@@ -2296,6 +2296,6 @@
     <string name="vdm_camera_access_denied" product="tablet" msgid="6895968310395249076">"Impossible d\'accéder à l\'appareil photo de la tablette depuis votre <xliff:g id="DEVICE">%1$s</xliff:g>"</string>
     <string name="vdm_secure_window" msgid="161700398158812314">"Impossible d\'accéder à cela pendant le streaming. Essayez plutôt sur votre téléphone."</string>
     <string name="system_locale_title" msgid="711882686834677268">"Paramètre système par défaut"</string>
-    <string name="subscription_displayname">CARTE </string>
+    <string name="subscription_displayname">"CARTE "</string>
 
 </resources>
