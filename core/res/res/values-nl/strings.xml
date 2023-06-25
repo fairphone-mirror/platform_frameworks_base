@@ -2339,4 +2339,6 @@
     <string name="keyboard_layout_notification_more_than_three_selected_message" msgid="1581834181578206937">"Toetsenbordindeling ingesteld op <xliff:g id="LAYOUT_1">%1$s</xliff:g>, <xliff:g id="LAYOUT_2">%2$s</xliff:g>, <xliff:g id="LAYOUT_3">%3$s</xliff:g>… Tik om te wijzigen."</string>
     <string name="keyboard_layout_notification_multiple_selected_title" msgid="5242444914367024499">"Fysieke toetsenborden zijn ingesteld"</string>
     <string name="keyboard_layout_notification_multiple_selected_message" msgid="6576533454124419202">"Tik om toetsenborden te bekijken"</string>
+    <string name="subscription_displayname">"KAART "</string>
+
 </resources>

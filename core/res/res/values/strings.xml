@@ -6306,6 +6306,6 @@ ul.</string>
     <string name="keyboard_layout_notification_multiple_selected_title">Physical keyboards configured</string>
     <!-- Notification message when multiple keyboards with selected layouts have been connected the first time simultaneously [CHAR LIMIT=NOTIF_BODY] -->
     <string name="keyboard_layout_notification_multiple_selected_message">Tap to view keyboards</string>
-    <string name="subscription_displayname">CARD </string>
+    <string name="subscription_displayname">"CARD "</string>
 
 </resources>
