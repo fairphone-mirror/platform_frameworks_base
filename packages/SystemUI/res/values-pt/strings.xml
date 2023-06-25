@@ -970,4 +970,10 @@
     <string name="height_temp_message_55">Aviso! A temperatura da bateria é demasiado elevada, feche as aplicações desnecessárias</string>
     <string name="height_temp_message_60">Aviso! A temperatura da bateria é demasiado elevada, o dispositivo será desligado</string>
     <string name="face_unlocking">desbloqueio facial em curso</string>
+    <string name="charging_slow">Modo lento</string>
+    <string name="charging_normal">Modo normal</string>
+    <string name="charging_state">Modo de carregamento</string>
+    <string name="hight_temp_message_notchanging">a temperatura é demasiado elevada!</string>
+    <string name="low_temp_message_5">Aviso! A temperatura da bateria é demasiado baixa</string>
+
 </resources>

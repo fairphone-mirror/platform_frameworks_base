@@ -970,4 +970,10 @@
     <string name="height_temp_message_55">Waarschuwing! De batterijtemperatuur is te hoog. Sluit onnodige applicaties af</string>
     <string name="height_temp_message_60">Waarschuwing! De batterijtemperatuur is te hoog. Je apparaat wordt uitgeschakeld</string>
     <string name="face_unlocking">De gezichtsontgrendeling is in uitvoering</string>
+    <string name="charging_slow">Langzame modus</string>
+    <string name="charging_normal">Normale modus</string>
+    <string name="charging_state">Oplaadmodus</string>
+    <string name="hight_temp_message_notchanging">De temperatuur is te hoog.</string>
+    <string name="low_temp_message_5">Waarschuwing! De batterijtemperatuur is te laag</string>
+
 </resources>

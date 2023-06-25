@@ -970,4 +970,10 @@
     <string name="height_temp_message_55">Warnung! Akkutemperatur ist zu hoch, nicht erforderliche Anwendungen schließen</string>
     <string name="height_temp_message_60">Warnung! Akkutemperatur ist zu hoch, dein Gerät wird ausgeschaltet</string>
     <string name="face_unlocking">Entsperrung durch Gesichtserkennung wird ausgeführt</string>
+    <string name="charging_slow">Langsamer Modus</string>
+    <string name="charging_normal">Normaler Modus</string>
+    <string name="charging_state">Lademodus</string>
+    <string name="hight_temp_message_notchanging">Temperatur ist zu hoch!</string>
+    <string name="low_temp_message_5">Warnung! Akkutemperatur ist zu niedrig</string>
+
 </resources>

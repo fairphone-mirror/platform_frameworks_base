@@ -970,4 +970,10 @@
     <string name="height_temp_message_55">Varning! Batteritemperaturen är för hög, stäng onödiga program</string>
     <string name="height_temp_message_60">Varning! Batteritemperaturen är för hög, din enhet kommer att stängas av</string>
     <string name="face_unlocking">ansiktsupplåsning pågår</string>
+    <string name="charging_slow">Långsamt läge</string>
+    <string name="charging_normal">Normalt läge</string>
+    <string name="charging_state">Laddningsläge</string>
+    <string name="hight_temp_message_notchanging">temperaturen är för hög!</string>
+    <string name="low_temp_message_5">Varning! Batteritemperaturen är för låg</string>
+
 </resources>

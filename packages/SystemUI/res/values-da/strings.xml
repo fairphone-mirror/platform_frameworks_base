@@ -970,4 +970,10 @@
     <string name="height_temp_message_55">Advarsel! Batteritemperaturen er for høj. Luk unødvendige applikationer</string>
     <string name="height_temp_message_60">Advarsel! Batteritemperaturen er for høj. Enheden slukkes</string>
     <string name="face_unlocking">oplåsning med ansigtsgenkendelse i gang</string>
+    <string name="charging_slow">Langsom tilstand</string>
+    <string name="charging_normal">Normal tilstand</string>
+    <string name="charging_state">Opladningstilstand</string>
+    <string name="hight_temp_message_notchanging">temperaturen er for høj!</string>
+    <string name="low_temp_message_5">Advarsel! Batteritemperaturen er for lav</string>
+
 </resources>
