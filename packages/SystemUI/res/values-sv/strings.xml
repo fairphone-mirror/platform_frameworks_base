@@ -1158,4 +1158,10 @@
     <string name="assistant_attention_content_description" msgid="6830215897604642875">"Assistenten är aktiverad"</string>
     <string name="set_default_notes_app_toast_content" msgid="2812374329662610753">"Ställ in en standardapp för anteckningar i inställningarna"</string>
     <string name="install_app" msgid="5066668100199613936">"Installera appen"</string>
+    <string name="charging_slow">Långsamt läge</string>
+    <string name="charging_normal">Normalt läge</string>
+    <string name="charging_state">Laddningsläge</string>
+    <string name="hight_temp_message_notchanging">temperaturen är för hög!</string>
+    <string name="low_temp_message_5">Varning! Batteritemperaturen är för låg</string>
+
 </resources>

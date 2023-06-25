@@ -1158,4 +1158,10 @@
     <string name="assistant_attention_content_description" msgid="6830215897604642875">"Atenção do Assistente ativada"</string>
     <string name="set_default_notes_app_toast_content" msgid="2812374329662610753">"Defina o app de notas padrão nas Configurações"</string>
     <string name="install_app" msgid="5066668100199613936">"Instalar o app"</string>
+    <string name="charging_slow">Modo lento</string>
+    <string name="charging_normal">Modo normal</string>
+    <string name="charging_state">Modo de carregamento</string>
+    <string name="hight_temp_message_notchanging">a temperatura é demasiado elevada!</string>
+    <string name="low_temp_message_5">Aviso! A temperatura da bateria é demasiado baixa</string>
+
 </resources>

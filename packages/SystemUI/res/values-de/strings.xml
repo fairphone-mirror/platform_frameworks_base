@@ -1158,4 +1158,10 @@
     <string name="assistant_attention_content_description" msgid="6830215897604642875">"Assistant-Aktivierung an"</string>
     <string name="set_default_notes_app_toast_content" msgid="2812374329662610753">"Standard-Notizen-App in den Einstellungen einrichten"</string>
     <string name="install_app" msgid="5066668100199613936">"App installieren"</string>
+    <string name="charging_slow">Langsamer Modus</string>
+    <string name="charging_normal">Normaler Modus</string>
+    <string name="charging_state">Lademodus</string>
+    <string name="hight_temp_message_notchanging">Temperatur ist zu hoch!</string>
+    <string name="low_temp_message_5">Warnung! Akkutemperatur ist zu niedrig</string>
+
 </resources>
