@@ -450,7 +450,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         android.util.Log.i("batteryTemperature","showHighTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature+"  batteryHealth:"+batteryHealth);
         if (mHighTemp != null || batteryHealth != BatteryManager.BATTERY_HEALTH_OVERHEAT) return;
 
-        if (batteryTemperature >= 550) {
+        if (batteryTemperature < 600 && batteryTemperature >= 550) {
             message = mContext.getResources().getString(R.string.height_temp_message_55);
         } else if (batteryTemperature >= 600) {
             message = mContext.getResources().getString(R.string.height_temp_message_60);
@@ -495,7 +495,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         android.util.Log.i("batteryTemperature","showLowTemp:batteryStatus:"+batteryStatus+"   batteryTemperature:"+batteryTemperature+" batteryHealth:"+batteryHealth);
         if (mLowTemp != null || !charging || batteryHealth != BatteryManager.BATTERY_HEALTH_COLD) return;
 
-        if (batteryTemperature <= 50) {
+        if (batteryTemperature > -200 && batteryTemperature <= -50) {
             message = mContext.getResources().getString(R.string.low_temp_message_5);
         } else if (batteryTemperature <= -200) {
             message = mContext.getResources().getString(R.string.low_temp_message_20);

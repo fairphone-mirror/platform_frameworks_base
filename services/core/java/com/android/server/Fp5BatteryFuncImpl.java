@@ -31,7 +31,7 @@ public class Fp5BatteryFuncImpl implements ICustomerBatteryFunc {
 
     private int mLastBatteryHealth = 0;
     private int low_temp_20 = -200;
-    private int low_temp_5 = 50;
+    private int low_temp_5 = -50;
     private int high_temp_55 = 550;
     private int high_temp_60 = 600;
     private int lastTemperatureState = 0;
@@ -49,7 +49,7 @@ public class Fp5BatteryFuncImpl implements ICustomerBatteryFunc {
                 currentTemperatureState = high_temp_60;
             } else if (currentTemperature >= 550 && currentTemperature < 600){
                 currentTemperatureState = high_temp_55;
-            } else if (currentTemperature >= -200 && currentTemperature < 50){
+            } else if (currentTemperature > -200 && currentTemperature <= -50){
                 currentTemperatureState = low_temp_5;
             } else if (currentTemperature <= -200){
                 currentTemperatureState = low_temp_20;
