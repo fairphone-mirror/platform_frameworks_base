@@ -973,4 +973,9 @@
     <string name="required_to_use_pattern">需要图案以增加安全性</string>
     <string name="required_to_use_password">需要密码以增加安全性</string>
     <string name="required_to_use_pin">需要PIN以增加安全性</string>
+    <string name="low_temp_title">电池温度低</string>
+    <string name="height_temp_title">电池温度高</string>
+    <string name="low_temp_message_20">警告！电池温度过低，您的设备将关闭</string>
+    <string name="height_temp_message_55">警告！电池温度过高，请关闭不必要的应用程序</string>
+    <string name="height_temp_message_60">警告！电池温度过高，您的设备将关闭</string>
 </resources>

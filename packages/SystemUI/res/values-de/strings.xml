@@ -964,4 +964,10 @@
     <string name="dream_date_complication_date_format" msgid="8191225366513860104">"EEE, d. MMM"</string>
     <string name="dream_time_complication_12_hr_time_format" msgid="4691197486690291529">"h:mm"</string>
     <string name="dream_time_complication_24_hr_time_format" msgid="6248280719733640813">"kk:mm"</string>
+    <string name="low_temp_title">Niedrige Akkutemperatur</string>
+    <string name="height_temp_title">Hohe Akkutemperatur</string>
+    <string name="low_temp_message_20">Warnung! Die Akkutemperatur ist zu niedrig, dein Gerät wird ausgeschaltet</string>
+    <string name="height_temp_message_55">Warnung! Akkutemperatur ist zu hoch, nicht erforderliche Anwendungen schließen</string>
+    <string name="height_temp_message_60">Warnung! Akkutemperatur ist zu hoch, dein Gerät wird ausgeschaltet</string>
+    <string name="face_unlocking">Entsperrung durch Gesichtserkennung wird ausgeführt</string>
 </resources>

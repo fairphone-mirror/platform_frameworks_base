@@ -964,4 +964,10 @@
     <string name="dream_date_complication_date_format" msgid="8191225366513860104">"EEE d mmm"</string>
     <string name="dream_time_complication_12_hr_time_format" msgid="4691197486690291529">"u:mm"</string>
     <string name="dream_time_complication_24_hr_time_format" msgid="6248280719733640813">"kk:mm"</string>
+    <string name="low_temp_title">Lage batterijtemperatuur</string>
+    <string name="height_temp_title">Hoge batterijtemperatuur</string>
+    <string name="low_temp_message_20">Waarschuwing! De batterijtemperatuur is te laag. Je apparaat wordt uitgeschakeld</string>
+    <string name="height_temp_message_55">Waarschuwing! De batterijtemperatuur is te hoog. Sluit onnodige applicaties af</string>
+    <string name="height_temp_message_60">Waarschuwing! De batterijtemperatuur is te hoog. Je apparaat wordt uitgeschakeld</string>
+    <string name="face_unlocking">De gezichtsontgrendeling is in uitvoering</string>
 </resources>
