@@ -93,6 +93,9 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
     private Estimate mEstimate;
     private boolean mFetchingEstimate = false;
 
+    protected boolean mHighBatteryColor = false;    
+    protected boolean mLowBatteryColor = false;
+
     // Use AtomicReference because we may request it from a different thread
     // Use WeakReference because we are keeping a reference to a View that's not as long lived
     // as this controller.
@@ -154,6 +157,8 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
         pw.print("  mCharged="); pw.println(mCharged);
         pw.print("  mPowerSave="); pw.println(mPowerSave);
         pw.print("  mStateUnknown="); pw.println(mStateUnknown);
+        pw.print("  mHighBatteryColor="); pw.println(mHighBatteryColor);
+        pw.print("  mLowBatteryColor="); pw.println(mLowBatteryColor);
     }
 
     @Override
@@ -184,6 +189,7 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
         cb.onPowerSaveChanged(mPowerSave);
         cb.onBatteryUnknownStateChanged(mStateUnknown);
         cb.onWirelessChargingChanged(mWirelessCharging);
+        cb.onBatteryColorChanged(mHighBatteryColor, mLowBatteryColor);
     }
 
     @Override
@@ -221,6 +227,8 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
                 mStateUnknown = unknown;
                 fireBatteryUnknownStateChanged();
             }
+
+            checkBatteryColor(intent);
 
             fireBatteryLevelChanged();
         } else if (action.equals(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)) {
@@ -373,6 +381,36 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
 
         if (DEBUG) Log.d(TAG, "Power save is " + (mPowerSave ? "on" : "off"));
         firePowerSaveChanged();
+    }
+
+    private void checkBatteryColor(Intent intent) {
+        int batteryTemperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
+        boolean highBattery = false;
+        boolean lowBattery = false;
+        if (batteryTemperature >= 550) {
+            highBattery = true;
+            lowBattery = false;
+        }else if (batteryTemperature <= 0) {
+            highBattery = false;
+            lowBattery = true;
+        }else{
+            highBattery = false;
+            lowBattery = false;
+        }
+        if (mHighBatteryColor != highBattery || mLowBatteryColor != lowBattery) {
+            mHighBatteryColor = highBattery;
+            mLowBatteryColor = lowBattery;
+            fireBatteryColorChanged();
+        }
+    }
+
+    protected void fireBatteryColorChanged() {
+        synchronized (mChangeCallbacks) {
+            final int N = mChangeCallbacks.size();
+            for (int i = 0; i < N; i++) {
+                mChangeCallbacks.get(i).onBatteryColorChanged(mHighBatteryColor, mLowBatteryColor);
+            }
+        }
     }
 
     protected void fireBatteryLevelChanged() {
