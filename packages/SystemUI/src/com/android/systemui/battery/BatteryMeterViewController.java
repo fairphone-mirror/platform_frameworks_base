@@ -103,6 +103,10 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
                     mContentResolver.unregisterContentObserver(mSettingObserver);
                     registerShowBatteryPercentObserver(newUser);
                     mView.updateShowPercent();
+		}
+
+                public void onBatteryColorChanged(boolean highBatteryColor, boolean lowBatteryColor) {
+                    mView.onBatteryColorChanged(highBatteryColor,lowBatteryColor);
                 }
             };
 

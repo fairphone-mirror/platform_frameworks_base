@@ -106,6 +106,18 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             postInvalidate()
         }
 
+    var highBatteryEnabled = false
+        set(value) {
+            field = value
+            postInvalidate()
+        }
+
+    var lowBatteryEnabled = false
+        set(value) {
+            field = value
+            postInvalidate()
+        }
+
     private val fillColorStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).also { p ->
         p.color = frameColor
         p.alpha = 255
@@ -136,6 +148,24 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
 
     private val errorPaint = Paint(Paint.ANTI_ALIAS_FLAG).also { p ->
         p.color = Utils.getColorStateListDefaultColor(context, R.color.batterymeter_saver_color)
+        p.alpha = 255
+        p.isDither = true
+        p.strokeWidth = 0f
+        p.style = Paint.Style.FILL_AND_STROKE
+        p.blendMode = BlendMode.SRC
+    }
+
+    private val highBatteryPaint = Paint(Paint.ANTI_ALIAS_FLAG).also { p ->
+        p.color = Utils.getColorStateListDefaultColor(context, R.color.battery_high_color)
+        p.alpha = 255
+        p.isDither = true
+        p.strokeWidth = 0f
+        p.style = Paint.Style.FILL_AND_STROKE
+        p.blendMode = BlendMode.SRC
+    }
+
+    private val lowBatteryPaint = Paint(Paint.ANTI_ALIAS_FLAG).also { p ->
+        p.color = Utils.getColorStateListDefaultColor(context, R.color.battery_low_color)
         p.alpha = 255
         p.isDither = true
         p.strokeWidth = 0f
@@ -250,12 +280,25 @@ open class ThemedBatteryDrawable(private val context: Context, frameColor: Int) 
             fillPaint.color = fillColor
             c.drawPath(scaledPlus, fillPaint)
         }
+
+        if (highBatteryEnabled){
+            c.drawPath(scaledErrorPerimeter, highBatteryPaint)
+            c.drawPath(scaledPlus, highBatteryPaint)
+            c.drawPath(scaledFill, highBatteryPaint)
+            c.drawPath(scaledBolt, highBatteryPaint)
+        }else if(lowBatteryEnabled){
+            c.drawPath(scaledErrorPerimeter, lowBatteryPaint)
+            c.drawPath(scaledPlus, lowBatteryPaint)
+            c.drawPath(scaledFill, lowBatteryPaint)
+            c.drawPath(scaledBolt, lowBatteryPaint)
+        }
+
         c.restore()
     }
 
     private fun batteryColorForLevel(level: Int): Int {
         return when {
-            charging || powerSaveEnabled -> fillColor
+            charging || powerSaveEnabled || highBatteryEnabled || lowBatteryEnabled -> fillColor
             else -> getColorForLevel(level)
         }
     }
