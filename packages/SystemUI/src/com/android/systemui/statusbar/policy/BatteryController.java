@@ -155,6 +155,10 @@ public interface BatteryController extends DemoMode,
 
         default void onWirelessChargingChanged(boolean isWirlessCharging) {
         }
+
+        default void onBatteryColorChanged(boolean high,boolean low){
+
+        }
     }
 
     /**
