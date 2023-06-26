@@ -219,9 +219,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
                 Global.MOBILE_DATA + mSubscriptionInfo.getSubscriptionId()),
                 true, mObserver);
         mContext.registerReceiver(mVolteSwitchObserver,
-                new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"));
+                new IntentFilter("org.codeaurora.intent.action.ACTION_ENHANCE_4G_SWITCH"), Context.RECEIVER_EXPORTED);
         mContext.registerReceiver(
-                mVowifiChanged, new IntentFilter("arima.intent.action.VOWIFI_STATE_CHANGED"));
+                mVowifiChanged, new IntentFilter("arima.intent.action.VOWIFI_STATE_CHANGED"), Context.RECEIVER_NOT_EXPORTED);
     }
 
     /**
