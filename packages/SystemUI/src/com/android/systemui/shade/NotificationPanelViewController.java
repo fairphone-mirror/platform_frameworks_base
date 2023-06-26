@@ -2442,6 +2442,13 @@ public final class NotificationPanelViewController extends PanelViewController {
         } else if (height <= mQsMinExpansionHeight && mQsExpanded) {
             setQsExpanded(false);
         }
+        if (emergencyButton != null) {
+            if (height >= 540) {
+                emergencyButton.setVisibility(View.GONE);
+            } else if(height == 0 && !mQsExpanded) {
+                emergencyButton.setVisibility(View.VISIBLE);
+            }
+        }
         mQsExpansionHeight = height;
         updateQsExpansion();
         requestScrollerTopPaddingUpdate(false /* animate */);
