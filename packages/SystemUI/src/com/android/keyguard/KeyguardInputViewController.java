@@ -115,6 +115,7 @@ public abstract class KeyguardInputViewController<T extends KeyguardInputView>
                 if(mMessageAreaController != null){
                     mMessageAreaController.setMessage(R.string.face_unlocking);
                 }
+                getKeyguardSecurityCallback().userActivity();
             }
         }
     };

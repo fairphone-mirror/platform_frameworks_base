@@ -4310,6 +4310,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
             new FalsingManager.FalsingBeliefListener() {
                 @Override
                 public void onFalse() {
+                    if(FaceUnlockUtil.getInstance().isInUnlocking()) {
+                        return;
+                    }
                     // Hides quick settings, bouncer, and quick-quick settings.
                     mStatusBarKeyguardViewManager.reset(true);
                 }

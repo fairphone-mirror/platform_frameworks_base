@@ -23,6 +23,7 @@ public class FaceUnlockUtil {
     private static final String COUNT_DOWN_TIME_UNLOCK = "count_down_time_unlock";
     private int mFailTimes = 0;
     private List<FaceUnlockCallback> mCallbackList = new ArrayList<>();
+    private boolean mIsInUnlocking = false;
 
     private FaceUnlockUtil(){
 
@@ -86,6 +87,7 @@ public class FaceUnlockUtil {
                     | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
                     | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             context.startActivityAsUser(faceIntent, UserHandle.CURRENT);
+            mIsInUnlocking = true;
             if(!mCallbackList.isEmpty()){
                 for(FaceUnlockCallback callback : mCallbackList){
                     if(callback != null){
@@ -110,6 +112,7 @@ public class FaceUnlockUtil {
                         | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             faceIntent.putExtra("stop_unlock", true);
             context.startActivityAsUser(faceIntent, UserHandle.CURRENT);
+            mIsInUnlocking = false;
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -141,6 +144,7 @@ public class FaceUnlockUtil {
 
     public void setFailTimes(int failTimes,boolean isFinishKeyguard){
         this.mFailTimes = failTimes;
+        mIsInUnlocking = false;
         if(!isFinishKeyguard && !mCallbackList.isEmpty()){
             for(FaceUnlockCallback callback : mCallbackList){
                 if(callback != null){
@@ -159,6 +163,10 @@ public class FaceUnlockUtil {
             return;
         }
         mCallbackList.add(callback);
+    }
+
+    public boolean isInUnlocking(){
+        return this.mIsInUnlocking;
     }
 
     public void removeCallback(FaceUnlockCallback callback) {
