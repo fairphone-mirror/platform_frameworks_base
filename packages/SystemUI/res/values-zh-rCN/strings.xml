@@ -978,4 +978,7 @@
     <string name="low_temp_message_20">警告！电池温度过低，您的设备将关闭</string>
     <string name="height_temp_message_55">警告！电池温度过高，请关闭不必要的应用程序</string>
     <string name="height_temp_message_60">警告！电池温度过高，您的设备将关闭</string>
+    <string name="charging_state">充电模式</string>
+    <string name="charging_slow">慢充模式</string>
+    <string name="charging_normal">正常模式</string>
 </resources>
