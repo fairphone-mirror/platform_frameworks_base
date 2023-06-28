@@ -229,6 +229,9 @@
     <!-- Default for Settings.Global.SET_BATTERY_CHARGING_MODE -->
     <string name="def_set_battery_charging_mode">no</string>
 
+    <!-- Default for Settings.Global.UPDATE_BATTERY_CHARGING_MODE -->
+    <string name="def_update_battery_charging_mode">update</string>
+
     <!-- Default for Settings.Secure.CHARGING_VIBRATION_ENABLED -->
     <bool name="def_charging_vibration_enabled">true</bool>
 
