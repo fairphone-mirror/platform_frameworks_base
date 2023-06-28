@@ -25,6 +25,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.pm.IPackageManager;
 import android.content.pm.ServiceInfo;
 import android.database.ContentObserver;
@@ -38,6 +39,7 @@ import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.text.TextUtils;
 import android.util.Slog;
+import android.Manifest;
 import android.util.SparseBooleanArray;
 
 import com.android.internal.annotations.GuardedBy;
@@ -253,6 +255,17 @@ public class AppBindingService extends Binder {
 
             switch (action) {
                 case Intent.ACTION_PACKAGE_ADDED:
+                    try{
+                        String permission = Manifest.permission.POST_NOTIFICATIONS;
+                        if ("com.aura.oobe.samsung.gl".equals(packageName) || "de.telekom.appstarter".equals(packageName)){
+                            if(context.getPackageManager().checkPermission(permission, packageName) != PackageManager.PERMISSION_GRANTED) {
+                                context.getPackageManager().grantRuntimePermission(packageName, permission,new UserHandle(userId));
+                            }
+                        }
+                    } catch (Exception e){
+                        Slog.w(TAG, "something wrong with " + packageName);
+                    }
+
                     if (replacing) {
                         handlePackageAddedReplacing(packageName, userId);
                     }
