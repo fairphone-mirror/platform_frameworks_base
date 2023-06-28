@@ -242,16 +242,15 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 .setTitle(R.string.charging_state)
                 .setSingleChoiceItems(charging_mode, getChargeMode(), (dialog,id)->{
                     position = id;
-                    Log.i(TAG," setSingleChoiceItems   id=" + id + "      position=" + position);
                 })
                 .setPositiveButton(R.string.save, (dialog,id)->{
-                    Log.i(TAG," setPositiveButton   id=" + id + "      position=" + position);
-                    //TODO: 0 slow mode  1 normal mode  2 default mode
+                    // 0 slow mode  1 normal mode  2 default mode
                     setChargeMode(position);
+                    updateSetting();
                 })
                 .setNegativeButton(R.string.cancel, (dialog,id)->{
-                    Log.i(TAG,"  setPositiveButton  id=" + id + "      position=" + position);
-                    //TODO: default mode choice
+                    // default mode choice
+                    updateSetting();
                 })
                 .setCancelable(false)
                 .create();
@@ -262,7 +261,6 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     private int getChargeMode(){
         String charge_mode = SystemProperties.get("persist.sys.charge_mode");
         String chargeMode = readChargeMode();
-        Log.i(TAG,"   charge_mode="+ charge_mode + "     ChargeMode:" + chargeMode);
         if (charge_mode != null &&( "1".equals(charge_mode) || "2000000".equals(charge_mode))){
             return 0;
         }else if (charge_mode != null && "0".equals(charge_mode)){
@@ -272,8 +270,13 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
         }
     }
 
+    private void updateSetting(){
+        Settings.Global.putStringForUser(mContext.getContentResolver(),
+                Settings.Global.UPDATE_BATTERY_CHARGING_MODE, System.currentTimeMillis() + "",
+                UserHandle.myUserId());
+    }
+
     private void setChargeMode(int position){
-        Log.i(TAG,"   setChargeMode  " + position);
     if (position == 0){
         SystemProperties.set("persist.sys.charge_mode","1");
         writeChargeMode("2000000");

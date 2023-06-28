@@ -2600,6 +2600,8 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
 	    loadStringSetting(stmt, Settings.Global.SET_BATTERY_CHARGING_MODE,
                 R.string.def_set_battery_charging_mode);
+	    loadStringSetting(stmt, Settings.Global.UPDATE_BATTERY_CHARGING_MODE,
+                R.string.def_update_battery_charging_mode);
 
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,

@@ -18042,6 +18042,13 @@ public final class Settings {
                 "set_battery_charging_mode";
 
         /**
+         * Settings set battery charging mode in first boot
+         * @hide
+         */
+        public static final String UPDATE_BATTERY_CHARGING_MODE =
+                "update_battery_charging_mode";
+
+        /**
          * Settings migrated from Wear OS settings provider.
          * @hide
          */
