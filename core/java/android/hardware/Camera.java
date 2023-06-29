@@ -4415,6 +4415,16 @@ public class Camera {
          * @see #getFocusAreas()
          */
         public void setFocusAreas(List<Area> focusAreas) {
+            //tct add debug log, would remove after bug resolved.
+            if(focusAreas != null){
+                Log.v("Camera##", "focusAreas.size() = " + focusAreas.size());
+                for(int i = 0; i < focusAreas.size(); i++) {
+                    Area area = focusAreas.get(i);
+                    if(area != null) {
+                        Log.v("Camera##", "i = " + i + ", " + area.rect.toString() + ", weight =" +area.weight);
+                    }
+                }
+            }
             set(KEY_FOCUS_AREAS, focusAreas);
         }
 
