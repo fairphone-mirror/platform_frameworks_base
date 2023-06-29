@@ -1157,8 +1157,12 @@ class AutomaticBrightnessController {
         public void onSensorChanged(SensorEvent event) {
             if (mLightSensorEnabled) {
                 final long time = mClock.uptimeMillis();
-                final float lux = event.values[0];
-                handleLightSensorEvent(time, lux);
+                if(event.values[0] < 1.0f){
+                    handleLightSensorEvent(time, 0f);
+                }else {
+                    final float lux = event.values[0];
+                    handleLightSensorEvent(time, lux);
+                }
             }
         }
 
