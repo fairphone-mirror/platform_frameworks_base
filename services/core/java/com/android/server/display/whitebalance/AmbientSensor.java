@@ -206,8 +206,12 @@ abstract class AmbientSensor {
 
         @Override
         public void onSensorChanged(SensorEvent event) {
-            final float value = event.values[0];
-            handleNewEvent(value);
+            if(event.values[0] < 1.0f){
+                handleNewEvent(0f);
+            }else{
+                final float value = event.values[0];
+                handleNewEvent(value);
+            }
         }
 
         @Override

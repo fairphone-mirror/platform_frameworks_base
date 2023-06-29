@@ -2228,6 +2228,9 @@ public class DisplayModeDirector {
             @Override
             public void onSensorChanged(SensorEvent event) {
                 mLastSensorData = event.values[0];
+                if(mLastSensorData < 1.0f){
+                    mLastSensorData = 0f;
+                }
                 if (mLoggingEnabled) {
                     Slog.d(TAG, "On sensor changed: " + mLastSensorData);
                 }
