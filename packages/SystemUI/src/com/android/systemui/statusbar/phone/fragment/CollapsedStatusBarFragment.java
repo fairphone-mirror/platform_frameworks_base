@@ -431,7 +431,6 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         boolean headsUpVisible =
                 mStatusBarFragmentComponent.getHeadsUpAppearanceController().shouldBeVisible();
         if (headsUpVisible) {
-            state |= DISABLE_SYSTEM_INFO;
             state |= DISABLE_CLOCK;
         }
 
