@@ -490,6 +490,8 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 	    Log.d(mTag, "disable volte icon when vowifi icon display.");
 	}
         int volteIcon = mConfig.showVolteIcon && !hideVolteIcon ? getVolteResId() : 0;
+	Log.d(mTag, "mConfig.showVowifiIcon:" + mConfig.showVowifiIcon + ", mConfig.showVolteIcon: " + mConfig.showVolteIcon + "volteIcon : " + volteIcon
+                    + ", !hideVolteIcon:" + !hideVolteIcon + ", getVolteResId() : " + getVolteResId());
 	// modify by T2M.zhang renjie for FP4S-78 23-1-29 end
         MobileDataIndicators mobileDataIndicators = new MobileDataIndicators(
                 sbInfo.icon,
@@ -553,6 +555,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         }
 
         MobileIconGroup vowifiIconGroup = getVowifiIconGroup();
+	Log.d(mTag, "mConfig.showVowifiIcon:" + mConfig.showVowifiIcon + ", isNullvowifiIconGroup : " + (vowifiIconGroup != null) + ",showTriangle: " + showTriangle);
         if (mConfig.showVowifiIcon && vowifiIconGroup != null) {
             typeIcon = vowifiIconGroup.dataType;
             statusIcon = new IconState(true,
