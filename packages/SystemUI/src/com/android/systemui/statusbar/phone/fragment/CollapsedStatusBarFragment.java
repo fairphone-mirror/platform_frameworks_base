@@ -424,10 +424,8 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
         if ((diff1 & DISABLE_CLOCK) != 0 || mClockView.getVisibility() != clockHiddenMode()) {
             if ((state1 & DISABLE_CLOCK) != 0) {
                 hideClock(animate);
-                hideOperatorName(animate);
             } else {
                 showClock(animate);
-                showOperatorName(animate);
             }
         }
     }
@@ -656,6 +654,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
             mOperatorNameViewController =
                     mOperatorNameViewControllerFactory.create((OperatorNameView) (mOperatorNameFrame.findViewById(R.id.operator_name)));
             mOperatorNameViewController.init();
+            if(mStatusBarFragmentComponent != null && mStatusBarFragmentComponent.getHeadsUpAppearanceController() != null){
+                mStatusBarFragmentComponent.getHeadsUpAppearanceController().SetOperatorNameView(mOperatorNameFrame);
+            }
             // This view should not be visible on lock-screen
             if (mKeyguardStateController.isShowing()) {
                 hideOperatorName(false);
