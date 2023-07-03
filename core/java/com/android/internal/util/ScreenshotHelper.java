@@ -420,4 +420,8 @@ public class ScreenshotHelper {
         mContext.sendBroadcastAsUser(errorIntent, UserHandle.CURRENT);
     }
 
+    public void unregisterReceiverByHelper(){
+        if(mContext != null)mContext.unregisterReceiver(mBroadcastReceiver);
+    }
+
 }
