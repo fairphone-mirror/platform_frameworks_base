@@ -182,4 +182,10 @@ public class OperatorNameView extends TextView implements DemoModeCommandReceive
         return originalString;
     }
     //Modify by T2M yingyubin for FP4S-619 20221012
+
+    @Override
+    public boolean isFocused() {
+        return true;
+    }
+
 }
