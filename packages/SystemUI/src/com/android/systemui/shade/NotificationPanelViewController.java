@@ -100,7 +100,7 @@ import com.android.internal.policy.SystemBarUtils;
 import com.android.internal.util.LatencyTracker;
 import com.android.keyguard.ActiveUnlockConfig;
 import com.android.keyguard.EmergencyButton;
-import com.android.keyguard.EmergencyButtonController;
+import com.android.keyguard.EmergencyButtonControllerForNotificationPanelView;
 import com.android.keyguard.FaceAuthApiRequestReason;
 import com.android.keyguard.KeyguardClockSwitch.ClockSize;
 import com.android.keyguard.KeyguardStatusView;
@@ -367,8 +367,8 @@ public final class NotificationPanelViewController extends PanelViewController {
     private final ScreenOffAnimationController mScreenOffAnimationController;
     private final UnlockedScreenOffAnimationController mUnlockedScreenOffAnimationController;
 
-    private final EmergencyButtonController.Factory mEmergencyButtonControllerFactory;
-    private EmergencyButtonController mEmergencyButtonController;
+    private final EmergencyButtonControllerForNotificationPanelView.Factory mEmergencyButtonControllerFactory;
+    private EmergencyButtonControllerForNotificationPanelView mEmergencyButtonController;
 
     private int mQsTrackingPointer;
     private VelocityTracker mQsVelocityTracker;
@@ -784,7 +784,7 @@ public final class NotificationPanelViewController extends PanelViewController {
             CameraGestureHelper cameraGestureHelper,
             KeyguardBottomAreaViewModel keyguardBottomAreaViewModel,
             KeyguardBottomAreaInteractor keyguardBottomAreaInteractor,
-            EmergencyButtonController.Factory emergencyButtonControllerFactory) {
+            EmergencyButtonControllerForNotificationPanelView.Factory emergencyButtonControllerFactory) {
         super(view,
                 falsingManager,
                 dozeLog,
