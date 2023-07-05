@@ -714,7 +714,7 @@ public class Notifier {
         tm.notifyUserActivity();
         mPolicy.userActivity(displayGroupId, event);
         mFaceDownDetector.userActivity(event);
-        mScreenUndimDetector.userActivity(displayGroupId);
+        //mScreenUndimDetector.userActivity(displayGroupId);
     }
 
     void postEnhancedDischargePredictionBroadcast(long delayMs) {
@@ -880,7 +880,7 @@ public class Notifier {
     }
 
     private void screenPolicyChanging(int displayGroupId, int screenPolicy) {
-        mScreenUndimDetector.recordScreenPolicy(displayGroupId, screenPolicy);
+        //mScreenUndimDetector.recordScreenPolicy(displayGroupId, screenPolicy);
     }
 
     private void lockProfile(@UserIdInt int userId) {
