@@ -1158,6 +1158,19 @@ public final class SensorPrivacyService extends SystemService {
             if (sensor == MICROPHONE) {
                 return mContext.getResources().getBoolean(R.bool.config_supportsMicToggle);
             } else if (sensor == CAMERA) {
+                Context context = mContext.getApplicationContext();
+                ActivityManager activityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+                String processName = "";
+
+                for (ActivityManager.RunningAppProcessInfo processInfo : activityManager.getRunningAppProcesses()) {
+                    if (processInfo.pid == android.os.Process.myPid()) {
+                        processName = processInfo.processName;
+                        break;
+                    }
+                }
+                if (processName.equals("system")) {
+                    return true;
+                }
                 return mContext.getResources().getBoolean(R.bool.config_supportsCamToggle);
             }
             throw new IllegalArgumentException("Unable to find value " + sensor);
