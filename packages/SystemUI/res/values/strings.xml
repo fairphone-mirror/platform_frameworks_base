@@ -2611,7 +2611,7 @@
     <string name="bt_le_audio_broadcast_dialog_unknown_name">Unknown</string>
 
     <string name="usbntc_temp_message">High temperature at USB connector. Do not touch the phone and disconnect the charger and cable immediately!</string>
-    <string name="usbntc_temp_title">Height USB NTC Temperature</string>
+    <string name="usbntc_temp_title">High USB NTC Temperature</string>
 
     <string name="usbntc_temp_notification_title">Warning</string>
     <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
