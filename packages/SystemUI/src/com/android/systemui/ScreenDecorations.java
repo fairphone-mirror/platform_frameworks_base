@@ -583,7 +583,7 @@ public class ScreenDecorations extends CoreStartable implements Tunable , Dumpab
                 Pair<List<DecorProvider>, List<DecorProvider>> pair =
                         DecorProviderKt.partitionAlignedBound(decorProviders, bound);
                 decorProviders = pair.getSecond();
-                createOverlay(bound, pair.getFirst(), true);
+                createOverlay(bound, pair.getFirst(), shouldOptimizeVisibility);
             }
             for (int i = 0; i < BOUNDS_POSITION_LENGTH; i++) {
                 if (!hasCreatedOverlay[i]) {
