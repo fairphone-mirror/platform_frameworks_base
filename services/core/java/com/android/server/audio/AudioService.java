@@ -5874,21 +5874,33 @@ public class AudioService extends IAudioService.Stub
             if (mode == AudioSystem.MODE_IN_COMMUNICATION) {
                 Log.d(TAG, "plt voipcall setMode(mode=" + mode + ", pid=" + pid + ", uid=" + uid + ", caller=" + callingPackage + ")");
                 if ("us.zoom.videomeetings".equals(callingPackage) || (callingPackage != null && callingPackage.contains("zoom"))) {
-                    AudioSystem.setParameters("voip_app_type=2");
-                    Log.d(TAG, "plt voipcall zoom set voip_app_type=2");
-                } else if ("com.whatsapp".equals(callingPackage)) {
                     AudioSystem.setParameters("voip_app_type=3");
-                    Log.d(TAG, "plt voipcall whatsapp set voip_app_type=3");
-                } else if ("com.facebook.katana".equals(callingPackage) || (callingPackage != null && callingPackage.contains("facebook"))) {
+                    Log.d(TAG, "plt voipcall zoom set voip_app_type=3");
+                } else if ("com.google.android.apps.tachyon".equals(callingPackage)) {
+                    AudioSystem.setParameters("voip_app_type=10");
+                    Log.d(TAG, "plt voipcall google meet set voip_app_type=10");
+                } else if ("com.whatsapp".equals(callingPackage)) {
+                    AudioSystem.setParameters("voip_app_type=2");
+                    Log.d(TAG, "plt voipcall whatsapp set voip_app_type=2");
+                } else if ("com.microsoft.teams".equals(callingPackage)) {
                     AudioSystem.setParameters("voip_app_type=4");
-                    Log.d(TAG, "plt voipcall facebook set voip_app_type=4");
-                } else if ("jp.naver.line.android".equals(callingPackage) || (callingPackage != null && callingPackage.contains("line"))) {
+                    Log.d(TAG, "plt voipcall mircro teams set voip_app_type=4");
+                } else if ("com.skype.raider".equals(callingPackage) || (callingPackage != null && callingPackage.contains("skype"))) {
                     AudioSystem.setParameters("voip_app_type=5");
-                    Log.d(TAG, "plt voipcall line set voip_app_type=5");
-                } else if ("5GNR".equals(callingPackage)) {
+                    Log.d(TAG, "plt voipcall skype set voip_app_type=5");
+                } else if ("com.facebook.katana".equals(callingPackage) || (callingPackage != null && callingPackage.contains("facebook"))) {
+                    AudioSystem.setParameters("voip_app_type=7");
+                    Log.d(TAG, "plt voipcall facebook set voip_app_type=7");
+                } else if ("jp.naver.line.android".equals(callingPackage) || (callingPackage != null && callingPackage.contains("line"))) {
                     AudioSystem.setParameters("voip_app_type=6");
-                    Log.d(TAG, "plt voipcall 5GNR set voip_app_type=6");
-                } else {//teams,wechat,skype
+                    Log.d(TAG, "plt voipcall line set voip_app_type=6");
+                } else if ("org.telegram.messenger".equals(callingPackage)) {
+                    AudioSystem.setParameters("voip_app_type=8");
+                    Log.d(TAG, "plt voipcall telegram set voip_app_type=8");
+                } else if ("org.thoughtcrime.securesms".equals(callingPackage)) {
+                    AudioSystem.setParameters("voip_app_type=9");
+                    Log.d(TAG, "plt voipcall signal set voip_app_type=9");
+                } else {//wechat,default
                     AudioSystem.setParameters("voip_app_type=1");
                     Log.d(TAG, "plt voipcall default set voip_app_type=1");
                 }
