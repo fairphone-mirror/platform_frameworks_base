@@ -2470,7 +2470,7 @@ public final class DisplayManagerService extends SystemService {
                 // Scan supported modes returned by display.getInfo() to find a mode with the same
                 // size as the default display mode but with the specified refresh rate instead.
                 Display.Mode mode = display.getDisplayInfoLocked().findDefaultModeByRefreshRate(
-                        requestedRefreshRate);
+                        requestedRefreshRate == 60.0f ? 60.000004f : requestedRefreshRate);
                 if (mode != null) {
                     requestedModeId = mode.getModeId();
                 } else {
