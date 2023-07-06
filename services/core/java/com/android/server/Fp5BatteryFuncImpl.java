@@ -47,7 +47,7 @@ public class Fp5BatteryFuncImpl implements ICustomerBatteryFunc {
             int batteryStatus = currentHealthInfo.batteryStatus ;
             if (currentTemperature >= 600) {
                 currentTemperatureState = high_temp_60;
-            } else if (currentTemperature >= 550 && currentTemperature < 600){
+            } else if (currentTemperature >= 550 && currentTemperature < 600 && batteryStatus == 4){
                 currentTemperatureState = high_temp_55;
             } else if (currentTemperature > -200 && currentTemperature <= -50){
                 currentTemperatureState = low_temp_5;
