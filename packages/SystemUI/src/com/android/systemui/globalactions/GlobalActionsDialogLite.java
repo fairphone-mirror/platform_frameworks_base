@@ -421,6 +421,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
      * Clean up callbacks
      */
     public void destroy() {
+        if(mScreenshotHelper != null)mScreenshotHelper.unregisterReceiverByHelper();
         mBroadcastDispatcher.unregisterReceiver(mBroadcastReceiver);
         mTelephonyListenerManager.removeServiceStateListener(mPhoneStateListener);
         mGlobalSettings.unregisterContentObserver(mAirplaneModeObserver);
