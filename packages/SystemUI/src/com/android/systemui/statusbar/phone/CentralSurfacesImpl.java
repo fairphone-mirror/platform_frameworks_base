@@ -267,6 +267,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import android.provider.Settings;
+import android.content.ContentResolver;
+import android.os.Message;
 /**
  * A class handling initialization and coordination between some of the key central surfaces in
  * System UI: The notification shade, the keyguard (lockscreen), and the status bar.
@@ -553,6 +556,9 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
     // Two variables because the first one evidently ran out of room for new flags.
     private int mDisabled1 = 0;
     private int mDisabled2 = 0;
+
+    private Handler mMainHandler;
+    private static final int MESSAGE_UPDATE_FLASH_RATE = 1;
 
     /**
      * This keeps track of whether we have (or haven't) registered the predictive back callback.
@@ -951,6 +957,18 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
 
         mLightRevealScrimViewModelLazy = lightRevealScrimViewModelLazy;
         mLightRevealScrim = lightRevealScrim;
+
+        mMainHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                  case MESSAGE_UPDATE_FLASH_RATE:
+                      Settings.System.putFloatForUser(mContext.getContentResolver(),
+                          Settings.System.MIN_REFRESH_RATE, 90f,mContext.getContentResolver().getUserId());
+                  break;
+                }
+            }
+        };
 
         // Based on teamfood flag, turn predictive back dispatch on at runtime.
         if (mFeatureFlags.isEnabled(Flags.WM_ENABLE_PREDICTIVE_BACK_SYSUI)) {
@@ -3322,6 +3340,20 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                 }
             }
             updateScrimController();
+<<<<<<< HEAD
+=======
+            if(mKeyguardUpdateMonitor.isSecureCameraLaunchedOverKeyguard()){
+                FaceUnlockUtil.getInstance().stopFaceUnlock(mContext);
+            }
+            ContentResolver cr = mContext.getContentResolver();
+            float minRefreshRate = Settings.System.getFloatForUser(cr,
+                Settings.System.MIN_REFRESH_RATE, 0f, cr.getUserId());
+            if(minRefreshRate == 90f){
+                Settings.System.putFloatForUser(cr,
+                     Settings.System.MIN_REFRESH_RATE, 60f,cr.getUserId());
+                mMainHandler.sendEmptyMessageDelayed(MESSAGE_UPDATE_FLASH_RATE,3000);
+            }
+>>>>>>> 3f0b3d1383a9... [FP5-2132]add workround for 90hz flash rate when screen off
         }
     };
 
