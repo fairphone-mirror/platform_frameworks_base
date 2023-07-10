@@ -757,6 +757,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
 
     @Override
     public void updateLowBatteryWarning() {
+        mWarning = true;
         updateNotification();
     }
 
