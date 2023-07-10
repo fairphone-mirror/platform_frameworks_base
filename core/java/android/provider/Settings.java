@@ -5191,6 +5191,13 @@ public final class Settings {
                 "hide_rotation_lock_toggle_for_accessibility";
 
         /**
+         * @hide
+         */
+        @Readable
+        @SuppressLint("NoSettingsProvider")
+        public static final String IS_FAIRPHONE_FIRST_OPEN = "is_fairphone_first_open";
+
+        /**
          * Whether the phone vibrates when it is ringing due to an incoming call. This will
          * be used by Phone and Setting apps; it shouldn't affect other apps.
          * The value is boolean (1 or 0).
@@ -5593,6 +5600,7 @@ public final class Settings {
             PUBLIC_SETTINGS.add(SHOW_WEB_SUGGESTIONS);
             PUBLIC_SETTINGS.add(VIBRATE_WHEN_RINGING);
             PUBLIC_SETTINGS.add(APPLY_RAMPING_RINGER);
+            PUBLIC_SETTINGS.add(IS_FAIRPHONE_FIRST_OPEN);
         }
 
         /**
