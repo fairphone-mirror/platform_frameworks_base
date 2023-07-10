@@ -108,7 +108,7 @@ public final class PinnerService extends SystemService {
 
     private static final String MY_FAIRPHONE_PACKAGE_NAME = "com.fairphone.myfairphone";
     private static final String MY_FAIRPHONE_CLASS_NAME = "com.fairphone.presentation.ui.compose.activity.FairphoneOnboardingActivity";
-    private static final int DELAY_START_MY_FAIRPHONE = 5 * 1000;
+    private static final int DELAY_START_MY_FAIRPHONE = 1 * 1000;
     private static final String MY_FAIRPHONE_IS_OPENED = "persist.sys.fairphone.open";
 
     private static final int KEY_CAMERA = 0;
