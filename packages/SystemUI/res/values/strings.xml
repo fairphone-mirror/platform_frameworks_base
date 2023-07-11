@@ -3037,7 +3037,7 @@
     <string name="wifi_scan_notify_message">To improve device experience, apps and services can still scan for Wi\u2011Fi networks at any time, even when Wi\u2011Fi is off. You can change this in Wi\u2011Fi scanning settings. <annotation id="link">Change</annotation></string>
 
     <string name="usbntc_temp_message">High temperature at USB connector. Do not touch the phone and disconnect the charger and cable immediately!</string>
-    <string name="usbntc_temp_title">Height USB NTC Temperature</string>
+    <string name="usbntc_temp_title">High USB NTC Temperature</string>
 
     <string name="usbntc_temp_notification_title">Warning</string>
     <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
@@ -3045,7 +3045,7 @@
     <string name="low_temp_title">Low Battery Temperature</string>
     <string name="low_temp_message">Your battery temperature is too low,please disconnect the changer!</string>
     <string name="low_temp_message_notchanging">temperature is too low!</string>
-    <string name="height_temp_title">Height Battery Temperature</string>
+    <string name="height_temp_title">High Battery Temperature</string>
     <string name="height_temp_message">Your battery temperature is too High,please disconnect the changer!</string>
     <string name="hight_temp_message_notchanging">temperature is too high!</string>
     <string name="low_temp_alert_dismiss">Dismiss</string>
