@@ -1163,5 +1163,9 @@
     <string name="charging_state">Laddningsläge</string>
     <string name="hight_temp_message_notchanging">temperaturen är för hög!</string>
     <string name="low_temp_message_5">Varning! Batteritemperaturen är för låg</string>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+        <item quantity="one">Incorrect SIM<xliff:g id="slotid">%d</xliff:g> PIN code, you have <xliff:g id="number">%d</xliff:g> remaining attempt before you must contact your carrier to unlock your device.</item>
+        <item quantity="other">Felaktig SIM<xliff:g id="slotid">%d</xliff:g> -pin -kod. Du har <xliff:g id="number">%d</xliff:g> återstående försök.</item>
+    </plurals>
 
 </resources>

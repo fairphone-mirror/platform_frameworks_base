@@ -1163,5 +1163,9 @@
     <string name="charging_state">Oplaadmodus</string>
     <string name="hight_temp_message_notchanging">De temperatuur is te hoog.</string>
     <string name="low_temp_message_5">Waarschuwing! De batterijtemperatuur is te laag</string>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+        <item quantity="one">Incorrect SIM<xliff:g id="slotid">%d</xliff:g> PIN code, you have <xliff:g id="number">%d</xliff:g> remaining attempt before you must contact your carrier to unlock your device.</item>
+        <item quantity="other">Incorrecte SIM<xliff:g id="slotid">%d</xliff:g> PIN-code. Je hebt nog <xliff:g id="number">%d</xliff:g> pogingen over.</item>
+    </plurals>
 
 </resources>

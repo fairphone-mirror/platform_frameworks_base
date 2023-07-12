@@ -1158,4 +1158,9 @@
     <string name="assistant_attention_content_description" msgid="6830215897604642875">"Atenção do Assistente ativada"</string>
     <string name="set_default_notes_app_toast_content" msgid="2812374329662610753">"Predefina a app de notas nas Definições"</string>
     <string name="install_app" msgid="5066668100199613936">"Instalar app"</string>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+        <item quantity="one">Incorrect SIM<xliff:g id="slotid">%d</xliff:g> PIN code, you have <xliff:g id="number">%d</xliff:g> remaining attempt before you must contact your carrier to unlock your device.</item>
+        <item quantity="other">Código de pino Sim<xliff:g id="slotid">%d</xliff:g> incorreto. Você tem <xliff:g id="number">%d</xliff:g> tentativas restantes.</item>
+    </plurals>
+
 </resources>

@@ -1163,5 +1163,9 @@
     <string name="charging_state">Modo de carga</string>
     <string name="hight_temp_message_notchanging">¡La temperatura es demasiado alta!</string>
     <string name="low_temp_message_5">¡Atención! La temperatura de la batería es demasiado baja</string>
+    <plurals name="kg_password_wrong_pin_code_multi_sim">
+        <item quantity="one">Incorrect SIM<xliff:g id="slotid">%d</xliff:g> PIN code, you have <xliff:g id="number">%d</xliff:g> remaining attempt before you must contact your carrier to unlock your device.</item>
+        <item quantity="other">Código PIN SIM<xliff:g id="slotid">%d</xliff:g> incorrecto. Tienes <xliff:g id="number">%d</xliff:g> intentos restantes.</item>
+    </plurals>
 
 </resources>
