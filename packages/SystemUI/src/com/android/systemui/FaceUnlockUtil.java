@@ -66,7 +66,6 @@ public class FaceUnlockUtil {
     }
 
     public void setCountDownUnlock(Context context, int coutDown){
-        Log.d(TAG, "setCountDownUnlock: " + coutDown);
         Settings.System.putIntForUser(context.getContentResolver(),
                 COUNT_DOWN_TIME_UNLOCK, coutDown,
                 UserHandle.USER_CURRENT);
@@ -128,9 +127,6 @@ public class FaceUnlockUtil {
         boolean hasFaceEnrolled = hasFaceEnrolled(context);
         boolean isCounDown = getCountDownUnlock(context);
         boolean isRebootView = isRebootView(context);
-        Log.d(TAG, "isFaceUnlockEnable faceUnlockSupported: " + faceUnlockSupported +
-                ",hasFaceEnrolled:" + hasFaceEnrolled + ",isCounDown:" + isCounDown +
-                ",isRebootView:" +isRebootView+",mFailTimes:"+mFailTimes);
         return !isRebootView && faceUnlockSupported && hasFaceEnrolled && !isCounDown && mFailTimes < 3;
     }
 
