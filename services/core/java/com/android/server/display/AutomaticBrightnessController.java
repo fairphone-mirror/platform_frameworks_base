@@ -230,6 +230,8 @@ public class AutomaticBrightnessController {
     private BrightnessThrottler mBrightnessThrottler;
     private boolean mIsBrightnessThrottled;
 
+    private int mLowluxlevelTimes = 0;
+
     // Context-sensitive brightness configurations require keeping track of the foreground app's
     // package name and category, which is done by registering a TaskStackListener to call back to
     // us onTaskStackChanged, and then using the ActivityTaskManager to get the foreground app's
@@ -668,6 +670,7 @@ public class AutomaticBrightnessController {
             mRecentLightSamples = 0;
             mAmbientLightRingBuffer.clear();
             mCurrentLightSensorRate = -1;
+            mLowluxlevelTimes = 0;
             mHandler.removeMessages(MSG_UPDATE_AMBIENT_LUX);
             unregisterForegroundAppUpdater();
             mSensorManager.unregisterListener(mLightSensorListener);
@@ -1344,6 +1347,15 @@ public class AutomaticBrightnessController {
         public void onSensorChanged(SensorEvent event) {
             if (mLightSensorEnabled) {
                 final long time = mClock.uptimeMillis();
+                if(event.values[0] < 100f){
+                    mLowluxlevelTimes++;
+                }else{
+                    mLowluxlevelTimes = 0;
+                }
+                if (mLowluxlevelTimes == 45 && mShortTermModelAnchor != -1){
+                    resetShortTermModel();
+                    updateAutoBrightness(true, false);
+                }
                 if(event.values[0] < 1.0f){
                     handleLightSensorEvent(time, 0f);
                 }else {
