@@ -135,7 +135,6 @@ class AuthRippleController @Inject constructor(
                                 Math.max(it.y, centralSurfaces.displayHeight.toInt() - it.y)
                         )
                 )
-                showUnlockedRipple()
             }
         } else if (biometricSourceType == BiometricSourceType.FACE) {
             if (!bypassController.canBypass() && !authController.isUdfpsFingerDown) {
