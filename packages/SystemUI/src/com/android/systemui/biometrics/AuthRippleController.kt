@@ -166,7 +166,6 @@ class AuthRippleController @Inject constructor(
                         )
                 )
                 logger.showingUnlockRippleAt(it.x, it.y, "FP sensor radius: $udfpsRadius")
-                showUnlockedRipple()
             }
         } else if (biometricSourceType == BiometricSourceType.FACE) {
             faceSensorLocation?.let {
