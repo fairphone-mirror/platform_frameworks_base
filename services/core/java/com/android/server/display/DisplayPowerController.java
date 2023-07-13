@@ -1898,7 +1898,7 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
                     if (isIncreasing && slowChange) {
                         rampSpeed = mBrightnessRampRateSlowIncrease;
                     } else if (isIncreasing && !slowChange) {
-                        rampSpeed = mBrightnessRampRateFastIncrease;
+                        rampSpeed = 0f;//mBrightnessRampRateFastIncrease;
                     } else if (!isIncreasing && slowChange) {
                         rampSpeed = mBrightnessRampRateSlowDecrease;
                     } else {
