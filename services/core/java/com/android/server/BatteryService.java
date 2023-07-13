@@ -867,30 +867,45 @@ public final class BatteryService extends SystemService {
 
     private boolean getUsbPresent() {
         String version = null;
+        InputStream is = null;
+        BufferedReader reader = null;
         try {
-            InputStream is = new FileInputStream("/sys/class/power_supply/usb/online");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            is = new FileInputStream("/sys/class/power_supply/usb/online");
+            reader = new BufferedReader(new InputStreamReader(is));
             version = reader.readLine();
-            reader.close();
-            is.close();
             Slog.e(TAG, "getUsbPresent version" + version);
-            return "1".equals(version);
         } catch (IOException e) {
             e.printStackTrace();
             Slog.e(TAG, "getVersion fail" + e);
+        } finally {
+            try{
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+
+            }
+
+            try{
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+
+            }
         }
-        return false;
+        return "1".equals(version);
     }
 
     private float getUsbNTCTemp() {
         String version = null;
         float temp = -1f;
+        InputStream is = null;
+        BufferedReader reader = null;
         try {
-            InputStream is = new FileInputStream("/sys/class/power_supply/usb/temp");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            is = new FileInputStream("/sys/class/power_supply/usb/temp");
+            reader = new BufferedReader(new InputStreamReader(is));
             version = reader.readLine();
-            reader.close();
-            is.close();
 
             int current = Integer.parseInt(version.trim());
 
@@ -899,6 +914,22 @@ public final class BatteryService extends SystemService {
         } catch (IOException e) {
             e.printStackTrace();
             Slog.e(TAG, "getVersion fail" + e);
+        } finally {
+            try{
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+
+            }
+
+            try{
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+
+            }
         }
         return temp;
     }
