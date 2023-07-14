@@ -2652,6 +2652,7 @@
   <java-symbol type="string" name="fingerprint_recalibrate_notification_title" />
   <java-symbol type="string" name="fingerprint_recalibrate_notification_content" />
   <java-symbol type="string" name="fingerprint_error_power_pressed" />
+  <java-symbol type="string" name="fingerprint_acquired_already_enrolled" />
 
   <!-- Fingerprint config -->
   <java-symbol type="integer" name="config_fingerprintMaxTemplatesPerUser"/>

@@ -1548,6 +1548,15 @@ public class FingerprintManager implements BiometricAuthenticator, BiometricFing
             case FINGERPRINT_ACQUIRED_START:
                 return null;
         }
+        if(acquireInfo == 6) {
+            if(vendorCode == 16) {
+                return context.getString(
+                        com.android.internal.R.string.fingerprint_acquired_immobile);
+            } else if(vendorCode == 15) {
+                return context.getString(
+                        com.android.internal.R.string.fingerprint_acquired_already_enrolled);
+            }
+        }
         Slog.w(TAG, "Invalid acquired message: " + acquireInfo + ", " + vendorCode);
         return null;
     }
