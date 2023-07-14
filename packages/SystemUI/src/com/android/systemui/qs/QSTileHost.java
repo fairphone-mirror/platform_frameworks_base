@@ -21,6 +21,7 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.os.SystemProperties;
 import android.provider.Settings.Secure;
 import android.text.TextUtils;
 import android.util.ArraySet;
@@ -632,6 +633,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
 
         ArrayList<String> finalTiles = new ArrayList<String>();
         finalTiles = replaceWifiOrCell(tiles);
+        finalTiles = setControlsAndWalletPosition(tiles);
         return finalTiles;
     }
 
@@ -653,6 +655,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
         }
         ArrayList<String> finalTiles = new ArrayList<String>();
         finalTiles = replaceWifiOrCell(tiles);
+        finalTiles = setControlsAndWalletPosition(tiles);
         return finalTiles;
     }
 
@@ -670,6 +673,19 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
             list.remove("wifi");
             list.remove("cell");
         }
+        return list;
+    }
+
+    private static ArrayList<String> setControlsAndWalletPosition (ArrayList<String> list){
+
+        String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
+        if("20404".equals(mccmnc) || "23415".equals(mccmnc) || "23407".equals(mccmnc)|| "23591".equals(mccmnc)|| "23592".equals(mccmnc)|| "26202".equals(mccmnc)|| "26204".equals(mccmnc)|| "26209".equals(mccmnc)){
+            if (list.contains("controls")) {
+                list.remove("controls");
+                list.add(4,"controls");
+            }
+        }
+
         return list;
     }
 
