@@ -546,9 +546,12 @@ public final class BatteryService extends SystemService {
 
         //add by suntianhai 2023.03.23 for FP5-198 Battery healty for demo device
         boolean bath_status =  SystemProperties.get("persist.sys.battery.healty.enable", "Close").equals("Open");
-        if (bath_status){
-            int level = mHealthInfo.batteryLevel;
-            setBatteryHealthProtect(level);
+        boolean protect_battery = SystemProperties.get("persist.sys.battery.protect.enable").equals("1");
+
+        if (protect_battery && !bath_status) {
+            setBatteryHealthProtect(mHealthInfo.batteryLevel,80,78);
+        } else if (bath_status) {
+            setBatteryHealthProtect(mHealthInfo.batteryLevel,70,30);
         }
 
         if (force
@@ -770,21 +773,23 @@ public final class BatteryService extends SystemService {
     }
 
     //open bat_health
-    private void setBatteryHealthProtect(int level){
+    private void setBatteryHealthProtect(int level,int h_level,int l_level){
         if (mPlugType != BATTERY_PLUGGED_NONE){
             isHealtyEnW = false;
             //charging
-            if (level >= 70){
+            if (level >= h_level){
                 //TODO: set charge_disable
                 if (!isHealtyL70){
                     writeBatEn("0");
                     isHealtyL70 = true;
+                    SystemProperties.set("persist.sys.battery.icon.enable","1");
                 }
 
-            }else if (level == 30){
+            }else if (level == l_level){
                 //TODO:set charge_enable
                 writeBatEn("6000000");
                 isHealtyL70 = false;
+                SystemProperties.set("persist.sys.battery.icon.enable","0");
             }
         }else {
             //no charging set charge_enable
@@ -792,6 +797,7 @@ public final class BatteryService extends SystemService {
                 writeBatEn("6000000");
                 isHealtyEnW = true;
                 isHealtyL70 = false;
+                SystemProperties.set("persist.sys.battery.icon.enable","0");
             }
         }
     }
@@ -942,8 +948,15 @@ public final class BatteryService extends SystemService {
 
         int icon = getIconLocked(mHealthInfo.batteryLevel);
 
+        String bat_icon_enable = SystemProperties.get("persist.sys.battery.icon.enable");
+
         intent.putExtra(BatteryManager.EXTRA_SEQUENCE, mSequence);
-        intent.putExtra(BatteryManager.EXTRA_STATUS, mHealthInfo.batteryStatus);
+        if (bat_icon_enable != null && "1".equals(bat_icon_enable)) {
+            intent.putExtra(BatteryManager.EXTRA_STATUS, 4);
+        } else {
+            intent.putExtra(BatteryManager.EXTRA_STATUS, mHealthInfo.batteryStatus);
+        }
+        
         intent.putExtra(BatteryManager.EXTRA_HEALTH, mHealthInfo.batteryHealth);
         intent.putExtra(BatteryManager.EXTRA_PRESENT, mHealthInfo.batteryPresent);
         intent.putExtra(BatteryManager.EXTRA_LEVEL, mHealthInfo.batteryLevel);
