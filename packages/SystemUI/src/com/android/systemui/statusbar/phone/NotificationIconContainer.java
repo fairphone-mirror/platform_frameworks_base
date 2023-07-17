@@ -491,7 +491,7 @@ public class NotificationIconContainer extends ViewGroup {
                 firstOverflowIndex = i;
                 mVisualOverflowStart = layoutEnd - mIconSize;
                 if (forceOverflow || mIsStaticLayout) {
-                    mVisualOverflowStart = Math.min(translationX, mVisualOverflowStart);
+                    mVisualOverflowStart = Math.min(translationX, mVisualOverflowStart) + mIconSize / 3;
                 }
             }
             final float drawingScale = mOnLockScreen && view instanceof StatusBarIconView
