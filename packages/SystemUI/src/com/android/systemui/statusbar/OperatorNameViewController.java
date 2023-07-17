@@ -83,7 +83,8 @@ public class OperatorNameViewController extends ViewController<OperatorNameView>
 
     private void update() {
         SubInfo defaultSubInfo = getDefaultSubInfo();
-        boolean showOperatorName =
+        //FP5-1499 fixed by renjie.zhang
+        boolean showOperatorName = (defaultSubInfo == null) ? false :
                 mCarrierConfigTracker
                         .getShowOperatorNameInStatusBarConfig(defaultSubInfo.getSubId())
                         && (mTunerService.getValue(KEY_SHOW_OPERATOR_NAME, 1) != 0);
@@ -93,6 +94,7 @@ public class OperatorNameViewController extends ViewController<OperatorNameView>
     private SubInfo getDefaultSubInfo() {
         int defaultSubId = SubscriptionManager.getDefaultDataSubscriptionId();
         SubscriptionInfo sI = mKeyguardUpdateMonitor.getSubscriptionInfoForSubId(defaultSubId);
+        if (sI == null) return null;//FP5-1499 fixed by renjie.zhang
         return new SubInfo(
                 sI.getSubscriptionId(),
                 sI.getCarrierName(),
