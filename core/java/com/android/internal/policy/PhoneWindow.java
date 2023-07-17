@@ -2526,8 +2526,9 @@ public class PhoneWindow extends Window implements MenuBuilder.Callback {
                     0x00000000);
         }
         if (!targetPreQ) {
+            // Enforce statusbar contrast
             mEnsureStatusBarContrastWhenTransparent = a.getBoolean(
-                    R.styleable.Window_enforceStatusBarContrast, false);
+                    R.styleable.Window_enforceStatusBarContrast, true);
             mEnsureNavigationBarContrastWhenTransparent = a.getBoolean(
                     R.styleable.Window_enforceNavigationBarContrast, true);
         }
