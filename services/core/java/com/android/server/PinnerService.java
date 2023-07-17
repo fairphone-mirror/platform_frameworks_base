@@ -368,13 +368,11 @@ public final class PinnerService extends SystemService {
                         if (userSetupCompleteUri.equals(uri)) {
                             sendPinAppMessage(KEY_HOME, ActivityManager.getCurrentUser(),
                                     true /* force */);
-                            android.util.Log.d("debugdebug","PinnerService.java-registerUserSetupCompleteListener-onChange~~~~~");
                             if (isUserSetupCompleted() && isMyPhoneFirstOpen() && !isDtCarrier()) {
                                 mPinnerHandler.postDelayed(new Runnable(){
                                     @Override
                                     public void run(){
                                         try {
-                                            android.util.Log.d("debugdebug","PinnerService.java-registerUserSetupCompleteListener-onChange-startMyFairphone~~~~~");
                                             startMyFairphone();
                                         } catch (Exception e) {
                                             Slog.e(TAG, "Failed find MyFirePhone ", e);
