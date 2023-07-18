@@ -2446,7 +2446,11 @@ public final class NotificationPanelViewController extends PanelViewController {
             if (height >= 540) {
                 emergencyButton.setVisibility(View.GONE);
             } else if(height == 0 && !mQsExpanded) {
-                emergencyButton.setVisibility(View.VISIBLE);
+                if (!emergencyButton.isInCalling && mResources.getString(com.android.internal.R.string.lockscreen_return_to_call).equals(emergencyButton.getText())) {
+                    emergencyButton.setVisibility(View.GONE);
+                } else {
+                    emergencyButton.setVisibility(View.VISIBLE);
+                }
             }
         }
         mQsExpansionHeight = height;

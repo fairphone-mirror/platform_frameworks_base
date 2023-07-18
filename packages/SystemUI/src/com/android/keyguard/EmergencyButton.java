@@ -44,7 +44,7 @@ public class EmergencyButton extends Button {
     private int mDownX;
     private int mDownY;
     private boolean mLongPressWasDragged;
-
+    public boolean isInCalling = false;
     private LockPatternUtils mLockPatternUtils;
 
     private final boolean mEnableEmergencyCallWhileSimLocked;
@@ -114,6 +114,7 @@ public class EmergencyButton extends Button {
     public void updateEmergencyCallButton(boolean isInCall, boolean hasTelephonyRadio,
                                           boolean simLocked, boolean isEmergencyCapable) {
         boolean visible = false;
+        isInCalling = isInCall;
         if (hasTelephonyRadio) {
             // Emergency calling requires a telephony radio.
             if (isInCall) {
