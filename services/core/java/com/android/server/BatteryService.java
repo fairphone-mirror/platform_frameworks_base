@@ -298,6 +298,20 @@ public final class BatteryService extends SystemService {
                 updateBatteryWarningLevelLocked();
             }
         }
+
+        if (phase == PHASE_BOOT_COMPLETED) {
+            ContentObserver obs = new ContentObserver(mHandler) {
+                @Override
+                public void onChange(boolean selfChange) {
+                    updateBatteryWarningLevelLocked();
+                    sendBatteryLevelChangedIntentLocked();
+                }
+            };
+            final ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.Global.getUriFor(
+                    Settings.Global.UPDATE_BATTERY_CHARGING_MODE),
+                    false, obs, UserHandle.USER_ALL);
+        }
     }
 
     private void registerHealthCallback() {
