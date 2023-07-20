@@ -43,6 +43,13 @@ import com.android.systemui.qs.tileimpl.QSTileImpl;
 import com.android.systemui.statusbar.policy.FlashlightController;
 
 import javax.inject.Inject;
+import android.os.Message;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.IntentFilter;
+import android.os.SystemProperties;
 
 /**
  * Quick settings tile: Control flashlight
@@ -52,6 +59,18 @@ public class FlashlightTile extends QSTileImpl<BooleanState> implements
 
     public static final String TILE_SPEC = "flashlight";
     private final FlashlightController mFlashlightController;
+    private BroadcastReceiver mReceiver;
+    private IntentFilter mFilter;
+    private AlarmManager alarmManager;
+    private PendingIntent updateIntent_reduce;
+    private PendingIntent updateIntent_close;
+    private int mAlarmState = 0;
+
+    private static final String ACTION_REDUCE_FLASHLIGHT = "action.t2m.reduce.flashlight";
+    private static final String ACTION_CLOSE_FLASHLIGHT = "action.t2m.close.flashlight";
+    private static final long FIRST_DELAY_TIME = 3*60*1000;
+    private static final long CLOSE_DELAY_TIME = 1*60*1000;
+
 
     @Inject
     public FlashlightTile(
@@ -70,6 +89,33 @@ public class FlashlightTile extends QSTileImpl<BooleanState> implements
                 statusBarStateController, activityStarter, qsLogger);
         mFlashlightController = flashlightController;
         mFlashlightController.observe(getLifecycle(), this);
+        alarmManager = (AlarmManager)mContext.getSystemService(Context.ALARM_SERVICE);
+        mFilter = new IntentFilter(ACTION_REDUCE_FLASHLIGHT);
+        mFilter.addAction(ACTION_CLOSE_FLASHLIGHT);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (!mFlashlightController.isAvailable() || !mFlashlightController.isEnabled()) {
+                    mAlarmState = 0;
+                    SystemProperties.set("persist.sys.setflashlight","0");
+                    return;
+                }
+                if(ACTION_REDUCE_FLASHLIGHT.equals(action)){
+                    mAlarmState = 2;
+                    SystemProperties.set("persist.sys.setflashlight","1");
+                    alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + CLOSE_DELAY_TIME, updateIntent_close);
+                }else if(ACTION_CLOSE_FLASHLIGHT.equals(action)){
+                    mAlarmState = 0;
+                    refreshState(false);
+                    mFlashlightController.setFlashlight(false);
+                    SystemProperties.set("persist.sys.setflashlight","0");
+                }
+            }
+        };
+        mContext.registerReceiver(mReceiver, mFilter);
+        updateIntent_reduce = PendingIntent.getBroadcast(mContext, 0,new Intent(ACTION_REDUCE_FLASHLIGHT), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        updateIntent_close = PendingIntent.getBroadcast(mContext, 0,new Intent(ACTION_CLOSE_FLASHLIGHT), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
 
     @Override
@@ -104,8 +150,21 @@ public class FlashlightTile extends QSTileImpl<BooleanState> implements
             return;
         }
         boolean newState = !mState.value;
+        if(newState){
+            mAlarmState = 1;
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + FIRST_DELAY_TIME,updateIntent_reduce);
+        }else{
+            if(mAlarmState == 1){
+                alarmManager.cancel(updateIntent_reduce);
+                mAlarmState = 0;
+            }else if(mAlarmState == 2){
+                alarmManager.cancel(updateIntent_close);
+                mAlarmState = 0;
+            }
+        }
         refreshState(newState);
         mFlashlightController.setFlashlight(newState);
+        SystemProperties.set("persist.sys.setflashlight","0");
     }
 
     @Override
@@ -154,6 +213,16 @@ public class FlashlightTile extends QSTileImpl<BooleanState> implements
 
     @Override
     public void onFlashlightChanged(boolean enabled) {
+        if(!enabled){
+            if(mAlarmState == 1){
+                alarmManager.cancel(updateIntent_reduce);
+                mAlarmState = 0;
+            }else if(mAlarmState == 2){
+                alarmManager.cancel(updateIntent_close);
+                mAlarmState = 0;
+                SystemProperties.set("persist.sys.setflashlight","0");
+            }
+        }
         refreshState(enabled);
     }
 
@@ -164,6 +233,16 @@ public class FlashlightTile extends QSTileImpl<BooleanState> implements
 
     @Override
     public void onFlashlightAvailabilityChanged(boolean available) {
+        if(!available){
+            if(mAlarmState == 1){
+                alarmManager.cancel(updateIntent_reduce);
+                mAlarmState = 0;
+            }else if(mAlarmState == 2){
+                alarmManager.cancel(updateIntent_close);
+                mAlarmState = 0;
+                SystemProperties.set("persist.sys.setflashlight","0");
+            }
+        }
         refreshState();
     }
 }
