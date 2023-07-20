@@ -188,10 +188,7 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
                     public void onChange(boolean selfChange) {
                         if ("isBoot".equals(Settings.Global.getString(mContext.getContentResolver(),
                                 Settings.Global.SET_BATTERY_CHARGING_MODE))){
-                            Log.i(TAG,"------ isBoot");
                         }else {
-                            Log.i(TAG,"------ SET_BATTERY_CHARGING_MODE :" + Settings.Global.getString(mContext.getContentResolver(),
-                                    Settings.Global.SET_BATTERY_CHARGING_MODE));
                             setBatteryChargingMode();
                         }
                     }
@@ -524,7 +521,6 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
                 int batteryHealth = intent.getIntExtra(Intent.EXTRA_BATTERY_HEALTH, 0);
                 int batteryTemperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
                 int batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
-                Log.i(TAG, "receive ACTION_BATTERY_WARM_TEMP_CHANGED:batteryTemperature:"+batteryTemperature+"  batteryStatus:"+batteryStatus);
                 if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
                     mWarnings.showHighTemp(true,batteryStatus,batteryTemperature,batteryHealth);
                 } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
