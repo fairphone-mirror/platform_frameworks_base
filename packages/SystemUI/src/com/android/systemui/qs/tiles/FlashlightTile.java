@@ -68,8 +68,8 @@ public class FlashlightTile extends QSTileImpl<BooleanState> implements
 
     private static final String ACTION_REDUCE_FLASHLIGHT = "action.t2m.reduce.flashlight";
     private static final String ACTION_CLOSE_FLASHLIGHT = "action.t2m.close.flashlight";
-    private static final long FIRST_DELAY_TIME = 3*60*1000;
-    private static final long CLOSE_DELAY_TIME = 1*60*1000;
+    private static final long FIRST_DELAY_TIME = 3*60*1000l;
+    private static final long CLOSE_DELAY_TIME = 1*60*1000l;
 
 
     @Inject
