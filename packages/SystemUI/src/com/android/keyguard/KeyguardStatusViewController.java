@@ -490,8 +490,6 @@ public class KeyguardStatusViewController extends ViewController<KeyguardStatusV
                 int doze_ = Settings.Secure.getInt(getContext().getContentResolver(), Settings.Secure.DOZE_ALWAYS_ON, -1);
                 int padTop = mView.getPaddingTop();
                 String in_doze = SystemProperties.get("persist.sys.in_doze");
-                Slog.v(TAG, "   dozeTimeTick  doze_ = " + doze_  + "     padTop =" + padTop +
-                        "      in_doze=" + in_doze + "     isShowDoubleLine :" + mKeyguardClockSwitchController.isShowDoubleLine() );
                 if (doze_ == 1 && "1".equals(in_doze)){
                     if (mKeyguardClockSwitchController.isShowDoubleLine() && padTop > 600){
                         padTop = 0;
