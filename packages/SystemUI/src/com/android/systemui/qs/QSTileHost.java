@@ -14,14 +14,17 @@
 
 package com.android.systemui.qs;
 
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.database.ContentObserver;
 import android.os.Build;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.os.SystemProperties;
+import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.text.TextUtils;
 import android.util.ArraySet;
@@ -126,6 +129,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
 
     private final TileServiceRequestController mTileServiceRequestController;
     private TileLifecycleManager.Factory mTileLifeCycleManagerFactory;
+    private ContentObserver mDefaultPaymentAppObserver;
 
     @Inject
     public QSTileHost(Context context,
@@ -177,6 +181,9 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
             // AutoTileManager can modify mTiles so make sure mTiles has already been initialized.
             mAutoTiles = autoTiles.get();
             mTileServiceRequestController.init();
+
+            setupDefaultPaymentAppObserver();
+
         });
     }
 
@@ -308,7 +315,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
         if (!TILES_SETTING.equals(key)) {
             return;
         }
-        Log.d(TAG, "Recreating tiles");
+        Log.d(TAG, "Recreating tiles : " + new Exception("onTuningChanged").fillInStackTrace());
         if (newValue == null && UserManager.isDeviceInDemoMode(mContext)) {
             newValue = mContext.getResources().getString(R.string.quick_settings_tiles_retail_mode);
         }
@@ -507,6 +514,58 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
         });
     }
 
+    private void setupDefaultPaymentAppObserver() {
+        if (mDefaultPaymentAppObserver == null) {
+            mDefaultPaymentAppObserver = new ContentObserver(null /* handler */) {
+                @Override
+                public void onChange(boolean selfChange) {
+                    mMainExecutor.execute(() -> {
+                        updateWalletTiles();
+                    });
+                }
+            };
+
+            mSecureSettings.registerContentObserverForUser(
+                    Settings.Secure.getUriFor(Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT),
+                    false /* notifyForDescendants */,
+                    mDefaultPaymentAppObserver,
+                    UserHandle.USER_ALL);
+        }
+    }
+
+    public void unregisterWalletChangeObservers() {
+        if (mDefaultPaymentAppObserver != null) {
+            mSecureSettings.unregisterContentObserver(mDefaultPaymentAppObserver);
+        }
+    }
+
+    //update wallet Title Position
+    public void updateWalletTiles(){
+        mMainExecutor.execute(() -> {
+            List<String> newSpecs = new ArrayList<>(mTileSpecs);
+            if(getDefaultPaymentApp()){
+                if(newSpecs.size() >= 3 && ! newSpecs.contains("wallet")){
+                    newSpecs.add(3,"wallet");
+                    changeTilesByUser(mTileSpecs, newSpecs);
+                }
+            } else {
+
+                if (newSpecs.contains("wallet")) {
+                    newSpecs.remove("wallet");
+                    changeTilesByUser(mTileSpecs, newSpecs);
+                }
+            }
+            
+        });
+
+    }
+
+     public boolean getDefaultPaymentApp() {
+        String componentString = Settings.Secure.getStringForUser(mContext.getContentResolver(),
+                Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT, ActivityManager.getCurrentUser());
+        return componentString != null;
+    }
+
     /**
      * Change the tiles triggered by the user editing.
      * <p>
@@ -685,7 +744,6 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
                 list.add(4,"controls");
             }
         }
-
         return list;
     }
 
