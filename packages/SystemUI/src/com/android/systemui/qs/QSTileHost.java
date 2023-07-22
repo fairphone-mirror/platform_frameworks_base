@@ -315,7 +315,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
         if (!TILES_SETTING.equals(key)) {
             return;
         }
-        Log.d(TAG, "Recreating tiles : " + new Exception("onTuningChanged").fillInStackTrace());
+        Log.d(TAG, "Recreating tiles");
         if (newValue == null && UserManager.isDeviceInDemoMode(mContext)) {
             newValue = mContext.getResources().getString(R.string.quick_settings_tiles_retail_mode);
         }
@@ -555,7 +555,6 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
                     changeTilesByUser(mTileSpecs, newSpecs);
                 }
             }
-            
         });
 
     }
@@ -692,7 +691,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
 
         ArrayList<String> finalTiles = new ArrayList<String>();
         finalTiles = replaceWifiOrCell(tiles);
-        finalTiles = setControlsAndWalletPosition(tiles);
+        // finalTiles = setControlsAndWalletPosition(tiles);
         return finalTiles;
     }
 
@@ -714,7 +713,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
         }
         ArrayList<String> finalTiles = new ArrayList<String>();
         finalTiles = replaceWifiOrCell(tiles);
-        finalTiles = setControlsAndWalletPosition(tiles);
+        // finalTiles = setControlsAndWalletPosition(tiles);
         return finalTiles;
     }
 
@@ -735,17 +734,17 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
         return list;
     }
 
-    private static ArrayList<String> setControlsAndWalletPosition (ArrayList<String> list){
+    // private static ArrayList<String> setControlsAndWalletPosition (ArrayList<String> list){
 
-        String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
-        if("20404".equals(mccmnc) || "23415".equals(mccmnc) || "23407".equals(mccmnc)|| "23591".equals(mccmnc)|| "23592".equals(mccmnc)|| "26202".equals(mccmnc)|| "26204".equals(mccmnc)|| "26209".equals(mccmnc)){
-            if (list.contains("controls")) {
-                list.remove("controls");
-                list.add(4,"controls");
-            }
-        }
-        return list;
-    }
+    //     String mccmnc = SystemProperties.get("persist.radio.sim.mcc.mnc");
+    //     if("20404".equals(mccmnc) || "23415".equals(mccmnc) || "23407".equals(mccmnc)|| "23591".equals(mccmnc)|| "23592".equals(mccmnc)|| "26202".equals(mccmnc)|| "26204".equals(mccmnc)|| "26209".equals(mccmnc)){
+    //         if (list.contains("controls")) {
+    //             list.remove("controls");
+    //             list.add(4,"controls");
+    //         }
+    //     }
+    //     return list;
+    // }
 
     @Override
     public void dump(PrintWriter pw, String[] args) {
