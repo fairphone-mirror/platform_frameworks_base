@@ -335,6 +335,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
                     tile.getValue().destroy();
                 });
         final LinkedHashMap<String, QSTile> newTiles = new LinkedHashMap<>();
+        boolean isCreateControllers = false;
         for (String tileSpec : tileSpecs) {
             QSTile tile = mTiles.get(tileSpec);
             if (tile != null && (!(tile instanceof CustomTile)
@@ -367,6 +368,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
                         tile.setTileSpec(tileSpec);
                         if (tile.isAvailable()) {
                             newTiles.put(tileSpec, tile);
+                            isCreateControllers = tileSpec.equals("controls");
                             mQSLogger.logTileAdded(tileSpec);
                         } else {
                             tile.destroy();
@@ -383,6 +385,12 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
         List<String> currentSpecs = new ArrayList<>(mTileSpecs);
         mTileSpecs.clear();
         mTileSpecs.addAll(newTiles.keySet()); // Only add the valid (available) tiles.
+
+        if(isCreateControllers && mTileSpecs.contains("controls")){
+            mTileSpecs.remove("controls");
+            mTileSpecs.add(4,"controls");
+        }
+
         mTiles.clear();
         mTiles.putAll(newTiles);
         if (newTiles.isEmpty() && !tileSpecs.isEmpty()) {
