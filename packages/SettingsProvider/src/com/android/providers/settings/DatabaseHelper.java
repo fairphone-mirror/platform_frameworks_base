@@ -2389,6 +2389,9 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
             loadBooleanSetting(stmt, "def_dcdimming_is_UI_finish",
                     R.bool.def_dcdimming_is_UI_finish);
+
+            loadStringSetting(stmt, "def_operator_applist",
+                    R.string.def_operator_applist);
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,
              * secure, and system settings are no longer stored in a database

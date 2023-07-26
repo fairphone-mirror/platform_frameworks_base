@@ -341,4 +341,5 @@
     <!-- DCDimming is enabled by default. -->
     <bool name="def_dcdimming_enabled">false</bool>
     <bool name="def_dcdimming_is_UI_finish">true</bool>
+    <string name="def_operator_applist">""</string>
 </resources>
