@@ -258,7 +258,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     private int getChargeMode(){
         String charge_mode = SystemProperties.get("persist.sys.charge_mode");
         String chargeMode = readChargeMode();
-        if (charge_mode != null &&( "1".equals(charge_mode) || "2000000".equals(charge_mode))){
+        if (charge_mode != null &&( "1".equals(charge_mode) || "1000000".equals(charge_mode))){
             return 0;
         }else if (charge_mode != null && "0".equals(charge_mode)){
             return 1;
@@ -276,7 +276,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     private void setChargeMode(int position){
     if (position == 0){
         SystemProperties.set("persist.sys.charge_mode","1");
-        writeChargeMode("2000000");
+        writeChargeMode("1000000");
         }else if (position == 1){
         SystemProperties.set("persist.sys.charge_mode","0");
         writeChargeMode("6000000");

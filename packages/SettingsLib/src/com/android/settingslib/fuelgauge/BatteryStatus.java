@@ -34,6 +34,7 @@ import android.os.BatteryManager;
 import com.android.settingslib.R;
 
 import java.util.Optional;
+import android.os.SystemProperties;
 
 /**
  * Stores and computes some battery information.
@@ -154,10 +155,15 @@ public class BatteryStatus {
                 R.integer.config_chargingSlowlyThreshold);
         final int fastThreshold = context.getResources().getInteger(
                 R.integer.config_chargingFastThreshold);
-        return maxChargingWattage <= 0 ? CHARGING_UNKNOWN :
+        String charge_mode = SystemProperties.get("persist.sys.charge_mode");
+        if (charge_mode != null && "1".equals(charge_mode)){
+            return CHARGING_SLOWLY;
+        } else {
+            return maxChargingWattage <= 0 ? CHARGING_UNKNOWN :
                 maxChargingWattage < slowThreshold ? CHARGING_SLOWLY :
                         maxChargingWattage > fastThreshold ? CHARGING_FAST :
                                 CHARGING_REGULAR;
+        }
     }
 
     @Override
