@@ -106,6 +106,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import com.android.systemui.FaceUnlockUtil;
+import android.os.SystemProperties;
 
 /**
  * Controls the indications and error messages shown on the Keyguard
@@ -909,23 +910,30 @@ public class KeyguardIndicationController {
 
         final boolean hasChargingTime = mChargingTimeRemaining > 0;
         if (mPowerPluggedInWired) {
-            switch (mChargingSpeed) {
-                case BatteryStatus.CHARGING_FAST:
-                    chargingId = hasChargingTime
-                            ? R.string.keyguard_indication_charging_time_fast
-                            : R.string.keyguard_plugged_in_charging_fast;
-                    break;
-                case BatteryStatus.CHARGING_SLOWLY:
-                    chargingId = hasChargingTime
+            String charge_mode = SystemProperties.get("persist.sys.charge_mode");
+            if (charge_mode != null && "1".equals(charge_mode)){
+                chargingId = hasChargingTime
                             ? R.string.keyguard_indication_charging_time_slowly
                             : R.string.keyguard_plugged_in_charging_slowly;
-                    break;
-                default:
-                    chargingId = hasChargingTime
+            } else {
+                switch (mChargingSpeed) {
+                    case BatteryStatus.CHARGING_FAST:
+                        chargingId = hasChargingTime
+                            ? R.string.keyguard_indication_charging_time_fast
+                            : R.string.keyguard_plugged_in_charging_fast;
+                        break;
+                    case BatteryStatus.CHARGING_SLOWLY:
+                        chargingId = hasChargingTime
+                            ? R.string.keyguard_indication_charging_time_slowly
+                            : R.string.keyguard_plugged_in_charging_slowly;
+                        break;
+                    default:
+                        chargingId = hasChargingTime
                             ? R.string.keyguard_indication_charging_time
                             : R.string.keyguard_plugged_in;
-                    break;
-            }
+                        break;
+                    }
+                }
         } else if (mPowerPluggedInWireless) {
             chargingId = hasChargingTime
                     ? R.string.keyguard_indication_charging_time_wireless
