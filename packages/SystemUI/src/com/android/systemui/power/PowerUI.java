@@ -219,11 +219,14 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 new ContentObserver(mHandler) {
                     @Override
                     public void onChange(boolean selfChange) {
-                        if ("isBoot".equals(Settings.Global.getString(mContext.getContentResolver(),
-                                Settings.Global.SET_BATTERY_CHARGING_MODE))){
-                        }else {
-                            setBatteryChargingMode();
-                        }
+                        // if ("isBoot".equals(Settings.Global.getString(mContext.getContentResolver(),
+                        //         Settings.Global.SET_BATTERY_CHARGING_MODE))){
+                        // }else {
+                        //     setBatteryChargingMode();
+                        // }
+                        String mode = Settings.Global.getString(mContext.getContentResolver(),
+                                Settings.Global.SET_BATTERY_CHARGING_MODE);
+                        setBCM(mode);
                     }
                 });
 
@@ -255,6 +258,15 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
         alert.show();
     }
 
+    private void setBCM(String mode){
+        if ("0".equals(mode)) {
+            setChargeMode(0);
+        }else{
+            setChargeMode(1);
+        }
+        updateSetting();
+    }
+
     private int getChargeMode(){
         String charge_mode = SystemProperties.get("persist.sys.charge_mode");
         String chargeMode = readChargeMode();
@@ -274,12 +286,12 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     }
 
     private void setChargeMode(int position){
-    if (position == 0){
-        SystemProperties.set("persist.sys.charge_mode","1");
-        writeChargeMode("1000000");
+        if (position == 0){
+            SystemProperties.set("persist.sys.charge_mode","1");
+            writeChargeMode("1000000");
         }else if (position == 1){
-        SystemProperties.set("persist.sys.charge_mode","0");
-        writeChargeMode("6000000");
+            SystemProperties.set("persist.sys.charge_mode","0");
+            writeChargeMode("6000000");
         }
     }
 
