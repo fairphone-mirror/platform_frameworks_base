@@ -418,6 +418,9 @@ public class ComputerEngine implements Computer {
     private final PackageManagerInternal.ExternalSourcesPolicy mExternalSourcesPolicy;
     private final CrossProfileIntentResolverEngine mCrossProfileIntentResolverEngine;
 
+    private static final String PHONE_APP_PACKAGE_NAME = "com.android.phone";
+    private static final String CELL_BROADCAST_APP_PACKAGE_NAME = "com.android.cellbroadcastservice";
+
     // PackageManagerService attributes that are primitives are referenced through the
     // pms object directly.  Primitives are the only attributes so referenced.
     protected final PackageManagerService mService;
@@ -5510,9 +5513,21 @@ public class ComputerEngine implements Computer {
             final boolean matchesAware = ((flags & MATCH_DIRECT_BOOT_AWARE) != 0)
                     && p.isDirectBootAware();
 
+            if(PHONE_APP_PACKAGE_NAME.equals(p.getPackageName())) {
+                continue;
+            }
             if (p.isPersistent()
                     && (!safeMode || packageState.isSystem())
                     && (matchesUnaware || matchesAware)) {
+                // Early start Phone app before cellbroadcast app to fix delayed sim pin
+                if(CELL_BROADCAST_APP_PACKAGE_NAME.equals(p.getPackageName())) {
+                    PackageStateInternal ps = mSettings.getPackage(PHONE_APP_PACKAGE_NAME);
+                    AndroidPackage pkg = mPackages.get(PHONE_APP_PACKAGE_NAME);
+                    ApplicationInfo ai = PackageInfoUtils.generateApplicationInfo(pkg, flags,
+                                        ps.getUserStateOrDefault(userId), userId, ps);
+                    finalList.add(ai);
+                }
+
                 PackageStateInternal ps = mSettings.getPackage(p.getPackageName());
                 if (ps != null) {
                     ApplicationInfo ai = PackageInfoUtils.generateApplicationInfo(p, flags,
