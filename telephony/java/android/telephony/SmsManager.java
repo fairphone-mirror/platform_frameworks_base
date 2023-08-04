@@ -3169,6 +3169,20 @@ public final class SmsManager {
             if (iSms != null) {
                 smsc = iSms.getSmscAddressFromIccEfForSubscriber(
                         getSubscriptionId(), null);
+
+                 //Add for FP4T-586 delete smsc address type in service center display ui begin
+                 String[] realsmsc = smsc.split(",");
+                 boolean isVodafone = false;
+                 String mccmnc = TelephonyManager.getDefault().getSimOperator(getSubscriptionId());
+                 if (!TextUtils.isEmpty(mccmnc)) {
+                     isVodafone = mccmnc.equals("23415") || mccmnc.equals("23591") || mccmnc.equals("26202") || mccmnc.equals("20404");
+                 }
+                 Log.d(TAG, "smsc is " + smsc + ", realsmsc.length : " + realsmsc.length + ", isVodafone:" + isVodafone);
+                 if (realsmsc.length > 0 && isVodafone) {
+                     smsc = realsmsc[0];//smsc without smsc address type
+                     Log.d(TAG, "smsc without smsc address type is : " + smsc );
+                 }
+                 //Add for FP4T-586 delete smsc address type in service center display ui end
             }
         } catch (RemoteException ex) {
             throw new RuntimeException(ex);
