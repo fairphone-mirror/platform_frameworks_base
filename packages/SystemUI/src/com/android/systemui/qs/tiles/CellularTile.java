@@ -26,15 +26,18 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.PersistableBundle;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
+import android.telephony.CarrierConfigManager;
 import android.telephony.SubscriptionManager;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager.LayoutParams;
 import android.widget.Switch;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -74,6 +77,8 @@ public class CellularTile extends QSTileImpl<SignalState> {
     private final DataUsageController mDataController;
     private final KeyguardStateController mKeyguard;
     private final CellSignalCallback mSignalCallback = new CellSignalCallback();
+
+    private static final String TAG = "CellularTile";
 
     @Inject
     public CellularTile(
@@ -195,10 +200,29 @@ public class CellularTile extends QSTileImpl<SignalState> {
             state.secondaryLabel = r.getString(R.string.status_bar_airplane);
         } else if (mobileDataEnabled) {
             state.state = Tile.STATE_ACTIVE;
-            state.secondaryLabel = appendMobileDataType(
-                    // Only show carrier name if there are more than 1 subscription
-                    cb.multipleSubs ? cb.dataSubscriptionName : "",
-                    getMobileDataContentName(cb));
+
+            // add for FP4T-584 by T2M.dengxiangyu 2023-08-04 begin
+            boolean invisibleNetworkType = false;
+            CarrierConfigManager configManager = (CarrierConfigManager)
+                 mContext.getSystemService(CarrierConfigManager.class);
+            final PersistableBundle config = configManager.getConfigForSubId(
+                    SubscriptionManager.getDefaultDataSubscriptionId());
+            if (config != null) {
+                invisibleNetworkType = config.getBoolean("invisible_network_under_mobile_data_icon", false);
+                Log.d(TAG, "invisibleNetworkType("
+                        + SubscriptionManager.getDefaultDataSubscriptionId()
+                        + "): " + invisibleNetworkType);
+            }
+
+            if (invisibleNetworkType) {
+                state.secondaryLabel = "";
+            } else {
+                state.secondaryLabel = appendMobileDataType(
+                        // Only show carrier name if there are more than 1 subscription
+                        cb.multipleSubs ? cb.dataSubscriptionName : "",
+                        getMobileDataContentName(cb));
+            }
+            // add for FP4T-584 by T2M.dengxiangyu 2023-08-04 end
         } else {
             boolean settingsSwitchOn = SystemProperties.getBoolean(SIM_DATA_SWITCH, true);
             if (settingsSwitchOn) {
