@@ -75,6 +75,11 @@ import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.FileReader;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 
 @SysUISingleton
 public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
@@ -219,11 +224,6 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 new ContentObserver(mHandler) {
                     @Override
                     public void onChange(boolean selfChange) {
-                        // if ("isBoot".equals(Settings.Global.getString(mContext.getContentResolver(),
-                        //         Settings.Global.SET_BATTERY_CHARGING_MODE))){
-                        // }else {
-                        //     setBatteryChargingMode();
-                        // }
                         String mode = Settings.Global.getString(mContext.getContentResolver(),
                                 Settings.Global.SET_BATTERY_CHARGING_MODE);
                         setBCM(mode);
@@ -235,7 +235,6 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     }
 
     private void setBatteryChargingMode(){
-        SystemProperties.set("persist.sys.is_first_boot","0");
         String[] charging_mode = {mContext.getResources().getString(R.string.charging_slow),
                 mContext.getResources().getString(R.string.charging_normal)};
         AlertDialog alert = new AlertDialog.Builder(mContext)
@@ -256,6 +255,37 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 .create();
         alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         alert.show();
+    }
+
+    private void showCharingModeDialog(){
+        final AlertDialog alert = new AlertDialog.Builder(mContext).setCancelable(false).create();
+        View dialogView = View.inflate(mContext, R.layout.alert_battery_mode, null);
+        alert.setView(dialogView);
+        alert.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        alert.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alert.show();
+
+        final TextView skip = dialogView.findViewById(R.id.tv_skip);
+        final TextView bats = dialogView.findViewById(R.id.tv_bats);
+
+        skip.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                alert.dismiss();
+            }
+        });
+
+        bats.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent();
+                intent.setClassName("com.android.settings",
+                    "com.android.settings.fuelgauge.batterysaver.BatsActivity");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+                alert.dismiss();
+            }
+        });
     }
 
     private void setBCM(String mode){
@@ -403,7 +433,6 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
         public void init() {
             // Register for Intent broadcasts for...
             IntentFilter filter = new IntentFilter();
-            filter.addAction(UsbManager.ACTION_USB_STATE);
             filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
             filter.addAction(Intent.ACTION_BOOT_COMPLETED);
             filter.addAction(Intent.ACTION_BATTERY_CHANGED);
@@ -428,19 +457,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (UsbManager.ACTION_USB_STATE.equals(action)){
-                boolean connected = intent.getExtras().getBoolean("connected");
-                boolean isBoot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
-                boolean isFirstBoot = "1".equals(SystemProperties.get("persist.sys.is_first_boot"));
-                Log.e(TAG, "USB   connect  isBoot = " + isBoot );
-
-                if (connected && isBoot && isFirstBoot){
-                    Log.e(TAG, "USB  connected ");
-                    setBatteryChargingMode();
-                }else {
-                    Log.e(TAG, "USB  break ");
-                }
-            }else if (PowerManager.ACTION_POWER_SAVE_MODE_CHANGED.equals(action)) {
+            if (PowerManager.ACTION_POWER_SAVE_MODE_CHANGED.equals(action)) {
                 ThreadUtils.postOnBackgroundThread(() -> {
                     if (mPowerManager.isPowerSaveMode()) {
                         mWarnings.dismissLowBatteryWarning();
@@ -528,14 +545,21 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                             plugged, bucket);
                 });
 
-                Log.e(TAG, "ACTION_BATTERY_CHANGED  oldPlugType：" + oldPlugType  +
-                        "    mPlugType:" + mPlugType);
-                if (oldPlugged && (mPlugType == 1)){
-                    boolean isBoot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
-                    boolean isFirstBoot = "1".equals(SystemProperties.get("persist.sys.is_first_boot"));
-                    if (isBoot && isFirstBoot){
-                        Log.e(TAG, " battery ");
-                        setBatteryChargingMode();
+                if (!oldPlugged && mPlugType == 2){
+                    boolean is_boot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
+                    String bat_num = SystemProperties.get("persist.sys.bat_charging_num","0");
+                    long up_time = SystemClock.elapsedRealtime() / 1000;
+                    try{
+                        if (is_boot && bat_num.length() < 2) {
+                            int num = Integer.parseInt(bat_num);
+                            num++;
+                            SystemProperties.set("persist.sys.bat_charging_num",String.valueOf(num));
+                            if (num == 2 || (up_time > 60*60*24*3 && num < 2)) {
+                                showCharingModeDialog();
+                            }
+                        }
+                    }catch(Exception e){
+
                     }
                 }
             } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
