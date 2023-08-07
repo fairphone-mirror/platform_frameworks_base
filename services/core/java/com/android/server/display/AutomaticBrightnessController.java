@@ -1169,7 +1169,7 @@ class AutomaticBrightnessController {
                     resetShortTermModel();
                     updateAutoBrightness(true, false);
                 }
-                if(event.values[0] < 1.0f){
+                if(event.values[0] < 2.0f){
                     handleLightSensorEvent(time, 0f);
                 }else {
                     final float lux = event.values[0];
