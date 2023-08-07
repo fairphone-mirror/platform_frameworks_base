@@ -1167,4 +1167,7 @@
     <string name="charging_state">充电模式</string>
     <string name="charging_slow">慢充模式</string>
     <string name="charging_normal">正常模式</string>
+    <string name="charging_mode_dialog">自定义充电速度，以优化电池寿命或尽快恢复满电状态。导航至电池设置以在模式之间切换并了解更多信息。</string>
+    <string name="cmdialog_skip">跳过</string>
+    <string name="cmdialog_bats">电池设置</string>
 </resources>

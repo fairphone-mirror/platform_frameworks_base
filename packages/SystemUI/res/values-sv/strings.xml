@@ -1161,6 +1161,11 @@
     <string name="charging_slow">Långsamt läge</string>
     <string name="charging_normal">Normalt läge</string>
     <string name="charging_state">Laddningsläge</string>
+    <string name="charging_mode_dialog">Laddningsläge
+Anpassa din laddningshastighet för att antingen optimera batteriets livslängd eller komma tillbaka till full ström så snart som möjligt.
+Navigera till batteriinställningar för att växla mellan lägen och lära dig mer.</string>
+    <string name="cmdialog_skip">Hoppa</string>
+    <string name="cmdialog_bats">Batteriledare</string>
     <string name="hight_temp_message_notchanging">temperaturen är för hög!</string>
     <string name="low_temp_message_5">Varning! Batteritemperaturen är för låg</string>
     <plurals name="kg_password_wrong_pin_code_multi_sim">

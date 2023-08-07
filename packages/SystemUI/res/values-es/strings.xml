@@ -1161,6 +1161,11 @@
     <string name="charging_slow">Modo lento</string>
     <string name="charging_normal">Modo normal</string>
     <string name="charging_state">Modo de carga</string>
+    <string name="charging_mode_dialog">Modo de carga
+Personaliza tu velocidad de carga para optimizar la longevidad de tu batería o volver a la carga completa lo antes posible.
+Navegua a la configuración de la batería para cambiar entre modos y obtener más información</string>
+    <string name="cmdialog_skip">Saltar</string>
+    <string name="cmdialog_bats">Configuración de batería</string>
     <string name="hight_temp_message_notchanging">¡La temperatura es demasiado alta!</string>
     <string name="low_temp_message_5">¡Atención! La temperatura de la batería es demasiado baja</string>
     <plurals name="kg_password_wrong_pin_code_multi_sim">

@@ -1161,6 +1161,9 @@
     <string name="charging_slow">Langsom tilstand</string>
     <string name="charging_normal">Normal tilstand</string>
     <string name="charging_state">Opladningstilstand</string>
+    <string name="charging_mode_dialog">Opladningstilstand Tilpas din opladningshastighed for enten at optimere din batteris levetid eller komme tilbage til fuld strøm så hurtigt som muligt.Naviger til batteriindstillinger for at skifte mellem tilstande og lære mere.</string>
+    <string name="cmdialog_skip">Springe</string>
+    <string name="cmdialog_bats">Batteriindstillinger</string>
     <string name="hight_temp_message_notchanging">temperaturen er for høj!</string>
     <string name="low_temp_message_5">Advarsel! Batteritemperaturen er for lav</string>
     <plurals name="kg_password_wrong_pin_code_multi_sim">

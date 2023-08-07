@@ -1161,6 +1161,10 @@
     <string name="charging_slow">Langzame modus</string>
     <string name="charging_normal">Normale modus</string>
     <string name="charging_state">Oplaadmodus</string>
+    <string name="charging_mode_dialog">Laadmodus
+Pas de oplaadsnelheid aan om de levensduur van de batterij te optimaliseren, of zo snel als mogelijk weer op 100% te zitten. Navigeer naar de batterij-instellingen om tussen de modi te schakelen en meer te leren.</string>
+    <string name="cmdialog_skip">Overslaan</string>
+    <string name="cmdialog_bats">Batterij-instellingen</string>
     <string name="hight_temp_message_notchanging">De temperatuur is te hoog.</string>
     <string name="low_temp_message_5">Waarschuwing! De batterijtemperatuur is te laag</string>
     <plurals name="kg_password_wrong_pin_code_multi_sim">

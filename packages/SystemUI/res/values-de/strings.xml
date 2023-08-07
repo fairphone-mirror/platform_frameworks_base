@@ -1161,6 +1161,11 @@
     <string name="charging_slow">Langsamer Modus</string>
     <string name="charging_normal">Normaler Modus</string>
     <string name="charging_state">Lademodus</string>
+    <string name="charging_mode_dialog">Lademodus
+Passe die Ladegeschwindigkeit an, um entweder auf die Langlebigkeit deines Akkus zu optimieren, oder um den Akku so schnell wie möglich zu laden.
+Navigiere zu den Batterieeinstellungen, um zwischen den Modi zu wechseln und mehr zu erfahren.</string>
+    <string name="cmdialog_skip">Überspringen</string>
+    <string name="cmdialog_bats">Batterieeinstellungen</string>
     <string name="hight_temp_message_notchanging">Temperatur ist zu hoch!</string>
     <string name="low_temp_message_5">Warnung! Akkutemperatur ist zu niedrig</string>
     <plurals name="kg_password_wrong_pin_code_multi_sim">
