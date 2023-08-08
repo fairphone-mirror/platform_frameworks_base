@@ -1,0 +1,105 @@
+diff a/packages/SystemUI/tests/src/com/android/systemui/media/MediaDataManagerTest.kt b/packages/SystemUI/tests/src/com/android/systemui/media/MediaDataManagerTest.kt	(rejected hunks)
+@@ -53,8 +58,10 @@ import org.mockito.Mockito.reset
+ import org.mockito.Mockito.times
+ import org.mockito.Mockito.verify
+ import org.mockito.Mockito.verifyNoMoreInteractions
++import org.mockito.MockitoSession
+ import org.mockito.junit.MockitoJUnit
+ import org.mockito.Mockito.`when` as whenever
++import org.mockito.quality.Strictness
+ 
+ private const val KEY = "KEY"
+ private const val KEY_2 = "KEY_2"
+@@ -111,14 +118,25 @@ class MediaDataManagerTest : SysuiTestCase() {
+     private val clock = FakeSystemClock()
+     @Mock private lateinit var tunerService: TunerService
+     @Captor lateinit var tunableCaptor: ArgumentCaptor<TunerService.Tunable>
++    @Mock private lateinit var ugm: IUriGrantsManager
++    @Mock private lateinit var imageSource: ImageDecoder.Source
+ 
+     private val instanceIdSequence = InstanceIdSequenceFake(1 shl 20)
+ 
+     private val originalSmartspaceSetting = Settings.Secure.getInt(context.contentResolver,
+             Settings.Secure.MEDIA_CONTROLS_RECOMMENDATION, 1)
+ 
++    private lateinit var staticMockSession: MockitoSession
++
+     @Before
+     fun setup() {
++        staticMockSession =
++            ExtendedMockito.mockitoSession()
++                .mockStatic<UriGrantsManager>(UriGrantsManager::class.java)
++                .mockStatic<ImageDecoder>(ImageDecoder::class.java)
++                .strictness(Strictness.LENIENT)
++                .startMocking()
++        whenever(UriGrantsManager.getService()).thenReturn(ugm)
+         foregroundExecutor = FakeExecutor(clock)
+         backgroundExecutor = FakeExecutor(clock)
+         smartspaceMediaDataProvider = SmartspaceMediaDataProvider()
+@@ -1093,6 +1112,66 @@ class MediaDataManagerTest : SysuiTestCase() {
+             anyBoolean())
+     }
+ 
++    @Test
++    fun testResumeMediaLoaded_hasArtPermission_artLoaded() {
++        // When resume media is loaded and user/app has permission to access the art URI,
++        whenever(
++                ugm.checkGrantUriPermission_ignoreNonSystem(
++                    anyInt(),
++                    any(),
++                    any(),
++                    anyInt(),
++                    anyInt()
++                )
++            )
++            .thenReturn(1)
++        val artwork = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
++        val uri = Uri.parse("content://example")
++        whenever(ImageDecoder.createSource(any(), eq(uri))).thenReturn(imageSource)
++        whenever(ImageDecoder.decodeBitmap(any(), any())).thenReturn(artwork)
++
++        val desc =
++            MediaDescription.Builder().run {
++                setTitle(SESSION_TITLE)
++                setIconUri(uri)
++                build()
++            }
++        addResumeControlAndLoad(desc)
++
++        // Then the artwork is loaded
++        assertThat(mediaDataCaptor.value.artwork).isNotNull()
++    }
++
++    @Test
++    fun testResumeMediaLoaded_noArtPermission_noArtLoaded() {
++        // When resume media is loaded and user/app does not have permission to access the art URI
++        whenever(
++                ugm.checkGrantUriPermission_ignoreNonSystem(
++                    anyInt(),
++                    any(),
++                    any(),
++                    anyInt(),
++                    anyInt()
++                )
++            )
++            .thenThrow(SecurityException("Test no permission"))
++        val artwork = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
++        val uri = Uri.parse("content://example")
++        whenever(ImageDecoder.createSource(any(), eq(uri))).thenReturn(imageSource)
++        whenever(ImageDecoder.decodeBitmap(any(), any())).thenReturn(artwork)
++
++        val desc =
++            MediaDescription.Builder().run {
++                setTitle(SESSION_TITLE)
++                setIconUri(uri)
++                build()
++            }
++        addResumeControlAndLoad(desc)
++
++        // Then the artwork is not loaded
++        assertThat(mediaDataCaptor.value.artwork).isNull()
++    }
++
+     /**
+      * Helper function to add a media notification and capture the resulting MediaData
+      */
