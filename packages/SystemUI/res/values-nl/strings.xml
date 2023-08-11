@@ -1172,4 +1172,10 @@ Pas de oplaadsnelheid aan om de levensduur van de batterij te optimaliseren, of 
         <item quantity="other">Incorrecte SIM<xliff:g id="slotid">%d</xliff:g> PIN-code. Je hebt nog <xliff:g id="number">%d</xliff:g> pogingen over.</item>
     </plurals>
 
+    <string name="high_temp_message_59">De batterij is oververhit. Het toestel wordt nu uitgeschakeld.</string>
+    <string name="high_temp_message_51">De batterij wordt heet. Sluit onnodige apps of achtergrondprocessen om het toestel af te koelen.</string>
+    <string name="high_temp_message_48">De temperatuur van het toestel is aan de hoge kant. Als je halverwege een installatie of data-overdracht bent, leg het toestel op een goed geventileerd oppervlak om het process succesvol af te ronden.</string>
+    <string name="high_temp_message_low_5">De temperatuur van de batterij is aan de lage kant. Breng het toestel terug op kamertemperatuur voor de beste prestaties.</string>
+    <string name="high_temp_message_low_19">Waarschuwing! De batterij raakt onderkoelt. Het toestel wordt nu uitgeschakeld om schade te voorkomen.</string>
+
 </resources>

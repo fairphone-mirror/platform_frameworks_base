@@ -1173,4 +1173,10 @@ Navigera till batteriinställningar för att växla mellan lägen och lära dig 
         <item quantity="other">Felaktig SIM<xliff:g id="slotid">%d</xliff:g> -pin -kod. Du har <xliff:g id="number">%d</xliff:g> återstående försök.</item>
     </plurals>
 
+    <string name="high_temp_message_59">Varning! Ditt batteri överhettas. Din enhet stängs nu för att förhindra skador.</string>
+    <string name="high_temp_message_51">Ditt batteri går varmt. Stäng eventuella onödiga appar eller bakgrundsprocesser för att kyla ner det.</string>
+    <string name="high_temp_message_48">Din telefon blir varm. Om du är halvvägs genom en installation eller överföring, fyll i processen efter att ha placerat telefonen på en väl ventilerad yta.</string>
+    <string name="high_temp_message_low_5">Ditt batteri är kallt. Din fairphone kommer att prestera bättre om du returnerar den till rumstemperatur.</string>
+    <string name="high_temp_message_low_19">Varning! Ditt batteri fryser. Din enhet stängs nu för att förhindra skador</string>
+
 </resources>

@@ -1173,4 +1173,10 @@ Vai nelle Impostazioni batteria per selezionare tra le modalità presenti e scop
         <item quantity="other">Codice PIN SIM<xliff:g id="slotid">%d</xliff:g> errato, hai <xliff:g id="number">%d</xliff:g> tentativi rimanenti.</item>
     </plurals>
 
+    <string name="high_temp_message_59">La batteria si sta surriscaldando. Il tuo dispositivo si spegnerà per evitare possibili danni.</string>
+    <string name="high_temp_message_51">La tua batteria si sta scaldando eccessivamente. Chiudi eventuali app non necessarie o processi in background per raffreddarla.</string>
+    <string name="high_temp_message_48">Il tuo telefono si sta scaldando eccessivamente. Se sei a metà di una installazione o di un trasferimento di file, completa il processo dopo aver posizionato il telefono su una superficie ben ventilata.</string>
+    <string name="high_temp_message_low_5">La tua batteria si sta raffreddando eccessivamente. Il tuo Fairphone funzionerà meglio se lo riporti a temperatura ambiente.</string>
+    <string name="high_temp_message_low_19">Attenzione! La batteria sta congelando. Il tuo dispositivo si spegnerà per evitare possibili danni.</string>
+
 </resources>

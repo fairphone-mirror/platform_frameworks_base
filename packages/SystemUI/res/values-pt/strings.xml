@@ -1169,4 +1169,10 @@ Navegue até as configurações da bateria para alternar entre os modos e saber 
     <string name="hight_temp_message_notchanging">a temperatura é demasiado elevada!</string>
     <string name="low_temp_message_5">Aviso! A temperatura da bateria é demasiado baixa</string>
 
+    <string name="high_temp_message_59">Aviso! Sua bateria está superaquecendo. Seu dispositivo agora será desligado para evitar qualquer dano.</string>
+    <string name="high_temp_message_51">Sua bateria está funcionando quente. Feche quaisquer aplicativos desnecessários ou processos em segundo plano para esfriá -lo.</string>
+    <string name="high_temp_message_48">Seu telefone está esquentando. Se você estiver no meio de uma instalação ou transferência, preencha o processo depois de colocar o telefone em uma superfície bem ventilada.</string>
+    <string name="high_temp_message_low_5">Sua bateria está ficando fria. Seu Fairphone terá um desempenho melhor se você o retornar à temperatura ambiente.</string>
+    <string name="high_temp_message_low_19">Aviso! Sua bateria está congelando. Seu dispositivo agora será desligado para evitar qualquer dano</string>
+
 </resources>

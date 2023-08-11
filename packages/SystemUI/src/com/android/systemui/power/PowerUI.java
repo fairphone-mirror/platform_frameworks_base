@@ -581,13 +581,21 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                 int batteryHealth = intent.getIntExtra(Intent.EXTRA_BATTERY_HEALTH, 0);
                 int batteryTemperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0);
                 int batteryStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
-                if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
+                if (batteryTemperature >= 480) {
                     mWarnings.showHighTemp(true,batteryStatus,batteryTemperature,batteryHealth);
-                } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
+                }else if (batteryTemperature <= -50) {
                     mWarnings.showLowTemp(true,batteryStatus,batteryTemperature,batteryHealth);
                 } else {
                     mWarnings.updateOTP();
                 }
+
+                // if (batteryHealth == BatteryManager.BATTERY_HEALTH_OVERHEAT) {
+                //     mWarnings.showHighTemp(true,batteryStatus,batteryTemperature,batteryHealth);
+                // } else if (batteryHealth == BatteryManager.BATTERY_HEALTH_COLD) {
+                //     mWarnings.showLowTemp(true,batteryStatus,batteryTemperature,batteryHealth);
+                // } else {
+                //     mWarnings.updateOTP();
+                // }
             } else if ("intent.battery.usbntc.temperror".equals(action)) {
                 boolean dismissDialog = intent.getIntExtra("disable",0) != 0;
                 boolean speakerNoise = intent.getIntExtra("speakerNoise",0) != 0;

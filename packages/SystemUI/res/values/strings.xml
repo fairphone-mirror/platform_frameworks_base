@@ -3197,4 +3197,11 @@
 
     <string name="usbntc_temp_notification_title">Warning</string>
     <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
+
+
+    <string name="high_temp_message_59">Warning! Your battery is overheating. Your device will now shut down to prevent any damage.</string>
+    <string name="high_temp_message_51">Your battery is running hot. Close any unnecessary apps or background processes to cool it down.</string>
+    <string name="high_temp_message_48">"Your phone's getting warm. If you are midway through an installation or transfer, please complete the process after placing the phone on a well-ventilated surface."</string>
+    <string name="high_temp_message_low_5">Your battery’s running cold. Your Fairphone will perform better if you return it to room temperature.</string>
+    <string name="high_temp_message_low_19">Your battery is freezing. Your device will now shut down to prevent any damage.</string>
 </resources>

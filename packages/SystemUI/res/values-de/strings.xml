@@ -1173,4 +1173,10 @@ Navigiere zu den Batterieeinstellungen, um zwischen den Modi zu wechseln und meh
         <item quantity="other">Falscher Pin-Code für SIM <xliff:g id="slotid">%d</xliff:g>. Du hast noch <xliff:g id="number">%d</xliff:g> Versuche.</item>
     </plurals>
 
+    <string name="high_temp_message_59">Dein Akku ist überhitzt. Dein Gerät wird nun heruntergefahren, um Schäden zu vermeiden.</string>
+    <string name="high_temp_message_51">Dein Akku wird zu heiß. Bitte schließe unnötige Apps oder Hintergrundprozesse, um ihn abzukühlen.</string>
+    <string name="high_temp_message_48">Dein Telefon wird warm. Falls du gerade eine Installation oder Übertragung ausführst, bringe dein Telefon an eine gut belüftete Oberfläche und schließe den Vorgang ab.</string>
+    <string name="high_temp_message_low_5">Dein Akku wird zu kalt. Dein Fairphone funktioniert besser, wenn du es auf Raumtemperatur zurückbringst.</string>
+    <string name="high_temp_message_low_19">Warnung! Dein Akku ist stark unterkühlt. Dein Gerät wird nun heruntergefahren, um Schäden zu vermeiden.</string>
+
 </resources>

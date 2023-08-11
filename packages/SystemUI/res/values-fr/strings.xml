@@ -1172,4 +1172,10 @@ Accédez aux paramètres de la batterie pour basculer entre les modes et en savo
         <item quantity="one">Incorrect SIM<xliff:g id="slotid">%d</xliff:g> PIN code, you have <xliff:g id="number">%d</xliff:g> remaining attempt before you must contact your carrier to unlock your device.</item>
         <item quantity="other">Code PIN SIM<xliff:g id="slotid">%d</xliff:g> PIN incorrect, il vous reste <xliff:g id="number">%d</xliff:g> tentatives.</item>
     </plurals>
+
+    <string name="high_temp_message_59">Votre batterie surchauffe. Votre appareil va maintenant s’arrêter pour éviter tout dommage.</string>
+    <string name="high_temp_message_51">Votre batterie chauffe. Fermez les applications inutiles ou les activités en arrière-plan pour la refroidir.</string>
+    <string name="high_temp_message_48">Votre téléphone se réchauffe. Si vous êtes en train d’installer ou de transferer des éléments, veuillez terminer le processus après avoir placé le téléphone sur une surface bien ventilée.</string>
+    <string name="high_temp_message_low_5">Votre batterie est trop froide. Votre Fairphone fonctionnera mieux si vous le faites fonctionner à température ambiante.</string>
+    <string name="high_temp_message_low_19">"Avertissement! Votre batterie est trop froide. Votre appareil va maintenant s'arrêter pour éviter tout dommage"</string>
 </resources>
