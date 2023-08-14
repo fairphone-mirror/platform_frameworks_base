@@ -547,7 +547,7 @@ public class NotificationIconContainer extends ViewGroup {
         TelephonyManager tm = (TelephonyManager)getContext().getSystemService("phone");
         String subscriptionId = tm.getSubscriberId();
         int maxStaticIcons = 6;
-        if (showOperatorName == 1 && !subscriptionId.equals("")) {
+        if (showOperatorName == 1 && subscriptionId != null && !"".equals(subscriptionId)) {
             maxStaticIcons = MAX_STATIC_ICONS;
         }
         return mOnLockScreen ? MAX_ICONS_ON_AOD :
