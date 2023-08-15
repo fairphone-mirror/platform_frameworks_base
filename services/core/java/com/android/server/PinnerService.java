@@ -85,6 +85,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import android.content.ComponentName;
+import static android.provider.Settings.System.SCREEN_OFF_TIMEOUT;
 
 /**
  * <p>PinnerService pins important files for key processes in memory.</p>
@@ -368,6 +369,9 @@ public final class PinnerService extends SystemService {
                         if (userSetupCompleteUri.equals(uri)) {
                             sendPinAppMessage(KEY_HOME, ActivityManager.getCurrentUser(),
                                     true /* force */);
+                            if (isUserSetupCompleted() && isMyPhoneFirstOpen()){
+                                 Settings.System.putInt(mContext.getContentResolver(), SCREEN_OFF_TIMEOUT, 60*1000); 
+                            }
                             if (isUserSetupCompleted() && isMyPhoneFirstOpen() && !isDtCarrier()) {
                                 mPinnerHandler.postDelayed(new Runnable(){
                                     @Override
