@@ -228,6 +228,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                                 Settings.Global.SET_BATTERY_CHARGING_MODE);
                         if("isBoot".equals(mode)){
                             SystemProperties.set("persist.sys.bat_charging_time",readTFT()+"");
+                            SystemProperties.set("persist.sys.bat_charging_first","0");
                         }
                         setBCM(mode);
                     }
@@ -281,7 +282,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
     }
 
     private void showCharingModeDialog(){
-        SystemProperties.set("persist.sys.is_first_boot","2");
+        SystemProperties.set("persist.sys.bat_charging_first","1");
         final AlertDialog alert = new AlertDialog.Builder(mContext).setCancelable(false).create();
         View dialogView = View.inflate(mContext, R.layout.alert_battery_mode, null);
         alert.setView(dialogView);
@@ -569,7 +570,7 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                             plugged, bucket);
                 });
 
-                if (!oldPlugged && mPlugType == 2 && !("2".equals(SystemProperties.get("persist.sys.is_first_boot")))){
+                if (!oldPlugged && mPlugType == 2 && !("1".equals(SystemProperties.get("persist.sys.bat_charging_first")))){
                     long bat_charging_time = SystemProperties.getLong("persist.sys.bat_charging_time",0);
                     long up_time = readTFT() - bat_charging_time;
                     // 60*60*24*3  259200
