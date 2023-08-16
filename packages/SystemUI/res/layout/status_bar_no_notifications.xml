@@ -32,7 +32,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="64dp"
-                android:gravity="center"
+		android:gravity="center"
+		android:textAllCaps="false"
                 android:textAppearance="?android:attr/textAppearanceButton"
                 android:text="@string/empty_shade_text"/>
         <TextView
