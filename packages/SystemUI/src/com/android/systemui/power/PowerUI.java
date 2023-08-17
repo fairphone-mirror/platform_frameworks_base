@@ -570,7 +570,8 @@ public class PowerUI implements CoreStartable, CommandQueue.Callbacks {
                             plugged, bucket);
                 });
 
-                if (!oldPlugged && mPlugType == 2 && !("1".equals(SystemProperties.get("persist.sys.bat_charging_first")))){
+                String  bat_charging_first = SystemProperties.get("persist.sys.bat_charging_first");
+                if (!oldPlugged && mPlugType == 2 && bat_charging_first != null && "0".equals(bat_charging_first)){
                     long bat_charging_time = SystemProperties.getLong("persist.sys.bat_charging_time",0);
                     long up_time = readTFT() - bat_charging_time;
                     // 60*60*24*3  259200
