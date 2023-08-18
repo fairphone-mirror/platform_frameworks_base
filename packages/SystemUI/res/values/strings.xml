@@ -2642,6 +2642,10 @@
     <string name="charging_slow">Slow mode</string>
     <string name="charging_normal">Normal mode</string>
     <string name="charging_state">Charging mode</string>
+    <string name="charging_mode_dialog">Customize your charging speed to either optimize your battery’s longevity or getting back to full power as soon as possible. Navigate to Battery Settings to switch between modes and learn more.</string>
+    <string name="cmdialog_skip">Skip</string>
+    <string name="cmdialog_bats">Battery Settings</string>
+
     <string name="face_unlock_failed">No match.Touch icon to use face unlock.</string>
     <string name="too_many_face_unlock_failed_to_use_pattern">Too many incorrect attempts.Use pattern to unlock.</string>
     <string name="too_many_face_unlock_failed_to_use_password">Too many incorrect attempts.Use password to unlock.</string>
