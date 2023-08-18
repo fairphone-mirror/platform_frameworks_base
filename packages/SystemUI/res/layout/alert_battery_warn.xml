@@ -9,5 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:scaleType="centerInside"
-        android:src="@mipmap/alert_lowtemp_icon" />
+        android:src="@mipmap/alert_lowtemp_icon"
+        android:visibility="invisible" />
 </LinearLayout>

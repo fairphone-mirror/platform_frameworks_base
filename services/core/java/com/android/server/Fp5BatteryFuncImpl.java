@@ -34,6 +34,10 @@ public class Fp5BatteryFuncImpl implements ICustomerBatteryFunc {
     private int low_temp_5 = -50;
     private int high_temp_55 = 550;
     private int high_temp_60 = 600;
+    private int high_temp_48 = 480;
+    private int high_temp_51 = 510;
+    private int high_temp_59 = 590;
+    private int low_temp_19 = -190;
     private int lastTemperatureState = 0;
     private int currentTemperatureState = 999;
 
@@ -45,14 +49,16 @@ public class Fp5BatteryFuncImpl implements ICustomerBatteryFunc {
             int currentBatteryHealth = currentHealthInfo.batteryHealth;
             int currentTemperature = currentHealthInfo.batteryTemperatureTenthsCelsius;
             int batteryStatus = currentHealthInfo.batteryStatus ;
-            if (currentTemperature >= 600) {
-                currentTemperatureState = high_temp_60;
-            } else if (currentTemperature >= 550 && currentTemperature < 600 && batteryStatus == 4){
-                currentTemperatureState = high_temp_55;
-            } else if (currentTemperature > -200 && currentTemperature <= -50){
+            if (currentTemperature >= 590) {
+                currentTemperatureState = high_temp_59;
+            } else if (currentTemperature >= 510 && currentTemperature < 590){
+                currentTemperatureState = high_temp_51;
+            }  else if (currentTemperature >= 480 && currentTemperature < 510){
+                currentTemperatureState = high_temp_48;
+            } else if (currentTemperature > -190 && currentTemperature <= -50){
                 currentTemperatureState = low_temp_5;
-            } else if (currentTemperature <= -200){
-                currentTemperatureState = low_temp_20;
+            } else if (currentTemperature <= -190){
+                currentTemperatureState = low_temp_19;
             } else {
                 currentTemperatureState = 999;
             }
