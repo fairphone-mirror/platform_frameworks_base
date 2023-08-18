@@ -193,6 +193,9 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
                     public void onChange(boolean selfChange) {
                         String mode = Settings.Global.getString(mContext.getContentResolver(),
                                 Settings.Global.SET_BATTERY_CHARGING_MODE);
+                        if("isBoot".equals(mode)){
+                            SystemProperties.set("persist.sys.bat_charging_time",readTFT()+"");
+                        }
                         setBCM(mode);
                     }
                 });
@@ -200,6 +203,26 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
         initThermalEventListeners();
         mCommandQueue.addCallback(this);
     }
+
+    private long readTFT(){
+        long date = SystemProperties.getLong("persist.sys.tct.tft.date",0);
+        if(date == 0){
+            long persistTFTdate = SystemProperties.getLong("sys.t2m.tft",0);
+            if(persistTFTdate != 0){
+                date = persistTFTdate;
+            }
+        }
+        if(date == 0){
+            return SystemClock.elapsedRealtime() / 1000;
+        }else{
+            if(SystemClock.elapsedRealtime() > date){
+                return SystemClock.elapsedRealtime() / 1000;
+            }else{
+                return date/1000;
+            }
+        }
+    }
+
 
     private void setBatteryChargingMode(){
         String[] charging_mode = {mContext.getResources().getString(R.string.charging_slow),
@@ -225,6 +248,7 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
     }
 
     private void showCharingModeDialog(){
+        SystemProperties.set("persist.sys.is_first_boot","2");
         final AlertDialog alert = new AlertDialog.Builder(mContext).setCancelable(false).create();
         View dialogView = View.inflate(mContext, R.layout.alert_battery_mode, null);
         alert.setView(dialogView);
@@ -515,22 +539,13 @@ public class PowerUI extends CoreStartable implements CommandQueue.Callbacks {
                             plugged, bucket);
                 });
 
-                if (!oldPlugged && mPlugType == 2){
-                    boolean is_boot = "isBoot".equals(Settings.Global.getString(context.getContentResolver(), Settings.Global.SET_BATTERY_CHARGING_MODE));
-                    String bat_num = SystemProperties.get("persist.sys.bat_charging_num","0");
-                    long up_time = SystemClock.elapsedRealtime() / 1000;
-                    try{
-                        if (is_boot && bat_num.length() < 2) {
-                            int num = Integer.parseInt(bat_num);
-                            num++;
-                            SystemProperties.set("persist.sys.bat_charging_num",String.valueOf(num));
-                            if (num == 2 || (up_time > 60*60*24*3 && num < 2)) {
-                                showCharingModeDialog();
-                            }
+                if (!oldPlugged && mPlugType == 2 && !("2".equals(SystemProperties.get("persist.sys.is_first_boot")))){
+                    long bat_charging_time = SystemProperties.getLong("persist.sys.bat_charging_time",0);
+                    long up_time = readTFT() - bat_charging_time;
+                    // 60*60*24*3  259200
+                    if (up_time > 259200 ) {
+                            showCharingModeDialog();
                         }
-                    }catch(Exception e){
-
-                    }
                 }
             } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
                 mScreenOffTime = SystemClock.elapsedRealtime();
