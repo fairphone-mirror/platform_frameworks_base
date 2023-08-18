@@ -213,7 +213,10 @@ public final class SnoozeHelper {
     protected void snooze(NotificationRecord record, String contextId) {
         if (contextId != null) {
             synchronized (mLock) {
-                mPersistedSnoozedNotificationsWithContext.put(getTrimmedString(record.getKey()), contextId);
+                mPersistedSnoozedNotificationsWithContext.put(
+                        getTrimmedString(record.getKey()),
+                        getTrimmedString(contextId)
+                );
             }
         }
         snooze(record);
@@ -309,7 +312,7 @@ public final class SnoozeHelper {
         synchronized (mLock) {
             mPersistedSnoozedNotifications.remove(trimmedKey);
             mPersistedSnoozedNotificationsWithContext.remove(trimmedKey);
-            record = mSnoozedNotifications.remove(trimmedKey);
+            record = mSnoozedNotifications.remove(key);
         }
 
         if (record != null && !record.isCanceled) {
@@ -361,8 +364,9 @@ public final class SnoozeHelper {
                 final NotificationRecord record = mSnoozedNotifications.valueAt(i);
                 if (record.getUserId() == userId && record.getSbn().getPackageName().equals(pkg)) {
                     mSnoozedNotifications.removeAt(i);
-                    mPersistedSnoozedNotificationsWithContext.remove(record.getKey());
-                    mPersistedSnoozedNotifications.remove(record.getKey());
+                    String trimmedKey = getTrimmedString(record.getKey());
+                    mPersistedSnoozedNotificationsWithContext.remove(trimmedKey);
+                    mPersistedSnoozedNotifications.remove(trimmedKey);
                     Runnable runnable = () -> {
                         final PendingIntent pi = createPendingIntent(record.getKey());
                         mAm.cancel(pi);
@@ -383,8 +387,9 @@ public final class SnoozeHelper {
                 final NotificationRecord record = mSnoozedNotifications.valueAt(i);
                 if (record.getUserId() == userId) {
                     mSnoozedNotifications.removeAt(i);
-                    mPersistedSnoozedNotificationsWithContext.remove(record.getKey());
-                    mPersistedSnoozedNotifications.remove(record.getKey());
+                    String trimmedKey = getTrimmedString(record.getKey());
+                    mPersistedSnoozedNotificationsWithContext.remove(trimmedKey);
+                    mPersistedSnoozedNotifications.remove(trimmedKey);
 
                     Runnable runnable = () -> {
                         final PendingIntent pi = createPendingIntent(record.getKey());
