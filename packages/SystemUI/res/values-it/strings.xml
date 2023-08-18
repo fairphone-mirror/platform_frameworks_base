@@ -1161,8 +1161,7 @@
     <string name="charging_slow">Modalità lenta</string>
     <string name="charging_normal">Modalità normale</string>
     <string name="charging_state">Modalità di ricarica</string>
-    <string name="charging_mode_dialog">Modalità di ricarica
-Personalizza la velocità di ricarica per ottimizzare la longevità della batteria o per avere il massimo della carica il più velocemente possibile.
+    <string name="charging_mode_dialog">Personalizza la velocità di ricarica per ottimizzare la longevità della batteria o per avere il massimo della carica il più velocemente possibile.
 Vai nelle Impostazioni batteria per selezionare tra le modalità presenti e scoprire di più.</string>
     <string name="cmdialog_skip">Salta</string>
     <string name="cmdialog_bats">Impostazioni batteria</string>

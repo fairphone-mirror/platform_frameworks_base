@@ -1161,8 +1161,7 @@
     <string name="charging_slow">Langsamer Modus</string>
     <string name="charging_normal">Normaler Modus</string>
     <string name="charging_state">Lademodus</string>
-    <string name="charging_mode_dialog">Lademodus
-Passe die Ladegeschwindigkeit an, um entweder auf die Langlebigkeit deines Akkus zu optimieren, oder um den Akku so schnell wie möglich zu laden.
+    <string name="charging_mode_dialog">Passe die Ladegeschwindigkeit an, um entweder auf die Langlebigkeit deines Akkus zu optimieren, oder um den Akku so schnell wie möglich zu laden.
 Navigiere zu den Batterieeinstellungen, um zwischen den Modi zu wechseln und mehr zu erfahren.</string>
     <string name="cmdialog_skip">Überspringen</string>
     <string name="cmdialog_bats">Batterieeinstellungen</string>

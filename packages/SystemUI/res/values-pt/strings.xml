@@ -1161,10 +1161,9 @@
     <string name="charging_slow">Modo lento</string>
     <string name="charging_normal">Modo normal</string>
     <string name="charging_state">Modo de carregamento</string>
-    <string name="charging_mode_dialog">Modo de carregamento
-Personalize sua velocidade de carregamento para otimizar a longevidade da sua bateria ou voltar à energia máxima o mais rápido possível.
+    <string name="charging_mode_dialog">Personalize sua velocidade de carregamento para otimizar a longevidade da sua bateria ou voltar à energia máxima o mais rápido possível.
 Navegue até as configurações da bateria para alternar entre os modos e saber mais.</string>
-    <string name="cmdialog_skip">Pular</string>
+    <string name="cmdialog_skip">Saltar</string>
     <string name="cmdialog_bats">Configurações da bateria</string>
     <string name="hight_temp_message_notchanging">a temperatura é demasiado elevada!</string>
     <string name="low_temp_message_5">Aviso! A temperatura da bateria é demasiado baixa</string>

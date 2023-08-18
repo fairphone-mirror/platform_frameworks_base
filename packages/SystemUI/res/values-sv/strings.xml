@@ -1161,8 +1161,7 @@
     <string name="charging_slow">Långsamt läge</string>
     <string name="charging_normal">Normalt läge</string>
     <string name="charging_state">Laddningsläge</string>
-    <string name="charging_mode_dialog">Laddningsläge
-Anpassa din laddningshastighet för att antingen optimera batteriets livslängd eller komma tillbaka till full ström så snart som möjligt.
+    <string name="charging_mode_dialog">Anpassa din laddningshastighet för att antingen optimera batteriets livslängd eller komma tillbaka till full ström så snart som möjligt.
 Navigera till batteriinställningar för att växla mellan lägen och lära dig mer.</string>
     <string name="cmdialog_skip">Hoppa</string>
     <string name="cmdialog_bats">Batteriledare</string>

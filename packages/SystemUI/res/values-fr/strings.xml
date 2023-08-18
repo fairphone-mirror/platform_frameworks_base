@@ -1161,8 +1161,7 @@
     <string name="charging_slow">Mode lent</string>
     <string name="charging_normal">Mode normal</string>
     <string name="charging_state">Mode de recharge</string>
-    <string name="charging_mode_dialog">Mode de charge
-Personnalisez votre vitesse de charge pour optimiser la longévité de votre batterie ou remonter le plus vite possible à pleine puissance.
+    <string name="charging_mode_dialog">Personnalisez votre vitesse de charge pour optimiser la longévité de votre batterie ou remonter le plus vite possible à pleine puissance.
 Accédez aux paramètres de la batterie pour basculer entre les modes et en savoir plus.</string>
     <string name="cmdialog_skip">Passer</string>
     <string name="cmdialog_bats">Paramètres de la batterie</string>
