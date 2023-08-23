@@ -418,7 +418,7 @@ public final class PinnerService extends SystemService {
         String imsi = telphonyManager.getSubscriberId();
         boolean isDtCarrier = false;
         if(imsi != null){
-            isDtCarrier = imsi.startsWith("26201")|| imsi.startsWith("26206");
+            isDtCarrier = imsi.startsWith("26201")|| imsi.startsWith("26206") || imsi.startsWith("23203")|| imsi.startsWith("23204")|| imsi.startsWith("23207");
         }
 
         setIsDtCarrier(isDtCarrier);
