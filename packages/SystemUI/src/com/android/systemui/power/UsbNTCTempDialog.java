@@ -19,6 +19,14 @@ import java.io.IOException;
 import android.os.PowerManager;
 import static android.os.PowerManager.WAKE_REASON_UNKNOWN;
 import android.os.SystemClock;
+import android.content.Intent;
+import android.os.UserHandle;
+import android.app.PendingIntent;
+import android.app.PendingIntent.CanceledException;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
+import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.os.Handler;
 
 
 /**
@@ -33,6 +41,9 @@ public class UsbNTCTempDialog extends AlertDialog {
     private AudioManager audioManager;
     private PowerManager mPowerManager;
     private boolean setPower = false;
+
+    private int mLastMode = -1;
+    private boolean isBluetoothA2dpOn = false;
 
 
 
@@ -96,14 +107,60 @@ public class UsbNTCTempDialog extends AlertDialog {
         return true;
     }
 
+    private boolean requestAudioFocus() {
+          // Bluetooth A2DP may carry Music, Audio Books, Navigation, or other sounds so mark content
+          // type unknown.
+          AudioAttributes streamAttributes =
+                  new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA)
+                          .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
+                          .build();
+          // Bluetooth ducking is handled at the native layer at the request of AudioManager.
+          AudioFocusRequest focusRequest =
+                  new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setAudioAttributes(
+                          streamAttributes)
+                          .setOnAudioFocusChangeListener(mAudioFocusListener, new Handler())
+                          .build();
+        int focusRequestStatus = audioManager.requestAudioFocus(focusRequest);
+
+        Log.d(TAG, "requestAudioFocus focusRequestStatus " + focusRequestStatus);
+
+        if (focusRequestStatus == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            return true;
+        }
+        return false;
+      }
+
+      // Focus changes when we are currently holding focus.
+      private OnAudioFocusChangeListener mAudioFocusListener = new OnAudioFocusChangeListener() {
+          @Override
+          public void onAudioFocusChange(int focusChange) {
+            Log.d(TAG, "onAudioFocusChangeListener focuschange " + focusChange);
+          }
+      };
+
     private void setSpeakerMode() {
+
       int maxVolume = audioManager
-              .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                .getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-      Log.d(TAG, "STREAM_MUSIC maxVolume=" + maxVolume);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume-3,
+                0);
 
-      audioManager.setMode(AudioManager.MODE_NORMAL);
-      audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0);
+        mLastMode = audioManager.getMode();
+
+        isBluetoothA2dpOn = audioManager.isBluetoothA2dpOn();
+
+        audioManager.setMode(isBluetoothA2dpOn ? AudioManager.MODE_IN_COMMUNICATION : AudioManager.MODE_NORMAL);
+
+        if (isBluetoothA2dpOn) {
+            audioManager.stopBluetoothSco();
+
+            audioManager.setBluetoothScoOn(false);
+        }
+
+        audioManager.setSpeakerphoneOn(true);
+
+        Log.e(TAG, "setSpeakerMode maxVolume = "+maxVolume+" ;isBluetoothA2dpOn = "+isBluetoothA2dpOn+" ; mLastMode = "+mLastMode);
     }
 
     private void stopMusic(){
@@ -113,6 +170,16 @@ public class UsbNTCTempDialog extends AlertDialog {
             playPhoneMusic.release();
             playPhoneMusic = null;
         }
+        audioManager.abandonAudioFocus(mAudioFocusListener,null);
+        if (isBluetoothA2dpOn) {
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            audioManager.startBluetoothSco();
+            audioManager.setBluetoothScoOn(true);
+            Log.d(TAG, "=======stopMusic()========== reset BluetoothA2dp");
+        }else{
+            audioManager.setMode(mLastMode);            
+        }
+        audioManager.setSpeakerphoneOn(false);
     }
 
 
@@ -122,6 +189,7 @@ public class UsbNTCTempDialog extends AlertDialog {
         if (playPhoneMusic != null) {
             return;
         }
+        requestAudioFocus();
 
         setSpeakerMode();
 

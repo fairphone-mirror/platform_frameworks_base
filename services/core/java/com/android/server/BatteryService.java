@@ -79,6 +79,7 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import android.os.SystemProperties;
 
 /**
  * <p>BatteryService monitors the charging status, and charge level of the device
@@ -722,7 +723,6 @@ public final class BatteryService extends SystemService {
         float ntcTemp = getUsbNTCTemp();
 
         if (isUsbPresent && ntcTemp >= 80){
-            // float ntcTemp = getUsbNTCTemp();
             Intent intent = new Intent("intent.battery.usbntc.temperror");
             intent.putExtra("disable",0);
             // if (ntcTemp >= 90 && ntcTemp < 100) {
