@@ -12,7 +12,7 @@
         android:layout_marginTop="10dp"
         android:layout_gravity="center"
         android:scaleType="centerInside"
-        android:src="@mipmap/alert_lowtemp_icon"/>
+        android:src="@mipmap/charging_state"/>
 
     <TextView
         android:layout_width="match_parent"
