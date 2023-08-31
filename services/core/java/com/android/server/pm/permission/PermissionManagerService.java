@@ -990,7 +990,9 @@ public class PermissionManagerService extends IPermissionManager.Stub {
             }
 
             synchronized (mLock) {
-                mAttributions.put(source.getToken(), source);
+                // Change the token for the AttributionSource we're storing, so that we don't store
+                // a strong reference to the original token inside the map itself.
+                mAttributions.put(source.getToken(), source.withDefaultToken());
             }
         }
 
@@ -998,7 +1000,7 @@ public class PermissionManagerService extends IPermissionManager.Stub {
             synchronized (mLock) {
                 final AttributionSource cachedSource = mAttributions.get(source.getToken());
                 if (cachedSource != null) {
-                    return cachedSource.equals(source);
+                    return cachedSource.equalsExceptToken(source);
                 }
                 return false;
             }
