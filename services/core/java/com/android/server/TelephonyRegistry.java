@@ -2215,9 +2215,12 @@ public class TelephonyRegistry extends ITelephonyRegistry.Stub {
                 log("isAirplaneMode is : " + isAirplaneMode + " , telephonyManager.isWifiCallingAvailable() = "
                     + telephonyManager.isWifiCallingAvailable() + " , preciseState.getState() = " + preciseState.getState()
                     + " ,preciseState.getNetworkType() = " + preciseState.getNetworkType() + ", networkType = " + networkType);
-                if (isAirplaneMode && preciseState.getNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN) {
+                if (isAirplaneMode
+                        && preciseState.getNetworkType() == TelephonyManager.NETWORK_TYPE_IWLAN
+                        && preciseState.getState() != TelephonyManager.DATA_DISCONNECTED) {
                     log("AirplaneMode and vowifi register");
-                    state = TelephonyManager.DATA_CONNECTED;
+                    networkType = TelephonyManager.NETWORK_TYPE_IWLAN;
+                    state = preciseState.getState();
                 }
                 //Add for FP5-1074 [FP5 #25]SVFT DE DT: NW status shows disconnected when VoWiFi registered in Airplane mode
 
