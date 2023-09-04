@@ -825,6 +825,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
             // don't actually trigger the shutdown if we are running stability
             // tests via monkey
             if (ActivityManager.isUserAMonkey()) {
+                Log.w(TAG, "skip shutdown in monkey test");
                 return;
             }
             mUiEventLogger.log(GlobalActionsEvent.GA_SHUTDOWN_PRESS);
@@ -966,6 +967,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
             // don't actually trigger the reboot if we are running stability
             // tests via monkey
             if (ActivityManager.isUserAMonkey()) {
+                Log.w(TAG, "skip reboot in monkey test");
                 return;
             }
             mUiEventLogger.log(GlobalActionsEvent.GA_REBOOT_PRESS);
