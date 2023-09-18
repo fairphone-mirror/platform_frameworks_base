@@ -132,6 +132,7 @@ public class CompanionDeviceManagerService extends SystemService {
             "debug.cdm.cdmservice.removal_time_window";
 
     private static final long ASSOCIATION_REMOVAL_TIME_WINDOW_DEFAULT = DAYS.toMillis(90);
+    private static final int MAX_CN_LENGTH = 500;
 
     private final ActivityManager mActivityManager;
     private final OnPackageVisibilityChangeListener mOnPackageVisibilityChangeListener;
@@ -620,6 +621,9 @@ public class CompanionDeviceManagerService extends SystemService {
                 throws RemoteException {
             String callingPackage = component.getPackageName();
             checkCanCallNotificationApi(callingPackage, userId);
+            if (component.flattenToString().length() > MAX_CN_LENGTH) {
+                throw new IllegalArgumentException("Component name is too long.");
+            }
             final long identity = Binder.clearCallingIdentity();
             try {
                 return PendingIntent.getActivityAsUser(getContext(),
