@@ -491,6 +491,8 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
     private final String mSuspendBlockerIdProxNegative;
     private final String mSuspendBlockerIdProxDebounce;
 
+    private String old_screen_mode = "0";
+
     /**
      * Creates the display power controller.
      */
@@ -935,6 +937,10 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
         mContext.getContentResolver().registerContentObserver(
                 Settings.System.getUriFor(Settings.System.SCREEN_AUTO_BRIGHTNESS_ADJ),
                 false /*notifyForDescendants*/, mSettingsObserver, UserHandle.USER_ALL);
+        mContext.getContentResolver().registerContentObserver(
+                Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE),
+                false /*notifyForDescendants*/, mSettingsObserver, UserHandle.USER_ALL);
+
     }
 
     private void setUpAutoBrightness(Resources resources, Handler handler) {
@@ -3075,7 +3081,17 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
-            handleSettingsChange(false /* userSwitch */);
+            String screen_mode = Settings.System.getString(mContext.getContentResolver(),
+                    Settings.System.SCREEN_BRIGHTNESS_MODE);
+            if ("0".equals(screen_mode)){
+                old_screen_mode = screen_mode;
+            }
+            if ("1".equals(screen_mode) && "0".equals(old_screen_mode)){
+                old_screen_mode = screen_mode;
+                handleSettingsChange(true );
+            }else {
+                handleSettingsChange(false /* userSwitch */);
+            }
         }
     }
 
