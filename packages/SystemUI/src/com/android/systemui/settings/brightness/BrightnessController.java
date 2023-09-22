@@ -42,6 +42,15 @@ import android.service.vr.IVrManager;
 import android.service.vr.IVrStateCallbacks;
 import android.util.Log;
 import android.util.MathUtils;
+import android.provider.Settings.Secure;
+import android.provider.Settings.System;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.UserHandle;
+import android.os.Message;
+import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.android.internal.display.BrightnessSynchronizer;
 import com.android.internal.logging.MetricsLogger;
@@ -107,6 +116,10 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
     private ImageView mAutoBrightessBtn;
     private final boolean mAutomaticAvailable;
 
+    private ContentObserver mSettingsContentObserver;
+    private static final String DCDIMMING_ENABLED = "def_dcdimming_enabled";
+    private boolean isUIFinished = true;
+
     @Override
     public void setMirror(BrightnessMirrorController controller) {
         mControl.setMirrorControllerAndMirror(controller);
@@ -153,7 +166,9 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
     private final Runnable mStartListeningRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mListening) {
+            android.util.Log.d(TAG, "iris-BrightnessController :mStartListeningRunnable-isUIFinished:"+isUIFinished);
+
+            if (mListening || !isUIFinished) {
                 return;
             }
             mListening = true;
@@ -328,7 +343,45 @@ public class BrightnessController implements ToggleSlider.Listener, MirroredBrig
         if (mAutoBrightessBtn != null) {
             mAutoBrightessBtn.setOnClickListener(autoBtnListener);
         }
+
+        mSettingsContentObserver = new ContentObserver(new Handler(Looper.getMainLooper())){
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                final String path = uri == null ? null : uri.getLastPathSegment();
+                if (TextUtils.equals(path, DCDIMMING_ENABLED)) {
+                        Message message = Message.obtain();
+                        message.what = 1;
+                        dcdimmingHandler.sendMessageDelayed(message,20);
+                }
+            }
+        };
+        mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor(DCDIMMING_ENABLED),false, mSettingsContentObserver, UserHandle.USER_CURRENT);
     }
+
+    private Handler dcdimmingHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            int what = msg.what;
+            if (1 == what) {
+                android.util.Log.d(TAG, "iris-BrightnessController:DCDIMMING_ENABLED-click DCDimming button,system ui Brightness bar not working.");
+                mAutoBrightessBtn.setEnabled(false);
+                isUIFinished = false;
+                registerCallbacks();
+
+                Message message = Message.obtain();
+                message.what = 2;
+                //Delay for 7.2 seconds and wait for all brightness changes to end before clicking
+                dcdimmingHandler.sendMessageDelayed(message,7200);
+            } else if (2 == what){
+                android.util.Log.d(TAG, "iris-BrightnessController:CDimming button-Brightness change completed,system ui Brightness bar function restored, synchronized brightness.");
+                mAutoBrightessBtn.setEnabled(true);
+                isUIFinished = true;
+                registerCallbacks();
+            }
+            return false;
+        }
+    });
+
 
     View.OnClickListener autoBtnListener = new View.OnClickListener() {
 
