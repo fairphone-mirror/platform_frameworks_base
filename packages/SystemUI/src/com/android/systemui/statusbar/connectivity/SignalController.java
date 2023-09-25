@@ -42,7 +42,7 @@ public abstract class SignalController<T extends ConnectivityState, I extends Ic
     // If RECORD_HISTORY how many to save, must be a power of 2.
     static final int HISTORY_SIZE = 64;
 
-    protected static final boolean DEBUG = NetworkControllerImpl.DEBUG;
+    protected static final boolean DEBUG = /*NetworkControllerImpl.DEBUG*/true;
     protected static final boolean CHATTY = NetworkControllerImpl.CHATTY;
 
     protected final String mTag;
