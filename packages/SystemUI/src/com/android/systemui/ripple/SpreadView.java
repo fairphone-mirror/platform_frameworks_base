@@ -118,7 +118,7 @@ public class SpreadView extends View {
             case MotionEvent.ACTION_UP:
                 if(closePS){
                     closePS = false;
-                    layout(0 , 2351, 1224 , 2700);
+                    layout(0 , 2035, 1080 , 2340);
                     Settings.Global.putStringForUser(getContext().getContentResolver(),
                     Settings.Global.UPDATE_POCKET_MODE_UI, System.currentTimeMillis() + "",
                     UserHandle.myUserId());
