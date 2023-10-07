@@ -32,6 +32,8 @@ import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
+import android.telephony.TelephonyManager;
+import android.provider.Settings;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.collection.ArrayMap;
@@ -486,7 +488,7 @@ public class NotificationIconContainer extends ViewGroup {
                 firstOverflowIndex = i;
                 mVisualOverflowStart = layoutEnd - mIconSize;
                 if (forceOverflow || mIsStaticLayout) {
-                    mVisualOverflowStart = Math.min(translationX, mVisualOverflowStart);
+                    mVisualOverflowStart = Math.min(translationX, mVisualOverflowStart) + 26;
                 }
             }
             final float drawingScale = mOnLockScreen && view instanceof StatusBarIconView
@@ -541,8 +543,15 @@ public class NotificationIconContainer extends ViewGroup {
     }
 
     private int getMaxVisibleIcons(int childCount) {
+        int showOperatorName = Settings.Secure.getInt(getContext().getContentResolver(),"show_operator_name", 1);
+        TelephonyManager tm = (TelephonyManager)getContext().getSystemService("phone");
+        String subscriptionId = tm.getSubscriberId();
+        int maxStaticIcons = 6;
+        if (showOperatorName == 1 && subscriptionId != null && !"".equals(subscriptionId)) {
+            maxStaticIcons = MAX_STATIC_ICONS;
+        }
         return mOnLockScreen ? MAX_ICONS_ON_AOD :
-                mIsStaticLayout ? MAX_STATIC_ICONS : childCount;
+                mIsStaticLayout ? maxStaticIcons : childCount;
     }
 
     private float getLayoutEnd() {
