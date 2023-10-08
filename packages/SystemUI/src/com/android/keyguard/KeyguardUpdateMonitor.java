@@ -213,6 +213,8 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
     private static final String TAG = "KeyguardUpdateMonitor";
     private static final int BIOMETRIC_LOCKOUT_RESET_DELAY_MS = 600;
 
+    public static final String KEY_CONFIRM_SIM_DELETION = "fingerprint_settings";
+
     // Callback messages
     private static final int MSG_TIME_UPDATE = 301;
     private static final int MSG_BATTERY_UPDATE = 302;
@@ -2718,9 +2720,18 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         updateFaceListeningState(action, faceAuthUiEvent);
     }
 
+    private boolean getFingerPrintBehaviorState() {
+        return Settings.Global.getInt(
+                mContext.getContentResolver(),
+                KEY_CONFIRM_SIM_DELETION,
+                false ? 1 : 0)
+                == 1;
+    }
+
     private void updateFingerprintListeningState(int action) {
         // If this message exists, we should not authenticate again until this message is
         // consumed by the handler
+        PowerManager mPm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
         if (mHandler.hasMessages(MSG_BIOMETRIC_AUTHENTICATION_CONTINUE)) {
             mLogger.logHandlerHasAuthContinueMsgs(action);
             return;
@@ -2734,18 +2745,36 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         final boolean shouldListenForFingerprint = shouldListenForFingerprint(isUdfpsSupported());
         final boolean runningOrRestarting = mFingerprintRunningState == BIOMETRIC_STATE_RUNNING
                 || mFingerprintRunningState == BIOMETRIC_STATE_CANCELLING_RESTARTING;
-        if (runningOrRestarting && !shouldListenForFingerprint) {
-            if (action == BIOMETRIC_ACTION_START) {
-                mLogger.v("Ignoring stopListeningForFingerprint()");
-                return;
+
+        boolean fingerPrintBahaviorState = getFingerPrintBehaviorState();
+        if (fingerPrintBahaviorState) { //touch unlock
+            if (runningOrRestarting && !shouldListenForFingerprint) {
+                if (action == BIOMETRIC_ACTION_START) {
+                    mLogger.v("Ignoring stopListeningForFingerprint()");
+                    return;
+                }
+                stopListeningForFingerprint();
+            } else if (!runningOrRestarting && shouldListenForFingerprint) {
+                if (action == BIOMETRIC_ACTION_STOP) {
+                    mLogger.v("Ignoring startListeningForFingerprint()");
+                    return;
+                }
+                startListeningForFingerprint();
             }
-            stopListeningForFingerprint();
-        } else if (!runningOrRestarting && shouldListenForFingerprint) {
-            if (action == BIOMETRIC_ACTION_STOP) {
-                mLogger.v("Ignoring startListeningForFingerprint()");
-                return;
+        } else { //press unlock
+            if (!mPm.isScreenOn() || (runningOrRestarting && !shouldListenForFingerprint)) {
+                if (action == BIOMETRIC_ACTION_START) {
+                    mLogger.v("Ignoring stopListeningForFingerprint()");
+                    return;
+                }
+                stopListeningForFingerprint();
+            } else if (!runningOrRestarting && shouldListenForFingerprint) {
+                if (action == BIOMETRIC_ACTION_STOP) {
+                    mLogger.v("Ignoring startListeningForFingerprint()");
+                    return;
+                }
+                startListeningForFingerprint();
             }
-            startListeningForFingerprint();
         }
     }
 
