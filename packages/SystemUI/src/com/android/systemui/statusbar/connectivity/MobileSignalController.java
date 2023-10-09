@@ -31,6 +31,7 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.net.NetworkCapabilities;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.provider.Settings.Global;
 import android.telephony.AccessNetworkConstants;
@@ -55,6 +56,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.internal.annotations.VisibleForTesting;
+import com.android.internal.telephony.ExponentialBackoff;
 import com.android.internal.telephony.TelephonyIntents;
 import com.android.settingslib.AccessibilityContentDescriptions;
 import com.android.settingslib.SignalIcon.MobileIconGroup;
@@ -240,6 +242,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         super("MobileSignalController(" + info.getSubscriptionId() + ")", context,
                 NetworkCapabilities.TRANSPORT_CELLULAR, callbackHandler,
                 networkController);
+        Log.d(mTag, "create MobileSignalController(" + info.getSubscriptionId() + ")");
         mCarrierConfigTracker = carrierConfigTracker;
         mConfig = config;
         mPhone = phone;
@@ -273,6 +276,16 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         // modify for FP4T-594 by T2M.dengxiangyu 2023-08-04
         //mProviderModelBehavior = featureFlags.isEnabled(Flags.COMBINED_STATUS_BAR_SIGNAL_ICONS);
         mProviderModelBehavior = false;
+
+        // add for FP4T-741 by T2M.dengxiangyu 2023-09-25 begin
+        mHandlerThread.start();
+        mRegisterImsListenerBackoff = new ExponentialBackoff(
+                REGISTER_START_DELAY_MS,
+                REGISTER_MAXIMUM_DELAY_MS,
+                2, /* multiplier */
+                mHandlerThread.getLooper(),
+                mRegisterImsListenerRunnable);
+        // add for FP4T-741 by T2M.dengxiangyu 2023-09-25 end
     }
 
     void setConfiguration(Config config) {
@@ -409,16 +422,59 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
     private void setListeners() {
         try {
-            Log.d(mTag, "setListeners: register CapabilitiesCallback and RegistrationCallback");
+            Log.d(mTag, "setListeners: register CapabilitiesCallback");
             mImsMmTelManager.registerMmTelCapabilityCallback(mContext.getMainExecutor(),
                     mCapabilityCallback);
-            mImsMmTelManager.registerImsRegistrationCallback (mContext.getMainExecutor(),
+            Log.d(mTag, "setListeners: register RegistrationCallback");
+            mImsMmTelManager.registerImsRegistrationCallback(mContext.getMainExecutor(),
                     mRegistrationCallback);
         } catch (ImsException e) {
             Log.e(mTag, "unable to register listeners.", e);
+
+            // add for FP4T-741 by T2M.dengxiangyu 2023-09-25 begin
+            reRegisterImsListener();
+            return;
         }
+
         queryImsState();
+
+        // add for FP4T-741 by T2M.dengxiangyu 2023-09-25
+        Log.d(mTag, "setListeners done.");
+        mListenerSetSuccess = LISTENER_STATE_REGISTERED;
+        mRegisterImsListenerBackoff.stop();
+        mHandlerThread.quitSafely();
     }
+
+    // add for FP4T-741 by T2M.dengxiangyu 2023-09-25 begin
+    private static final int LISTENER_STATE_UNREGISTERED = 0;
+    private static final int LISTENER_STATE_PERFORMING_BACKOFF = 2;
+    private static final int LISTENER_STATE_REGISTERED = 3;
+    private static final int REGISTER_START_DELAY_MS = 1 * 1000; // 1 second
+    private static final int REGISTER_MAXIMUM_DELAY_MS = 60 * 1000; // 1 minute
+    private int mListenerSetSuccess = LISTENER_STATE_UNREGISTERED;
+    private ExponentialBackoff mRegisterImsListenerBackoff;
+    private final HandlerThread mHandlerThread = new HandlerThread("MobileSignalController");
+    private Runnable mRegisterImsListenerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mListenerSetSuccess != LISTENER_STATE_REGISTERED) {
+                Log.d(mTag, "performing delayed setListeners.");
+                setListeners();
+            }
+        }
+    };
+
+    private void reRegisterImsListener() {
+        removeListeners();
+
+        if (mListenerSetSuccess == LISTENER_STATE_UNREGISTERED) {
+            mListenerSetSuccess = LISTENER_STATE_PERFORMING_BACKOFF;
+            mRegisterImsListenerBackoff.start();
+        } else {
+            mRegisterImsListenerBackoff.notifyFailed();
+        }
+    }
+    // add for FP4T-741 by T2M.dengxiangyu 2023-09-25 end
 
     private void queryImsState() {
         TelephonyManager tm = mPhone.createForSubscriptionId(mSubscriptionInfo.getSubscriptionId());
@@ -1075,6 +1131,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         public void onUnavailable(int reason) {
             Log.d(mTag, "ImsStateCallback.onUnavailable: reason=" + reason);
             removeListeners();
+
+            // add for FP4T-741 by T2M.dengxiangyu 2023-09-25
+            mListenerSetSuccess = LISTENER_STATE_UNREGISTERED;
         }
 
         @Override
@@ -1087,6 +1146,9 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         public void onError() {
             Log.e(mTag, "ImsStateCallback.onError");
             removeListeners();
+
+            // add for FP4T-741 by T2M.dengxiangyu 2023-09-25
+            mListenerSetSuccess = LISTENER_STATE_UNREGISTERED;
         }
     };
 
