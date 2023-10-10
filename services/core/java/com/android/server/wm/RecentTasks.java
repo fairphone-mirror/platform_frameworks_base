@@ -978,9 +978,25 @@ class RecentTasks {
                 continue;
             }
 
+            if (!checkPhotosRecent(task)) {
+                if (DEBUG_RECENTS) {
+                    Slog.d(TAG_RECENTS, "Skipping, photos bug: " + task);
+                }
+                continue;
+            }
+
             res.add(createRecentTaskInfo(task, true /* stripExtras */, getTasksAllowed));
         }
         return res;
+    }
+
+    private boolean checkPhotosRecent(Task task){
+        if (task != null && task.intent != null && task.intent.getComponent() != null && "com.google.android.apps.photos".equals(task.intent.getComponent().getPackageName())) {
+            if (task.getDisplayId() == -1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
