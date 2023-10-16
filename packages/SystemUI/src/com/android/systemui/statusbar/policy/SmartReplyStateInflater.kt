@@ -25,6 +25,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.os.PowerManager;
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
@@ -384,6 +385,9 @@ class SmartReplyInflaterImpl @Inject constructor(
                             parent,
                             this,
                             choice)
+                    parent.context.getSystemService(PowerManager::class.java).wakeUp(SystemClock.uptimeMillis(),
+                            PowerManager.WAKE_REASON_GESTURE,
+                            "com.android.systemui:SMART_REPLY")
                 }
                 setOnClickListener(
                         if (delayOnClickListener)
