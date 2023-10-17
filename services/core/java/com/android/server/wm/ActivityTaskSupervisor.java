@@ -2000,7 +2000,7 @@ public class ActivityTaskSupervisor implements RecentTasks.Callbacks {
                     return;
                 }
 
-                if (proc.hasForegroundServices()) {
+                if (proc.hasForegroundServices() && !("com.codoon.gps".equals(pkg) && removeFromRecents)) {
                     // Don't kill process(es) with foreground service.
                     return;
                 }
