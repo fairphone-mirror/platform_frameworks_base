@@ -75,6 +75,10 @@ import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedReader;
@@ -266,6 +270,16 @@ public final class BatteryService extends SystemService {
                         false, obs, UserHandle.USER_ALL);
                 updateBatteryWarningLevelLocked();
             }
+        }
+
+        if (phase == PHASE_BOOT_COMPLETED) {
+            ContentObserver obs = new ContentObserver(mHandler) {
+                @Override
+                public void onChange(boolean selfChange) {
+                    updateBatteryWarningLevelLocked();
+                    sendBatteryLevelChangedIntentLocked();
+                }
+            };
         }
     }
 
@@ -499,6 +513,13 @@ public final class BatteryService extends SystemService {
         shutdownIfNoPowerLocked();
         shutdownIfOverTempLocked();
 
+
+        boolean protect_battery = SystemProperties.get("persist.sys.battery.protect.enable").equals("1");
+
+        if (protect_battery) {
+            setBatteryHealthProtect(mHealthInfo.batteryLevel,80,78);
+        }
+
         if (force
                 || (mHealthInfo.batteryStatus != mLastBatteryStatus
                         //|| mHealthInfo.batteryHealth != mLastBatteryHealth
@@ -704,6 +725,48 @@ public final class BatteryService extends SystemService {
         }
     }
 
+    //open bat_health
+    private void setBatteryHealthProtect(int level,int h_level,int l_level){
+        if (mPlugType != BATTERY_PLUGGED_NONE){
+            //charging
+            if (level >= h_level){
+                //TODO: set charge_disable
+                writeBatEn("0");
+                SystemProperties.set("persist.sys.battery.icon.enable","1");
+            }else if (level == l_level){
+                //TODO:set charge_enable
+                writeBatEn("1");
+                SystemProperties.set("persist.sys.battery.icon.enable","0");
+            }
+        }else {
+            //no charging set charge_enable
+            writeBatEn("1");
+            SystemProperties.set("persist.sys.battery.icon.enable","0");
+        }
+    }
+
+    private void writeBatEn(String value) {
+        BufferedWriter bw = null;
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter("/sys/class/power_supply/battery/charging_enabled");
+            bw = new BufferedWriter(fw, 256);
+            bw.write(value);
+            bw.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            try{
+                if (bw != null)
+                    bw.close();
+                if (fw != null)
+                    fw.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void shutDown(){
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -796,8 +859,14 @@ public final class BatteryService extends SystemService {
 
         int icon = getIconLocked(mHealthInfo.batteryLevel);
 
+        String bat_icon_enable = SystemProperties.get("persist.sys.battery.icon.enable");
         intent.putExtra(BatteryManager.EXTRA_SEQUENCE, mSequence);
-        intent.putExtra(BatteryManager.EXTRA_STATUS, mHealthInfo.batteryStatus);
+        if (bat_icon_enable != null && "1".equals(bat_icon_enable)) {
+            intent.putExtra(BatteryManager.EXTRA_STATUS, 4);
+        } else {
+            intent.putExtra(BatteryManager.EXTRA_STATUS, mHealthInfo.batteryStatus);
+        }
+        
         intent.putExtra(BatteryManager.EXTRA_HEALTH, mHealthInfo.batteryHealth);
         intent.putExtra(BatteryManager.EXTRA_PRESENT, mHealthInfo.batteryPresent);
         intent.putExtra(BatteryManager.EXTRA_LEVEL, mHealthInfo.batteryLevel);
