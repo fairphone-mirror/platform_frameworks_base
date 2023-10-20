@@ -2724,7 +2724,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
         return Settings.Global.getInt(
                 mContext.getContentResolver(),
                 KEY_CONFIRM_SIM_DELETION,
-                false ? 1 : 0)
+                true ? 1 : 0)
                 == 1;
     }
 
