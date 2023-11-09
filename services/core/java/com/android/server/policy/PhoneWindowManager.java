@@ -4484,6 +4484,22 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 result &= ~ACTION_PASS_TO_USER;
                 break;
             }
+            case KeyEvent.KEYCODE_PROG_RED: {
+                if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
+                    Log.d(TAG, "power key pressed in mmitest");
+                    return ACTION_PASS_TO_USER;
+                }
+                result &= ~ACTION_PASS_TO_USER;
+                if (down) {
+                     isWakeKey = false;
+
+                     mPowerManager.goToSleep(SystemClock.uptimeMillis(),
+                                 PowerManager.GO_TO_SLEEP_REASON_LID_SWITCH, PowerManager.GO_TO_SLEEP_FLAG_NO_DOZE);
+                 }else{
+                     isWakeKey = true;
+                 }
+                 break;
+            }
             case KeyEvent.KEYCODE_WINDOW: {
                 if (mShortPressOnWindowBehavior == SHORT_PRESS_WINDOW_PICTURE_IN_PICTURE) {
                     if (mPictureInPictureVisible) {
