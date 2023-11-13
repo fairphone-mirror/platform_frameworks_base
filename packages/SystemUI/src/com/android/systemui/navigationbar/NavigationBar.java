@@ -725,12 +725,11 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
 
     //ADD by T2M yingyubin for Desktop mode
     private boolean isSecondaryDisplay(){
-        final Context userContext = mUserContextProvider.createCurrentUserContext(mContext);
         boolean desktopOn = Settings.Global.getInt(mContext.getContentResolver(),
                 DEVELOPMENT_FORCE_DESKTOP_MODE_ON_EXTERNAL_DISPLAYS,0) == 1
                 && Settings.Global.getInt(mContext.getContentResolver(),
                 DEVELOPMENT_ENABLE_FREEFORM_WINDOWS_SUPPORT, 0) == 1;
-        boolean isSecondaryDisplay = desktopOn && userContext.getDisplayId() != DEFAULT_DISPLAY;
+        boolean isSecondaryDisplay = desktopOn && !mIsOnDefaultDisplay;
         return isSecondaryDisplay;
     }
     //ADD by T2M yingyubin for Desktop mode
