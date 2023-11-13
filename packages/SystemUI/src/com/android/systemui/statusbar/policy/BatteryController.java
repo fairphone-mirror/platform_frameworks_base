@@ -159,8 +159,6 @@ public interface BatteryController extends DemoMode,
         default void onIsBatteryDefenderChanged(boolean isBatteryDefender) {
 	}
 
-	default void onBatteryColorChanged(boolean high,boolean low){
-        }
     }
 
     /**

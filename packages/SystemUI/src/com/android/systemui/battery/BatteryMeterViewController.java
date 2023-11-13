@@ -105,9 +105,6 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
                     mView.updateShowPercent();
 		}
 
-                public void onBatteryColorChanged(boolean highBatteryColor, boolean lowBatteryColor) {
-                    mView.onBatteryColorChanged(highBatteryColor,lowBatteryColor);
-                }
             };
 
     // Some places may need to show the battery conditionally, and not obey the tuner
