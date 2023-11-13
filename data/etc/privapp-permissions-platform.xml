@@ -615,5 +615,6 @@ applications that come with the platform
     <privapp-permissions package="com.android.systemui">
         <permission name="android.permission.READ_PHONE_STATE"/>
         <permission name="android.permission.ACCESS_FINE_LOCATION"/>
+        <permission name="android.permission.SCHEDULE_EXACT_ALARM" />
     </privapp-permissions>
 </permissions>

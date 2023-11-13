@@ -50,8 +50,6 @@ import android.os.UserHandle;
 import android.os.Message;
 import android.text.TextUtils;
 
-import androidx.annotation.NonNull;
-
 import com.android.internal.display.BrightnessSynchronizer;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;

@@ -2340,7 +2340,6 @@
     <string name="keyboard_layout_notification_more_than_three_selected_message" msgid="1581834181578206937">"Disposition du clavier définie sur <xliff:g id="LAYOUT_1">%1$s</xliff:g>, <xliff:g id="LAYOUT_2">%2$s</xliff:g>, <xliff:g id="LAYOUT_3">%3$s</xliff:g>… Appuyez pour la modifier."</string>
     <string name="keyboard_layout_notification_multiple_selected_title" msgid="5242444914367024499">"Claviers physiques configurés"</string>
     <string name="keyboard_layout_notification_multiple_selected_message" msgid="6576533454124419202">"Appuyez pour voir les claviers"</string>
-    <string name="subscription_displayname">CARTE </string>
     <string name="subscription_displayname">"CARTE "</string>
 
 </resources>

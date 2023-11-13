@@ -2644,13 +2644,6 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
             mStatusBarStateController.setState(StatusBarState.KEYGUARD);
         }
         updatePanelExpansionForKeyguard();
-        if(isWakingOrAwake() && mStatusBarStateController.getState() == StatusBarState.KEYGUARD) {
-            if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
-                mKeyguardIndicationController.startAncFaceUnlock();
-            } else {
-                mKeyguardIndicationController.showFaceUnlockFailed(3);
-            }
-        }
         Trace.endSection();
     }
 
@@ -3340,11 +3333,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                 }
             }
             updateScrimController();
-<<<<<<< HEAD
-=======
-            if(mKeyguardUpdateMonitor.isSecureCameraLaunchedOverKeyguard()){
-                FaceUnlockUtil.getInstance().stopFaceUnlock(mContext);
-            }
+
             ContentResolver cr = mContext.getContentResolver();
             float minRefreshRate = Settings.System.getFloatForUser(cr,
                 Settings.System.MIN_REFRESH_RATE, 0f, cr.getUserId());
@@ -3353,7 +3342,6 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                      Settings.System.MIN_REFRESH_RATE, 60f,cr.getUserId());
                 mMainHandler.sendEmptyMessageDelayed(MESSAGE_UPDATE_FLASH_RATE,3000);
             }
->>>>>>> 3f0b3d1383a9... [FP5-2132]add workround for 90hz flash rate when screen off
         }
     };
 

@@ -480,7 +480,9 @@ public class KeyguardStatusViewController extends ViewController<KeyguardStatusV
         public String[] getTransitionProperties() {
             return TRANSITION_PROPERTIES;
         }
-
+    }
+    
+      /**
      * set View padding top when in doze
      */
     private void setViewPaddingTop(){

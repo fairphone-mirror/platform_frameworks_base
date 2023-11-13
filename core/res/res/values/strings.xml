@@ -330,7 +330,6 @@
         <item>@string/wfcSpnFormat_wifi_call</item>
         <item>@string/wfcSpnFormat_vdf_wifi_calling</item>
         <item>@string/wfcSpnFormat_vdf_nl_wifi_wo_hyphen</item>
-        <item>@string/wfcSpnFormat_wifi_call</item>
     </string-array>
 
     <!-- Spn during Wi-Fi Calling: "<operator>" -->
@@ -363,8 +362,6 @@
     <string name="wfcSpnFormat_vdf_wifi_calling">Vodafone WiFi Calling</string>
     <!-- Spn during Wi-Fi Calling: "<operator> Wifi" -->
     <string name="wfcSpnFormat_vdf_nl_wifi_wo_hyphen">Vodafone NL Wifi</string>
-    <!-- Spn during Wi-Fi Calling: "WiFi Call" -->
-    <string name="wfcSpnFormat_wifi_call">WiFi Call</string>
 
     <!-- WFC, summary for Disabled -->
     <string name="wifi_calling_off_summary">Off</string>

@@ -1350,7 +1350,7 @@ public class DisplayDeviceConfig {
             mHbmData.timeMaxMillis = Integer.MAX_VALUE;
             mHbmData.timeMinMillis = 1 * 1000;
             mHbmData.allowInLowPowerMode = false;
-            mHbmData.thermalStatusLimit = PowerManager.THERMAL_STATUS_NONE;
+            //mHbmData.thermalStatusLimit = PowerManager.THERMAL_STATUS_NONE;
             mHbmData.minimumHdrPercentOfScreen = 0.5f;
             mIsHighBrightnessModeEnabled = true;
         }

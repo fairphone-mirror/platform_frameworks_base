@@ -21,6 +21,7 @@ import android.content.ComponentName;
 import android.os.Bundle;
 
 
+@RequiresNoPermission
 interface IT2MmiTestManager {
 
 	String t2GetNodeString(String action);
