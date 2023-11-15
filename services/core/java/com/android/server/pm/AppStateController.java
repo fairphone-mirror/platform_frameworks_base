@@ -18,6 +18,7 @@ import android.telephony.CarrierConfigManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.os.Process;
+import android.os.SystemProperties;
 
 
 public class AppStateController {
@@ -41,7 +42,9 @@ public class AppStateController {
     private boolean mIsCarrierConfigLoaded = false;
 
     private boolean mIsCarrierConfigReveiver = false;
-
+    private static final String DSDLOCKED_CARRIERID = "persist.radio.dsd.locked";
+    private static final String DSDLOCKED_HASENABLEAPP = "persist.sys.dsd.enableapp";
+    private static final String DSDLOCKED_REBOOT = "persist.radio.dsd.locked.reboot";
 
     private int mUserId;
 
@@ -56,7 +59,10 @@ public class AppStateController {
         mUserId = Process.myUserHandle().myUserId();
         registerReceiver();
         initCarrierAppList();
-        setPreInstallCarrierApkState();
+        boolean islock = SystemProperties.getBoolean(DSDLOCKED_CARRIERID, false);
+        if(!islock){
+            setPreInstallCarrierApkState();
+        }
         Log.d(TAG, "AppStateController init");
     }
 
@@ -174,12 +180,15 @@ public class AppStateController {
     }
 
     private void judgeAndFireSetAppState() {
-        if (!mIsCarrierConfigLoaded || mHasSetAppState) {
+        mHasSetAppState = SystemProperties.getBoolean(DSDLOCKED_HASENABLEAPP, false);
+        boolean rebootafterfirstdsdlock  = SystemProperties.getBoolean(DSDLOCKED_REBOOT, false);
+        if (!mIsCarrierConfigLoaded || mHasSetAppState || !rebootafterfirstdsdlock) {
             Log.d(TAG, " judgeAndFireSetAppState mIsCarrierConfigLoaded  " + mIsCarrierConfigLoaded + " mHasSetAppState = " + mHasSetAppState);
             return;
         }
         setPreInstallCarrierApkState();
         mHasSetAppState = true;
+        SystemProperties.set(DSDLOCKED_HASENABLEAPP, "1");
     }
 
     private void setPreInstallCarrierApkState() {
