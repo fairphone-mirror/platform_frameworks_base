@@ -290,6 +290,7 @@ import android.view.WindowManager.LayoutParams;
 import android.view.LayoutInflater;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+
 /**
  * A class handling initialization and coordination between some of the key central surfaces in
  * System UI: The notification shade, the keyguard (lockscreen), and the status bar.
