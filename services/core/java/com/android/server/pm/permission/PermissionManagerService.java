@@ -223,6 +223,11 @@ public class PermissionManagerService extends IPermissionManager.Stub {
                        return PackageManager.PERMISSION_DENIED;
                     }
                 }
+                if ("com.fairphone.myfairphone".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.POST_NOTIFICATIONS.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
             }
         }
 
