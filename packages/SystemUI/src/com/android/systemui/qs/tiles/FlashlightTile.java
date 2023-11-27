@@ -113,7 +113,7 @@ public class FlashlightTile extends QSTileImpl<BooleanState> implements
                 }
             }
         };
-        mContext.registerReceiver(mReceiver, mFilter);
+        mContext.registerReceiver(mReceiver, mFilter,Context.RECEIVER_EXPORTED);
         updateIntent_reduce = PendingIntent.getBroadcast(mContext, 0,new Intent(ACTION_REDUCE_FLASHLIGHT), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         updateIntent_close = PendingIntent.getBroadcast(mContext, 0,new Intent(ACTION_CLOSE_FLASHLIGHT), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
     }
