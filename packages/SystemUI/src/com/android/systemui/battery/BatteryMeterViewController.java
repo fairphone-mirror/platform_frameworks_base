@@ -77,7 +77,7 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
             new BatteryController.BatteryStateChangeCallback() {
                 @Override
                 public void onBatteryLevelChanged(int level, boolean pluggedIn, boolean charging) {
-                    mView.onBatteryLevelChanged(level, pluggedIn);
+                    mView.onBatteryLevelChanged(level, charging);
                 }
 
                 @Override

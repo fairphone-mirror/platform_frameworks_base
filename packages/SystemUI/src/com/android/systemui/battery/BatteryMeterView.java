@@ -199,12 +199,12 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
      * Update battery level
      *
      * @param level     int between 0 and 100 (representing percentage value)
-     * @param pluggedIn whether the device is plugged in or not
+     * @param charging whether the device is charging or not
      */
-    public void onBatteryLevelChanged(@IntRange(from = 0, to = 100) int level, boolean pluggedIn) {
-        mDrawable.setCharging(pluggedIn);
+    public void onBatteryLevelChanged(@IntRange(from = 0, to = 100) int level, boolean charging) {
+        mDrawable.setCharging(charging);
         mDrawable.setBatteryLevel(level);
-        mCharging = pluggedIn;
+        mCharging = charging;
         mLevel = level;
         updatePercentText();
     }
