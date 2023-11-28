@@ -1352,8 +1352,7 @@ public class AutomaticBrightnessController {
                 }else{
                     mLowluxlevelTimes = 0;
                 }
-                //if (mLowluxlevelTimes == 45 && mShortTermModelAnchor != -1){
-                if (mLowluxlevelTimes == 45){
+                if (mLowluxlevelTimes == 45 && mShortTermModel.mAnchor != -1){
                     resetShortTermModel();
                     updateAutoBrightness(true, false);
                 }

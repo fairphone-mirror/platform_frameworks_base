@@ -1534,7 +1534,7 @@ final class DisplayPowerController2 implements AutomaticBrightnessController.Cal
                     if (isIncreasing && slowChange) {
                         rampSpeed = mBrightnessRampRateSlowIncrease;
                     } else if (isIncreasing && !slowChange) {
-                        rampSpeed = mBrightnessRampRateFastIncrease;
+                        rampSpeed = 0f;//mBrightnessRampRateFastIncrease;
                     } else if (!isIncreasing && slowChange) {
                         rampSpeed = mBrightnessRampRateSlowDecrease;
                     } else {
@@ -1793,8 +1793,14 @@ final class DisplayPowerController2 implements AutomaticBrightnessController.Cal
                 mLogicalDisplay.getPrimaryDisplayDeviceLocked().getDisplayTokenLocked();
         final String displayUniqueId =
                 mLogicalDisplay.getPrimaryDisplayDeviceLocked().getUniqueId();
-        final DisplayDeviceConfig.HighBrightnessModeData hbmData =
-                ddConfig != null ? ddConfig.getHighBrightnessModeData() : null;
+        //Modify by t2m yingyubin for FP5-659 20230418
+        final DisplayDeviceConfig.HighBrightnessModeData hbmData;
+        if(mDisplayId == Display.DEFAULT_DISPLAY) {
+            hbmData = ddConfig != null ? ddConfig.getHighBrightnessModeData() : null;
+        } else {
+            hbmData = null;
+        }
+        //Modify by t2m yingyubin for FP5-659 20230418
         final DisplayDeviceInfo info = device.getDisplayDeviceInfoLocked();
         return new HighBrightnessModeController(mHandler, info.width, info.height, displayToken,
                 displayUniqueId, PowerManager.BRIGHTNESS_MIN, PowerManager.BRIGHTNESS_MAX, hbmData,
@@ -1942,7 +1948,7 @@ final class DisplayPowerController2 implements AutomaticBrightnessController.Cal
 
     private void loadAmbientLightSensor() {
         final int fallbackType = mDisplayId == Display.DEFAULT_DISPLAY
-                ? Sensor.TYPE_LIGHT : SensorUtils.NO_FALLBACK;
+                ? Sensor.TYPE_LIGHT_BACK : SensorUtils.NO_FALLBACK;
         mLightSensor = SensorUtils.findSensor(mSensorManager,
                 mDisplayDeviceConfig.getAmbientLightSensor(), fallbackType);
     }
@@ -2731,6 +2737,7 @@ final class DisplayPowerController2 implements AutomaticBrightnessController.Cal
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE))) {
                 handleBrightnessModeChange();
+                handleSettingsChange(true /* userSwitch */);
             } else {
                 handleSettingsChange(false /* userSwitch */);
             }

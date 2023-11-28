@@ -3359,6 +3359,7 @@ final class DisplayPowerController implements AutomaticBrightnessController.Call
         public void onChange(boolean selfChange, Uri uri) {
             if (uri.equals(Settings.System.getUriFor(Settings.System.SCREEN_BRIGHTNESS_MODE))) {
                 handleBrightnessModeChange();
+                handleSettingsChange(true /* userSwitch */);
             } else {
                 handleSettingsChange(false /* userSwitch */);
             }
