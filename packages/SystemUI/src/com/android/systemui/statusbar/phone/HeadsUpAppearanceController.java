@@ -86,6 +86,7 @@ public class HeadsUpAppearanceController extends ViewController<HeadsUpStatusBar
 
     private final View mClockView;
     private final Optional<View> mOperatorNameViewOptional;
+    private View mOperatorNameView;
 
     @VisibleForTesting
     float mExpandedHeight;
@@ -240,9 +241,15 @@ public class HeadsUpAppearanceController extends ViewController<HeadsUpStatusBar
                 show(mView);
                 hide(mClockView, View.INVISIBLE);
                 mOperatorNameViewOptional.ifPresent(view -> hide(view, View.INVISIBLE));
+                if(mOperatorNameView != null){
+                    hide(mOperatorNameView, View.INVISIBLE);
+                }
             } else {
                 show(mClockView);
                 mOperatorNameViewOptional.ifPresent(this::show);
+                if(mOperatorNameView != null){
+                    show(mOperatorNameView);
+                }
                 hide(mView, View.GONE, () -> {
                     updateParentClipping(true /* shouldClip */);
                 });
@@ -433,5 +440,9 @@ public class HeadsUpAppearanceController extends ViewController<HeadsUpStatusBar
     @Override
     public void onFullyHiddenChanged(boolean isFullyHidden) {
         updateTopEntry();
+    }
+
+    public void SetOperatorNameView(View operator){
+        mOperatorNameView = operator;
     }
 }

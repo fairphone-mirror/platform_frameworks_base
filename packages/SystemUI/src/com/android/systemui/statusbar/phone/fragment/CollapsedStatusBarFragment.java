@@ -726,6 +726,9 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
                     mOperatorNameViewControllerFactory.create((OperatorNameView) (mOperatorNameFrame.findViewById(R.id.operator_name)));
             mOperatorNameViewController.init();
             // This view should not be visible on lock-screen
+            if(mStatusBarFragmentComponent != null && mStatusBarFragmentComponent.getHeadsUpAppearanceController() != null){
+                mStatusBarFragmentComponent.getHeadsUpAppearanceController().SetOperatorNameView(mOperatorNameFrame);
+            }
             if (mKeyguardStateController.isShowing()) {
                 hideOperatorName(false);
             }
