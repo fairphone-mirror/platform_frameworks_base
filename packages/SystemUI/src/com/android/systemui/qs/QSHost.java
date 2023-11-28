@@ -51,20 +51,35 @@ public interface QSHost {
             tiles.add(GarbageMonitor.MemoryTile.TILE_SPEC);
         }
 
-        if (!tiles.contains("internet")) {
-            if (tiles.contains("wifi")) {
+        ArrayList<String> finalTiles = new ArrayList<String>();
+        finalTiles = replaceWifiOrCell(tiles);
+        finalTiles = setControlsAndWalletPosition(tiles);
+        return finalTiles;
+    }
+
+    static ArrayList<String> replaceWifiOrCell (ArrayList<String> list){
+        if (!list.contains("internet")) {
+            if (list.contains("wifi")) {
                 // Replace the WiFi with Internet, and remove the Cell
-                tiles.set(tiles.indexOf("wifi"), "internet");
-                tiles.remove("cell");
-            } else if (tiles.contains("cell")) {
+                list.set(list.indexOf("wifi"), "internet");
+                list.remove("cell");
+            } else if (list.contains("cell")) {
                 // Replace the Cell with Internet
-                tiles.set(tiles.indexOf("cell"), "internet");
+                list.set(list.indexOf("cell"), "internet");
             }
         } else {
-            tiles.remove("wifi");
-            tiles.remove("cell");
+            list.remove("wifi");
+            list.remove("cell");
         }
-        return tiles;
+        return list;
+    }
+
+    static ArrayList<String> setControlsAndWalletPosition (ArrayList<String> list){
+        if (list.contains("controls")) {
+            list.remove("controls");
+            list.add(4,"controls");
+        }
+        return list;
     }
 
     Context getContext();

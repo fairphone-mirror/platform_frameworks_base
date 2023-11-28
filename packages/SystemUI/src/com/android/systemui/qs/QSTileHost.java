@@ -75,6 +75,11 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import android.app.ActivityManager;
+import android.database.ContentObserver;
+import android.os.SystemProperties;
+import android.provider.Settings;
+
 /** Platform implementation of the quick settings tile host
  *
  * This class keeps track of the set of current tiles and is the in memory source of truth
@@ -120,6 +125,8 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
 
     private TileLifecycleManager.Factory mTileLifeCycleManagerFactory;
 
+    private ContentObserver mDefaultPaymentAppObserver;
+
     private final FeatureFlags mFeatureFlags;
 
     @Inject
@@ -163,6 +170,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
             tunerService.addTunable(this, TILES_SETTING);
             // AutoTileManager can modify mTiles so make sure mTiles has already been initialized.
             mAutoTiles = autoTiles.get();
+            setupDefaultPaymentAppObserver();
         });
     }
 
@@ -400,6 +408,57 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
         mMainExecutor.execute(() -> changeTileSpecs(tileSpecs -> tileSpecs.removeAll(specs)));
     }
 
+    private void setupDefaultPaymentAppObserver() {
+        if (mDefaultPaymentAppObserver == null) {
+            mDefaultPaymentAppObserver = new ContentObserver(null /* handler */) {
+                @Override
+                public void onChange(boolean selfChange) {
+                    mMainExecutor.execute(() -> {
+                        updateWalletTiles();
+                    });
+                }
+            };
+
+            mSecureSettings.registerContentObserverForUser(
+                    Settings.Secure.getUriFor(Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT),
+                    false /* notifyForDescendants */,
+                    mDefaultPaymentAppObserver,
+                    UserHandle.USER_ALL);
+        }
+    }
+
+    public void unregisterWalletChangeObservers() {
+        if (mDefaultPaymentAppObserver != null) {
+            mSecureSettings.unregisterContentObserver(mDefaultPaymentAppObserver);
+        }
+    }
+
+    //update wallet Title Position
+    public void updateWalletTiles(){
+        mMainExecutor.execute(() -> {
+            List<String> newSpecs = new ArrayList<>(mTileSpecs);
+            if(getDefaultPaymentApp()){
+                if(newSpecs.size() >= 3 && ! newSpecs.contains("wallet")){
+                    newSpecs.add(3,"wallet");
+                    changeTilesByUser(mTileSpecs, newSpecs);
+                }
+            } else {
+
+                if (newSpecs.contains("wallet")) {
+                    newSpecs.remove("wallet");
+                    changeTilesByUser(mTileSpecs, newSpecs);
+                }
+            }
+        });
+
+    }
+
+     public boolean getDefaultPaymentApp() {
+        String componentString = Settings.Secure.getStringForUser(mContext.getContentResolver(),
+                Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT, ActivityManager.getCurrentUser());
+        return componentString != null;
+    }
+
     /**
      * Add a tile to the end
      *
@@ -602,21 +661,12 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
             }
         }
 
-        if (!tiles.contains("internet")) {
-            if (tiles.contains("wifi")) {
-                // Replace the WiFi with Internet, and remove the Cell
-                tiles.set(tiles.indexOf("wifi"), "internet");
-                tiles.remove("cell");
-            } else if (tiles.contains("cell")) {
-                // Replace the Cell with Internet
-                tiles.set(tiles.indexOf("cell"), "internet");
-            }
-        } else {
-            tiles.remove("wifi");
-            tiles.remove("cell");
-        }
-        return tiles;
+        ArrayList<String> finalTiles = new ArrayList<String>();
+        finalTiles = QSHost.replaceWifiOrCell(tiles);
+        finalTiles = QSHost.setControlsAndWalletPosition(tiles);
+        return finalTiles;
     }
+
 
     @Override
     public void dump(PrintWriter pw, String[] args) {

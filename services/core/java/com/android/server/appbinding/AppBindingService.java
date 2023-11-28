@@ -16,6 +16,20 @@
 
 package com.android.server.appbinding;
 
+import android.app.ActivityManager;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.nfc.NfcAdapter;
+import android.nfc.cardemulation.ApduServiceInfo;
+import android.nfc.cardemulation.CardEmulation;
+import android.os.Looper;
+import android.os.Message;
+import android.os.UserManager;
+import android.provider.Settings.SettingNotFoundException;
+import com.android.internal.content.PackageMonitor;
+import java.util.List;
+
+
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.AppGlobals;
@@ -264,6 +278,12 @@ public class AppBindingService extends Binder {
                         }
                     } catch (Exception e){
                         Slog.w(TAG, "something wrong with " + packageName);
+                    }
+
+                    try{
+                       setDefaultPaymentApp();
+                    } catch (Exception e){
+                        Slog.w(TAG, "something wrong with setDefaultPayment");
                     }
 
                     if (replacing) {
@@ -548,5 +568,79 @@ public class AppBindingService extends Binder {
 
     AppBindingConstants getConstantsForTest() {
         return mConstants;
+    }
+
+    public void setDefaultPaymentApp(){
+            
+        if(getDefaultPaymentApp() == null){
+            PackageManager pm = mContext.getPackageManager();
+            UserManager um = mContext.createContextAsUser(UserHandle.of(ActivityManager.getCurrentUser()), /*flags=*/0)
+                    .getSystemService(UserManager.class);
+            List<UserHandle> userHandles = um.getEnabledProfiles();
+
+            NfcAdapter mAdapter = NfcAdapter.getDefaultAdapter(mContext);
+            CardEmulation mCardEmuManager = CardEmulation.getInstance(mAdapter);
+
+            for (UserHandle uh : userHandles) {
+                List<ApduServiceInfo> serviceInfosByProfile =
+                        mCardEmuManager.getServices(CardEmulation.CATEGORY_PAYMENT, uh.getIdentifier());
+                if (serviceInfosByProfile == null) continue;
+                for (ApduServiceInfo service : serviceInfosByProfile) {
+                    ComponentName componentName = service.getComponent();
+                    setDefaultPaymentApp(componentName,uh.getIdentifier());
+                    break;
+                }
+            }
+
+        } 
+    }
+
+    ComponentName getDefaultPaymentApp() {
+        UserManager um = mContext.createContextAsUser(UserHandle.of(ActivityManager.getCurrentUser()), /*flags=*/0)
+                .getSystemService(UserManager.class);
+        List<UserHandle> userHandles = um.getEnabledProfiles();
+        for (UserHandle uh : userHandles) {
+            ComponentName defaultApp = getDefaultPaymentApp(uh.getIdentifier());
+            if (defaultApp != null) {
+                return defaultApp;
+            }
+        }
+        return null;
+    }
+
+    ComponentName getDefaultPaymentApp(int userId) {
+        String componentString = Settings.Secure.getStringForUser(mContext.getContentResolver(),
+                Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT, userId);
+        if (componentString != null) {
+            return ComponentName.unflattenFromString(componentString);
+        } else {
+            return null;
+        }
+    }
+
+    // public void setDefaultPaymentApp(ComponentName app) {
+    //     setDefaultPaymentApp(app, UserHandle.myUserId());
+    // }
+
+    /**
+     *  Set Nfc default payment application
+     */
+    public void setDefaultPaymentApp(ComponentName app, int userId) {
+        UserManager um = mContext.createContextAsUser(
+                UserHandle.of(ActivityManager.getCurrentUser()), /*flags=*/0)
+                .getSystemService(UserManager.class);
+        List<UserHandle> userHandles = um.getEnabledProfiles();
+
+        for (UserHandle uh : userHandles) {
+            if (uh.getIdentifier() == userId) {
+                Settings.Secure.putStringForUser(mContext.getContentResolver(),
+                        Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT,
+                        app != null ? app.flattenToString() : null, uh.getIdentifier());
+            } else {
+                Settings.Secure.putStringForUser(mContext.getContentResolver(),
+                        Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT,
+                        null, uh.getIdentifier());
+            }
+        }
     }
 }
