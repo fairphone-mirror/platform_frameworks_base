@@ -3052,6 +3052,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         switch(keyCode) {
             case KeyEvent.KEYCODE_HOME:
+                if(mDefaultDisplayPolicy.blockKeysForMiniTest(false)) {
+                    Log.i(TAG, "home key pressed in mmitest.");
+                    return 0;
+                }
                 return handleHomeShortcuts(displayId, focusedToken, event);
             case KeyEvent.KEYCODE_MENU:
                 if(SystemProperties.getBoolean("dev.tct.MMITestPower", false)) {
