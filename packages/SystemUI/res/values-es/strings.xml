@@ -1177,5 +1177,11 @@ Navegua a la configuración de la batería para cambiar entre modos y obtener m�
     <string name="high_temp_message_48">Tu dispositivo se está calentando. Si estás en mitad de una instalación o transferencia de datos, completa el proceso después de colocar el dispositivo en una superficie bien ventilada.</string>
     <string name="high_temp_message_low_5">Tu batería está demasiado fría. Tu dispositivo funcionará mejor si aumentas la temperatura ambiente.</string>
     <string name="high_temp_message_low_19">Tu batería corre riesgo de congelarse. Tu dispositivo se apagara para evitar cualquier daño.</string>
+    <string name="low_temp_title">Temperatura de la batería baja</string>
+    <string name="height_temp_title">Temperatura de la batería alta</string>
+    <string name="low_temp_message_20">¡Atención! La temperatura de la batería es demasiado baja, tu dispositivo se apagará</string>
+    <string name="height_temp_message_55">¡Atención! La temperatura de la batería es demasiado alta, cierra las aplicaciones que no sean necesarias</string>
+    <string name="height_temp_message_60">¡Atención! La temperatura de la batería es demasiado alta, tu dispositivo se apagará</string>
+    <string name="face_unlocking">desbloqueo facial en curso</string>
 
 </resources>

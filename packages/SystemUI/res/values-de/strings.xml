@@ -1177,5 +1177,11 @@ Navigiere zu den Batterieeinstellungen, um zwischen den Modi zu wechseln und meh
     <string name="high_temp_message_48">Dein Telefon wird warm. Falls du gerade eine Installation oder Übertragung ausführst, bringe dein Telefon an eine gut belüftete Oberfläche und schließe den Vorgang ab.</string>
     <string name="high_temp_message_low_5">Dein Akku wird zu kalt. Dein Fairphone funktioniert besser, wenn du es auf Raumtemperatur zurückbringst.</string>
     <string name="high_temp_message_low_19">Warnung! Dein Akku ist stark unterkühlt. Dein Gerät wird nun heruntergefahren, um Schäden zu vermeiden.</string>
+    <string name="low_temp_title">Niedrige Akkutemperatur</string>
+    <string name="height_temp_title">Hohe Akkutemperatur</string>
+    <string name="low_temp_message_20">Warnung! Die Akkutemperatur ist zu niedrig, dein Gerät wird ausgeschaltet</string>
+    <string name="height_temp_message_55">Warnung! Akkutemperatur ist zu hoch, nicht erforderliche Anwendungen schließen</string>
+    <string name="height_temp_message_60">Warnung! Akkutemperatur ist zu hoch, dein Gerät wird ausgeschaltet</string>
+    <string name="face_unlocking">Entsperrung durch Gesichtserkennung wird ausgeführt</string>
 
 </resources>

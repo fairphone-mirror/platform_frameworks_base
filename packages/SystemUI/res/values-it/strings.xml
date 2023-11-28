@@ -1177,5 +1177,11 @@ Vai nelle Impostazioni batteria per selezionare tra le modalità presenti e scop
     <string name="high_temp_message_48">Il tuo telefono si sta scaldando eccessivamente. Se sei a metà di una installazione o di un trasferimento di file, completa il processo dopo aver posizionato il telefono su una superficie ben ventilata.</string>
     <string name="high_temp_message_low_5">La tua batteria si sta raffreddando eccessivamente. Il tuo Fairphone funzionerà meglio se lo riporti a temperatura ambiente.</string>
     <string name="high_temp_message_low_19">Attenzione! La batteria sta congelando. Il tuo dispositivo si spegnerà per evitare possibili danni.</string>
+    <string name="low_temp_title">Temperatura della batteria bassa</string>
+    <string name="height_temp_title">Temperatura della batteria alta</string>
+    <string name="low_temp_message_20">Attenzione! La temperatura della batteria è troppo bassa, il dispositivo verrà spento</string>
+    <string name="height_temp_message_55">Avvertimento! La temperatura della batteria è troppo alta, chiudere le applicazioni non necessarie</string>
+    <string name="height_temp_message_60">ATTENZIONE! La temperatura della batteria è troppo alta, il dispositivo verrà spento</string>
+    <string name="face_unlocking">Sblocco facciale in corso</string>
 
 </resources>

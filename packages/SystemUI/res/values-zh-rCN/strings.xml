@@ -1170,4 +1170,10 @@
     <string name="charging_mode_dialog">自定义充电速度，以优化电池寿命或尽快恢复满电状态。导航至电池设置以在模式之间切换并了解更多信息。</string>
     <string name="cmdialog_skip">跳过</string>
     <string name="cmdialog_bats">电池设置</string>
+    <string name="low_temp_title">电池温度低</string>
+    <string name="height_temp_title">电池温度高</string>
+    <string name="low_temp_message_20">警告！电池温度过低，您的设备将关闭</string>
+    <string name="height_temp_message_55">警告！电池温度过高，请关闭不必要的应用程序</string>
+    <string name="height_temp_message_60">警告！电池温度过高，您的设备将关闭</string>
+
 </resources>

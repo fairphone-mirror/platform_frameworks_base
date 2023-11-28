@@ -1176,5 +1176,11 @@
     <string name="high_temp_message_48">De temperatuur van het toestel is aan de hoge kant. Als je halverwege een installatie of data-overdracht bent, leg het toestel op een goed geventileerd oppervlak om het process succesvol af te ronden.</string>
     <string name="high_temp_message_low_5">De temperatuur van de batterij is aan de lage kant. Breng het toestel terug op kamertemperatuur voor de beste prestaties.</string>
     <string name="high_temp_message_low_19">Waarschuwing! De batterij raakt onderkoelt. Het toestel wordt nu uitgeschakeld om schade te voorkomen.</string>
+    <string name="low_temp_title">Lage batterijtemperatuur</string>
+    <string name="height_temp_title">Hoge batterijtemperatuur</string>
+    <string name="low_temp_message_20">Waarschuwing! De batterijtemperatuur is te laag. Je apparaat wordt uitgeschakeld</string>
+    <string name="height_temp_message_55">Waarschuwing! De batterijtemperatuur is te hoog. Sluit onnodige applicaties af</string>
+    <string name="height_temp_message_60">Waarschuwing! De batterijtemperatuur is te hoog. Je apparaat wordt uitgeschakeld</string>
+    <string name="face_unlocking">De gezichtsontgrendeling is in uitvoering</string>
 
 </resources>

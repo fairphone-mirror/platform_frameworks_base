@@ -1177,5 +1177,11 @@ Navigera till batteriinställningar för att växla mellan lägen och lära dig 
     <string name="high_temp_message_48">Din telefon blir varm. Om du är halvvägs genom en installation eller överföring, fyll i processen efter att ha placerat telefonen på en väl ventilerad yta.</string>
     <string name="high_temp_message_low_5">Ditt batteri är kallt. Din fairphone kommer att prestera bättre om du returnerar den till rumstemperatur.</string>
     <string name="high_temp_message_low_19">Varning! Ditt batteri fryser. Din enhet stängs nu för att förhindra skador</string>
+    <string name="low_temp_title">Låg batteritemperatur</string>
+    <string name="height_temp_title">Hög batteritemperatur</string>
+    <string name="low_temp_message_20">Varning! Batteritemperaturen är för låg, din enhet kommer att stängas av</string>
+    <string name="height_temp_message_55">Varning! Batteritemperaturen är för hög, stäng onödiga program</string>
+    <string name="height_temp_message_60">Varning! Batteritemperaturen är för hög, din enhet kommer att stängas av</string>
+    <string name="face_unlocking">ansiktsupplåsning pågår</string>
 
 </resources>

@@ -1176,5 +1176,11 @@
     <string name="high_temp_message_48">Din telefon bliver varm. Hvis du er midtvejs gennem en installation eller overførsel, skal du udfylde processen efter at have placeret telefonen på en godt ventileret overflade.</string>
     <string name="high_temp_message_low_5">Dit batteri er ved at blive koldt. Din fairphone fungerer bedre, hvis du returnerer den til stuetemperatur.</string>
     <string name="high_temp_message_low_19">Advarsel! Dit batteri fryser. Din enhed lukker nu for at forhindre skade</string>
+    <string name="low_temp_title">Lav batteritemperatur</string>
+    <string name="height_temp_title">Høj batteritemperatur</string>
+    <string name="low_temp_message_20">Advarsel! Batteritemperaturen er for lav. Enheden slukkes</string>
+    <string name="height_temp_message_55">Advarsel! Batteritemperaturen er for høj. Luk unødvendige applikationer</string>
+    <string name="height_temp_message_60">Advarsel! Batteritemperaturen er for høj. Enheden slukkes</string>
+    <string name="face_unlocking">oplåsning med ansigtsgenkendelse i gang</string>
 
 </resources>
