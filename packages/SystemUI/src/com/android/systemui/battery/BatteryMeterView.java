@@ -91,6 +91,9 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
     private int mNonAdaptedForegroundColor;
     private int mNonAdaptedBackgroundColor;
 
+    private boolean mHighBatteryColor;
+    private boolean mLowBatteryColor;
+
     private BatteryEstimateFetcher mBatteryEstimateFetcher;
 
     public BatteryMeterView(Context context, AttributeSet attrs) {
@@ -382,6 +385,17 @@ public class BatteryMeterView extends LinearLayout implements DarkReceiver {
         }
 
         updateShowPercent();
+    }
+
+    void onBatteryColorChanged(boolean highBatteryColor,boolean lowBatteryColor) {
+        if (mHighBatteryColor == highBatteryColor && mLowBatteryColor == lowBatteryColor) {
+            return;
+        }
+        mHighBatteryColor = highBatteryColor;
+        mLowBatteryColor = lowBatteryColor;
+
+        mDrawable.setHighBatteryEnabled(mHighBatteryColor);
+        mDrawable.setLowBatteryEnabled(mLowBatteryColor);
     }
 
     /**

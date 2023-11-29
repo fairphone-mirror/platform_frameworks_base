@@ -189,6 +189,26 @@ class AccessorizedBatteryDrawable(
         return mainBatteryDrawable.powerSaveEnabled
     }
 
+    /** Sets whether battery is high. */
+    fun setHighBatteryEnabled(highBatteryEnabled: Boolean) {
+        mainBatteryDrawable.highBatteryEnabled = highBatteryEnabled
+    }
+
+    /** Returns whether battery is currently high. */
+    fun getHighBatteryEnabled(): Boolean {
+        return mainBatteryDrawable.highBatteryEnabled
+    }
+
+    /** Sets whether battery is is low. */
+    fun setLowBatteryEnabled(lowBatteryEnabled: Boolean) {
+        mainBatteryDrawable.lowBatteryEnabled = lowBatteryEnabled
+    }
+
+    /** Returns whether battery is currently low. */
+    fun getLowBatteryEnabled(): Boolean {
+        return mainBatteryDrawable.lowBatteryEnabled
+    }
+
     /** Sets the colors to use for the icon. */
     fun setColors(fgColor: Int, bgColor: Int, singleToneColor: Int) {
         shieldPaint.color = if (dualTone) fgColor else singleToneColor

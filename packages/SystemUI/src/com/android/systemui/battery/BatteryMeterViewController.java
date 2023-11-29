@@ -91,6 +91,11 @@ public class BatteryMeterViewController extends ViewController<BatteryMeterView>
                 }
 
                 @Override
+                public void onBatteryColorChanged(boolean highBatteryColor, boolean lowBatteryColor) {
+                    mView.onBatteryColorChanged(highBatteryColor,lowBatteryColor);
+                }
+
+                @Override
                 public void onIsBatteryDefenderChanged(boolean isBatteryDefender) {
                     mView.onIsBatteryDefenderChanged(isBatteryDefender);
                 }
