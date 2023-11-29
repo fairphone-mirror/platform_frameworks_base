@@ -37,6 +37,7 @@ import androidx.annotation.Nullable;
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.keyguard.AuthKeyguardMessageArea;
 import com.android.keyguard.LockIconViewController;
+import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.dagger.KeyguardBouncerComponent;
 import com.android.systemui.R;
 import com.android.systemui.classifier.FalsingCollector;
@@ -51,6 +52,7 @@ import com.android.systemui.keyguard.shared.model.TransitionStep;
 import com.android.systemui.keyguard.ui.binder.KeyguardBouncerViewBinder;
 import com.android.systemui.keyguard.ui.viewmodel.KeyguardBouncerViewModel;
 import com.android.systemui.keyguard.ui.viewmodel.PrimaryBouncerToGoneTransitionViewModel;
+import com.android.keyguard.KeyguardSecurityContainerController;
 import com.android.systemui.multishade.domain.interactor.MultiShadeInteractor;
 import com.android.systemui.multishade.domain.interactor.MultiShadeMotionEventInteractor;
 import com.android.systemui.multishade.ui.view.MultiShadeView;
@@ -483,6 +485,18 @@ public class NotificationShadeWindowViewController {
 
     public NotificationShadeWindowView getView() {
         return mView;
+    }
+
+    public LockIconViewController getLockIconViewController() {
+        return mLockIconViewController;
+    }
+
+    public void doUnlock(){
+        KeyguardSecurityContainerController keyguardSecurityContainerController = KeyguardBouncerViewBinder.getSecurityContainerController();
+        final int userId =  KeyguardUpdateMonitor.getCurrentUser();
+        keyguardSecurityContainerController.showNextSecurityScreenOrFinish(
+                true, userId, true,
+                keyguardSecurityContainerController.getCurrentSecurityMode());
     }
 
     public void cancelCurrentTouch() {

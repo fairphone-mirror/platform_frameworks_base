@@ -42,6 +42,7 @@ import com.android.systemui.classifier.FalsingCollector;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.flags.FeatureFlags;
 import com.android.systemui.util.concurrency.DelayableExecutor;
+import com.android.systemui.FaceUnlockUtil;
 
 import java.util.List;
 
@@ -193,6 +194,9 @@ public class KeyguardPasswordViewController
         mPaused = false;
         if (reason != KeyguardSecurityView.SCREEN_ON || mShowImeAtScreenOn) {
             showInput();
+        }
+        if(mIvFaceUnlock != null){
+            mIvFaceUnlock.setVisibility(FaceUnlockUtil.getInstance().hasFaceUnlock(getContext()) ? View.VISIBLE : View.GONE);
         }
     }
 

@@ -3192,6 +3192,15 @@
     <string name="cmdialog_skip">Skip</string>
     <string name="cmdialog_bats">Battery Settings</string>
 
+    <string name="face_unlocking">Face unlocking in progress</string>
+    <string name="face_unlock_failed">No match.Touch icon to use face unlock.</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">Too many incorrect attempts.Use pattern to unlock.</string>
+    <string name="too_many_face_unlock_failed_to_use_password">Too many incorrect attempts.Use password to unlock.</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">Too many incorrect attempts.Use pin to unlock.</string>
+    <string name="required_to_use_pattern">Pattern required for addtional security</string>
+    <string name="required_to_use_password">Password required for addtional security</string>
+    <string name="required_to_use_pin">PIN required for addtional security</string>
+
     <string name="usbntc_temp_message">High temperature at USB connector. Do not touch the phone and disconnect the charger and cable immediately!</string>
     <string name="usbntc_temp_title">High USB NTC Temperature</string>
 

@@ -266,6 +266,7 @@ import java.util.concurrent.Executor;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import com.android.systemui.FaceUnlockUtil;
 
 import android.provider.Settings;
 import android.content.ContentResolver;
@@ -1599,6 +1600,9 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        //add by t2m yingyubin for FP5-186 20230325
+        filter.addAction("intent.action.faceunlock");
+        //add by t2m yingyubin for FP5-186 20230325
         mBroadcastDispatcher.registerReceiver(mBroadcastReceiver, filter, null, UserHandle.ALL);
     }
 
@@ -2361,7 +2365,19 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                 }
                 finishBarAnimations();
                 resetUserExpandedStates();
+            //add by t2m yingyubin for FP5-186 20230325
+            } else if ("intent.action.faceunlock".equals(action)) {
+                int failTimes = intent.getIntExtra("faceunlock_status", 0);
+                boolean isFailed = failTimes != 0;
+                FaceUnlockUtil.getInstance().setFailTimes(failTimes,false);
+                if(isFailed) {
+                    mKeyguardIndicationController.showFaceUnlockFailed(failTimes);
+                } else {
+                    mNotificationShadeWindowViewController.doUnlock();
+                }
+                mNotificationShadeWindowViewController.getLockIconViewController().updateFaceFail();
             }
+            //add by t2m yingyubin for FP5-186 20230325
             Trace.endSection();
         }
     };
@@ -2644,6 +2660,13 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
             mStatusBarStateController.setState(StatusBarState.KEYGUARD);
         }
         updatePanelExpansionForKeyguard();
+        if(isWakingOrAwake() && mStatusBarStateController.getState() == StatusBarState.KEYGUARD) {
+            if(FaceUnlockUtil.getInstance().getFailTimes() < 3) {
+                mKeyguardIndicationController.startAncFaceUnlock();
+            } else {
+                mKeyguardIndicationController.showFaceUnlockFailed(3);
+            }
+        }
         Trace.endSection();
     }
 
@@ -2820,6 +2843,9 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
      */
     @Override
     public void finishKeyguardFadingAway() {
+        FaceUnlockUtil.getInstance().setFailTimes(0, true);
+        FaceUnlockUtil.getInstance().setCountDownUnlock(mContext, 0);
+        mNotificationShadeWindowViewController.getLockIconViewController().updateFaceFail();
         mKeyguardStateController.notifyKeyguardDoneFading();
         mScrimController.setExpansionAffectsAlpha(true);
 

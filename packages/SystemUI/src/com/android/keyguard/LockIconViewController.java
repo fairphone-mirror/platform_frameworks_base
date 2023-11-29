@@ -22,6 +22,7 @@ import static android.hardware.biometrics.BiometricSourceType.FINGERPRINT;
 import static com.android.keyguard.LockIconView.ICON_FINGERPRINT;
 import static com.android.keyguard.LockIconView.ICON_LOCK;
 import static com.android.keyguard.LockIconView.ICON_UNLOCK;
+import static com.android.keyguard.LockIconView.ICON_FACE;
 import static com.android.systemui.doze.util.BurnInHelperKt.getBurnInOffset;
 import static com.android.systemui.flags.Flags.DOZING_MIGRATION_1;
 import static com.android.systemui.util.kotlin.JavaAdapterKt.collectFlow;
@@ -78,6 +79,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
+import com.android.systemui.FaceUnlockUtil;
 
 /**
  * Controls when to show the LockIcon affordance (lock/unlocked icon or circle) on lock screen.
@@ -139,6 +141,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
 
     private boolean mShowUnlockIcon;
     private boolean mShowLockIcon;
+    private boolean mShowFaceIcon;
 
     // for udfps when strong auth is required or unlocked on AOD
     private boolean mShowAodLockIcon;
@@ -252,6 +255,7 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         mAccessibilityManager.addAccessibilityStateChangeListener(
                 mAccessibilityStateChangeListener);
         updateAccessibility();
+        FaceUnlockUtil.getInstance().addCallback(mCallback);
     }
 
     private void updateAccessibility() {
@@ -272,10 +276,39 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
 
         mAccessibilityManager.removeAccessibilityStateChangeListener(
                 mAccessibilityStateChangeListener);
+        mView.stopFaceViewAnim();
+        FaceUnlockUtil.getInstance().removeCallback(mCallback);
     }
+
+    private final FaceUnlockUtil.FaceUnlockCallback mCallback = new FaceUnlockUtil.FaceUnlockCallback() {
+        @Override
+        public void onFaceAuthResult(int failTimes){
+            if(failTimes >= 3) {
+                mView.stopFaceViewAnim();
+                mView.setOnClickListener(null);
+            } else if(failTimes > 0) {
+                mView.shakeFaceView();
+            }
+            mVibrator.vibrate(
+                Process.myUid(),
+                getContext().getOpPackageName(),
+                UdfpsController.EFFECT_CLICK,
+                "face-unlock-fail",
+                TOUCH_VIBRATION_ATTRIBUTES);
+        }
+
+        @Override
+        public void onStartFaceUnlock(){
+            mView.scaleFaceView();
+        }
+    };
 
     public float getTop() {
         return mView.getLocationTop();
+    }
+
+    public void updateFaceFail(){
+        updateVisibility();
     }
 
     public float getBottom() {
@@ -295,6 +328,14 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
         mShowUnlockIcon = mCanDismissLockScreen && isLockScreen();
         mShowAodUnlockedIcon = mIsDozing && mUdfpsEnrolled && !mRunningFPS && mCanDismissLockScreen;
         mShowAodLockIcon = mIsDozing && mUdfpsEnrolled && !mRunningFPS && !mCanDismissLockScreen;
+        //add by t2m yingyubin for FP5-186 20230331
+        boolean showFaceIcon = mShowLockIcon && FaceUnlockUtil.getInstance().isFaceUnlockEnable(getContext());
+        if(!showFaceIcon && mShowFaceIcon != showFaceIcon) {
+            mView.setImageDrawable(mIcon);
+            mView.setOnClickListener(null);
+            mView.stopFaceViewAnim();
+        }
+        mShowFaceIcon = showFaceIcon;
 
         final CharSequence prevContentDescription = mView.getContentDescription();
         if (mShowLockIcon) {
@@ -303,7 +344,13 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
                 // in this drawable
                 mView.updateIcon(ICON_FINGERPRINT, false);
             }
-            mView.updateIcon(ICON_LOCK, false);
+            if(showFaceIcon) {
+                mView.updateIcon(ICON_FACE, false);
+                mView.setOnClickListener(mFaceIconClickListener);
+                //add by t2m yingyubin for FP5-186 20230331
+            } else {
+                mView.updateIcon(ICON_LOCK, false);
+            }
             mView.setContentDescription(mLockedLabel);
             mView.setVisibility(View.VISIBLE);
         } else if (mShowUnlockIcon) {
@@ -340,6 +387,13 @@ public class LockIconViewController extends ViewController<LockIconView> impleme
             mView.announceForAccessibility(mView.getContentDescription());
         }
     }
+
+    private final View.OnClickListener mFaceIconClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            FaceUnlockUtil.getInstance().startFaceUnlock(getContext());
+        }
+    };
 
     private final View.AccessibilityDelegate mAccessibilityDelegate =
             new View.AccessibilityDelegate() {

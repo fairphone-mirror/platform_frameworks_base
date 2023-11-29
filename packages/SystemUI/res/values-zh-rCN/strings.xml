@@ -1164,6 +1164,14 @@
     <string name="set_default_notes_app_toast_content" msgid="2812374329662610753">"在设置中设置默认记事应用"</string>
     <string name="install_app" msgid="5066668100199613936">"安装应用"</string>
     <string name="mobile_data_summary_not_allowed_to_disable_data">其它SIM卡通话期间，不可用</string>
+    <string name="face_unlocking">正在人脸解锁</string>
+    <string name="face_unlock_failed">不匹配。触摸图标使用面部解锁。</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">错误的尝试太多。使用图案解锁。</string>
+    <string name="too_many_face_unlock_failed_to_use_password">错误的尝试太多。使用密码解锁。</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">错误的尝试太多。使用pin解锁。</string>
+    <string name="required_to_use_pattern">需要图案以增加安全性</string>
+    <string name="required_to_use_password">需要密码以增加安全性</string>
+    <string name="required_to_use_pin">需要PIN以增加安全性</string>
     <string name="charging_state">充电模式</string>
     <string name="charging_slow">慢充模式</string>
     <string name="charging_normal">正常模式</string>

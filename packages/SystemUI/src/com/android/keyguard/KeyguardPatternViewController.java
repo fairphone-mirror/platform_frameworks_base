@@ -35,6 +35,7 @@ import com.android.internal.widget.LockPatternView.Cell;
 import com.android.internal.widget.LockscreenCredential;
 import com.android.keyguard.EmergencyButtonController.EmergencyButtonCallback;
 import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
+import com.android.systemui.FaceUnlockUtil;
 import com.android.systemui.R;
 import com.android.systemui.classifier.FalsingClassifier;
 import com.android.systemui.classifier.FalsingCollector;
@@ -366,6 +367,7 @@ public class KeyguardPatternViewController
     private void handleAttemptLockout(long elapsedRealtimeDeadline) {
         mLockPatternView.clearPattern();
         mLockPatternView.setEnabled(false);
+        FaceUnlockUtil.getInstance().setCountDownUnlock(getContext(), 1);
         final long elapsedRealtime = SystemClock.elapsedRealtime();
         final long secondsInFuture = (long) Math.ceil(
                 (elapsedRealtimeDeadline - elapsedRealtime) / 1000.0);

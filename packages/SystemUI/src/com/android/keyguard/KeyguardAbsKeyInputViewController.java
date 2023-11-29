@@ -34,6 +34,7 @@ import com.android.internal.widget.LockscreenCredential;
 import com.android.keyguard.EmergencyButtonController.EmergencyButtonCallback;
 import com.android.keyguard.KeyguardAbsKeyInputView.KeyDownListener;
 import com.android.keyguard.KeyguardSecurityModel.SecurityMode;
+import com.android.systemui.FaceUnlockUtil;
 import com.android.systemui.R;
 import com.android.systemui.classifier.FalsingClassifier;
 import com.android.systemui.classifier.FalsingCollector;
@@ -138,6 +139,7 @@ public abstract class KeyguardAbsKeyInputViewController<T extends KeyguardAbsKey
     // Prevent user from using the PIN/Password entry until scheduled deadline.
     protected void handleAttemptLockout(long elapsedRealtimeDeadline) {
         mView.setPasswordEntryEnabled(false);
+        FaceUnlockUtil.getInstance().setCountDownUnlock(getContext(), 1);
         mView.setPasswordEntryInputEnabled(false);
         mLockedOut = true;
         long elapsedRealtime = SystemClock.elapsedRealtime();

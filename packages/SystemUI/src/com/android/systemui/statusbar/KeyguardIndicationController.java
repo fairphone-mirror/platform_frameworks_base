@@ -115,6 +115,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
+import com.android.systemui.FaceUnlockUtil;
 import android.os.SystemProperties;
 
 /**
@@ -809,6 +810,43 @@ public class KeyguardIndicationController {
 
         updateTransient();
     }
+
+    //add by t2m yingyubin for FP5-186 20230331
+    public void startAncFaceUnlock() {
+        if(FaceUnlockUtil.getInstance().isFaceUnlockEnable(mContext)) {
+            FaceUnlockUtil.getInstance().startFaceUnlock(mContext);
+            showBiometricMessage(mContext.getString(R.string.face_unlocking));
+            hideBiometricMessageDelayed(DEFAULT_HIDE_DELAY_MS);
+        }
+    }
+
+    public void showFaceUnlockFailed(int failTimes) {
+        if(failTimes >= 3) {
+            final int security = whitelistIpcs(() ->
+                    mLockPatternUtils.getActivePasswordQuality(KeyguardUpdateMonitor.getCurrentUser()));
+            switch(security){
+                case DevicePolicyManager.PASSWORD_QUALITY_SOMETHING:
+                    showBiometricMessage(
+                        mContext.getString(R.string.too_many_face_unlock_failed_to_use_pattern));
+                    break;
+                case DevicePolicyManager.PASSWORD_QUALITY_ALPHABETIC:
+                case DevicePolicyManager.PASSWORD_QUALITY_ALPHANUMERIC:
+                case DevicePolicyManager.PASSWORD_QUALITY_COMPLEX:
+                case DevicePolicyManager.PASSWORD_QUALITY_MANAGED:
+                    showBiometricMessage(
+                        mContext.getString(R.string.too_many_face_unlock_failed_to_use_password));
+                    break;
+                default:
+                    showBiometricMessage(
+                        mContext.getString(R.string.too_many_face_unlock_failed_to_use_pin));
+                    break;
+            }
+        } else {
+            showBiometricMessage(
+                mContext.getString(R.string.face_unlock_failed));
+        }
+    }
+    //add by t2m yingyubin for FP5-186 20230331
 
     private void showBiometricMessage(CharSequence biometricMessage) {
         showBiometricMessage(biometricMessage, null);

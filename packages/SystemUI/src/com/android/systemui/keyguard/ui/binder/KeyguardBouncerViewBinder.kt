@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 
 /** Binds the bouncer container to its view model. */
 object KeyguardBouncerViewBinder {
+    private lateinit var mSecurityController:KeyguardSecurityContainerController;
     @JvmStatic
     fun bind(
         view: ViewGroup,
@@ -50,6 +51,7 @@ object KeyguardBouncerViewBinder {
         val securityContainerController: KeyguardSecurityContainerController =
             componentFactory.create(view).securityContainerController
         securityContainerController.init()
+        mSecurityController = securityContainerController
         val delegate =
             object : BouncerViewDelegate {
                 override fun isFullScreenBouncer(): Boolean {
@@ -233,5 +235,10 @@ object KeyguardBouncerViewBinder {
                 }
             }
         }
+    }
+
+    @JvmStatic
+    fun getSecurityContainerController() : KeyguardSecurityContainerController {
+        return mSecurityController;
     }
 }
