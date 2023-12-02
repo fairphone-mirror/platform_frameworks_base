@@ -908,18 +908,20 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     private boolean isVowifiAvailable() {
-        // modify by T2M.zhang renjie for FP4-3605 22-03-24 begin
+        //[BUG]-Modify-Begin by shaopan.tang 2023-12-02 FP5-2939 VoWifi icon not shown normally
         int regTech = ImsRegistrationImplBase.REGISTRATION_TECH_NONE;
+        boolean imsRegistered = false;
+        boolean isWifiCallingAvailable = false;
         if (mPhone != null) {
             regTech = mPhone.getImsRegTechnologyForMmTel();
+            imsRegistered = mPhone.isImsRegistered();
+            isWifiCallingAvailable = mPhone.isWifiCallingAvailable();
         }
-        //[BUG]-Modify-Begin by huan.sun
-        Log.i(mTag, "isVowifiAvailable, getDataNetworkType() = " 
-            + getDataNetworkType() + " mCurrentState.voiceCapable = " +mCurrentState.voiceCapable + " mCurrentState.imsRegistered = "+ mCurrentState.imsRegistered
-            + ", regTech = " + regTech);
-        return mCurrentState.voiceCapable &&  mCurrentState.imsRegistered
-               && (ImsRegistrationImplBase.REGISTRATION_TECH_IWLAN == regTech);//[BUG]-Modify by huan.sun 2022-11-24 [FP4S-690]VoWifi icon display obnormall
-        // modify by T2M.zhang renjie for FP4-3605 22-03-24 end
+
+        Log.i(mTag, "isVowifiAvailable, mCurrentState.voiceCapable = " +mCurrentState.voiceCapable + " mCurrentState.imsRegistered = "+ mCurrentState.imsRegistered + ", regTech = " + regTech);
+        Log.i(mTag, "isVowifiAvailable, imsRegistered = " + imsRegistered + " isWifiCallingAvailable = "+ isWifiCallingAvailable);
+        return (isWifiCallingAvailable && imsRegistered && (ImsRegistrationImplBase.REGISTRATION_TECH_IWLAN == regTech));
+        //[BUG]-Modify-End by shaopan.tang
     }
 
     private MobileIconGroup getVowifiIconGroup() {
