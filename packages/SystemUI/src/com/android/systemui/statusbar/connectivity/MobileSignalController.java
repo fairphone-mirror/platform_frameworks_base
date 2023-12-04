@@ -289,6 +289,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
      * Stop listening for phone state changes.
      */
     public void unregisterListener() {
+        Log.d(mTag, "unregisterListener");
         mMobileStatusTracker.setListening(false);
         mContext.getContentResolver().unregisterContentObserver(mObserver);
         mContext.unregisterReceiver(mVolteSwitchObserver);
