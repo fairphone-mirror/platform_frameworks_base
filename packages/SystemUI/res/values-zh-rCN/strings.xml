@@ -1183,5 +1183,7 @@
     <string name="low_temp_message_20">警告！电池温度过低，您的设备将关闭</string>
     <string name="height_temp_message_55">警告！电池温度过高，请关闭不必要的应用程序</string>
     <string name="height_temp_message_60">警告！电池温度过高，您的设备将关闭</string>
-
+    <string name="proximity_top">请勿遮挡屏幕顶端</string>
+    <string name="proximity_mode">口袋模式</string>
+    <string name="proximity_action">向左或右滑动可强制退出</string>
 </resources>

@@ -3191,6 +3191,9 @@
     <string name="charging_mode_dialog">Customize your charging speed to either optimize your battery’s longevity or getting back to full power as soon as possible. Navigate to Battery Settings to switch between modes and learn more.</string>
     <string name="cmdialog_skip">Skip</string>
     <string name="cmdialog_bats">Battery Settings</string>
+    <string name="proximity_top">Don’t cover the top of the screen</string>
+    <string name="proximity_mode">Pocket Mode</string>
+    <string name="proximity_action">Swipe left or right to exit this mode</string>
 
     <string name="face_unlocking">Face unlocking in progress</string>
     <string name="face_unlock_failed">No match.Touch icon to use face unlock.</string>

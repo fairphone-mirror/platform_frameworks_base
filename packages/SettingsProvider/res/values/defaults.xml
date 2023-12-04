@@ -342,4 +342,7 @@
     <bool name="def_dcdimming_enabled">false</bool>
     <bool name="def_dcdimming_is_UI_finish">true</bool>
     <string name="def_operator_applist">""</string>
+
+    <!-- Default for Settings.Secure.DISABLE_POCKET_MODE -->
+    <bool name="def_disable_pocket_mode">false</bool>
 </resources>

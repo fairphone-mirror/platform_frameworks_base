@@ -1425,4 +1425,24 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
+    <declare-styleable name="SpreadView">
+        <!--中心圆颜色-->
+        <attr name="spread_center_color" format="color"/>
+        <!--中心圆半径-->
+        <attr name="spread_radius" format="integer"/>
+        <!--扩散圆颜色-->
+        <attr name="spread_spread_color" format="color"/>
+        <!--扩散间距-->
+        <attr name="spread_distance" format="integer"/>
+        <!--扩散最大半径-->
+        <attr name="spread_max_radius" format="integer"/>
+        <!--扩散延迟间隔-->
+        <attr name="spread_delay_milliseconds" format="integer"/>
+    </declare-styleable>
+
+    <style name="PocketModeDialog_Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

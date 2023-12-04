@@ -2392,6 +2392,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
             loadStringSetting(stmt, "def_operator_applist",
                     R.string.def_operator_applist);
+
+            //disable pocket mode
+            loadBooleanSetting(stmt, Settings.Secure.DISABLE_POCKET_MODE,
+                      R.bool.def_disable_pocket_mode);
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,
              * secure, and system settings are no longer stored in a database
