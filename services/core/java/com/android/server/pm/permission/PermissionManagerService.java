@@ -484,10 +484,21 @@ public class PermissionManagerService extends IPermissionManager.Stub {
         }
     }
 
+    /**
+     * Reference propagation over binder is affected by the ownership of the object. So if
+     * the token is owned by client, references to the token on client side won't be
+     * propagated to the server and the token may still be garbage collected on server side.
+     * But if the token is owned by server, references to the token on client side will now
+     * be propagated to the server since it's a foreign object to the client, and that will
+     * keep the token referenced on the server side as long as the client is alive and
+     * holding it.
+     */
     @Override
-    public void registerAttributionSource(@NonNull AttributionSourceState source) {
+    public IBinder registerAttributionSource(@NonNull AttributionSourceState source) {
+        Binder token = new Binder();
         mAttributionSourceRegistry
-                .registerAttributionSource(new AttributionSource(source));
+                .registerAttributionSource(new AttributionSource(source).withToken(token));
+        return token;
     }
 
     @Override
@@ -1220,7 +1231,6 @@ public class PermissionManagerService extends IPermissionManager.Stub {
                 @Nullable String message, boolean forDataDelivery, boolean startDataDelivery,
                 boolean fromDatasource, int attributedOp) {
             PermissionInfo permissionInfo = sPlatformPermissions.get(permission);
-
             if (permissionInfo == null) {
                 try {
                     permissionInfo = context.getPackageManager().getPermissionInfo(permission, 0);
@@ -1280,8 +1290,8 @@ public class PermissionManagerService extends IPermissionManager.Stub {
 
                 // If the call is from a datasource we need to vet only the chain before it. This
                 // way we can avoid the datasource creating an attribution context for every call.
-                if (!(fromDatasource && current.equals(attributionSource))
-                        && next != null && !current.isTrusted(context)) {
+                boolean isDatasource = fromDatasource && current.equals(attributionSource);
+                if (!isDatasource && next != null && !current.isTrusted(context)) {
                     return PermissionChecker.PERMISSION_HARD_DENIED;
                 }
 
