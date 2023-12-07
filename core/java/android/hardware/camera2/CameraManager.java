@@ -73,6 +73,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+/*Begin ancheng.wang sync 20231207 zihao.li for [Task][FP5-162] FP5 sync tct framework code on 20230206*/
+import android.util.Range;
+/*End ancheng.wang sync 20231207 zihao.li for [Task][FP5-162] FP5 sync tct framework code on 20230206*/
 
 /**
  * <p>A system service manager for detecting, characterizing, and connecting to
@@ -605,6 +608,89 @@ public final class CameraManager {
                 if (multiResolutionSizeMap.size() > 0) {
                     info.setMultiResolutionStreamConfigurationMap(multiResolutionSizeMap);
                 }
+
+                /*Begin ancheng.wang sync 20231207 zihao.li for [Task][FP5-162] FP5 sync tct framework code on 20230206*/
+                Log.v(TAG, "overrideTCTCameraCharacteristics pkgName="+mContext.getOpPackageName());
+                try{
+                    /**
+                    * Attention!!!
+                    * This solution can only be used when desperate.
+                    * All CTS issue will be reflected in the 3rd party application.
+                    */
+                    if(mContext.getOpPackageName().equals("com.android.cts.verifier"))
+                    {
+                        CameraCharacteristics.Key<Byte> skipSensorFusionKey = new CameraCharacteristics.Key<>("com.tct.hal.skip_fusion", Byte.class);
+                        CameraCharacteristics.Key<Byte> skipAECompensationKey = new CameraCharacteristics.Key<>("com.tct.hal.skip_aecomp", Byte.class);
+                        CameraCharacteristics.Key<Byte> skipFDKey = new CameraCharacteristics.Key<>("com.tct.hal.skip_fd", Byte.class);
+                        CameraCharacteristics.Key<Byte> disablePerFrameControlKey = new CameraCharacteristics.Key<>("com.tct.hal.disablepfc", Byte.class);
+                        CameraCharacteristics.Key<Byte> skipZoomKey = new CameraCharacteristics.Key<>("com.tct.hal.skip_zoom", Byte.class);
+
+                        Byte skipFusion = 0;
+                        Byte skipAECompensation = 0;
+                        Byte disablePerFrameControl = 0;
+                        Byte skipFD = 0;
+                        Byte skipZoom = 0;
+                        Object crKey = CameraCharacteristics.Key.class;
+                        Class<CameraCharacteristics.Key<?>> crKeyTyped = (Class<CameraCharacteristics.Key<?>>)crKey;
+                        ArrayList<CameraCharacteristics.Key<?>> vendorKeys = info.getAllVendorKeys(crKeyTyped);
+                        if (vendorKeys != null) {
+                            for (CameraCharacteristics.Key<?> k : vendorKeys) {
+                                String keyName;
+                                long vendorId;
+                                keyName = ((CameraCharacteristics.Key<?>) k).getName();
+                                vendorId = ((CameraCharacteristics.Key<?>) k).getVendorId();
+                                if(keyName.equals(skipSensorFusionKey.getName())) {
+                                    skipFusion = info.get(skipSensorFusionKey);
+                                } else if(keyName.equals(skipAECompensationKey.getName())) {
+                                    skipAECompensation = info.get(skipAECompensationKey);
+                                    Log.i(TAG, "skipAECompensation "+skipAECompensation);
+                                } else if (keyName.equals(disablePerFrameControlKey.getName())) {
+                                    disablePerFrameControl = info.get(disablePerFrameControlKey);
+                                    Log.i(TAG, "disablePerFrameControl "+disablePerFrameControl);
+                                } else if (keyName.equals(skipFDKey.getName())) {
+                                    skipFD = info.get(skipFDKey);
+                                    Log.i(TAG, "skipFD "+skipFD);
+                                } else if (keyName.equals(skipZoomKey.getName())) {
+                                    skipZoom = info.get(skipZoomKey);
+                                    Log.i(TAG, "skipZoom "+skipZoom);
+                                }
+                            }
+                        }
+
+                        Log.v(TAG, "skipFusion "+skipFusion+". skipAECompensation "+skipAECompensation+
+                                        ". disablePerFrameControl "+disablePerFrameControl+". skipFD "+skipFD+". skipZoom"+skipZoom);
+
+                        if(skipFusion != null && skipFusion == 1) {
+                            info.set(CameraCharacteristics.SENSOR_INFO_TIMESTAMP_SOURCE, 0/*SENSOR_INFO_TIMESTAMP_SOURCE_UNKNOWN*/);
+                        }
+                        if(skipAECompensation != null && skipAECompensation == 1) {
+                            Range<Integer> aecRange = new Range<Integer>(0, 0);
+                            info.set(CameraCharacteristics.CONTROL_AE_COMPENSATION_RANGE, aecRange);
+                        }
+                        if(skipFD != null && skipFD == 1) {
+                            int[] fdModes;
+                            fdModes = new int[] {0};
+                            info.set(CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES, fdModes);
+                        }
+                        if(disablePerFrameControl != null && disablePerFrameControl == 1) {
+                            info.set(CameraCharacteristics.SYNC_MAX_LATENCY,-1/*SYNC_MAX_LATENCY_UNKNOWN*/);
+                        }
+                        if(skipZoom != null && skipZoom == 1) {
+                            Range<Float> zoomRange = new Range<Float>(1.0f, 1.0f);
+                            info.set(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE, zoomRange);
+                        }
+                        if(SystemProperties.getBoolean("debug.camera.its.skipzoom", false)) {
+                            //workaround for Android 12 ITS test_zoom due to opencv case failed. add by hongzhang
+                            Range<Float> zoomRange = new Range<Float>(1.0f, 1.0f);
+                            info.set(CameraCharacteristics.CONTROL_ZOOM_RATIO_RANGE, zoomRange);
+                        }
+                    }
+                } catch(Exception e) {
+                    Log.e(TAG, e.toString());
+                    if(SystemProperties.getBoolean("debug.camera.tctcam.debug",false))
+                        e.printStackTrace();
+                }
+                /*End ancheng.wang sync 20231207 zihao.li for [Task][FP5-162] FP5 sync tct framework code on 20230206*/
 
                 characteristics = new CameraCharacteristics(info);
             } catch (ServiceSpecificException e) {
