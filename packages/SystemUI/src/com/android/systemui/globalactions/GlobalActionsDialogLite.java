@@ -112,6 +112,7 @@ import com.android.internal.util.EmergencyAffordanceManager;
 import com.android.internal.util.ScreenshotHelper;
 import com.android.internal.widget.LockPatternUtils;
 import com.android.keyguard.KeyguardUpdateMonitor;
+import com.android.systemui.FaceUnlockUtil;
 import com.android.systemui.MultiListLayout;
 import com.android.systemui.MultiListLayout.MultiListAdapter;
 import com.android.systemui.animation.DialogCuj;
@@ -1198,6 +1199,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                     UserHandle.USER_ALL);
             mUiEventLogger.log(GlobalActionsEvent.GA_LOCKDOWN_PRESS);
             try {
+                FaceUnlockUtil.getInstance().startLockdown();
                 mIWindowManager.lockNow(null);
                 // Lock profiles (if any) on the background thread.
                 mBackgroundExecutor.execute(() -> lockProfiles());
