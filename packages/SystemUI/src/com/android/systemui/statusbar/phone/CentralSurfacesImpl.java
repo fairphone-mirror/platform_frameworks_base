@@ -820,6 +820,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
         mAutoHideController = autoHideController;
         mStatusBarWindowController = statusBarWindowController;
         mKeyguardUpdateMonitor = keyguardUpdateMonitor;
+        FaceUnlockUtil.getInstance().setKeyguardUpdateMonitor(keyguardUpdateMonitor);
         mPulseExpansionHandler = pulseExpansionHandler;
         mWakeUpCoordinator = notificationWakeUpCoordinator;
         mKeyguardBypassController = keyguardBypassController;

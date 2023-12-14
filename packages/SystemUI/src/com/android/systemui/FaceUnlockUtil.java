@@ -24,6 +24,8 @@ public class FaceUnlockUtil {
     private int mFailTimes = 0;
     private List<FaceUnlockCallback> mCallbackList = new ArrayList<>();
     private boolean mIsInUnlocking = false;
+    private KeyguardUpdateMonitor mKeyguardUpdateMonitor;
+    private boolean mStartLockdown = false;
 
     private FaceUnlockUtil(){
 
@@ -38,6 +40,14 @@ public class FaceUnlockUtil {
             }
         }
         return mInstance;
+    }
+
+    public void setKeyguardUpdateMonitor(KeyguardUpdateMonitor keyguardUpdateMonitor) {
+        this.mKeyguardUpdateMonitor = keyguardUpdateMonitor;
+    }
+
+    public void startLockdown() {
+        this.mStartLockdown = true;
     }
 
     private boolean isRebootView(Context context){
@@ -127,7 +137,14 @@ public class FaceUnlockUtil {
         boolean hasFaceEnrolled = hasFaceEnrolled(context);
         boolean isCounDown = getCountDownUnlock(context);
         boolean isRebootView = isRebootView(context);
-        return !isRebootView && faceUnlockSupported && hasFaceEnrolled && !isCounDown && mFailTimes < 3;
+        boolean isLockdown = false;
+        if(mKeyguardUpdateMonitor != null){
+            isLockdown = mKeyguardUpdateMonitor.isEncryptedOrLockdown(userId);
+        }
+        if(isLockdown) {
+            mStartLockdown = false;
+        }
+        return !isRebootView && faceUnlockSupported && hasFaceEnrolled && !isCounDown && mFailTimes < 3 && !isLockdown && !mStartLockdown;
     }
 
     public boolean hasFaceUnlock(Context context){
@@ -135,7 +152,14 @@ public class FaceUnlockUtil {
         boolean faceUnlockSupported = isFaceUnlockSupported(context);
         boolean hasFaceEnrolled = hasFaceEnrolled(context);
         boolean isRebootView = isRebootView(context);
-        return !isRebootView && faceUnlockSupported && hasFaceEnrolled;
+        boolean isLockdown = false;
+        if(mKeyguardUpdateMonitor != null){
+            isLockdown = mKeyguardUpdateMonitor.isEncryptedOrLockdown(userId);
+        }
+        if(isLockdown) {
+            mStartLockdown = false;
+        }
+        return !isRebootView && faceUnlockSupported && hasFaceEnrolled && !isLockdown && !mStartLockdown;
     }
 
     public void setFailTimes(int failTimes,boolean isFinishKeyguard){
