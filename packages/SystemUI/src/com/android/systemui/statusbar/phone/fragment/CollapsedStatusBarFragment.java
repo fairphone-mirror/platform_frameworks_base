@@ -646,8 +646,10 @@ public class CollapsedStatusBarFragment extends Fragment implements CommandQueue
     }
 
     private void initOperatorName() {
-        int subId = SubscriptionManager.getDefaultDataSubscriptionId();
-        if (mCarrierConfigTracker.getShowOperatorNameInStatusBarConfig(subId)) {
+        // int subId = SubscriptionManager.getDefaultDataSubscriptionId();
+        // if (mCarrierConfigTracker.getShowOperatorNameInStatusBarConfig(subId)) {
+        //modify it to be the same as FP4S
+        if (getResources().getBoolean(R.bool.config_showOperatorNameInStatusBar)) {
             ViewStub stub = mStatusBar.findViewById(R.id.operator_name);
             //fix SystemUI crash renjie.zhang FP5-1156
             mOperatorNameFrame = stub.inflate();
