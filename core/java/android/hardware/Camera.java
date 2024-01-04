@@ -302,7 +302,7 @@ public class Camera {
         /* Force to expose only two cameras
          * if is xts apk
          */
-        if(packageName.equals("com.android.cts.verifier") || packageName.equals("android.camera.cts")) {
+        if(packageName.equals("com.android.cts.verifier") || packageName.equals("android.camera.cts") || packageName.equals("android.media.cts")) {
             exposeAuxCamera = false;
         }
         int numberOfCameras = _getNumberOfCameras();
