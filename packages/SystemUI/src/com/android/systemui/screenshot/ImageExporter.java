@@ -295,7 +295,9 @@ public class ImageExporter {
             Uri baseUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
             Uri uriWithUserId = ContentProvider.maybeAddUserId(baseUri, owner.getIdentifier());
 
-            Uri uri = resolver.insert(uriWithUserId, values);
+            //Modify by luhaibiao for fix [FP5U-105] screen shot can not be edit 
+            //Uri uri = resolver.insert(uriWithUserId, values);
+            Uri uri = resolver.insert(baseUri, values);
             if (uri == null) {
                 throw new ImageExportException(RESOLVER_INSERT_RETURNED_NULL);
             }
