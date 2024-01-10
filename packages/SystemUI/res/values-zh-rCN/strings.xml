@@ -985,4 +985,7 @@
     <string name="charging_mode_dialog">自定义充电速度，以优化电池寿命或尽快恢复满电状态。导航至电池设置以在模式之间切换并了解更多信息。</string>
     <string name="cmdialog_skip">跳过</string>
     <string name="cmdialog_bats">电池设置</string>
+    <string name="proximity_top">请勿遮挡屏幕顶端</string>
+    <string name="proximity_mode">口袋模式</string>
+    <string name="proximity_action">向左或右滑动可强制退出</string>
 </resources>

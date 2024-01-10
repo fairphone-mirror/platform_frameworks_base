@@ -987,4 +987,7 @@ Navegue até as configurações da bateria para alternar entre os modos e saber 
     <string name="high_temp_message_low_5">Sua bateria está ficando fria. Seu Fairphone terá um desempenho melhor se você o retornar à temperatura ambiente.</string>
     <string name="high_temp_message_low_19">Aviso! Sua bateria está congelando. Seu dispositivo agora será desligado para evitar qualquer dano</string>
 
+    <string name="proximity_top">Não cubra a parte superior do ecrã</string>
+    <string name="proximity_mode">Modo de bolso</string>
+    <string name="proximity_action">Deslizar para a esquerda ou direita para sair deste modo</string>
 </resources>

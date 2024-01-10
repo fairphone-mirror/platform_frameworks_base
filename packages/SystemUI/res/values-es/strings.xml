@@ -991,4 +991,7 @@ Navegua a la configuración de la batería para cambiar entre modos y obtener m�
     <string name="high_temp_message_low_5">Tu batería está demasiado fría. Tu dispositivo funcionará mejor si aumentas la temperatura ambiente.</string>
     <string name="high_temp_message_low_19">Tu batería corre riesgo de congelarse. Tu dispositivo se apagara para evitar cualquier daño.</string>
 
+    <string name="proximity_top">No cubra la parte superior de la pantalla</string>
+    <string name="proximity_mode">Modo de bolsillo</string>
+    <string name="proximity_action">Desliza hacia la izquierda para salir de este modo</string>
 </resources>

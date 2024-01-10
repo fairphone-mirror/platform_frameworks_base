@@ -991,4 +991,7 @@ Navigera till batteriinställningar för att växla mellan lägen och lära dig 
     <string name="high_temp_message_low_5">Ditt batteri är kallt. Din fairphone kommer att prestera bättre om du returnerar den till rumstemperatur.</string>
     <string name="high_temp_message_low_19">Varning! Ditt batteri fryser. Din enhet stängs nu för att förhindra skador</string>
 
+    <string name="proximity_top">Täck inte toppen av skärmen</string>
+    <string name="proximity_mode">Fickläge</string>
+    <string name="proximity_action">Dra åt vänster eller höger för att lämna detta läge</string>
 </resources>

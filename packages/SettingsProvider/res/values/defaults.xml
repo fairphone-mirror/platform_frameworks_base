@@ -334,4 +334,7 @@
     <!-- DCDimming is enabled by default. -->
     <bool name="def_dcdimming_enabled">false</bool>
     <bool name="def_dcdimming_is_UI_finish">true</bool>
+
+    <!-- Default for Settings.Secure.DISABLE_POCKET_MODE -->
+    <bool name="def_disable_pocket_mode">false</bool>
 </resources>

@@ -990,4 +990,8 @@
     <string name="high_temp_message_low_5">Dit batteri er ved at blive koldt. Din fairphone fungerer bedre, hvis du returnerer den til stuetemperatur.</string>
     <string name="high_temp_message_low_19">Advarsel! Dit batteri fryser. Din enhed lukker nu for at forhindre skade</string>
 
+    <string name="proximity_top">Dæk ikke toppen af skærmen</string>
+    <string name="proximity_mode">Lommetilstand</string>
+    <string name="proximity_action">Stryg til venstre eller højre for at forlade denne tilstand</string>
+
 </resources>

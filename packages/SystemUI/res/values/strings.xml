@@ -2647,6 +2647,9 @@
     <string name="charging_mode_dialog">Customize your charging speed to either optimize your battery’s longevity or getting back to full power as soon as possible. Navigate to Battery Settings to switch between modes and learn more.</string>
     <string name="cmdialog_skip">Skip</string>
     <string name="cmdialog_bats">Battery Settings</string>
+    <string name="proximity_top">Don’t cover the top of the screen</string>
+    <string name="proximity_mode">Pocket Mode</string>
+    <string name="proximity_action">Swipe left or right to exit this mode</string>
 
     <string name="face_unlock_failed">No match.Touch icon to use face unlock.</string>
     <string name="too_many_face_unlock_failed_to_use_pattern">Too many incorrect attempts.Use pattern to unlock.</string>
@@ -2661,7 +2664,6 @@
 
     <string name="usbntc_temp_notification_title">Warning</string>
     <string name="usbntc_temp_notification_message">Please reinsert the USB,if the phone cannot be recharged!</string>
-
 
     <string name="high_temp_message_59">Warning! Your battery is overheating. Your device will now shut down to prevent any damage.</string>
     <string name="high_temp_message_51">Your battery is running hot. Close any unnecessary apps or background processes to cool it down.</string>

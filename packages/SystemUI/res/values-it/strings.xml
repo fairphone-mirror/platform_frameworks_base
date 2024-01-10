@@ -991,4 +991,7 @@ Vai nelle Impostazioni batteria per selezionare tra le modalità presenti e scop
     <string name="high_temp_message_low_5">La tua batteria si sta raffreddando eccessivamente. Il tuo Fairphone funzionerà meglio se lo riporti a temperatura ambiente.</string>
     <string name="high_temp_message_low_19">Attenzione! La batteria sta congelando. Il tuo dispositivo si spegnerà per evitare possibili danni.</string>
 
+    <string name="proximity_top">Non coprire la parte superiore dello schermo</string>
+    <string name="proximity_mode">Pocket Mode</string>
+    <string name="proximity_action">Scorri a sinistra o a destra per uscire da questa modalità</string>
 </resources>

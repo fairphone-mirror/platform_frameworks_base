@@ -990,4 +990,8 @@ Accédez aux paramètres de la batterie pour basculer entre les modes et en savo
     <string name="high_temp_message_48">Votre téléphone se réchauffe. Si vous êtes en train d’installer ou de transferer des éléments, veuillez terminer le processus après avoir placé le téléphone sur une surface bien ventilée.</string>
     <string name="high_temp_message_low_5">Votre batterie est trop froide. Votre Fairphone fonctionnera mieux si vous le faites fonctionner à température ambiante.</string>
     <string name="high_temp_message_low_19">"Avertissement! Votre batterie est trop froide. Votre appareil va maintenant s'arrêter pour éviter tout dommage"</string>
+
+    <string name="proximity_top">Ne couvrez pas le haut de l\'écran</string>
+    <string name="proximity_mode">Mode de poche</string>
+    <string name="proximity_action">Balayez vers la gauche ou la droite pour quitter ce mode</string>
 </resources>

@@ -991,4 +991,7 @@ Navigiere zu den Batterieeinstellungen, um zwischen den Modi zu wechseln und meh
     <string name="high_temp_message_low_5">Dein Akku wird zu kalt. Dein Fairphone funktioniert besser, wenn du es auf Raumtemperatur zurückbringst.</string>
     <string name="high_temp_message_low_19">Warnung! Dein Akku ist stark unterkühlt. Dein Gerät wird nun heruntergefahren, um Schäden zu vermeiden.</string>
 
+    <string name="proximity_top">Decke nicht die Oberseite des Bildschirms ab</string>
+    <string name="proximity_mode">Taschenmodus</string>
+    <string name="proximity_action">Wische nach links oder rechts, um diesen Modus zu verlassen</string>
 </resources>
