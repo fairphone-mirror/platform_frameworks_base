@@ -1141,6 +1141,18 @@ public class DisplayPolicy {
         boolean isSecondaryDisplay = desktopOn && !mDisplayContent.isDefaultDisplay;
         return isSecondaryDisplay;
     }
+
+    private boolean isSecondaryLauncher(WindowState win) {
+        if(win == null || win.mActivityRecord == null) {
+            return false;
+        }
+        if("com.android.launcher3/.secondarydisplay.SecondaryDisplayLauncher"
+                .equals(win.mActivityRecord.shortComponentName)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     /**
      * Add additional policy if needed to ensure the window or its children should not receive any
      * input.
@@ -2569,9 +2581,11 @@ public class DisplayPolicy {
             // The immersive confirmation window should be attached to the immersive window root.
             final RootDisplayArea root = win.getRootDisplayArea();
             final int rootDisplayAreaId = root == null ? FEATURE_UNDEFINED : root.mFeatureId;
-            mImmersiveModeConfirmation.immersiveModeChangedLw(rootDisplayAreaId, isImmersiveMode,
-                    mService.mPolicy.isUserSetupComplete(),
-                    isNavBarEmpty(disableFlags));
+            if(!isSecondaryLauncher(win) || !isSecondaryDisplay()){
+                mImmersiveModeConfirmation.immersiveModeChangedLw(rootDisplayAreaId, isImmersiveMode,
+                        mService.mPolicy.isUserSetupComplete(),
+                        isNavBarEmpty(disableFlags));
+            }
         }
 
         // Show transient bars for panic if needed.
