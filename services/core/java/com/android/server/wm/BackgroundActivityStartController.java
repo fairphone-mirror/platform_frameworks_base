@@ -296,6 +296,10 @@ public class BackgroundActivityStartController {
 
         String realCallingPackage = mService.getPackageNameIfUnique(realCallingUid, realCallingPid);
 
+        if("com.android.launcher3".equals(realCallingPackage)){
+            return BAL_ALLOW_DEFAULT;
+        }
+
         // Legacy behavior allows to use caller foreground state to bypass BAL restriction.
         // The options here are the options passed by the sender and not those on the intent.
         final BackgroundStartPrivileges balAllowedByPiSender =
