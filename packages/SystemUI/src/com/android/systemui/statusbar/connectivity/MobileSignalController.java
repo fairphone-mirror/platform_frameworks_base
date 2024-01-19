@@ -268,6 +268,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
             try {
                 mImsMmTelManager.registerImsStateCallback(mContext.getMainExecutor(),
                         mImsStateCallback);
+                Log.d(mTag, "registerImsStateCallback success");
             }catch (ImsException exception) {
                 Log.e(mTag, "failed to call registerImsStateCallback ", exception);
             }

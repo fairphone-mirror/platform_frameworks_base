@@ -11654,7 +11654,7 @@ public class TelephonyManager {
     public @ImsRegistrationImplBase.ImsRegistrationTech int getImsRegTechnologyForMmTel() {
         try {
             return getITelephony().getImsRegTechnologyForMmTel(getSubId());
-        } catch (RemoteException ex) {
+        } catch (RemoteException | NullPointerException ex) {// modify by T2M.zhang renjie for FP5U-158 24-01-19
             return ImsRegistrationImplBase.REGISTRATION_TECH_NONE;
         }
     }
