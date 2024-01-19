@@ -43,6 +43,8 @@ import com.android.settingslib.media.LocalMediaManager.MediaDeviceState;
 import com.android.settingslib.media.MediaDevice;
 import com.android.systemui.R;
 
+import android.os.Handler;
+import android.os.Looper;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -56,6 +58,7 @@ public class MediaOutputAdapter extends MediaOutputBaseAdapter {
     private static final float DEVICE_DISCONNECTED_ALPHA = 0.5f;
     private static final float DEVICE_CONNECTED_ALPHA = 1f;
     protected List<MediaItem> mMediaItemList = new CopyOnWriteArrayList<>();
+    protected final Handler mMainThreadHandler = new Handler(Looper.getMainLooper());
 
     public MediaOutputAdapter(MediaOutputController controller) {
         super(controller);
@@ -457,6 +460,11 @@ public class MediaOutputAdapter extends MediaOutputBaseAdapter {
                 showCustomEndSessionDialog(device);
             } else {
                 transferOutput(device);
+                if(device.getDeviceType() == MediaDevice.MediaDeviceType.TYPE_BLUETOOTH_DEVICE) {
+                    mMainThreadHandler.postDelayed(()->{
+                            transferOutput(device);
+                    }, 200);
+                }
             }
         }
 
