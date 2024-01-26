@@ -7185,6 +7185,9 @@ public class WindowManagerService extends IWindowManager.Stub
     void setForceDesktopModeOnExternalDisplays(boolean forceDesktopModeOnExternalDisplays) {
         synchronized (mGlobalLock) {
             mForceDesktopModeOnExternalDisplays = forceDesktopModeOnExternalDisplays;
+            if(!mForceDesktopModeOnExternalDisplays) {
+                mRoot.removeSecondaryDisplay();
+            }
             mRoot.updateDisplayImePolicyCache();
         }
     }

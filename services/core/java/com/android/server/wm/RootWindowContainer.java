@@ -2735,6 +2735,28 @@ public class RootWindowContainer extends WindowContainer<DisplayContent>
         }
     }
 
+    void removeSecondaryDisplay() {
+        synchronized (mService.mGlobalLock) {
+            final Display[] displays = mDisplayManager.getDisplays();
+            int displayId = 0;
+            for (int displayNdx = 0; displayNdx < displays.length; ++displayNdx) {
+                final Display display = displays[displayNdx];
+                if(display.getDisplayId() > displayId) {
+                    displayId = display.getDisplayId();
+                }
+            }
+            if(displayId == 0) {
+                return;
+            }
+            final DisplayContent displayContent = getDisplayContent(displayId);
+            if (displayContent == null) {
+                return;
+            }
+            displayContent.remove();
+            mWmService.mPossibleDisplayInfoMapper.removePossibleDisplayInfos(displayId);
+        }
+    }
+
     void updateDisplayImePolicyCache() {
         ArrayMap<Integer, Integer> displayImePolicyMap = new ArrayMap<>();
         forAllDisplays(dc -> displayImePolicyMap.put(dc.getDisplayId(), dc.getImePolicy()));
