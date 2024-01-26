@@ -23,6 +23,9 @@ import android.os.Handler
 import android.os.Trace
 import android.util.Log
 import android.view.View
+import android.database.ContentObserver;
+import android.provider.Settings;
+
 import com.android.keyguard.KeyguardConstants
 import com.android.keyguard.KeyguardSecurityModel
 import com.android.keyguard.KeyguardUpdateMonitor
@@ -300,7 +303,8 @@ constructor(
 
     /** Tell the bouncer to start the pre hide animation. */
     fun startDisappearAnimation(runnable: Runnable) {
-        if (willRunDismissFromKeyguard()) {
+        val isUserSetupComplete = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.USER_SETUP_COMPLETE, 0) != 0;
+        if (willRunDismissFromKeyguard() || !isUserSetupComplete) {
             runnable.run()
             return
         }
