@@ -134,6 +134,7 @@ public class AppStateController {
         mIntentFilter.addAction(CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED);
         mIntentFilter.addAction(Intent.ACTION_USER_SWITCHED);
         mIntentFilter.addAction(Intent.ACTION_USER_REMOVED);
+        mIntentFilter.addAction(Intent.ACTION_USER_ADDED);
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -141,6 +142,16 @@ public class AppStateController {
                     int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, 0);
                     if (userId != mUserId) {
                         Log.d(TAG, "ACTION_USER_SWITCHED" + " old user id = " + userId + " new user id = " + mUserId);
+                        mUserId = userId;
+                        updateCarrierAppState();
+                        setPreInstallCarrierApkState();
+                    }
+
+                }
+                if (Intent.ACTION_USER_ADDED.equals(intent.getAction())) {
+                    int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, 0);
+                    if (userId != mUserId) {
+                        Log.d(TAG, "ACTION_USER_ADDED" + " old user id = " + userId + " new user id = " + mUserId);
                         mUserId = userId;
                         updateCarrierAppState();
                         setPreInstallCarrierApkState();
