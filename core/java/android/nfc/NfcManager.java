@@ -41,26 +41,37 @@ import android.os.Build;
  */
 @SystemService(Context.NFC_SERVICE)
 public final class NfcManager {
-    private final NfcAdapter mAdapter;
+    // Modified by yingsen.zhang T2M 20240131 for FP5U-173
+    private final Context mContext;
+    private NfcAdapter mAdapter;
 
     /**
      * @hide
      */
     @UnsupportedAppUsage(maxTargetSdk = Build.VERSION_CODES.P, trackingBug = 115609023)
     public NfcManager(Context context) {
-        NfcAdapter adapter;
+        // Modified by yingsen.zhang T2M 20240131 for FP5U-173
+        mContext = context;
+        mAdapter = getNfcAdapter(context);
+    }
+
+    // Modified by yingsen.zhang T2M 20240131 for FP5U-173 begin
+    private NfcAdapter getNfcAdapter(Context context) {
         context = context.getApplicationContext();
         if (context == null) {
             throw new IllegalArgumentException(
                     "context not associated with any application (using a mock context?)");
         }
+
         try {
-            adapter = NfcAdapter.getNfcAdapter(context);
-        } catch (UnsupportedOperationException e) {
-            adapter = null;
+            return NfcAdapter.getNfcAdapter(context);
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
-        mAdapter = adapter;
+
+        return null;
     }
+    // Modified by yingsen.zhang T2M 20240131 for FP5U-173 end
 
     /**
      * Get the default NFC Adapter for this device.
@@ -68,6 +79,13 @@ public final class NfcManager {
      * @return the default NFC Adapter
      */
     public NfcAdapter getDefaultAdapter() {
+        // Modified by yingsen.zhang T2M 20240131 for FP5U-173
+        // Re-initialize NfcAdapter in case of invalid NfcAdapter initialized in
+        // NfcManager Constructor, because NfcAdapter will be initialized failed
+        // before NfcService started.
+        if (mAdapter == null) {
+            mAdapter = getNfcAdapter(mContext);
+        }
         return mAdapter;
     }
 }
