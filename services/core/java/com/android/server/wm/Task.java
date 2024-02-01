@@ -2312,6 +2312,11 @@ class Task extends TaskFragment {
         // configurations and let its parent (organized task) to control it;
         final Task rootTask = getRootTask();
         final Rect bounds = rootTask != this && rootTask.isOrganized() ? null : getLaunchBounds();
+        if(!isOnHomeDisplay() && isDesktopModeOn()
+                && bounds != null && rootTask != null
+                && bounds.bottom > (rootTask.getDisplayContent().mBaseDisplayHeight -100)){
+            bounds.bottom = rootTask.getDisplayContent().mBaseDisplayHeight -100;
+        }
         setBounds(bounds);
         if (bounds != null && !bounds.isEmpty()) {
             // TODO: Review if we actually want to do this - we are setting the launch bounds
