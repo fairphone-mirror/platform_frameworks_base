@@ -1185,9 +1185,5 @@
     <string name="proximity_top">Dæk ikke toppen af skærmen</string>
     <string name="proximity_mode">Lommetilstand</string>
     <string name="proximity_action">Stryg til venstre eller højre for at forlade denne tilstand</string>
-
-    <string name="proximity_top">Dæk ikke toppen af skærmen</string>
-    <string name="proximity_mode">Lommetilstand</string>
-    <string name="proximity_action">Stryg til venstre eller højre for at forlade denne tilstand</string>
-
+    
 </resources>
