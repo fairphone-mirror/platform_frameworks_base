@@ -943,7 +943,7 @@ public class ComponentResolver extends ComponentResolverLocked implements
                 return false;
             }
 
-            return packageState.getUserStateOrDefault(userId).isStopped();
+            return !packageState.isSystem() && packageState.getUserStateOrDefault(userId).isStopped();
         }
     }
 
