@@ -525,7 +525,7 @@ public final class MediaRouterService extends IMediaRouterService.Stub
                     userRecord != null ? userRecord.mClientRecords : Collections.emptyList();
             for (ClientRecord clientRecord : userClientRecords) {
                 if (TextUtils.equals(clientRecord.mPackageName, packageName)) {
-                    if (mDefaultAudioRouteId.equals(clientRecord.mSelectedRouteId)) {
+                    if (mDefaultAudioRouteId.equals(clientRecord.mSelectedRouteId) && !mGlobalBluetoothA2dpOn) {
                         setDeviceRouteSelected = true;
                         break;
                     }
