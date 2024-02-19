@@ -62,6 +62,8 @@ import android.hardware.biometrics.SensorLocationInternal;
 import android.hardware.fingerprint.FingerprintSensorPropertiesInternal;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.Trace;
@@ -3560,8 +3562,16 @@ public final class NotificationPanelViewController extends PanelViewController {
         }
     }
 
+    private Handler myHandler = new Handler(new android.os.Handler.Callback() {
+        @Override
+        public boolean handleMessage(@NonNull Message msg) {
+            mKeyguardStatusViewController.dozeTimeTick();
+            return false;
+        }
+    });
+
     public void onScreenTurningOn() {
-        mKeyguardStatusViewController.dozeTimeTick();
+        myHandler.sendEmptyMessageDelayed(1,300);
     }
 
     @Override
