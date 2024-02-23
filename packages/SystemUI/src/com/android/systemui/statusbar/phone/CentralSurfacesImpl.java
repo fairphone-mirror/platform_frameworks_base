@@ -2935,7 +2935,9 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                 return;
             }
 
-            final boolean proximityDetected = event.values[0] == 0.0;
+            final boolean proximityDetected = ((event.values[0] == 0.0) || (
+                    !(event.values[0] == 0.0) && (event.values[1] > 4000)));
+
             // For initial proximity state, set right awayvalue
             if (mProximityDetected == null) {
                 setProximityDetectedShowing(proximityDetected);
