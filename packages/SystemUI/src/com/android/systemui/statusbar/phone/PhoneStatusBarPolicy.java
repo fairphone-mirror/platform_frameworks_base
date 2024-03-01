@@ -746,7 +746,7 @@ public class PhoneStatusBarPolicy
                     updateHeadsetPlug(intent);
                     break;
                 case NfcAdapter.ACTION_ADAPTER_STATE_CHANGED:
-                    updateNfc(intent);
+                    //updateNfc(intent);
                     break;
             }
         }
