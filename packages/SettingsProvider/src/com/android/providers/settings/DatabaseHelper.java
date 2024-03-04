@@ -2390,9 +2390,6 @@ class DatabaseHelper extends SQLiteOpenHelper {
             loadBooleanSetting(stmt, "def_dcdimming_is_UI_finish",
                     R.bool.def_dcdimming_is_UI_finish);
 
-            loadStringSetting(stmt, "def_operator_applist",
-                    R.string.def_operator_applist);
-
             //disable pocket mode
             loadBooleanSetting(stmt, Settings.Secure.DISABLE_POCKET_MODE,
                       R.bool.def_disable_pocket_mode);
