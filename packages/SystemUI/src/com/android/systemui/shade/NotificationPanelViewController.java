@@ -3571,7 +3571,7 @@ public final class NotificationPanelViewController extends PanelViewController {
     });
 
     public void onScreenTurningOn() {
-        myHandler.sendEmptyMessageDelayed(1,300);
+        myHandler.sendEmptyMessageDelayed(1,400);
     }
 
     @Override
