@@ -4489,7 +4489,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     Log.d(TAG, "power key pressed in mmitest");
                     return ACTION_PASS_TO_USER;
                 }
-                result &= ~ACTION_PASS_TO_USER;
+                //result &= ~ACTION_PASS_TO_USER;
                 if (down) {
                      isWakeKey = false;
 
