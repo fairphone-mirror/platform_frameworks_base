@@ -85,21 +85,27 @@ public class OperatorNameViewController extends ViewController<OperatorNameView>
         SubInfo defaultSubInfo = getDefaultSubInfo();
         //FP5-1499 fixed by renjie.zhang
         boolean showOperatorName = (defaultSubInfo == null) ? false :
-                mCarrierConfigTracker
+                /*mCarrierConfigTracker
                         .getShowOperatorNameInStatusBarConfig(defaultSubInfo.getSubId())
-                        && (mTunerService.getValue(KEY_SHOW_OPERATOR_NAME, 1) != 0);
+                        &&*/ (mTunerService.getValue(KEY_SHOW_OPERATOR_NAME, 1) != 0);
         mView.update(showOperatorName, mTelephonyManager.isDataCapable(), getDefaultSubInfo());
     }
 
     private SubInfo getDefaultSubInfo() {
-        int defaultSubId = SubscriptionManager.getDefaultDataSubscriptionId();
-        SubscriptionInfo sI = mKeyguardUpdateMonitor.getSubscriptionInfoForSubId(defaultSubId);
-        if (sI == null) return null;//FP5-1499 fixed by renjie.zhang
-        return new SubInfo(
-                sI.getSubscriptionId(),
-                sI.getCarrierName(),
-                mKeyguardUpdateMonitor.getSimState(defaultSubId),
-                mKeyguardUpdateMonitor.getServiceState(defaultSubId));
+        try{
+            int defaultSubId = SubscriptionManager.getDefaultDataSubscriptionId();
+            android.util.Log.d("OperatorNameViewController","getDefaultSubInfo defaultSubId = "+defaultSubId);
+            SubscriptionInfo sI = mKeyguardUpdateMonitor.getSubscriptionInfoForSubId(defaultSubId);
+            if (sI == null) return null;//FP5-1499 fixed by renjie.zhang
+            return new SubInfo(
+                    sI.getSubscriptionId(),
+                    sI.getCarrierName(),
+                    mKeyguardUpdateMonitor.getSimState(defaultSubId),
+                    mKeyguardUpdateMonitor.getServiceState(defaultSubId));
+        }catch(Exception e){
+           return null; 
+        }
+        
     }
 
     /** Factory for constructing an {@link OperatorNameViewController}. */
@@ -165,7 +171,10 @@ public class OperatorNameViewController extends ViewController<OperatorNameView>
             new KeyguardUpdateMonitorCallback() {
         @Override
         public void onRefreshCarrierInfo() {
-            mView.updateText(getDefaultSubInfo());
+            SubInfo defaultSubInfo = getDefaultSubInfo();
+            boolean showOperatorName = (defaultSubInfo == null) ? false : (mTunerService.getValue(KEY_SHOW_OPERATOR_NAME, 1) != 0);
+            android.util.Log.d("OperatorNameViewController","onRefreshCarrierInfo defaultSubInfo = "+defaultSubInfo+" ; showOperatorName = "+showOperatorName);
+            mView.updateText(defaultSubInfo,showOperatorName,mTelephonyManager.isDataCapable());
         }
     };
 

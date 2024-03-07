@@ -87,6 +87,48 @@ public class OperatorNameView extends TextView {
         //Modify by T2M yingyubin for FP4S-619 20221012
     }
 
+    void updateText(OperatorNameViewController.SubInfo subInfo,boolean showOperatorName,boolean hasMobile) {
+        setVisibility(showOperatorName ? VISIBLE : GONE);
+        boolean airplaneMode = WirelessUtils.isAirplaneModeOn(mContext);
+        if (!hasMobile || airplaneMode) {
+            setVisibility(GONE);
+        }
+
+
+        CharSequence carrierName = null;
+        CharSequence displayText = null;
+        if (subInfo != null) {
+            carrierName = subInfo.getCarrierName();
+        }
+        if (!TextUtils.isEmpty(carrierName) && subInfo.simReady()) {
+            if (subInfo.stateInService()) {
+                displayText = carrierName;
+            }
+        }
+        String defaultText = getText().toString(); 
+        if(displayText != null){
+            String carrierText = displayText.toString();
+            boolean showCustomizeName = mContext.getResources().getBoolean(
+                    com.android.systemui.R.bool.config_show_customize_carrier_name);
+            if(showCustomizeName) {
+                carrierText = getLocalString(displayText.toString(),
+                        com.android.systemui.R.array.origin_carrier_names,
+                        com.android.systemui.R.array.locale_carrier_names);
+            }
+            if (defaultText != null && defaultText.equals(carrierText)) {
+                //
+            }else{
+                setText(carrierText);                
+            }
+        } else {
+            if (defaultText != null && defaultText.equals(displayText)) {
+                //
+            }else{
+                setText(displayText);                
+            }
+        }
+    }
+
     //Modify by T2M yingyubin for FP4S-619 20221012
     private String getLocalString(String originalString,
             int originNamesId, int localNamesId) {
