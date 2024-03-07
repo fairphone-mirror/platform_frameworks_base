@@ -5174,5 +5174,5 @@
   <java-symbol type="integer" name="config_screen_rotation_total_90" />
   <java-symbol type="integer" name="config_screen_rotation_total_180" />
   <java-symbol type="string" name="subscription_displayname" />
-
+  <java-symbol type="bool" name="config_navBarButtonSwapAvailable" />
 </resources>

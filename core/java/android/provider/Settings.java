@@ -11767,6 +11767,15 @@ public final class Settings {
         public static void setLocationProviderEnabled(ContentResolver cr,
                 String provider, boolean enabled) {
         }
+
+        /**
+         * Whether the nav bar back/recents button positions should be swapped.
+         * When enabled, the back is on the right of the nav bar.
+         *
+         * @hide
+         */
+        public static final String NAV_BAR_BUTTON_SWAP_ENABLED =
+                "nav_bar_button_swap_enabled";
     }
 
     /**

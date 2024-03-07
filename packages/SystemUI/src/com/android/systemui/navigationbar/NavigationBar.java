@@ -172,6 +172,12 @@ import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
+import android.content.ContentResolver;
+import android.database.ContentObserver;
+import android.os.Looper;
+import android.provider.Settings;
+import android.os.UserHandle;
+
 /**
  * Contains logic for a navigation bar view.
  */
@@ -237,6 +243,9 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
 
     private Locale mLocale;
     private int mLayoutDirection;
+
+    private ContentObserver mNavBarOrderContentObserver;
+    private ContentResolver mContentResolver;
 
     private Optional<Long> mHomeButtonLongPressDurationMs;
 
@@ -721,6 +730,19 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
 
         mNotificationShadeDepthController.addListener(mDepthListener);
         mTaskStackChangeListeners.registerTaskStackListener(mTaskStackListener);
+
+
+        // Navbar back/recents swap
+        mContentResolver = mContext.getContentResolver();
+        mNavBarOrderContentObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
+            @Override
+            public void onChange(boolean selfChange) {
+                mView.updateStates();
+            }
+        };
+        mContentResolver.registerContentObserver(
+                Settings.Secure.getUriFor(Settings.Secure.NAV_BAR_BUTTON_SWAP_ENABLED),
+                true, mNavBarOrderContentObserver, UserHandle.USER_ALL);
     }
 
     //ADD by T2M yingyubin for Desktop mode
@@ -746,6 +768,7 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
 
         mDeviceConfigProxy.removeOnPropertiesChangedListener(mOnPropertiesChangedListener);
         mTaskStackChangeListeners.unregisterTaskStackListener(mTaskStackListener);
+        mContentResolver.unregisterContentObserver(mNavBarOrderContentObserver);
     }
 
     @Override
