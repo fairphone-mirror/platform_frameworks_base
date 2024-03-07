@@ -2395,6 +2395,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
             loadIntegerSetting(stmt, Settings.Secure.SLEEP_TIMEOUT,
                     R.integer.def_sleep_timeout);
 
+            //disable pocket mode
+            loadBooleanSetting(stmt, Settings.Secure.DISABLE_POCKET_MODE,
+                      R.bool.def_disable_pocket_mode);
+
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,
              * secure, and system settings are no longer stored in a database
@@ -2595,8 +2599,11 @@ class DatabaseHelper extends SQLiteOpenHelper {
                 defaultLidBehavior = 0;
             }
             loadSetting(stmt, Settings.Global.LID_BEHAVIOR, defaultLidBehavior);
-	    loadStringSetting(stmt, Settings.Global.NTP_SERVER_2,
+	        loadStringSetting(stmt, Settings.Global.NTP_SERVER_2,
                     R.string.def_ntp_server_2);
+
+            loadStringSetting(stmt, Settings.Global.UPDATE_POCKET_MODE_UI,
+                  R.string.def_update_pocket_mode_ui);
 
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,

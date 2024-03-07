@@ -969,4 +969,8 @@
     <string name="low_temp_message_20">"Attention ! La température de la batterie est trop faible ; votre appareil va s’éteindre"</string>
     <string name="height_temp_message_55">"Attention ! La température de la batterie est trop élevée ; veuillez fermer les apps inutiles"</string>
     <string name="height_temp_message_60">"Attention ! La température de la batterie est trop élevée ; votre appareil va s’éteindre"</string>
+
+    <string name="proximity_top">Ne couvrez pas le haut de l\'écran</string>
+    <string name="proximity_mode">Mode de poche</string>
+    <string name="proximity_action">Balayez vers la gauche ou la droite pour quitter ce mode</string>
 </resources>

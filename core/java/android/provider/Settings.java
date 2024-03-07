@@ -8706,6 +8706,15 @@ public final class Settings {
         public static final String MOUNT_UMS_NOTIFY_ENABLED = "mount_ums_notify_enabled";
 
         /**
+         * DISABLE POCKET MODE
+         * 1 don't do close proximity detection on lock screen
+         * 0 do close proximity detection on lock screen
+         * @hide
+         */
+        @Readable
+        public static final String DISABLE_POCKET_MODE = "disable_pocket_mode";
+
+        /**
          * If nonzero, ANRs in invisible background processes bring up a dialog.
          * Otherwise, the process will be silently killed.
          *
@@ -17223,6 +17232,13 @@ public final class Settings {
          */
         public static final String REVIEW_PERMISSIONS_NOTIFICATION_STATE =
                 "review_permissions_notification_state";
+
+        /**
+        * update pocket mode UI
+        * @hide
+        */
+        public static final String UPDATE_POCKET_MODE_UI =
+                  "update_pocket_mode_ui";
 
         /**
          * Settings migrated from Wear OS settings provider.

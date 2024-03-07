@@ -179,6 +179,7 @@ import com.android.systemui.recents.ScreenPinningRequest;
 import com.android.systemui.ripple.RippleShader.RippleShape;
 import com.android.systemui.scrim.ScrimView;
 import com.android.systemui.settings.brightness.BrightnessSliderController;
+import com.android.systemui.shade.NotificationPanelView;
 import com.android.systemui.shade.NotificationPanelViewController;
 import com.android.systemui.shade.NotificationShadeWindowView;
 import com.android.systemui.shade.NotificationShadeWindowViewController;
@@ -255,6 +256,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import dagger.Lazy;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.widget.LinearLayout;
+import android.database.ContentObserver;
+import android.provider.Settings.Global;
+import com.android.systemui.ripple.SpreadView;
+import android.widget.TextView;
 
 /**
  * A class handling initialization and coordination between some of the key central surfaces in
@@ -288,6 +298,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
      */
     private static final int HINT_RESET_DELAY_MS = 1200;
 
+    private static final int PROXIMITY_DEBOUNCE_MS = 10;
+
     private static final UiEventLogger sUiEventLogger = new UiEventLoggerImpl();
 
     /**
@@ -313,6 +325,12 @@ public class CentralSurfacesImpl extends CoreStartable implements
     private float mTransitionToFullShadeProgress = 0f;
     private NotificationListContainer mNotifListContainer;
 
+    final ContentObserver mDisableProximityObserver = new ContentObserver(new Handler()) {
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            disableProximityDetectionState();
+        }
+    };
     private final KeyguardStateController.Callback mKeyguardStateControllerCallback =
             new KeyguardStateController.Callback() {
                 @Override
@@ -503,6 +521,13 @@ public class CentralSurfacesImpl extends CoreStartable implements
     // expanded notifications
     // the sliding/resizing panel within the notification window
     protected NotificationPanelViewController mNotificationPanelViewController;
+
+    protected LinearLayout mProximityDetectedView;
+
+    protected View spreadview;
+    protected TextView proximity_top, proximity_mode,proximity_action;
+
+    protected NotificationPanelView mNotificationPanelView;
 
     // settings
     private QSPanelController mQSPanelController;
@@ -1086,6 +1111,11 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 (requestTopUi, componentTag) -> mMainExecutor.execute(() ->
                         mNotificationShadeWindowController.setRequestTopUi(
                                 requestTopUi, componentTag))));
+
+        mContext.getContentResolver().registerContentObserver(
+                Global.getUriFor(Global.UPDATE_POCKET_MODE_UI),
+                false,
+                mDisableProximityObserver);
     }
 
     private void onFoldedStateChanged(boolean isFolded, boolean willGoToSleep) {
@@ -1185,6 +1215,19 @@ public class CentralSurfacesImpl extends CoreStartable implements
         mAmbientIndicationContainer = mNotificationShadeWindowView.findViewById(
                 R.id.ambient_indication_container);
 
+        mProximityDetectedView = mNotificationShadeWindowView.findViewById(
+                R.id.proximity_view);
+        mNotificationPanelView = mNotificationShadeWindowView.findViewById(
+                R.id.notification_panel);
+        spreadview = mProximityDetectedView.findViewById(
+                R.id.spreadview);
+        proximity_top = mProximityDetectedView.findViewById(
+                R.id.proximity_top);
+        proximity_mode = mProximityDetectedView.findViewById(
+                R.id.proximity_mode);
+        proximity_action = mProximityDetectedView.findViewById(
+                R.id.proximity_action);
+        
         mAutoHideController.setStatusBar(new AutoHideUiElement() {
             @Override
             public void synchronizeState() {
@@ -1404,6 +1447,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction("android.intent.action.PHONE_STATE");
         filter.addAction(ACTION_RESET_VIEW);
         mBroadcastDispatcher.registerReceiver(mBroadcastReceiver, filter, null, UserHandle.ALL);
     }
@@ -2662,7 +2706,14 @@ public class CentralSurfacesImpl extends CoreStartable implements
                 }
                 finishBarAnimations();
                 resetUserExpandedStates();
-            } else if (ACTION_RESET_VIEW.equals(action)) {
+            } else if("android.intent.action.PHONE_STATE".equals(action)) {
+                boolean flag = mKeyguardManager.inKeyguardRestrictedInputMode();
+                int callState = mTelephonyManager.getCallState();
+                int pocket_mode = Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.DISABLE_POCKET_MODE, 0);
+                if (flag && callState == 1 && pocket_mode == 1 && !isDismissDialog) {
+                    registerSensorListener();
+                }
+            }else if (ACTION_RESET_VIEW.equals(action)) {
                 if (isKeyguardShowing()) {
                     mMessageRouter.sendMessage(MSG_LAUNCH_TRANSITION_TIMEOUT);
                 }            }
@@ -2947,6 +2998,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
         mStatusBarStateController.setKeyguardRequested(true);
         mStatusBarStateController.setLeaveOpenOnKeyguardHide(false);
         updateIsKeyguard();
+        enableProximityDetectionIfNecessary();
         mAssistManagerLazy.get().onLockscreenShown();
     }
 
@@ -3161,6 +3213,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
         mNotificationPanelViewController.resetViewGroupFade();
         updateDozingState();
         updateScrimController();
+        disableProximityDetectionState();
+        restoreProximityWakelockIfNecessary();
         Trace.endSection();
         return staying;
     }
@@ -3212,6 +3266,129 @@ public class CentralSurfacesImpl extends CoreStartable implements
         // If the device was re-locked while unlocking, we might have a pending lock that was
         // delayed because the keyguard was in the middle of going away.
         mKeyguardViewMediator.maybeHandlePendingLock();
+    }
+
+    private Handler proximityDebounceHandler = new Handler();
+    private SensorEventListener sensorEventListener = new SensorEventListener() {
+        @Override
+        public final void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+
+        @Override
+        public final void onSensorChanged(SensorEvent event) {
+            proximityDebounceHandler.removeCallbacksAndMessages(null);
+            boolean isPn = isKeyguardProximityDetectionNecessary();
+            if (!isPn) {
+                disableProximityDetectionState();
+                return;
+            }
+
+            final boolean proximityDetected = event.values[0] == 0.0;
+            // For initial proximity state, set right awayvalue
+            if (mProximityDetected == null) {
+                setProximityDetectedShowing(proximityDetected);
+                return;
+            }
+
+            proximityDebounceHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setProximityDetectedShowing(proximityDetected);
+                }
+            }, PROXIMITY_DEBOUNCE_MS);
+        }
+    };
+
+    private SensorManager sensorManager;
+    private Boolean mProximityDetected = null;
+    private boolean mProximityListening;
+
+    public boolean getProximityDetected() {
+        return mProximityDetected == null ? false : mProximityDetected.booleanValue();
+    }
+
+    private void registerSensorListener() {
+        if (mProximityListening) return;
+        sensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+        Sensor proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        sensorManager.registerListener(sensorEventListener, proximity, SensorManager.SENSOR_DELAY_NORMAL);
+        mProximityListening = true;
+    }
+
+    private boolean isKeyguardProximityDetectionNecessary() {
+        boolean isDreaming = false;
+        try {
+            isDreaming = mDreamManager.isDreaming();
+        } catch (RemoteException e) {
+        }
+        return
+                isKeyguardShowing()
+                        && mExpandedVisible  //mStatusBarWindowController.isCurrentlyExpanded()
+                        && !mDozing
+                        && !mDozeServiceHost.getDozingRequested()//mDozingRequested
+                        && !isGoingToSleepOrAsleep()
+                        && !isDreaming
+                        && mDeviceProvisionedController.isDeviceProvisioned()
+                        && (mUserSetup || mUserSwitcherController == null || !mUserSwitcherController.isSimpleUserSwitcher());
+    }
+
+    private void enableProximityDetectionIfNecessary() {
+        int pocket_mode = Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.DISABLE_POCKET_MODE, 0);
+        if (pocket_mode == 0){
+            return;
+        }
+
+        if (isKeyguardProximityDetectionNecessary()) {
+            registerSensorListener();
+            mPowerManager.wakeUp(SystemClock.uptimeMillis(), PowerManager.WAKE_REASON_POWER_BUTTON, "android.policy:POWER");
+        }
+    }
+
+    private void restoreProximityWakelockIfNecessary() {
+        boolean isDreaming = false;
+        try {
+            isDreaming = mDreamManager.isDreaming();
+        } catch (RemoteException e) {
+        }
+        if (!isGoingToSleepOrAsleep() && !mDozing && !mDozeServiceHost.getDozingRequested()/*mDozingRequested*/ && !isDreaming) {
+            mPowerManager.wakeUp(SystemClock.uptimeMillis(), PowerManager.WAKE_REASON_UNKNOWN, "android.policy:RESTORE_PROXIMITY_WAKEFULNESS");
+        }
+    }
+
+    private void unregisterSensorListener() {
+        mProximityDetected = null;
+        if (!mProximityListening) return;
+        if (sensorManager == null) return;
+        try {
+            sensorManager.unregisterListener(sensorEventListener);
+        } catch (Exception e) {
+        }
+        mProximityListening = false;
+    }
+
+    private void disableProximityDetectionState() {
+        unregisterSensorListener();
+        proximityDebounceHandler.removeCallbacksAndMessages(null);
+        setProximityDetectedShowing(false);
+    }
+
+    private void setProximityDetectedShowing(boolean show) {
+        mProximityDetected = show;
+        if (show) {
+            onBackPressed();
+            mNotificationPanelView.setAlpha(0f);
+            mNotificationPanelView.setVisibility(View.INVISIBLE);
+            proximity_top.setText(R.string.proximity_top);
+            proximity_mode.setText(R.string.proximity_mode);
+            proximity_action.setText(R.string.proximity_action);
+            mProximityDetectedView.setVisibility(View.VISIBLE);
+            mProximityDetectedView.setAlpha(0.8f);
+        } else {
+            mNotificationPanelView.setVisibility(View.VISIBLE);
+            mNotificationPanelView.setAlpha(1f);
+            mProximityDetectedView.setVisibility(View.INVISIBLE);
+            mProximityDetectedView.setAlpha(0f);
+        }
     }
 
     /**
@@ -3678,6 +3855,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
         public void onFinishedWakingUp() {
             mWakeUpCoordinator.setFullyAwake(true);
             mWakeUpCoordinator.setWakingUp(false);
+            enableProximityDetectionIfNecessary();
             if (mKeyguardStateController.isOccluded()
                     && !mDozeParameters.canControlUnlockedScreenOff()) {
                 // When the keyguard is occluded we don't use the KEYGUARD state which would
@@ -3736,6 +3914,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
         @Override
         public void onScreenTurnedOff() {
             Trace.beginSection("CentralSurfaces#onScreenTurnedOff");
+            disableProximityDetectionState();
             mDozeServiceHost.updateDozing();
             mFalsingCollector.onScreenOff();
             mScrimController.onScreenTurnedOff();
@@ -3832,6 +4011,11 @@ public class CentralSurfacesImpl extends CoreStartable implements
     public boolean isGoingToSleep() {
         return mWakefulnessLifecycle.getWakefulness()
                 == WakefulnessLifecycle.WAKEFULNESS_GOING_TO_SLEEP;
+    }
+
+    private boolean isGoingToSleepOrAsleep() {
+        int wakefulness = mWakefulnessLifecycle.getWakefulness();
+        return wakefulness == WakefulnessLifecycle.WAKEFULNESS_GOING_TO_SLEEP || wakefulness == WakefulnessLifecycle.WAKEFULNESS_ASLEEP;
     }
 
     boolean isWakingOrAwake() {

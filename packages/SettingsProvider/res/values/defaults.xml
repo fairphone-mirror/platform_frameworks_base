@@ -324,4 +324,9 @@
 
     <!-- Whether tilt to bright is enabled by default. -->
     <bool name="def_wearable_tiltToBrightEnabled">false</bool>
+
+    <!-- Default for Settings.Secure.DISABLE_POCKET_MODE -->
+    <bool name="def_disable_pocket_mode">false</bool>
+    <!-- Default for Settings.Global.UPDATE_POCKET_MODE_UI -->
+    <string name="def_update_pocket_mode_ui">update</string>
 </resources>

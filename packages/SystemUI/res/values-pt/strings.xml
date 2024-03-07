@@ -969,4 +969,8 @@
     <string name="low_temp_message_20">"Aviso! A temperatura da bateria é demasiado baixa, o dispositivo será desligado"</string>
     <string name="height_temp_message_55">"Aviso! A temperatura da bateria é demasiado elevada, feche as aplicações desnecessárias"</string>
     <string name="height_temp_message_60">"Aviso! A temperatura da bateria é demasiado elevada, o dispositivo será desligado"</string>
+
+    <string name="proximity_top">Não cubra a parte superior do ecrã</string>
+    <string name="proximity_mode">Modo de bolso</string>
+    <string name="proximity_action">Deslizar para a esquerda ou direita para sair deste modo</string>
 </resources>

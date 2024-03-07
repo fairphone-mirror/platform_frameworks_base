@@ -969,4 +969,8 @@
     <string name="low_temp_message_20">"Waarschuwing! De batterijtemperatuur is te laag. Je apparaat wordt uitgeschakeld"</string>
     <string name="height_temp_message_55">"Waarschuwing! De batterijtemperatuur is te hoog. Sluit onnodige applicaties af"</string>
     <string name="height_temp_message_60">"Waarschuwing! De batterijtemperatuur is te hoog. Je apparaat wordt uitgeschakeld"</string>
+
+    <string name="proximity_top">Bovenkant van het scherm niet bedekken</string>
+    <string name="proximity_mode">Broekzakmodus</string>
+    <string name="proximity_action">Veeg naar links of rechts om deze modus te sluiten</string>
 </resources>

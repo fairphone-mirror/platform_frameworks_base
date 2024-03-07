@@ -969,4 +969,9 @@
     <string name="low_temp_message_20">"Advarsel! Batteritemperaturen er for lav. Enheden slukkes"</string>
     <string name="height_temp_message_55">"Advarsel! Batteritemperaturen er for høj. Luk unødvendige applikationer"</string>
     <string name="height_temp_message_60">"Advarsel! Batteritemperaturen er for høj. Enheden slukkes"</string>
+
+    <string name="proximity_top">Dæk ikke toppen af skærmen</string>
+    <string name="proximity_mode">Lommetilstand</string>
+    <string name="proximity_action">Stryg til venstre eller højre for at forlade denne tilstand</string>
+
 </resources>

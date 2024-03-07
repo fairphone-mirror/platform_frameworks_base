@@ -2644,4 +2644,8 @@
 
     <!-- Time format for the Dream Time Complication for 24-hour time format [CHAR LIMIT=NONE] -->
     <string name="dream_time_complication_24_hr_time_format">kk:mm</string>
+    <!-- add by suntianhai for pocket mode -->
+    <string name="proximity_top">Don’t cover the top of the screen</string>
+    <string name="proximity_mode">Pocket Mode</string>
+    <string name="proximity_action">Swipe left or right to exit this mode</string>
 </resources>

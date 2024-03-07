@@ -969,4 +969,8 @@
     <string name="low_temp_message_20">"Warnung! Die Akkutemperatur ist zu niedrig, dein Gerät wird ausgeschaltet"</string>
     <string name="height_temp_message_55">"Warnung! Akkutemperatur ist zu hoch, nicht erforderliche Anwendungen schließen"</string>
     <string name="height_temp_message_60">"Warnung! Akkutemperatur ist zu hoch, dein Gerät wird ausgeschaltet"</string>
+
+    <string name="proximity_top">Decke nicht die Oberseite des Bildschirms ab</string>
+    <string name="proximity_mode">Taschenmodus</string>
+    <string name="proximity_action">Wische nach links oder rechts, um diesen Modus zu verlassen</string>
 </resources>

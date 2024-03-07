@@ -969,4 +969,8 @@
     <string name="low_temp_message_20">"Varning! Batteritemperaturen är för låg, din enhet kommer att stängas av"</string>
     <string name="height_temp_message_55">"Varning! Batteritemperaturen är för hög, stäng onödiga program"</string>
     <string name="height_temp_message_60">"Varning! Batteritemperaturen är för hög, din enhet kommer att stängas av"</string>
+
+    <string name="proximity_top">Täck inte toppen av skärmen</string>
+    <string name="proximity_mode">Fickläge</string>
+    <string name="proximity_action">Dra åt vänster eller höger för att lämna detta läge</string>
 </resources>

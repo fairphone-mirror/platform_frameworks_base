@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This is the view that appears when proximity is detected on the lock screen -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sysui="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/proximity_view"
+    android:background="@android:color/transparent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/proximity_top"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_marginTop="100dp"
+        android:textColor="?attr/wallpaperTextColor"
+        android:text="@string/proximity_top"
+        android:textSize="22sp"
+        android:singleLine="true"
+        android:ellipsize="end"
+    />
+
+    <ImageView
+        android:id="@+id/pocket_mode_iv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:gravity="center"
+        android:layout_marginTop="15dp"
+        android:background="@android:color/transparent"
+        android:src="@mipmap/pocket_mode"
+        />
+
+    <TextView
+        android:id="@+id/proximity_mode"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:textColor="?attr/wallpaperTextColor"
+        android:text="@string/proximity_mode"
+        android:textSize="18sp"
+        android:singleLine="true"
+        android:ellipsize="end"
+    />
+
+    <TextView
+        android:id="@+id/proximity_action"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:textColor="?attr/wallpaperTextColor"
+        android:text="@string/proximity_action"
+        android:textSize="16sp"
+        android:singleLine="true"
+        android:ellipsize="end"
+    />
+
+
+    <com.android.systemui.ripple.SpreadView
+        android:id="@+id/spreadview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        app:spread_center_color="#31DE80"
+        app:spread_delay_milliseconds="800"
+        app:spread_distance="3"
+        app:spread_max_radius="30"
+        app:spread_radius="70"
+        android:layout_gravity="center"
+        app:spread_spread_color="#fff" />
+
+</LinearLayout>
