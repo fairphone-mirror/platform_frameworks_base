@@ -265,6 +265,14 @@ import android.database.ContentObserver;
 import android.provider.Settings.Global;
 import com.android.systemui.ripple.SpreadView;
 import android.widget.TextView;
+import android.telephony.TelephonyManager;
+import com.android.systemui.statusbar.phone.SystemUIDialog;
+import android.view.Window;
+import android.app.Dialog;
+import android.view.WindowManager.LayoutParams;
+import android.view.LayoutInflater;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 
 /**
  * A class handling initialization and coordination between some of the key central surfaces in
@@ -320,6 +328,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
         ONLY_CORE_APPS = onlyCoreApps;
     }
 
+    private boolean isDismissDialog = false;
     private final LockscreenShadeTransitionController mLockscreenShadeTransitionController;
     private CentralSurfacesCommandQueueCallbacks mCommandQueueCallbacks;
     private float mTransitionToFullShadeProgress = 0f;
@@ -328,6 +337,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
     final ContentObserver mDisableProximityObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
+            isDismissDialog = true;
             disableProximityDetectionState();
         }
     };
@@ -526,6 +536,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
 
     protected View spreadview;
     protected TextView proximity_top, proximity_mode,proximity_action;
+
+    protected SystemUIDialog mPocketModeDialog;
 
     protected NotificationPanelView mNotificationPanelView;
 
@@ -942,6 +954,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
 
         mKeyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
         mWallpaperSupported = mWallpaperManager.isWallpaperSupported();
+
+        mTelephonyManager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
 
         RegisterStatusBarResult result = null;
         try {
@@ -3278,7 +3292,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
         public final void onSensorChanged(SensorEvent event) {
             proximityDebounceHandler.removeCallbacksAndMessages(null);
             boolean isPn = isKeyguardProximityDetectionNecessary();
-            if (!isPn) {
+            int callState = mTelephonyManager.getCallState();
+            if (!isPn && callState != 1) {
                 disableProximityDetectionState();
                 return;
             }
@@ -3356,6 +3371,12 @@ public class CentralSurfacesImpl extends CoreStartable implements
     }
 
     private void unregisterSensorListener() {
+        boolean flag = mKeyguardManager.inKeyguardRestrictedInputMode();
+        int callState = mTelephonyManager.getCallState();
+        int pocket_mode = Settings.Secure.getInt(mContext.getContentResolver(), Settings.Secure.DISABLE_POCKET_MODE, 0);
+        if (flag && callState == 1 && pocket_mode == 1 && !isDismissDialog) {
+            return;
+        }
         mProximityDetected = null;
         if (!mProximityListening) return;
         if (sensorManager == null) return;
@@ -3373,22 +3394,61 @@ public class CentralSurfacesImpl extends CoreStartable implements
     }
 
     private void setProximityDetectedShowing(boolean show) {
+        int callState = mTelephonyManager.getCallState();
         mProximityDetected = show;
         if (show) {
             onBackPressed();
             mNotificationPanelView.setAlpha(0f);
             mNotificationPanelView.setVisibility(View.INVISIBLE);
-            proximity_top.setText(R.string.proximity_top);
-            proximity_mode.setText(R.string.proximity_mode);
-            proximity_action.setText(R.string.proximity_action);
-            mProximityDetectedView.setVisibility(View.VISIBLE);
-            mProximityDetectedView.setAlpha(0.8f);
+            if (callState == 1) {
+                showDialog();
+            }else{
+                proximity_top.setText(R.string.proximity_top);
+                proximity_mode.setText(R.string.proximity_mode);
+                proximity_action.setText(R.string.proximity_action);
+                mProximityDetectedView.setVisibility(View.VISIBLE);
+                mProximityDetectedView.setAlpha(1f);
+                mProximityDetectedView.setBackgroundDrawable(mWallpaperManager.getDrawable());
+            }
         } else {
             mNotificationPanelView.setVisibility(View.VISIBLE);
             mNotificationPanelView.setAlpha(1f);
-            mProximityDetectedView.setVisibility(View.INVISIBLE);
-            mProximityDetectedView.setAlpha(0f);
+            if (callState == 1 && mPocketModeDialog != null) {
+                mPocketModeDialog.dismiss();
+                mPocketModeDialog = null;
+            }else{
+                mProximityDetectedView.setVisibility(View.INVISIBLE);
+                mProximityDetectedView.setAlpha(0f);
+            }
+            isDismissDialog = false;
         }
+    }
+
+    private void showDialog(){
+        if (mPocketModeDialog != null) {
+            return;
+        }
+        mPocketModeDialog = new SystemUIDialog(mContext,R.style.PocketModeDialog_Fullscreen);
+        View view = View.inflate(mContext, R.layout.status_bar_proximity_detected, null);
+        view.setBackgroundDrawable(mWallpaperManager.getDrawable());
+        TextView top = view.findViewById(R.id.proximity_top);
+        TextView mode = view.findViewById(R.id.proximity_mode);
+        TextView action = view.findViewById(R.id.proximity_action);
+        top.setText(R.string.proximity_top);
+        mode.setText(R.string.proximity_mode);
+        action.setText(R.string.proximity_action);
+
+        mPocketModeDialog.setView(view);
+        Window window = mPocketModeDialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+            window.setAttributes(params);
+        }
+        mPocketModeDialog.setShowForAllUsers(true);
+        mPocketModeDialog.show();
+        window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
     /**
@@ -4154,7 +4214,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
     protected DevicePolicyManager mDevicePolicyManager;
     private final PowerManager mPowerManager;
     protected StatusBarKeyguardViewManager mStatusBarKeyguardViewManager;
-
+    private TelephonyManager mTelephonyManager;
     protected KeyguardManager mKeyguardManager;
     private final DeviceProvisionedController mDeviceProvisionedController;
 

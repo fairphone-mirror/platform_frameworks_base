@@ -1270,4 +1270,10 @@
         <!--扩散延迟间隔-->
         <attr name="spread_delay_milliseconds" format="integer"/>
     </declare-styleable>
+
+    <style name="PocketModeDialog_Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>
