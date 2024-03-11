@@ -220,7 +220,7 @@
     <string name="reboot_to_update_prepare" msgid="6978842143587422365">"Naghahandang i-update…"</string>
     <string name="reboot_to_update_package" msgid="4644104795527534811">"Pinoproseso ang package ng update…"</string>
     <string name="reboot_to_update_reboot" msgid="4474726009984452312">"Nagre-restart…"</string>
-    <string name="reboot_to_reset_title" msgid="2226229680017882787">"I-reset ang data ng factory"</string>
+    <string name="reboot_to_reset_title" msgid="2226229680017882787">"Pag-reset sa factory data"</string>
     <string name="reboot_to_reset_message" msgid="3347690497972074356">"Nagre-restart…"</string>
     <string name="shutdown_progress" msgid="5017145516412657345">"Nagsa-shut down…"</string>
     <string name="shutdown_confirm" product="tablet" msgid="2872769463279602432">"Mag-shut down ang iyong tablet."</string>
@@ -1413,6 +1413,7 @@
     <string name="deny" msgid="6632259981847676572">"Tanggihan"</string>
     <string name="permission_request_notification_title" msgid="1810025922441048273">"Hiniling ang pahintulot"</string>
     <string name="permission_request_notification_with_subtitle" msgid="3743417870360129298">"Hiniling ang pahintulot\npara sa account na <xliff:g id="ACCOUNT">%s</xliff:g>."</string>
+    <string name="permission_request_notification_for_app_with_subtitle" msgid="1298704005732851350">"Humiling ang <xliff:g id="APP">%1$s</xliff:g> ng pahintulot\npara sa account na <xliff:g id="ACCOUNT">%2$s</xliff:g>."</string>
     <string name="forward_intent_to_owner" msgid="4620359037192871015">"Ginagamit mo ang app na ito sa labas ng iyong profile sa trabaho"</string>
     <string name="forward_intent_to_work" msgid="3620262405636021151">"Ginagamit mo ang app na ito sa iyong profile sa trabaho"</string>
     <string name="input_method_binding_label" msgid="1166731601721983656">"Pamamaraan ng pag-input"</string>

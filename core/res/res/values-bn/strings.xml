@@ -1413,6 +1413,7 @@
     <string name="deny" msgid="6632259981847676572">"অস্বীকার করুন"</string>
     <string name="permission_request_notification_title" msgid="1810025922441048273">"অনুমতির অনুরোধ করা হয়েছে"</string>
     <string name="permission_request_notification_with_subtitle" msgid="3743417870360129298">"<xliff:g id="ACCOUNT">%s</xliff:g>অ্যাকাউন্টের জন্য\nঅনুমতির অনুরোধ করা হয়েছে৷"</string>
+    <string name="permission_request_notification_for_app_with_subtitle" msgid="1298704005732851350">"<xliff:g id="ACCOUNT">%2$s</xliff:g> অ্যাকাউন্টের জন্য <xliff:g id="APP">%1$s</xliff:g>\n থেকে অনুমতি চাওয়া হয়েছে।"</string>
     <string name="forward_intent_to_owner" msgid="4620359037192871015">"আপনি এই অ্যাপ্লিকেশানটি আপনার কর্মস্থলের প্রোফাইলের বাইরে ব্যবহার করছেন"</string>
     <string name="forward_intent_to_work" msgid="3620262405636021151">"আপনি এই অ্যাপ্লিকেশানটি আপনার কর্মস্থলের প্রোফাইলে ব্যবহার করছেন"</string>
     <string name="input_method_binding_label" msgid="1166731601721983656">"ইনপুট পদ্ধতি"</string>
@@ -1661,7 +1662,7 @@
     <string name="accessibility_gesture_3finger_instructional_text" msgid="3425123684990193765">"একটি ফিচার থেকে অন্যটিতে যেতে, তিনটি আঙ্গুল দিয়ে উপরের দিকে সোয়াইপ করে ধরে থাকুন।"</string>
     <string name="accessibility_magnification_chooser_text" msgid="1502075582164931596">"বড় করে দেখা"</string>
     <string name="user_switched" msgid="7249833311585228097">"বর্তমান ব্যবহারকারী <xliff:g id="NAME">%1$s</xliff:g>৷"</string>
-    <string name="user_switching_message" msgid="1912993630661332336">"<xliff:g id="NAME">%1$s</xliff:g> নামের ব্যবহারকারীতে যাচ্ছে…"</string>
+    <string name="user_switching_message" msgid="1912993630661332336">"ব্যবহারকারী পরিবর্তন করে <xliff:g id="NAME">%1$s</xliff:g> করা হচ্ছে…"</string>
     <string name="user_logging_out_message" msgid="7216437629179710359">"<xliff:g id="NAME">%1$s</xliff:g>কে লগ-আউট করা হচ্ছে..."</string>
     <string name="owner_name" msgid="8713560351570795743">"মালিক"</string>
     <string name="error_message_title" msgid="4082495589294631966">"ত্রুটি"</string>

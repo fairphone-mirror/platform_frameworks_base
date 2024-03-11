@@ -257,6 +257,7 @@
     <string name="bluetooth_show_devices_without_names" msgid="923584526471885819">"Pokaż urządzenia Bluetooth bez nazw"</string>
     <string name="bluetooth_disable_absolute_volume" msgid="1452342324349203434">"Wyłącz głośność bezwzględną"</string>
     <string name="bluetooth_enable_gabeldorsche" msgid="9131730396242883416">"Włącz Gabeldorsche"</string>
+    <string name="enhanced_connectivity" msgid="7201127377781666804">"Lepsza obsługa połączeń"</string>
     <string name="bluetooth_select_avrcp_version_string" msgid="1710571610177659127">"Wersja AVRCP Bluetooth"</string>
     <string name="bluetooth_select_avrcp_version_dialog_title" msgid="7846922290083709633">"Wybierz wersję AVRCP Bluetooth"</string>
     <string name="bluetooth_select_map_version_string" msgid="526308145174175327">"Wersja MAP Bluetooth"</string>
@@ -446,7 +447,7 @@
     <string name="power_charging" msgid="6727132649743436802">"<xliff:g id="LEVEL">%1$s</xliff:g> – <xliff:g id="STATE">%2$s</xliff:g>"</string>
     <string name="power_remaining_charging_duration_only" msgid="7415639699283965818">"Do naładowania <xliff:g id="TIME">%1$s</xliff:g>"</string>
     <string name="power_charging_duration" msgid="5005740040558984057">"<xliff:g id="LEVEL">%1$s</xliff:g> – do naładowania <xliff:g id="TIME">%2$s</xliff:g>"</string>
-    <string name="power_charging_limited" msgid="1956874810658999681">"<xliff:g id="LEVEL">%1$s</xliff:g> – Optymalizuję, by utrzymać baterię w dobrym stanie"</string>
+    <string name="power_charging_limited" msgid="1956874810658999681">"<xliff:g id="LEVEL">%1$s</xliff:g> – Optymalizuję, aby utrzymać baterię w dobrym stanie"</string>
     <string name="battery_info_status_unknown" msgid="268625384868401114">"Nieznane"</string>
     <string name="battery_info_status_charging" msgid="4279958015430387405">"Ładowanie"</string>
     <string name="battery_info_status_charging_fast" msgid="8027559755902954885">"Szybkie ładowanie"</string>

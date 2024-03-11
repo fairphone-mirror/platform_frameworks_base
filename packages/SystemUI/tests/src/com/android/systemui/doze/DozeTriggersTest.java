@@ -74,8 +74,6 @@ public class DozeTriggersTest extends SysuiTestCase {
     private BroadcastDispatcher mBroadcastDispatcher;
     @Mock
     private DockManager mDockManager;
-    @Mock
-    private ProximitySensor.ProximityCheck mProximityCheck;
 
     private DozeTriggers mTriggers;
     private FakeSensorManager mSensors;
@@ -99,8 +97,8 @@ public class DozeTriggersTest extends SysuiTestCase {
         mProximitySensor = new FakeProximitySensor(thresholdSensor,  null, mExecutor);
 
         mTriggers = new DozeTriggers(mContext, mMachine, mHost, mAlarmManager, config, parameters,
-                asyncSensorManager, wakeLock, true, mDockManager, mProximitySensor,
-                mProximityCheck, mock(DozeLog.class), mBroadcastDispatcher);
+                asyncSensorManager, mExecutor, wakeLock, true,
+                mDockManager, mProximitySensor, mock(DozeLog.class), mBroadcastDispatcher);
         waitForSensorManager();
     }
 

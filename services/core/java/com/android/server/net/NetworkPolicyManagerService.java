@@ -1374,7 +1374,8 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
 
                 builder.setSmallIcon(R.drawable.stat_notify_error);
 
-                final Intent snoozeIntent = buildSnoozeWarningIntent(policy.template);
+                final Intent snoozeIntent = buildSnoozeWarningIntent(policy.template,
+                        mContext.getPackageName());
                 builder.setDeleteIntent(PendingIntent.getBroadcast(
                         mContext, 0, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
@@ -1460,7 +1461,8 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
 
                 builder.setSmallIcon(R.drawable.stat_notify_error);
 
-                final Intent snoozeIntent = buildSnoozeRapidIntent(policy.template);
+                final Intent snoozeIntent = buildSnoozeRapidIntent(policy.template,
+                        mContext.getPackageName());
                 builder.setDeleteIntent(PendingIntent.getBroadcast(
                         mContext, 0, snoozeIntent, PendingIntent.FLAG_UPDATE_CURRENT));
 
@@ -3087,23 +3089,19 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
         // Verify they're not lying about package name
         mAppOps.checkPackage(callingUid, callingPackage);
 
-        final SubscriptionManager sm;
-        final SubscriptionInfo si;
         final PersistableBundle config;
+        final TelephonyManager tm;
         final long token = Binder.clearCallingIdentity();
         try {
-            sm = mContext.getSystemService(SubscriptionManager.class);
-            si = sm.getActiveSubscriptionInfo(subId);
             config = mCarrierConfigManager.getConfigForSubId(subId);
+            tm = mContext.getSystemService(TelephonyManager.class);
         } finally {
             Binder.restoreCallingIdentity(token);
         }
 
-        // First check: is caller the CarrierService?
-        if (si != null) {
-            if (si.isEmbedded() && sm.canManageSubscription(si, callingPackage)) {
-                return;
-            }
+        // First check: does caller have carrier privilege?
+        if (tm != null && tm.hasCarrierPrivileges(subId)) {
+            return;
         }
 
         // Second check: has the CarrierService delegated access?
@@ -5085,17 +5083,19 @@ public class NetworkPolicyManagerService extends INetworkPolicyManager.Stub {
         return new Intent(ACTION_ALLOW_BACKGROUND);
     }
 
-    private static Intent buildSnoozeWarningIntent(NetworkTemplate template) {
+    private static Intent buildSnoozeWarningIntent(NetworkTemplate template, String targetPackage) {
         final Intent intent = new Intent(ACTION_SNOOZE_WARNING);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         intent.putExtra(EXTRA_NETWORK_TEMPLATE, template);
+        intent.setPackage(targetPackage);
         return intent;
     }
 
-    private static Intent buildSnoozeRapidIntent(NetworkTemplate template) {
+    private static Intent buildSnoozeRapidIntent(NetworkTemplate template, String targetPackage) {
         final Intent intent = new Intent(ACTION_SNOOZE_RAPID);
         intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         intent.putExtra(EXTRA_NETWORK_TEMPLATE, template);
+        intent.setPackage(targetPackage);
         return intent;
     }
 

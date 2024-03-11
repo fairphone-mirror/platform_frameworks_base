@@ -849,7 +849,7 @@
     <string name="lockscreen_transport_pause_description" msgid="6705284702135372494">"Pausar"</string>
     <string name="lockscreen_transport_play_description" msgid="106868788691652733">"Reproduzir"</string>
     <string name="lockscreen_transport_stop_description" msgid="1449552232598355348">"Parar"</string>
-    <string name="lockscreen_transport_rew_description" msgid="7680106856221622779">"Retroceder"</string>
+    <string name="lockscreen_transport_rew_description" msgid="7680106856221622779">"Voltar"</string>
     <string name="lockscreen_transport_ffw_description" msgid="4763794746640196772">"Avançar"</string>
     <string name="emergency_calls_only" msgid="3057351206678279851">"Só chamadas de emergência"</string>
     <string name="lockscreen_network_locked_message" msgid="2814046965899249635">"Rede bloqueada"</string>
@@ -1413,6 +1413,7 @@
     <string name="deny" msgid="6632259981847676572">"Negar"</string>
     <string name="permission_request_notification_title" msgid="1810025922441048273">"Permissão solicitada"</string>
     <string name="permission_request_notification_with_subtitle" msgid="3743417870360129298">"Permissão solicitada\npara a conta <xliff:g id="ACCOUNT">%s</xliff:g>."</string>
+    <string name="permission_request_notification_for_app_with_subtitle" msgid="1298704005732851350">"Permissão solicitada pelo app <xliff:g id="APP">%1$s</xliff:g>\npara a conta <xliff:g id="ACCOUNT">%2$s</xliff:g>."</string>
     <string name="forward_intent_to_owner" msgid="4620359037192871015">"Este app está sendo usado fora de seu perfil de trabalho"</string>
     <string name="forward_intent_to_work" msgid="3620262405636021151">"Você está usando este app em seu perfil de trabalho"</string>
     <string name="input_method_binding_label" msgid="1166731601721983656">"Método de entrada"</string>

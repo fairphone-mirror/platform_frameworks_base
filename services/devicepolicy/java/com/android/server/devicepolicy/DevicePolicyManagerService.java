@@ -23,6 +23,7 @@ import static android.accessibilityservice.AccessibilityServiceInfo.FEEDBACK_ALL
 import static android.app.ActivityManager.LOCK_TASK_MODE_NONE;
 import static android.app.admin.DeviceAdminReceiver.EXTRA_TRANSFER_OWNERSHIP_ADMIN_EXTRAS_BUNDLE;
 import static android.app.admin.DevicePolicyManager.ACTION_CHECK_POLICY_COMPLIANCE;
+import static android.app.admin.DevicePolicyManager.ACTION_MANAGED_PROFILE_PROVISIONED;
 import static android.app.admin.DevicePolicyManager.ACTION_PROVISION_MANAGED_USER;
 import static android.app.admin.DevicePolicyManager.CODE_ACCOUNTS_NOT_EMPTY;
 import static android.app.admin.DevicePolicyManager.CODE_CANNOT_ADD_MANAGED_PROFILE;
@@ -50,6 +51,7 @@ import static android.app.admin.DevicePolicyManager.DELEGATION_NETWORK_LOGGING;
 import static android.app.admin.DevicePolicyManager.DELEGATION_PACKAGE_ACCESS;
 import static android.app.admin.DevicePolicyManager.DELEGATION_PERMISSION_GRANT;
 import static android.app.admin.DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER;
+import static android.app.admin.DevicePolicyManager.EXTRA_PROVISIONING_ACCOUNT_TO_MIGRATE;
 import static android.app.admin.DevicePolicyManager.ID_TYPE_BASE_INFO;
 import static android.app.admin.DevicePolicyManager.ID_TYPE_IMEI;
 import static android.app.admin.DevicePolicyManager.ID_TYPE_INDIVIDUAL_ATTESTATION;
@@ -9396,6 +9398,9 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
             final ComponentName doComponent = mOwners.getDeviceOwnerComponent();
             final ComponentName poComponent =
                     mOwners.getProfileOwnerComponent(userHandle.getIdentifier());
+            if (supervisorComponent == null) {
+                return null;
+            }
             if (supervisorComponent.equals(doComponent) || supervisorComponent.equals(
                     poComponent)) {
                 return supervisorComponent;
@@ -10647,6 +10652,37 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
                 saveSettingsLocked(userHandle);
             }
         }
+    }
+
+    @Override
+    public void finalizeWorkProfileProvisioning(UserHandle managedProfileUser,
+            Account migratedAccount) {
+        if (mContext.checkCallingOrSelfPermission(permission.MANAGE_PROFILE_AND_DEVICE_OWNERS)
+                != PackageManager.PERMISSION_GRANTED) {
+            throw new SecurityException("Calling identity is not authorized");
+        }
+
+        if (!isManagedProfile(managedProfileUser.getIdentifier())) {
+            throw new IllegalStateException("Given user is not a managed profile");
+        }
+        ComponentName profileOwnerComponent =
+                mOwners.getProfileOwnerComponent(managedProfileUser.getIdentifier());
+        if (profileOwnerComponent == null) {
+            throw new IllegalStateException("There is no profile owner on the given profile");
+        }
+        Intent primaryProfileSuccessIntent = new Intent(ACTION_MANAGED_PROFILE_PROVISIONED);
+        primaryProfileSuccessIntent.setPackage(profileOwnerComponent.getPackageName());
+        primaryProfileSuccessIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES
+                | Intent.FLAG_RECEIVER_FOREGROUND);
+        primaryProfileSuccessIntent.putExtra(Intent.EXTRA_USER, managedProfileUser);
+
+        if (migratedAccount != null) {
+            primaryProfileSuccessIntent.putExtra(EXTRA_PROVISIONING_ACCOUNT_TO_MIGRATE,
+                    migratedAccount);
+        }
+
+        mContext.sendBroadcastAsUser(primaryProfileSuccessIntent,
+                UserHandle.of(getProfileParentId(managedProfileUser.getIdentifier())));
     }
 
     @Override
@@ -12482,6 +12518,13 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
         }
 
         @Override
+        public @Nullable ComponentName getProfileOwnerOrDeviceOwnerSupervisionComponent(
+                @NonNull UserHandle userHandle) {
+            return DevicePolicyManagerService.this.getProfileOwnerOrDeviceOwnerSupervisionComponent(
+                    userHandle);
+        }
+
+        @Override
         public boolean isActiveAdminWithPolicy(int uid, int reqPolicy) {
             synchronized (getLockObject()) {
                 return getActiveAdminWithPolicyForUidLocked(null, reqPolicy, uid) != null;
@@ -12838,6 +12881,26 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
             return getDefaultCrossProfilePackages().contains(packageName)
                     ? AppOpsManager.MODE_ALLOWED
                     : AppOpsManager.opToDefaultMode(AppOpsManager.OP_INTERACT_ACROSS_PROFILES);
+        }
+
+        public boolean isDeviceOrProfileOwnerInCallingUser(String packageName) {
+            return isDeviceOwnerInCallingUser(packageName)
+                    || isProfileOwnerInCallingUser(packageName);
+        }
+
+        private boolean isDeviceOwnerInCallingUser(String packageName) {
+            final ComponentName deviceOwnerInCallingUser =
+                    DevicePolicyManagerService.this.getDeviceOwnerComponent(
+                            /* callingUserOnly= */ true);
+            return deviceOwnerInCallingUser != null
+                    && packageName.equals(deviceOwnerInCallingUser.getPackageName());
+        }
+
+        private boolean isProfileOwnerInCallingUser(String packageName) {
+            final ComponentName profileOwnerInCallingUser =
+                    getProfileOwnerAsUser(UserHandle.getCallingUserId());
+            return profileOwnerInCallingUser != null
+                    && packageName.equals(profileOwnerInCallingUser.getPackageName());
         }
     }
 
@@ -14461,15 +14524,17 @@ public class DevicePolicyManagerService extends BaseIDevicePolicyManager {
         }
 
         enforceProfileOrDeviceOwner(admin);
-        synchronized (getLockObject()) {
-            try {
-                IBackupManager ibm = mInjector.getIBackupManager();
-                return ibm != null && ibm.isBackupServiceActive(
-                    mInjector.userHandleGetCallingUserId());
-            } catch (RemoteException e) {
-                throw new IllegalStateException("Failed requesting backup service state.", e);
+        final int userId = mInjector.userHandleGetCallingUserId();
+        return mInjector.binderWithCleanCallingIdentity(() -> {
+            synchronized (getLockObject()) {
+                try {
+                    IBackupManager ibm = mInjector.getIBackupManager();
+                    return ibm != null && ibm.isBackupServiceActive(userId);
+                } catch (RemoteException e) {
+                    throw new IllegalStateException("Failed requesting backup service state.", e);
+                }
             }
-        }
+        });
     }
 
     @Override

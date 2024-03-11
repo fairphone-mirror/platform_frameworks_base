@@ -1413,6 +1413,7 @@
     <string name="deny" msgid="6632259981847676572">"Elutasítás"</string>
     <string name="permission_request_notification_title" msgid="1810025922441048273">"Az engedélykérés megtörtént"</string>
     <string name="permission_request_notification_with_subtitle" msgid="3743417870360129298">"Az engedélykérés megtörtént\na(z) <xliff:g id="ACCOUNT">%s</xliff:g> fiók számára."</string>
+    <string name="permission_request_notification_for_app_with_subtitle" msgid="1298704005732851350">"A(z) <xliff:g id="APP">%1$s</xliff:g> alkalmazás által kért engedély\na következő fiók számára: <xliff:g id="ACCOUNT">%2$s</xliff:g>."</string>
     <string name="forward_intent_to_owner" msgid="4620359037192871015">"Ezt az alkalmazást munkaprofilján kívül használja"</string>
     <string name="forward_intent_to_work" msgid="3620262405636021151">"Munkaprofiljában már használja az alkalmazást"</string>
     <string name="input_method_binding_label" msgid="1166731601721983656">"Beviteli mód"</string>
@@ -1785,7 +1786,7 @@
     <string name="managed_profile_label_badge" msgid="6762559569999499495">"Munkahelyi <xliff:g id="LABEL">%1$s</xliff:g>"</string>
     <string name="managed_profile_label_badge_2" msgid="5673187309555352550">"2. munkahelyi <xliff:g id="LABEL">%1$s</xliff:g>"</string>
     <string name="managed_profile_label_badge_3" msgid="6882151970556391957">"3. munkahelyi <xliff:g id="LABEL">%1$s</xliff:g>"</string>
-    <string name="lock_to_app_unlock_pin" msgid="3890940811866290782">"PIN-kód kérése a rögzítés feloldásához"</string>
+    <string name="lock_to_app_unlock_pin" msgid="3890940811866290782">"PIN-kód kérése a kitűzés feloldásához"</string>
     <string name="lock_to_app_unlock_pattern" msgid="2694204070499712503">"Feloldási minta kérése a rögzítés feloldásához"</string>
     <string name="lock_to_app_unlock_password" msgid="9126722403506560473">"Jelszó kérése a rögzítés feloldásához"</string>
     <string name="package_installed_device_owner" msgid="7035926868974878525">"A rendszergazda által telepítve"</string>

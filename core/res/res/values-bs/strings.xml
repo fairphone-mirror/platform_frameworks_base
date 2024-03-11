@@ -1335,7 +1335,7 @@
     <string name="test_harness_mode_notification_title" msgid="2282785860014142511">"Omogućen način rada okvira za testiranje"</string>
     <string name="test_harness_mode_notification_message" msgid="3039123743127958420">"Izvršite vraćanje na fabričke postavke da onemogućite način rada okvira za testiranje."</string>
     <string name="console_running_notification_title" msgid="6087888939261635904">"Serijska konzola omogućena"</string>
-    <string name="console_running_notification_message" msgid="7892751888125174039">"Izvedba je otežana. Da onemogućite, provjerite program za učitavanje operativnog sistema."</string>
+    <string name="console_running_notification_message" msgid="7892751888125174039">"Performanse su smanjene. Da onemogućite, provjerite program za učitavanje operativnog sistema."</string>
     <string name="usb_contaminant_detected_title" msgid="4359048603069159678">"Tečnost ili nečistoće u USB priključku"</string>
     <string name="usb_contaminant_detected_message" msgid="7346100585390795743">"USB priključak je automatski onemogućen. Dodirnite da saznate više."</string>
     <string name="usb_contaminant_not_detected_title" msgid="2651167729563264053">"USB priključak je sada sigurno koristiti"</string>
@@ -1433,6 +1433,7 @@
     <string name="deny" msgid="6632259981847676572">"Odbij"</string>
     <string name="permission_request_notification_title" msgid="1810025922441048273">"Upućen zahtjev za odobrenje"</string>
     <string name="permission_request_notification_with_subtitle" msgid="3743417870360129298">"Upućen zahtjev za dozvolu\nza račun <xliff:g id="ACCOUNT">%s</xliff:g>."</string>
+    <string name="permission_request_notification_for_app_with_subtitle" msgid="1298704005732851350">"Odobrenje je zatražila aplikacija <xliff:g id="APP">%1$s</xliff:g>\nza račun <xliff:g id="ACCOUNT">%2$s</xliff:g>."</string>
     <string name="forward_intent_to_owner" msgid="4620359037192871015">"Aplikaciju koristite van poslovnog profila"</string>
     <string name="forward_intent_to_work" msgid="3620262405636021151">"Aplikaciju koristite u poslovnom profilu"</string>
     <string name="input_method_binding_label" msgid="1166731601721983656">"Način unosa"</string>

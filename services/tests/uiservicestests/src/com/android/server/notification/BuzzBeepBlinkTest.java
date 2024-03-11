@@ -46,6 +46,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.ActivityManager;
+import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.Notification.Builder;
 import android.app.NotificationChannel;
@@ -57,6 +58,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Process;
 import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.VibrationEffect;
@@ -77,10 +79,12 @@ import com.android.internal.logging.InstanceIdSequenceFake;
 import com.android.internal.util.IntPair;
 import com.android.server.UiServiceTestCase;
 import com.android.server.lights.LogicalLight;
+import com.android.server.pm.PackageManagerService;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -100,6 +104,8 @@ public class BuzzBeepBlinkTest extends UiServiceTestCase {
     NotificationUsageStats mUsageStats;
     @Mock
     IAccessibilityManager mAccessibilityService;
+    @Mock
+    KeyguardManager mKeyguardManager;
     NotificationRecordLoggerFake mNotificationRecordLogger = new NotificationRecordLoggerFake();
     private InstanceIdSequence mNotificationInstanceIdSequence = new InstanceIdSequenceFake(
             1 << 30);
@@ -144,6 +150,7 @@ public class BuzzBeepBlinkTest extends UiServiceTestCase {
         when(mAudioManager.getStreamVolume(anyInt())).thenReturn(10);
         when(mAudioManager.getRingerModeInternal()).thenReturn(AudioManager.RINGER_MODE_NORMAL);
         when(mUsageStats.isAlertRateLimited(any())).thenReturn(false);
+        when(mKeyguardManager.isDeviceLocked(anyInt())).thenReturn(false);
 
         long serviceReturnValue = IntPair.of(
                 AccessibilityManager.STATE_FLAG_ACCESSIBILITY_ENABLED,
@@ -165,6 +172,7 @@ public class BuzzBeepBlinkTest extends UiServiceTestCase {
         mService.setFallbackVibrationPattern(FALLBACK_VIBRATION_PATTERN);
         mService.setUsageStats(mUsageStats);
         mService.setAccessibilityManager(accessibilityManager);
+        mService.setKeyguardManager(mKeyguardManager);
         mService.mScreenOn = false;
         mService.mInCallStateOffHook = false;
         mService.mNotificationPulseEnabled = true;
@@ -407,12 +415,17 @@ public class BuzzBeepBlinkTest extends UiServiceTestCase {
     }
 
     private void verifyVibrate() {
+        ArgumentCaptor<AudioAttributes> captor = ArgumentCaptor.forClass(AudioAttributes.class);
         verify(mVibrator, times(1)).vibrate(anyInt(), anyString(), argThat(mVibrateOnceMatcher),
-                anyString(), any());
+                anyString(), captor.capture());
+        assertEquals(0, (captor.getValue().getAllFlags()
+                & AudioAttributes.FLAG_BYPASS_INTERRUPTION_POLICY));
     }
 
     private void verifyVibrate(int times) {
-        verify(mVibrator, times(times)).vibrate(anyInt(), anyString(), any(), anyString(), any());
+        verify(mVibrator, times(times)).vibrate(eq(Process.SYSTEM_UID),
+                eq(PackageManagerService.PLATFORM_PACKAGE_NAME), any(), anyString(),
+                any(AudioAttributes.class));
     }
 
     private void verifyVibrateLooped() {
@@ -473,6 +486,94 @@ public class BuzzBeepBlinkTest extends UiServiceTestCase {
         verify(mAccessibilityService, times(1)).sendAccessibilityEvent(any(), anyInt());
         assertTrue(r.isInterruptive());
         assertNotEquals(-1, r.getLastAudiblyAlertedMs());
+    }
+
+    @Test
+    public void testLockedPrivateA11yRedaction() throws Exception {
+        NotificationRecord r = getBeepyNotification();
+        r.setPackageVisibilityOverride(NotificationManager.VISIBILITY_NO_OVERRIDE);
+        r.getNotification().visibility = Notification.VISIBILITY_PRIVATE;
+        when(mKeyguardManager.isDeviceLocked(anyInt())).thenReturn(true);
+        AccessibilityManager accessibilityManager = Mockito.mock(AccessibilityManager.class);
+        when(accessibilityManager.isEnabled()).thenReturn(true);
+        mService.setAccessibilityManager(accessibilityManager);
+
+        mService.buzzBeepBlinkLocked(r);
+
+        ArgumentCaptor<AccessibilityEvent> eventCaptor =
+                ArgumentCaptor.forClass(AccessibilityEvent.class);
+
+        verify(accessibilityManager, times(1))
+                .sendAccessibilityEvent(eventCaptor.capture());
+
+        AccessibilityEvent event = eventCaptor.getValue();
+        assertEquals(r.getNotification().publicVersion, event.getParcelableData());
+    }
+
+    @Test
+    public void testLockedOverridePrivateA11yRedaction() throws Exception {
+        NotificationRecord r = getBeepyNotification();
+        r.setPackageVisibilityOverride(Notification.VISIBILITY_PRIVATE);
+        r.getNotification().visibility = Notification.VISIBILITY_PUBLIC;
+        when(mKeyguardManager.isDeviceLocked(anyInt())).thenReturn(true);
+        AccessibilityManager accessibilityManager = Mockito.mock(AccessibilityManager.class);
+        when(accessibilityManager.isEnabled()).thenReturn(true);
+        mService.setAccessibilityManager(accessibilityManager);
+
+        mService.buzzBeepBlinkLocked(r);
+
+        ArgumentCaptor<AccessibilityEvent> eventCaptor =
+                ArgumentCaptor.forClass(AccessibilityEvent.class);
+
+        verify(accessibilityManager, times(1))
+                .sendAccessibilityEvent(eventCaptor.capture());
+
+        AccessibilityEvent event = eventCaptor.getValue();
+        assertEquals(r.getNotification().publicVersion, event.getParcelableData());
+    }
+
+    @Test
+    public void testLockedPublicA11yNoRedaction() throws Exception {
+        NotificationRecord r = getBeepyNotification();
+        r.setPackageVisibilityOverride(NotificationManager.VISIBILITY_NO_OVERRIDE);
+        r.getNotification().visibility = Notification.VISIBILITY_PUBLIC;
+        when(mKeyguardManager.isDeviceLocked(anyInt())).thenReturn(true);
+        AccessibilityManager accessibilityManager = Mockito.mock(AccessibilityManager.class);
+        when(accessibilityManager.isEnabled()).thenReturn(true);
+        mService.setAccessibilityManager(accessibilityManager);
+
+        mService.buzzBeepBlinkLocked(r);
+
+        ArgumentCaptor<AccessibilityEvent> eventCaptor =
+                ArgumentCaptor.forClass(AccessibilityEvent.class);
+
+        verify(accessibilityManager, times(1))
+                .sendAccessibilityEvent(eventCaptor.capture());
+
+        AccessibilityEvent event = eventCaptor.getValue();
+        assertEquals(r.getNotification(), event.getParcelableData());
+    }
+
+    @Test
+    public void testUnlockedPrivateA11yNoRedaction() throws Exception {
+        NotificationRecord r = getBeepyNotification();
+        r.setPackageVisibilityOverride(NotificationManager.VISIBILITY_NO_OVERRIDE);
+        r.getNotification().visibility = Notification.VISIBILITY_PRIVATE;
+        when(mKeyguardManager.isDeviceLocked(anyInt())).thenReturn(false);
+        AccessibilityManager accessibilityManager = Mockito.mock(AccessibilityManager.class);
+        when(accessibilityManager.isEnabled()).thenReturn(true);
+        mService.setAccessibilityManager(accessibilityManager);
+
+        mService.buzzBeepBlinkLocked(r);
+
+        ArgumentCaptor<AccessibilityEvent> eventCaptor =
+                ArgumentCaptor.forClass(AccessibilityEvent.class);
+
+        verify(accessibilityManager, times(1))
+                .sendAccessibilityEvent(eventCaptor.capture());
+
+        AccessibilityEvent event = eventCaptor.getValue();
+        assertEquals(r.getNotification(), event.getParcelableData());
     }
 
     @Test

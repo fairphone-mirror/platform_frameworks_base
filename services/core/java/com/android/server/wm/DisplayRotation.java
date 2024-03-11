@@ -99,6 +99,8 @@ public class DisplayRotation {
     private final int mCarDockRotation;
     private final int mDeskDockRotation;
     private final int mUndockedHdmiRotation;
+    private final int mForceLandscapeRotation;
+    private final boolean mSupportForceLandscapeMode;
     private final RotationAnimationPair mTmpRotationAnim = new RotationAnimationPair();
 
     private OrientationListener mOrientationListener;
@@ -236,6 +238,13 @@ public class DisplayRotation {
                     "org.codeaurora.intent.action.WIFI_DISPLAY_VIDEO";
 
     /**
+     * Broadcast Permission for Wifi Display
+     */
+
+    private static final String WIFI_DISPLAY_PERMISSION =
+                    "com.qualcomm.permission.wfd.QC_WFD";
+
+    /**
      * Wifi Display specific variables
      */
     private boolean mWifiDisplayConnected = false;
@@ -264,6 +273,12 @@ public class DisplayRotation {
         mCarDockRotation = readRotation(R.integer.config_carDockRotation);
         mDeskDockRotation = readRotation(R.integer.config_deskDockRotation);
         mUndockedHdmiRotation = readRotation(R.integer.config_undockedHdmiRotation);
+        mForceLandscapeRotation = readRotation(R.integer.config_forceLandscapeRotation);
+        mSupportForceLandscapeMode =
+                mContext.getResources().getBoolean(R.bool.config_supportForceLandscapeMode);
+        if (mSupportForceLandscapeMode && mForceLandscapeRotation != -1) {
+            mRotation = mForceLandscapeRotation;
+        }
 
         if (isDefaultDisplay) {
             final Handler uiHandler = UiThread.getHandler();
@@ -308,7 +323,9 @@ public class DisplayRotation {
                                         false/* forceRelayout */);
                             }
                         }
-                    }, new IntentFilter(ACTION_WIFI_DISPLAY_VIDEO), null, UiThread.getHandler());
+                    }, new IntentFilter(ACTION_WIFI_DISPLAY_VIDEO),
+                        WIFI_DISPLAY_PERMISSION,
+                        UiThread.getHandler());
                 }
             };
             t.start();
@@ -1194,6 +1211,8 @@ public class DisplayRotation {
         } else if (orientation == ActivityInfo.SCREEN_ORIENTATION_LOCKED) {
             // Application just wants to remain locked in the last rotation.
             preferredRotation = lastRotation;
+        } else if (mSupportForceLandscapeMode) {
+            preferredRotation = mForceLandscapeRotation;
         } else if (!mSupportAutoRotation) {
             // If we don't support auto-rotation then bail out here and ignore
             // the sensor and any rotation lock settings.

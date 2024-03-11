@@ -608,6 +608,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private int mPowerButtonSuppressionDelayMillis = POWER_BUTTON_SUPPRESSION_DELAY_DEFAULT_MILLIS;
 
+    private boolean mLockNowPending = false;
+
     private static final int MSG_DISPATCH_MEDIA_KEY_WITH_WAKE_LOCK = 3;
     private static final int MSG_DISPATCH_MEDIA_KEY_REPEAT_WITH_WAKE_LOCK = 4;
     private static final int MSG_KEYGUARD_DRAWN_COMPLETE = 5;
@@ -2316,9 +2318,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     /** {@inheritDoc} */
     @Override
-    public StartingSurface addSplashScreen(IBinder appToken, String packageName, int theme,
-            CompatibilityInfo compatInfo, CharSequence nonLocalizedLabel, int labelRes, int icon,
-            int logo, int windowFlags, Configuration overrideConfig, int displayId) {
+    public StartingSurface addSplashScreen(IBinder appToken, int userId, String packageName,
+            int theme, CompatibilityInfo compatInfo, CharSequence nonLocalizedLabel, int labelRes,
+            int icon, int logo, int windowFlags, Configuration overrideConfig, int displayId) {
         if (!SHOW_SPLASH_SCREENS) {
             return null;
         }
@@ -2345,10 +2347,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
             if (theme != context.getThemeResId() || labelRes != 0) {
                 try {
-                    context = context.createPackageContext(packageName, CONTEXT_RESTRICTED);
+                    context = context.createPackageContextAsUser(packageName, CONTEXT_RESTRICTED,
+                            UserHandle.of(userId));
                     context.setTheme(theme);
                 } catch (PackageManager.NameNotFoundException e) {
-                    // Ignore
+                    Slog.w(TAG, "Failed creating package context with package name "
+                            + packageName + " for user " + userId, e);
                 }
             }
 
@@ -4958,6 +4962,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     mKeyguardDelegate.doKeyguardTimeout(options);
                 }
                 mLockScreenTimerActive = false;
+                mLockNowPending = false;
                 options = null;
             }
         }
@@ -4967,7 +4972,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
     }
 
-    ScreenLockTimeout mScreenLockTimeout = new ScreenLockTimeout();
+    final ScreenLockTimeout mScreenLockTimeout = new ScreenLockTimeout();
 
     @Override
     public void lockNow(Bundle options) {
@@ -4979,6 +4984,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             mScreenLockTimeout.setLockOptions(options);
         }
         mHandler.post(mScreenLockTimeout);
+        synchronized (mScreenLockTimeout) {
+            mLockNowPending = true;
+        }
     }
 
     // TODO (b/113840485): Move this logic to DisplayPolicy when lockscreen supports multi-display.
@@ -4994,6 +5002,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
     private void updateLockScreenTimeout() {
         synchronized (mScreenLockTimeout) {
+            if (mLockNowPending) {
+                Log.w(TAG, "lockNow pending, ignore updating lockscreen timeout");
+                return;
+            }
             final boolean enable = !mAllowLockscreenWhenOnDisplays.isEmpty()
                     && mDefaultDisplayPolicy.isAwake()
                     && mKeyguardDelegate != null && mKeyguardDelegate.isSecure(mCurrentUserId);

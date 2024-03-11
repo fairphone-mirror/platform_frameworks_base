@@ -1413,6 +1413,7 @@
     <string name="deny" msgid="6632259981847676572">"Մերժել"</string>
     <string name="permission_request_notification_title" msgid="1810025922441048273">"Թույլտվության հարցում է արված"</string>
     <string name="permission_request_notification_with_subtitle" msgid="3743417870360129298">"Թույլտվության հարցում է արված\n<xliff:g id="ACCOUNT">%s</xliff:g> հաշվի համար:"</string>
+    <string name="permission_request_notification_for_app_with_subtitle" msgid="1298704005732851350">"Հայցվում է թույլտվություն <xliff:g id="APP">%1$s</xliff:g> հավելվածի կողմից\n<xliff:g id="ACCOUNT">%2$s</xliff:g> հաշվի համար"</string>
     <string name="forward_intent_to_owner" msgid="4620359037192871015">"Դուք օգտագործում եք այս հավելվածը ձեր աշխատանքային պրոֆիլից դուրս"</string>
     <string name="forward_intent_to_work" msgid="3620262405636021151">"Դուք օգտագործում եք այս հավելվածը ձեր աշխատանքային պրոֆիլում"</string>
     <string name="input_method_binding_label" msgid="1166731601721983656">"Ներածման եղանակը"</string>
@@ -1421,7 +1422,7 @@
     <string name="wallpaper_binding_label" msgid="1197440498000786738">"Պաստառ"</string>
     <string name="chooser_wallpaper" msgid="3082405680079923708">"Փոխել պաստառը"</string>
     <string name="notification_listener_binding_label" msgid="2702165274471499713">"Ծանուցման ունկնդիր"</string>
-    <string name="vr_listener_binding_label" msgid="8013112996671206429">"VR ունկնդրիչ"</string>
+    <string name="vr_listener_binding_label" msgid="8013112996671206429">"VR ունկնիր"</string>
     <string name="condition_provider_service_binding_label" msgid="8490641013951857673">"Պայմանների մատակարար"</string>
     <string name="notification_ranker_binding_label" msgid="432708245635563763">"Ծանուցումների դասակարգման ծառայություն"</string>
     <string name="vpn_title" msgid="5906991595291514182">"VPN-ը ակտիվացված է"</string>
@@ -1661,7 +1662,7 @@
     <string name="accessibility_gesture_3finger_instructional_text" msgid="3425123684990193765">"Մի գործառույթից մյուսին անցնելու համար երեք մատը սահեցրեք վերև և պահեք։"</string>
     <string name="accessibility_magnification_chooser_text" msgid="1502075582164931596">"Խոշորացում"</string>
     <string name="user_switched" msgid="7249833311585228097">"Ներկայիս օգտատերը <xliff:g id="NAME">%1$s</xliff:g>:"</string>
-    <string name="user_switching_message" msgid="1912993630661332336">"Փոխարկվում է <xliff:g id="NAME">%1$s</xliff:g>-ին..."</string>
+    <string name="user_switching_message" msgid="1912993630661332336">"Անցում հետևյալ պրոֆիլին՝ <xliff:g id="NAME">%1$s</xliff:g>..."</string>
     <string name="user_logging_out_message" msgid="7216437629179710359">"Ելք <xliff:g id="NAME">%1$s</xliff:g>-ից…"</string>
     <string name="owner_name" msgid="8713560351570795743">"Սեփականատեր"</string>
     <string name="error_message_title" msgid="4082495589294631966">"Սխալ"</string>
