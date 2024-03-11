@@ -79,11 +79,9 @@ public class SpatializerHelperTest {
             mMockAudioSystem = mock(NoOpAudioSystemAdapter.class);
             asAdapter = mMockAudioSystem;
         }
-        mSpatHelper = new SpatializerHelper(mMockAudioService, asAdapter,
-                true /*binauralEnabledDefault*/,
-                true /*transauralEnabledDefault*/,
-                false /*headTrackingEnabledDefault*/);
 
+        mSpatHelper = new SpatializerHelper(mMockAudioService, asAdapter,
+                false /*headTrackingEnabledByDefault*/);
     }
 
     /**
