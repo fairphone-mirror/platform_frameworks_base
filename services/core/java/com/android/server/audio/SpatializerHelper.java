@@ -169,15 +169,9 @@ public class SpatializerHelper {
 
     //------------------------------------------------------
     // initialization
-    @SuppressWarnings("StaticAssignmentInConstructor")
-    SpatializerHelper(@NonNull AudioService mother, @NonNull AudioSystemAdapter asa,
-            boolean headTrackingEnabledByDefault) {
+    SpatializerHelper(@NonNull AudioService mother, @NonNull AudioSystemAdapter asa) {
         mAudioService = mother;
         mASA = asa;
-        // "StaticAssignmentInConstructor" warning is suppressed as the SpatializerHelper being
-        // constructed here is the factory for SADeviceState, thus SADeviceState and its
-        // private static field sHeadTrackingEnabledDefault should never be accessed directly.
-        SADeviceState.sHeadTrackingEnabledDefault = headTrackingEnabledByDefault;
     }
 
     synchronized void init(boolean effectExpected) {
@@ -1539,26 +1533,18 @@ public class SpatializerHelper {
     }
 
     /*package*/ static final class SADeviceState {
-        private static boolean sHeadTrackingEnabledDefault = false;
         final @AudioDeviceInfo.AudioDeviceType int mDeviceType;
         final @NonNull String mDeviceAddress;
         boolean mEnabled = true;               // by default, SA is enabled on any device
         boolean mHasHeadTracker = false;
-        boolean mHeadTrackerEnabled;
+        boolean mHeadTrackerEnabled = true;    // by default, if head tracker is present, use it
         static final String SETTING_FIELD_SEPARATOR = ",";
         static final String SETTING_DEVICE_SEPARATOR_CHAR = "|";
         static final String SETTING_DEVICE_SEPARATOR = "\\|";
 
-        /**
-         * Constructor
-         * @param deviceType
-         * @param address must be non-null for wireless devices
-         * @throws NullPointerException if a null address is passed for a wireless device
-         */
-        SADeviceState(@AudioDeviceInfo.AudioDeviceType int deviceType, @Nullable String address) {
+        SADeviceState(@AudioDeviceInfo.AudioDeviceType int deviceType, @NonNull String address) {
             mDeviceType = deviceType;
             mDeviceAddress = isWireless(deviceType) ? Objects.requireNonNull(address) : "";
-            mHeadTrackerEnabled = sHeadTrackingEnabledDefault;
         }
 
         @Override

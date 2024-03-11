@@ -80,21 +80,15 @@ public class SpatializerHelperTest {
             asAdapter = mMockAudioSystem;
         }
 
-        mSpatHelper = new SpatializerHelper(mMockAudioService, asAdapter,
-                false /*headTrackingEnabledByDefault*/);
+        mSpatHelper = new SpatializerHelper(mMockAudioService, asAdapter);
     }
 
-    /**
-     * Test that constructing an SADeviceState instance requires a non-null address for a
-     * wireless type, but can take null for a non-wireless type;
-     * @throws Exception
-     */
     @Test
     public void testSADeviceStateNullAddressCtor() throws Exception {
         setUpSpatHelper(true /*useSpyAudioSystem*/);
         try {
-            SADeviceState devState = new SADeviceState(AudioDeviceInfo.TYPE_BUILTIN_SPEAKER, null);
-            devState = new SADeviceState(AudioDeviceInfo.TYPE_BLUETOOTH_A2DP, null);
+            SADeviceState devState = new SADeviceState(
+                    AudioDeviceInfo.TYPE_BUILTIN_SPEAKER, null);
             Assert.fail();
         } catch (NullPointerException e) { }
     }
@@ -122,12 +116,11 @@ public class SpatializerHelperTest {
         final AudioDeviceAttributes dev1 =
                 new AudioDeviceAttributes(AudioSystem.DEVICE_OUT_SPEAKER, "");
         final AudioDeviceAttributes dev2 =
-                new AudioDeviceAttributes(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP, "C3:PO:beep");
+                new AudioDeviceAttributes(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP, "C3:P0:beep");
         final AudioDeviceAttributes dev3 =
                 new AudioDeviceAttributes(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP, "R2:D2:bloop");
 
         doNothing().when(mMockAudioService).persistSpatialAudioDeviceSettings();
-        mSpatHelper.initForTest(true /*binaural*/, true /*transaural*/);
 
         // test with single device
         mSpatHelper.addCompatibleAudioDevice(dev1);
