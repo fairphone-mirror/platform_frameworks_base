@@ -3562,16 +3562,8 @@ public final class NotificationPanelViewController extends PanelViewController {
         }
     }
 
-    private Handler myHandler = new Handler(new android.os.Handler.Callback() {
-        @Override
-        public boolean handleMessage(@NonNull Message msg) {
-            mKeyguardStatusViewController.dozeTimeTick();
-            return false;
-        }
-    });
-
     public void onScreenTurningOn() {
-        myHandler.sendEmptyMessageDelayed(1,400);
+        mKeyguardStatusViewController.dozeTimeTick();
     }
 
     @Override

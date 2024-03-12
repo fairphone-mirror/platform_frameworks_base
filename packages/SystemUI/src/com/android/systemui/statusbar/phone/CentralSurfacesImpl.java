@@ -708,6 +708,8 @@ public class CentralSurfacesImpl extends CoreStartable implements
         onBackPressed();
     };
 
+    private float[] mOldAnimationScales;
+
     /**
      * Public constructor for CentralSurfaces.
      *
@@ -3963,11 +3965,27 @@ public class CentralSurfacesImpl extends CoreStartable implements
         @Override
         public void onScreenTurningOn(Runnable onDrawn) {
             mFalsingCollector.onScreenTurningOn();
+            float[] mNewAnimationScales = {2,2,2};
+            try {
+                if (mWindowManagerService != null) {
+                    mOldAnimationScales = mWindowManagerService.getAnimationScales();
+                    mWindowManagerService.setAnimationScales(mNewAnimationScales);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mNotificationPanelViewController.onScreenTurningOn();
         }
 
         @Override
         public void onScreenTurnedOn() {
+            try {
+                if (mWindowManagerService != null && mOldAnimationScales != null) {
+                    mWindowManagerService.setAnimationScales(mOldAnimationScales);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             mScrimController.onScreenTurnedOn();
         }
 
