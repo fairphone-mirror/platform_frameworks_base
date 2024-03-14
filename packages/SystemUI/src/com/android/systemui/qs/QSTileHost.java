@@ -388,7 +388,11 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, D
 
         if(isCreateControllers && mTileSpecs.contains("controls")){
             mTileSpecs.remove("controls");
-            mTileSpecs.add(4,"controls");
+            try {
+               mTileSpecs.add(4,"controls");
+            } catch (IndexOutOfBoundsException e) {
+               Log.w(TAG, "mTileSpecs size is smaller than 4");
+            }
         }
 
         mTiles.clear();
