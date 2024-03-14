@@ -77,7 +77,10 @@ public interface QSHost {
     static ArrayList<String> setControlsAndWalletPosition (ArrayList<String> list){
         if (list.contains("controls")) {
             list.remove("controls");
-            list.add(4,"controls");
+            try {
+               list.add(4,"controls");
+            } catch (IndexOutOfBoundsException e) {
+            }
         }
         return list;
     }
