@@ -39,6 +39,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.content.ActivityNotFoundException
 
 @SysUISingleton
 class ActionIntentExecutor
@@ -74,7 +75,10 @@ constructor(
         dismissKeyguard()
 
         if (userId == UserHandle.myUserId()) {
-            withContext(mainDispatcher) { context.startActivity(intent, bundle) }
+            try {
+                withContext(mainDispatcher) { context.startActivity(intent, bundle) }
+            } catch (e: ActivityNotFoundException) {
+            }
         } else {
             launchCrossProfileIntent(userId, intent, bundle)
         }
