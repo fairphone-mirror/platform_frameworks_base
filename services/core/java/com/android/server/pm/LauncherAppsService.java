@@ -1406,6 +1406,18 @@ public class LauncherAppsService extends SystemService {
                 final int size = apps.size();
                 for (int i = 0; i < size; ++i) {
                     ActivityInfo activityInfo = apps.get(i).activityInfo;
+                    if ("com.google.android.apps.messaging".equals(component.getPackageName())) {
+                        if (!activityInfo.exported) {
+                            throw new SecurityException("Cannot launch non-exported components "
+                                    + component);
+                        }
+
+                        //Setting the correct ComponentName for messages
+                        launchIntent.setPackage(null);
+                        launchIntent.setComponent(activityInfo.getComponentName());
+                        canLaunch = true;
+                        break;
+                    }
                     if (activityInfo.packageName.equals(component.getPackageName()) &&
                             activityInfo.name.equals(component.getClassName())) {
                         if (!activityInfo.exported) {
