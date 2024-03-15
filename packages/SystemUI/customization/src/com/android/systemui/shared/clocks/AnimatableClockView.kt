@@ -22,6 +22,7 @@ import android.annotation.IntRange
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Typeface;
 import android.text.Layout
 import android.text.TextUtils
 import android.text.format.DateFormat
@@ -125,6 +126,7 @@ class AnimatableClockView @JvmOverloads constructor(
             }
 
         refreshFormat()
+        typeface = Typeface.create("radikal-regular",Typeface.NORMAL)
     }
 
     override fun onAttachedToWindow() {
