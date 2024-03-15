@@ -898,6 +898,17 @@ public class CarrierConfigManager {
      */
     public static final String KEY_CARRIER_USSD_METHOD_INT = "carrier_ussd_method_int";
 
+    //[BUG]-Modify-Begin by shaopan.tang 2024-03-15 FP5U-377 UE should send same TP MR when sms retry over NAS signaling for Orange
+    /**
+     * Flag specifying whether to update message ref when fallback.
+     * By default this value is {@code 0}.
+     *
+     * @hide
+     */
+    public static final String KEY_KEEP_SAME_MESSAGE_REF_FALLBACK_BOOL =
+            "carrier_keep_message_ref_fallback_bool";
+    //[BUG]-Modify-End
+
     /**
      * Flag specifying whether to show an alert dialog for 5G disable when the user disables VoLTE.
      * By default this value is {@code false}.
@@ -10112,6 +10123,7 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_CARRIER_VOLTE_AVAILABLE_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_VT_AVAILABLE_BOOL, false);
         sDefaults.putInt(KEY_CARRIER_USSD_METHOD_INT, USSD_OVER_CS_PREFERRED);
+        sDefaults.putBoolean(KEY_KEEP_SAME_MESSAGE_REF_FALLBACK_BOOL, false);//[BUG]-Modify by shaopan.tang 2024-03-15 FP5U-377 UE should send same TP MR when sms retry over NAS signaling for Orange
         sDefaults.putBoolean(KEY_VOLTE_5G_LIMITED_ALERT_DIALOG_BOOL, false);
         sDefaults.putBoolean(KEY_NOTIFY_HANDOVER_VIDEO_FROM_WIFI_TO_LTE_BOOL, false);
         sDefaults.putBoolean(KEY_ALLOW_MERGING_RTT_CALLS_BOOL, false);
