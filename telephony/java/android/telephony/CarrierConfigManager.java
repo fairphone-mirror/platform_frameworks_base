@@ -1288,6 +1288,14 @@ public class CarrierConfigManager {
      */
     public static final String KEY_USE_ONLY_DIALED_SIM_ECC_LIST_BOOL =
             "use_only_dialed_sim_ecc_list_bool";
+            
+    /**
+     * When {@code true}, the determination of whether to place a call as an emergency call will be
+     * based on ril.ecclist.And Eccdata in AOSP database will be ignore.
+     * @hide
+     */
+    public static final String KEY_IGNORE_ECCDATA_LIST_BOOL =
+            "ignore_eccdata_list_bool";
 
     /**
      * When IMS instant lettering is available for a carrier (see
@@ -10159,6 +10167,7 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_CARRIER_IMS_GBA_REQUIRED_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_INSTANT_LETTERING_AVAILABLE_BOOL, false);
         sDefaults.putBoolean(KEY_CARRIER_USE_IMS_FIRST_FOR_EMERGENCY_BOOL, true);
+        sDefaults.putBoolean(KEY_IGNORE_ECCDATA_LIST_BOOL, false);
         sDefaults.putBoolean(KEY_USE_ONLY_DIALED_SIM_ECC_LIST_BOOL, false);
         sDefaults.putString(KEY_CARRIER_NETWORK_SERVICE_WWAN_PACKAGE_OVERRIDE_STRING, "");
         sDefaults.putString(KEY_CARRIER_NETWORK_SERVICE_WLAN_PACKAGE_OVERRIDE_STRING, "");
