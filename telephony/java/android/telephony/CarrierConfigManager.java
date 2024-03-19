@@ -893,6 +893,17 @@ public class CarrierConfigManager {
             "carrier_cfnr_timer_default_int";
     //[BUG]-Modify-End
 
+    //[BUG]-Modify-Begin by shaopan.tang 2024-03-18 FP4T-1073 CallBarring error
+    /**
+     * Flag specifying whether support deactive all for call barring when with mmi code.
+     * By default this value is {@code 0}.
+     *
+     * @hide
+     */
+    public static final String KEY_CARRIER_CALLBARRING_DEACTIVE_ALL_SUPPORT_BOOL =
+            "carrier_cb_deactive_all_support_bool";
+    //[BUG]-Modify-End
+
     /**
      * Flag specifying whether to show an alert dialog for 5G disable when the user disables VoLTE.
      * By default this value is {@code false}.
@@ -9000,6 +9011,7 @@ public class CarrierConfigManager {
         sDefaults.putBoolean(KEY_CARRIER_VT_AVAILABLE_BOOL, false);
         sDefaults.putInt(KEY_CARRIER_USSD_METHOD_INT, USSD_OVER_CS_PREFERRED);
         sDefaults.putInt(KEY_CARRIER_CFNR_TIMER_DEFAULT_INT, 0);//[BUG]-Modify by shaopan.tang 2024-03-07 FP4T-909 CallForwarding error
+        sDefaults.putBoolean(KEY_CARRIER_CALLBARRING_DEACTIVE_ALL_SUPPORT_BOOL, true);//[BUG]-Modify by shaopan.tang 2024-03-18 FP4T-1073 CallBarring error
         sDefaults.putBoolean(KEY_VOLTE_5G_LIMITED_ALERT_DIALOG_BOOL, false);
         sDefaults.putBoolean(KEY_NOTIFY_HANDOVER_VIDEO_FROM_WIFI_TO_LTE_BOOL, false);
         sDefaults.putBoolean(KEY_ALLOW_MERGING_RTT_CALLS_BOOL, false);
