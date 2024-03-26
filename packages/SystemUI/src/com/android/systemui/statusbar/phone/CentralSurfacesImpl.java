@@ -2935,9 +2935,8 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                 return;
             }
 
-            final boolean proximityDetected = ((event.values[0] == 0.0) ||
-                    (!(event.values[0] == 0.0) && (event.values[1] > 4000)) ||
-                    (!(event.values[0] == 0.0) && isDark));
+            final boolean proximityDetected = ((event.values[0] == 0.0) || (
+                    !(event.values[0] == 0.0) && (event.values[1] > 4000)));
 
             // For initial proximity state, set right awayvalue
             if (mProximityDetected == null) {
@@ -2954,22 +2953,6 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
         }
     };
 
-    private boolean isDark = false;
-    private SensorEventListener light_sensorListener = new SensorEventListener() {
-        @Override
-        public final void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-
-        @Override
-        public final void onSensorChanged(SensorEvent event) {
-            if(event.values[0] < 10){
-                isDark = true;
-            }else{
-                isDark = false;
-            }
-        }
-    };
-
     private SensorManager sensorManager;
     private Boolean mProximityDetected = null;
     private boolean mProximityListening;
@@ -2982,9 +2965,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
         if (mProximityListening) return;
         sensorManager = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
         Sensor proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        Sensor light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT_BACK);
         sensorManager.registerListener(sensorEventListener, proximity, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(light_sensorListener, light, SensorManager.SENSOR_DELAY_NORMAL);
         mProximityListening = true;
     }
 
@@ -3040,7 +3021,6 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
         if (sensorManager == null) return;
         try {
             sensorManager.unregisterListener(sensorEventListener);
-            sensorManager.unregisterListener(light_sensorListener);
         } catch (Exception e) {
         }
         mProximityListening = false;
