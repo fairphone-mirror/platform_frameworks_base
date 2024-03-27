@@ -327,9 +327,9 @@
         <item>@string/wfcSpnFormat_wifi_calling_wo_hyphen</item>
         <item>@string/wfcSpnFormat_vowifi</item>
         <item>@string/wfcSpnFormat_spn_wifi_calling_vo_hyphen</item>
-        <item>@string/wfcSpnFormat_wifi_call</item>
         <item>@string/wfcSpnFormat_vdf_wifi_calling</item>
         <item>@string/wfcSpnFormat_vdf_nl_wifi_wo_hyphen</item>
+        <item>@string/wfcSpnFormat_wifi_call</item>
     </string-array>
 
     <!-- Spn during Wi-Fi Calling: "<operator>" -->
