@@ -29,7 +29,10 @@ import android.widget.ImageView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import androidx.preference.Preference;
+//[BUG]-Add by zxue 2024-03-28 [FP5U-360][Google GMS][CTSV 14.0R3][Device owner tests] Disallow adding WiFi config failed
+//import androidx.preference.Preference;
+import android.os.UserManager;
+import com.android.settingslib.RestrictedPreference;
 import androidx.preference.PreferenceViewHolder;
 
 import com.android.settingslib.R;
@@ -39,7 +42,7 @@ import com.android.wifitrackerlib.WifiEntry;
 /**
  * Preference to display a WifiEntry in a wifi picker.
  */
-public class WifiEntryPreference extends Preference implements WifiEntry.WifiEntryCallback,
+public class WifiEntryPreference extends RestrictedPreference implements WifiEntry.WifiEntryCallback,
         View.OnClickListener {
 
     private static final int[] STATE_SECURED = {
@@ -71,6 +74,9 @@ public class WifiEntryPreference extends Preference implements WifiEntry.WifiEnt
 
     public WifiEntryPreference(@NonNull Context context, @NonNull WifiEntry wifiEntry) {
         this(context, wifiEntry, new IconInjector(context));
+		
+		//[BUG]-Add by zxue 2024-03-28 [FP5U-360][Google GMS][CTSV 14.0R3][Device owner tests] Disallow adding WiFi config failed
+		checkRestrictionAndSetDisabled(UserManager.DISALLOW_ADD_WIFI_CONFIG);
     }
 
     @VisibleForTesting
