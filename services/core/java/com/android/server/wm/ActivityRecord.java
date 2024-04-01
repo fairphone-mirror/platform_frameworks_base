@@ -255,7 +255,6 @@ import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.annotation.Size;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.ActivityManager.TaskDescription;
 import android.app.ActivityOptions;
 import android.app.ICompatCameraControlCallback;
@@ -3320,9 +3319,6 @@ public final class ActivityRecord extends WindowToken implements WindowManagerSe
      * @return Whether AppOps allows this package to enter picture-in-picture.
      */
     boolean checkEnterPictureInPictureAppOpsState() {
-        if(ActivityManager.isUserAMonkey()) {
-            return false;
-        }
         return mAtmService.getAppOpsManager().checkOpNoThrow(
                 OP_PICTURE_IN_PICTURE, info.applicationInfo.uid, packageName) == MODE_ALLOWED;
     }
