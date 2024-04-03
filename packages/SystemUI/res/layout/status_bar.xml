@@ -44,7 +44,6 @@
     <LinearLayout android:id="@+id/status_bar_contents"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false"
         android:clipToPadding="false"
         android:paddingStart="@dimen/status_bar_padding_start"
         android:paddingEnd="@dimen/status_bar_padding_end"
@@ -57,7 +56,6 @@
             android:id="@+id/status_bar_start_side_container"
             android:layout_height="match_parent"
             android:layout_width="0dp"
-            android:clipChildren="false"
             android:layout_weight="1">
 
             <!-- Container that is wrapped around the views on the start half of the status bar.
