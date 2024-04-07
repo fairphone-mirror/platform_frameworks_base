@@ -486,18 +486,6 @@ public final class BatteryService extends SystemService {
 
         synchronized (mLock) {
             if (!mUpdatesStopped) {
-                //modify by t2m yingyubin for FP5-724 20230420
-                if(mHealthInfo != null &&
-                        plugType(mHealthInfo) == BatteryManager.BATTERY_PLUGGED_USB &&
-                        plugType(info) == BATTERY_PLUGGED_NONE) {
-                            synchronized (mLock) {
-                                try {
-                                    mLock.wait(600);
-                                } catch (InterruptedException ex) {
-                                }
-                            }
-                }
-                //modify by t2m yingyubin for FP5-724 20230420
                 mHealthInfo = info;
                 // Process the new values.
                 processValuesLocked(false);

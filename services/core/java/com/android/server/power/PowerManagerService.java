@@ -110,6 +110,7 @@ import android.util.proto.ProtoOutputStream;
 import android.view.Display;
 import android.view.DisplayInfo;
 import android.view.KeyEvent;
+import android.os.OsProtoEnums;
 
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.annotations.VisibleForTesting;
@@ -692,6 +693,7 @@ public final class PowerManagerService extends SystemService
 
     // Whether to keep dreaming when the device is unplugging.
     private boolean mKeepDreamingWhenUnplugging;
+    private long mLastDisconnectUsbTime = 0L;
 
     private final class DreamManagerStateListener implements
             DreamManagerInternal.DreamManagerStateListener {
@@ -2593,8 +2595,13 @@ public final class PowerManagerService extends SystemService
                 // only play charging sounds if boot is completed so charging sounds don't play
                 // with potential notification sounds
                 if (mBootCompleted) {
+                    if (oldPlugType == BatteryManager.BATTERY_PLUGGED_USB
+                            && mPlugType == OsProtoEnums.BATTERY_PLUGGED_NONE) {
+                        mLastDisconnectUsbTime = mClock.uptimeMillis();
+                    }
                     if (mIsPowered && !BatteryManager.isPlugWired(oldPlugType)
-                            && BatteryManager.isPlugWired(mPlugType)) {
+                            && BatteryManager.isPlugWired(mPlugType)
+                            && (now - mLastDisconnectUsbTime) > 300) {
                         mNotifier.onWiredChargingStarted(mUserId);
                     } else if (dockedOnWirelessCharger) {
                         mNotifier.onWirelessChargingStarted(mBatteryLevel, mUserId);

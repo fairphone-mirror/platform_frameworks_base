@@ -251,7 +251,12 @@ public class BatteryControllerImpl extends BroadcastReceiver implements BatteryC
 
             checkBatteryColor(intent);
             
-            fireBatteryLevelChanged();
+            mMainHandler.postDelayed(()->{
+                if(mPluggedChargingSource == BatteryManager.BATTERY_PLUGGED_USB && !mCharging) {
+                    mCharging = true;
+                }
+                fireBatteryLevelChanged();
+            }, 300);
         } else if (action.equals(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)) {
             updatePowerSave();
         } else if (action.equals(ACTION_LEVEL_TEST)) {
