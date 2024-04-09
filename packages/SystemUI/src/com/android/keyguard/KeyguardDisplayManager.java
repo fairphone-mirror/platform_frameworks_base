@@ -15,6 +15,8 @@
  */
 package com.android.keyguard;
 
+import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+
 import android.app.Presentation;
 import android.content.Context;
 import android.graphics.Color;
@@ -397,6 +399,7 @@ public class KeyguardDisplayManager {
             getWindow().getAttributes().setFitInsetsTypes(0 /* types */);
             getWindow().setNavigationBarContrastEnforced(false);
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            getWindow().getAttributes().layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
 
             mClock = findViewById(R.id.clock);
 
