@@ -153,7 +153,10 @@ object MobileIconBinder {
                 launch { viewModel.activityOutVisible.collect { activityOut.isVisible = it } }
 
                 launch {
-                    viewModel.activityContainerVisible.collect { activityContainer.isVisible = it }
+                    viewModel.activityContainerVisible.collect { 
+                        // activityContainer.isVisible = it 
+                        activityContainer.isVisible = false
+                    }
                 }
 
                 // Set the tint

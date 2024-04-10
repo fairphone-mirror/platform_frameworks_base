@@ -123,7 +123,8 @@ object WifiViewBinder {
 
                 launch {
                     viewModel.isActivityContainerVisible.distinctUntilChanged().collect { visible ->
-                        activityContainerView.isVisible = visible
+                        // activityContainerView.isVisible = visible
+                        activityContainerView.isVisible = false
                     }
                 }
 

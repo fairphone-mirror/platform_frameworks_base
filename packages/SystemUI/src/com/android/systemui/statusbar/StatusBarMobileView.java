@@ -188,8 +188,9 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mMobileRoamingSpace.setVisibility(mState.roaming ? View.VISIBLE : View.GONE);
         mIn.setVisibility(mState.activityIn ? View.VISIBLE : View.GONE);
         mOut.setVisibility(mState.activityOut ? View.VISIBLE : View.GONE);
-        mInoutContainer.setVisibility((mState.activityIn || mState.activityOut)
-                ? View.VISIBLE : View.GONE);
+        // mInoutContainer.setVisibility((mState.activityIn || mState.activityOut)
+        //         ? View.VISIBLE : View.GONE);
+        mInoutContainer.setVisibility(View.GONE);        
         if (mState.volteId > 0 ) {
             mVolte.setImageResource(mState.volteId);
             mVolte.setVisibility(View.VISIBLE);
@@ -229,9 +230,9 @@ public class StatusBarMobileView extends BaseStatusBarFrameLayout implements Dar
         mMobileRoamingSpace.setVisibility(state.roaming ? View.VISIBLE : View.GONE);
         mIn.setVisibility(state.activityIn ? View.VISIBLE : View.GONE);
         mOut.setVisibility(state.activityOut ? View.VISIBLE : View.GONE);
-        mInoutContainer.setVisibility((state.activityIn || state.activityOut)
-                ? View.VISIBLE : View.GONE);
-
+        // mInoutContainer.setVisibility((state.activityIn || state.activityOut)
+        //         ? View.VISIBLE : View.GONE);
+        mInoutContainer.setVisibility(View.GONE);
         if (mState.volteId != state.volteId) {
             if (state.volteId != 0) {
                 mVolte.setImageResource(state.volteId);
