@@ -276,6 +276,12 @@ public class PermissionManagerService extends IPermissionManager.Stub {
                        return PackageManager.PERMISSION_DENIED;
                     }
                 }
+
+                if ("com.android.mmi".equalsIgnoreCase(pkgName)) {
+                    if (Manifest.permission.RECORD_AUDIO.equalsIgnoreCase(permName)) {
+                       return PackageManager.PERMISSION_DENIED;
+                    }
+                }
             }
         }
 
