@@ -2393,6 +2393,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
             //disable pocket mode
             loadBooleanSetting(stmt, Settings.Secure.DISABLE_POCKET_MODE,
                       R.bool.def_disable_pocket_mode);
+            
+            //default lockscreen use double line clock
+            loadBooleanSetting(stmt, Settings.Secure.LOCKSCREEN_USE_DOUBLE_LINE_CLOCK,
+                      R.bool.def_lockscreen_use_double_line_clock);
             /*
              * IMPORTANT: Do not add any more upgrade steps here as the global,
              * secure, and system settings are no longer stored in a database
