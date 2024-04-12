@@ -91,5 +91,7 @@ interface IPermissionManager {
 
     void registerAttributionSource(in AttributionSourceState source);
 
+    int getRegisteredAttributionSourceCount(int uid);
+
     boolean isRegisteredAttributionSource(in AttributionSourceState source);
 }
