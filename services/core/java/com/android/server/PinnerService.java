@@ -370,7 +370,7 @@ public final class PinnerService extends SystemService {
                             sendPinAppMessage(KEY_HOME, ActivityManager.getCurrentUser(),
                                     true /* force */);
                             if (isUserSetupCompleted() && isMyPhoneFirstOpen()){
-                                 Settings.System.putInt(mContext.getContentResolver(), SCREEN_OFF_TIMEOUT, 60*1000); 
+                                 Settings.System.putInt(mContext.getContentResolver(), SCREEN_OFF_TIMEOUT, 30*1000); 
                             }
                             if (isUserSetupCompleted() && isMyPhoneFirstOpen() && !isDtCarrier()) {
                                 mPinnerHandler.postDelayed(new Runnable(){
