@@ -412,6 +412,7 @@ public class KeyguardDisplayManager {
 
             mKeyguardClockSwitchController.setOnlyClock(true);
             mKeyguardClockSwitchController.init();
+            mKeyguardClockSwitchController.setSmallClockVisible();
         }
 
         private void updateBounds() {

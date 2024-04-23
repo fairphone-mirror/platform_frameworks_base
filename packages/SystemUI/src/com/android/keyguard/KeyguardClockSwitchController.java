@@ -572,4 +572,14 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
         return ((mCurrentClockSize == LARGE) ? clock.getLargeClock() : clock.getSmallClock())
                 .getConfig().getHasCustomWeatherDataDisplay();
     }
+
+    public void setSmallClockVisible(){
+        if(mSmallClockFrame != null) {
+            mSmallClockFrame.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams layoutParams = mSmallClockFrame.getLayoutParams();
+            layoutParams.width = layoutParams.width * 18 / 10;
+            layoutParams.height = layoutParams.height * 18 / 10;
+            mSmallClockFrame.setLayoutParams(layoutParams);
+        }
+    }
 }
