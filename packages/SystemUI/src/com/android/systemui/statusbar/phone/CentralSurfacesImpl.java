@@ -2994,7 +2994,6 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
 
         if (isKeyguardProximityDetectionNecessary()) {
             registerSensorListener();
-            mPowerManager.wakeUp(SystemClock.uptimeMillis(), PowerManager.WAKE_REASON_POWER_BUTTON, "android.policy:POWER");
         }
     }
 
