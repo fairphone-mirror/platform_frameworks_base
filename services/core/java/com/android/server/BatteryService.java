@@ -554,6 +554,10 @@ public final class BatteryService extends SystemService {
             setBatteryHealthProtect(mHealthInfo.batteryLevel,80,78);
         } else if (bath_status) {
             setBatteryHealthProtect(mHealthInfo.batteryLevel,70,30);
+        }else if (!protect_battery && isHealtyL70) {
+            writeBatEn("6000000");
+            isHealtyL70 = false;
+            SystemProperties.set("persist.sys.battery.icon.enable","0");
         }
 
         if (force
