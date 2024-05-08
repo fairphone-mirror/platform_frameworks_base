@@ -578,7 +578,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
             mSmallClockFrame.setVisibility(View.VISIBLE);
             ViewGroup.LayoutParams layoutParams = mSmallClockFrame.getLayoutParams();
             layoutParams.width = layoutParams.width * 18 / 10;
-            layoutParams.height = layoutParams.height * 18 / 10;
+            layoutParams.height = layoutParams.height * 2;
             mSmallClockFrame.setLayoutParams(layoutParams);
         }
     }
