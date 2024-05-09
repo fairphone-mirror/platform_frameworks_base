@@ -15,6 +15,7 @@
  */
 package com.android.server.audio;
 
+import com.android.server.audio.SpatializerHelper.SADeviceState;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -25,12 +26,12 @@ import static org.mockito.Mockito.when;
 
 import android.media.AudioAttributes;
 import android.media.AudioDeviceAttributes;
+import android.media.AudioDeviceInfo;
 import android.media.AudioFormat;
 import android.media.AudioSystem;
 import android.util.Log;
 
 import androidx.test.filters.MediumTest;
-import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
 
 import org.junit.Assert;
@@ -55,7 +56,6 @@ public class SpatializerHelperTest {
     @Mock private AudioService mMockAudioService;
     @Spy private AudioSystemAdapter mSpyAudioSystem;
     @Mock private AudioSystemAdapter mMockAudioSystem;
-    @Spy private AudioDeviceBroker mSpyDeviceBroker;
 
     @Before
     public void setUp() throws Exception {
@@ -79,16 +79,38 @@ public class SpatializerHelperTest {
             mMockAudioSystem = mock(NoOpAudioSystemAdapter.class);
             asAdapter = mMockAudioSystem;
         }
-        mSpyDeviceBroker = spy(
-                new AudioDeviceBroker(
-                        InstrumentationRegistry.getInstrumentation().getTargetContext(),
-                        mMockAudioService, asAdapter));
-        mSpatHelper = new SpatializerHelper(mMockAudioService, asAdapter,
-                        mSpyDeviceBroker);
+
+        mSpatHelper = new SpatializerHelper(mMockAudioService, asAdapter);
     }
 
     @Test
-    public void testAdiDeviceStateSettings() throws Exception {
+    public void testSADeviceStateNullAddressCtor() throws Exception {
+        setUpSpatHelper(true /*useSpyAudioSystem*/);
+        try {
+            SADeviceState devState = new SADeviceState(
+                    AudioDeviceInfo.TYPE_BUILTIN_SPEAKER, null);
+            Assert.fail();
+        } catch (NullPointerException e) { }
+    }
+
+    @Test
+    public void testSADeviceStateStringSerialization() throws Exception {
+        Log.i(TAG, "starting testSADeviceStateStringSerialization");
+        setUpSpatHelper(true /*useSpyAudioSystem*/);
+        final SADeviceState devState = new SADeviceState(
+                AudioDeviceInfo.TYPE_BUILTIN_SPEAKER, "bla");
+        devState.mHasHeadTracker = false;
+        devState.mHeadTrackerEnabled = false;
+        devState.mEnabled = true;
+        final String persistString = devState.toPersistableString();
+        final SADeviceState result = SADeviceState.fromPersistedString(persistString);
+        Log.i(TAG, "original:" + devState);
+        Log.i(TAG, "result  :" + result);
+        Assert.assertEquals(devState, result);
+    }
+
+    @Test
+    public void testSADeviceSettings() throws Exception {
         Log.i(TAG, "starting testSADeviceSettings");
         setUpSpatHelper(true /*useSpyAudioSystem*/);
         final AudioDeviceAttributes dev1 =
@@ -98,7 +120,7 @@ public class SpatializerHelperTest {
         final AudioDeviceAttributes dev3 =
                 new AudioDeviceAttributes(AudioSystem.DEVICE_OUT_BLUETOOTH_A2DP, "R2:D2:bloop");
 
-        doNothing().when(mSpyDeviceBroker).persistAudioDeviceSettings();
+        doNothing().when(mMockAudioService).persistSpatialAudioDeviceSettings();
 
         // test with single device
         mSpatHelper.addCompatibleAudioDevice(dev1);
@@ -132,11 +154,11 @@ public class SpatializerHelperTest {
      * the original one.
      */
     private void checkAddSettings() throws Exception {
-        String settings = mSpyDeviceBroker.getDeviceSettings();
+        String settings = mSpatHelper.getSADeviceSettings();
         Log.i(TAG, "device settings: " + settings);
-        mSpyDeviceBroker.clearDeviceInventory();
-        mSpyDeviceBroker.setDeviceSettings(settings);
-        String settingsRestored = mSpyDeviceBroker.getDeviceSettings();
+        mSpatHelper.clearSADevices();
+        mSpatHelper.setSADeviceSettings(settings);
+        String settingsRestored = mSpatHelper.getSADeviceSettings();
         Log.i(TAG, "device settingsRestored: " + settingsRestored);
         Assert.assertEquals(settings, settingsRestored);
     }
