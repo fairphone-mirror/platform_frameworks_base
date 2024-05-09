@@ -1392,6 +1392,10 @@ public class DisplayDeviceConfig {
      * @return Auto brightness darkening light debounce
      */
     public long getAutoBrightnessDarkeningLightDebounce() {
+        if(mAutoBrightnessDarkeningLightDebounce == INVALID_AUTO_BRIGHTNESS_LIGHT_DEBOUNCE) {
+            mAutoBrightnessDarkeningLightDebounce = mContext.getResources().getInteger(
+                    com.android.internal.R.integer.config_autoBrightnessDarkeningLightDebounce);
+        }
         return mAutoBrightnessDarkeningLightDebounce;
     }
 
@@ -1399,6 +1403,10 @@ public class DisplayDeviceConfig {
      * @return Auto brightness brightening light debounce
      */
     public long getAutoBrightnessBrighteningLightDebounce() {
+        if(mAutoBrightnessBrighteningLightDebounce == INVALID_AUTO_BRIGHTNESS_LIGHT_DEBOUNCE) {
+            mAutoBrightnessBrighteningLightDebounce = mContext.getResources().getInteger(
+                    com.android.internal.R.integer.config_autoBrightnessBrighteningLightDebounce);
+        }
         return mAutoBrightnessBrighteningLightDebounce;
     }
 
