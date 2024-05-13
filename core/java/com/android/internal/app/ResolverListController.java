@@ -28,6 +28,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.util.Log;
 
@@ -35,8 +36,10 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.app.chooser.DisplayResolveInfo;
 import com.android.internal.app.chooser.TargetInfo;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.CountDownLatch;
@@ -62,6 +65,10 @@ public class ResolverListController {
     private AbstractResolverComparator mResolverComparator;
     private boolean isComputed = false;
     private final UserHandle mQueryIntentsAsUser;
+
+    private static final String APP_SELECTOR_PACKAGENAME = "com.aura.oobe.deutsche";
+    private static final String ORANGE_MANUAL_SELECTOR_PACKAGENAME = "com.orange.aura.oobe";
+    private static final String MCCMNC_ARRAY[] = {"20416", "21630", "23203", "23204", "23207", "26201", "26206", "20610", "20800", "20801", "20802", "21403"};
 
     public ResolverListController(
             Context context,
@@ -159,6 +166,23 @@ public class ResolverListController {
                     intent);
             final List<ResolveInfo> infos = mpm.queryIntentActivitiesAsUser(intent, flags,
                     userHandle);
+
+            int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);
+            if(userId != 0){
+                List<String> list = Arrays.asList(MCCMNC_ARRAY);
+                String mccmnc = SystemProperties.get("persist.ril.sim.mcc.mnc");
+                if(mccmnc == null || !list.contains(mccmnc)){
+                    Iterator<ResolveInfo> iterator = infos.iterator();
+                    while (iterator.hasNext()) {
+                        ResolveInfo r =  iterator.next();
+                        String packageName = r.activityInfo.packageName;
+                        if(APP_SELECTOR_PACKAGENAME.equals(packageName) || ORANGE_MANUAL_SELECTOR_PACKAGENAME.equals(packageName)){
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
+
             if (infos != null) {
                 if (resolvedComponents == null) {
                     resolvedComponents = new ArrayList<>();
