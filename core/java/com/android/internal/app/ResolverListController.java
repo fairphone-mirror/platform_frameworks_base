@@ -173,11 +173,18 @@ public class ResolverListController {
                 String mccmnc = SystemProperties.get("persist.ril.sim.mcc.mnc");
                 if(mccmnc == null || !list.contains(mccmnc)){
                     Iterator<ResolveInfo> iterator = infos.iterator();
-                    while (iterator.hasNext()) {
-                        ResolveInfo r =  iterator.next();
-                        String packageName = r.activityInfo.packageName;
-                        if(APP_SELECTOR_PACKAGENAME.equals(packageName) || ORANGE_MANUAL_SELECTOR_PACKAGENAME.equals(packageName)){
-                            iterator.remove();
+                    if(iterator != null){
+                        while (iterator.hasNext()) {
+                            ResolveInfo r =  iterator.next();
+                            if (r != null){
+                                ActivityInfo aci = r.activityInfo;
+                                if (aci != null){
+                                    String packageName = aci.packageName;
+                                    if(APP_SELECTOR_PACKAGENAME.equals(packageName) || ORANGE_MANUAL_SELECTOR_PACKAGENAME.equals(packageName)){
+                                        iterator.remove();
+                                    }
+                                }
+                            }
                         }
                     }
                 }
