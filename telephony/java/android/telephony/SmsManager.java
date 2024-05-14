@@ -53,6 +53,7 @@ import com.android.telephony.Rlog;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,10 @@ public final class SmsManager {
     private static final String TAG = "SmsManager";
 
     private static final Object sLockObject = new Object();
+
+    private static final String[] SMSC_TRIMMED_MCC_MNC_NUMERICS = {
+        "21403", // Orange Spain
+    };
 
     @GuardedBy("sLockObject")
     private static final Map<Pair<Context, Integer>, SmsManager> sSubInstances =
@@ -3135,6 +3140,19 @@ public final class SmsManager {
         return SmsManager.SMS_CATEGORY_NOT_SHORT_CODE;
     }
 
+    private String getTrimmedSMSCStringForSubId(int subId, String smsc) {
+        final String mccmnc = TelephonyManager.getDefault().getSimOperatorNumeric();
+        if (!Arrays.asList(SMSC_TRIMMED_MCC_MNC_NUMERICS).contains(mccmnc)) {
+            return smsc;
+        }
+
+        int smscEnd =  smsc.indexOf(",");
+        if (smscEnd != -1) {
+             return smsc.substring(0, smscEnd);
+        }
+        return smsc;
+    }
+
     /**
      * Gets the SMSC address from (U)SIM.
      *
@@ -3162,8 +3180,10 @@ public final class SmsManager {
         try {
             ISms iSms = getISmsService();
             if (iSms != null) {
+                int subId = getSubscriptionId();
                 smsc = iSms.getSmscAddressFromIccEfForSubscriber(
-                        getSubscriptionId(), null);
+                        subId, null);
+                smsc = getTrimmedSMSCStringForSubId(subId, smsc);
             }
         } catch (RemoteException ex) {
             throw new RuntimeException(ex);
