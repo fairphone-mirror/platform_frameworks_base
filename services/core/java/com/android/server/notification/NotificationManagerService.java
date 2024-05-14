@@ -7046,8 +7046,16 @@ public class NotificationManagerService extends SystemService {
     private boolean canBeNonDismissible(ApplicationInfo ai, Notification notification) {
         return notification.isMediaNotification() || isEnterpriseExempted(ai)
                 || notification.isStyle(Notification.CallStyle.class)
+                || isCustomRequirePackage(ai.packageName)    // modify by T2M.zhangrenjie for FP5U-542 2024-05-14
                 || isDefaultSearchSelectorPackage(ai.packageName);
     }
+
+    // modify Begin by T2M.zhangrenjie for FP5U-542 2024-05-14
+    private boolean isCustomRequirePackage(String pkg) {
+        List<String> pkgList = Arrays.asList("com.android.phone");
+        return pkgList.contains(pkg);
+    }
+    // modify End by T2M.zhangrenjie for FP5U-542 2024-05-14
 
     private boolean isDefaultSearchSelectorPackage(String pkg) {
         return Objects.equals(mDefaultSearchSelectorPkg, pkg);
