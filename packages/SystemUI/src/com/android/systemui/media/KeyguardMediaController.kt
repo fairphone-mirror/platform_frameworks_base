@@ -18,16 +18,10 @@ package com.android.systemui.media
 
 import android.content.Context
 import android.content.res.Configuration
-import android.database.ContentObserver
-import android.net.Uri
-import android.os.Handler
-import android.os.UserHandle
-import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.VisibleForTesting
 import com.android.systemui.dagger.SysUISingleton
-import com.android.systemui.dagger.qualifiers.Main
 import com.android.systemui.media.dagger.MediaModule.KEYGUARD
 import com.android.systemui.plugins.statusbar.StatusBarStateController
 import com.android.systemui.statusbar.StatusBarState
@@ -36,7 +30,6 @@ import com.android.systemui.statusbar.notification.stack.MediaContainerView
 import com.android.systemui.statusbar.phone.KeyguardBypassController
 import com.android.systemui.statusbar.policy.ConfigurationController
 import com.android.systemui.util.LargeScreenUtils
-import com.android.systemui.util.settings.SecureSettings
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -50,8 +43,6 @@ class KeyguardMediaController @Inject constructor(
     private val bypassController: KeyguardBypassController,
     private val statusBarStateController: SysuiStatusBarStateController,
     private val context: Context,
-    private val secureSettings: SecureSettings,
-    @Main private val handler: Handler,
     configurationController: ConfigurationController,
 ) {
 
@@ -66,24 +57,6 @@ class KeyguardMediaController @Inject constructor(
                 updateResources()
             }
         })
-
-        val settingsObserver: ContentObserver = object : ContentObserver(handler) {
-            override fun onChange(selfChange: Boolean, uri: Uri?) {
-                if (uri == lockScreenMediaPlayerUri) {
-                    allowMediaPlayerOnLockScreen =
-                            secureSettings.getBoolForUser(
-                                    Settings.Secure.MEDIA_CONTROLS_LOCK_SCREEN,
-                                    true,
-                                    UserHandle.USER_CURRENT
-                            )
-                    refreshMediaPosition()
-                }
-            }
-        }
-        secureSettings.registerContentObserverForUser(
-                Settings.Secure.MEDIA_CONTROLS_LOCK_SCREEN,
-                settingsObserver,
-                UserHandle.USER_ALL)
 
         // First let's set the desired state that we want for this host
         mediaHost.expansion = MediaHostState.EXPANDED
@@ -124,13 +97,6 @@ class KeyguardMediaController @Inject constructor(
     var singlePaneContainer: MediaContainerView? = null
         private set
     private var splitShadeContainer: ViewGroup? = null
-
-    /**
-     * Track the media player setting status on lock screen.
-     */
-    private var allowMediaPlayerOnLockScreen: Boolean = true
-    private val lockScreenMediaPlayerUri =
-            secureSettings.getUriFor(Settings.Secure.MEDIA_CONTROLS_LOCK_SCREEN)
 
     /**
      * Attaches media container in single pane mode, situated at the top of the notifications list
@@ -195,8 +161,7 @@ class KeyguardMediaController @Inject constructor(
         // mediaHost.visible required for proper animations handling
         visible = mediaHost.visible &&
                 !bypassController.bypassEnabled &&
-                keyguardOrUserSwitcher &&
-                allowMediaPlayerOnLockScreen
+                keyguardOrUserSwitcher
         if (visible) {
             showMediaPlayer()
         } else {

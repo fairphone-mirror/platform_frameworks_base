@@ -172,7 +172,10 @@ class MediaHost constructor(
      * the visibility has changed
      */
     fun updateViewVisibility() {
-        state.visible = if (showsOnlyActiveMedia) {
+        state.visible =
+        if (mediaHierarchyManager.isLockedAndHidden()) {
+                false
+            } else if (showsOnlyActiveMedia) {
             mediaDataManager.hasActiveMediaOrRecommendation()
         } else {
             mediaDataManager.hasAnyMediaOrRecommendation()
