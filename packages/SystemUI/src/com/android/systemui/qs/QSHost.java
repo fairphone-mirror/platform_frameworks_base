@@ -53,7 +53,7 @@ public interface QSHost {
 
         ArrayList<String> finalTiles = new ArrayList<String>();
         finalTiles = replaceWifiOrCell(tiles);
-        finalTiles = setControlsAndWalletPosition(tiles);
+        //finalTiles = setControlsAndWalletPosition(tiles);
         return finalTiles;
     }
 
@@ -74,16 +74,16 @@ public interface QSHost {
         return list;
     }
 
-    static ArrayList<String> setControlsAndWalletPosition (ArrayList<String> list){
-        if (list.contains("controls")) {
-            list.remove("controls");
-            try {
-               list.add(4,"controls");
-            } catch (IndexOutOfBoundsException e) {
-            }
-        }
-        return list;
-    }
+    // static ArrayList<String> setControlsAndWalletPosition (ArrayList<String> list){
+    //     if (list.contains("controls")) {
+    //         list.remove("controls");
+    //         try {
+    //            list.add(4,"controls");
+    //         } catch (IndexOutOfBoundsException e) {
+    //         }
+    //     }
+    //     return list;
+    // }
 
     Context getContext();
     Context getUserContext();

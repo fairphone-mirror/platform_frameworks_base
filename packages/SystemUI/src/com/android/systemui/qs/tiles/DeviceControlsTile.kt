@@ -69,7 +69,7 @@ class DeviceControlsTile @Inject constructor(
     qsLogger
 ) {
 
-    private var hasControlsApps = AtomicBoolean(false)
+    private var hasControlsApps = AtomicBoolean(true)
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val icon: QSTile.Icon

@@ -126,7 +126,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
     private TileLifecycleManager.Factory mTileLifeCycleManagerFactory;
 
     private ContentObserver mDefaultPaymentAppObserver;
-
+    private ContentObserver mDeviceControlAppObserver;
     private final FeatureFlags mFeatureFlags;
 
     @Inject
@@ -171,6 +171,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
             // AutoTileManager can modify mTiles so make sure mTiles has already been initialized.
             mAutoTiles = autoTiles.get();
             setupDefaultPaymentAppObserver();
+            setupDeviceControlAppObserver();
         });
     }
 
@@ -305,7 +306,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
                     tile.getValue().destroy();
                 });
         final LinkedHashMap<String, QSTile> newTiles = new LinkedHashMap<>();
-        boolean isCreateControllers = false;
+        // boolean isCreateControllers = false;
         for (String tileSpec : tileSpecs) {
             QSTile tile = mTiles.get(tileSpec);
             if (tile != null && (!(tile instanceof CustomTile)
@@ -338,7 +339,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
                         tile.setTileSpec(tileSpec);
                         if (tile.isAvailable()) {
                             newTiles.put(tileSpec, tile);
-                            isCreateControllers = tileSpec.equals("controls");
+                            // isCreateControllers = tileSpec.equals("controls");
                             mQSLogger.logTileAdded(tileSpec);
                         } else {
                             tile.destroy();
@@ -358,14 +359,14 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
         mTileSpecs.clear();
         mTileSpecs.addAll(newTiles.keySet()); // Only add the valid (available) tiles.
 
-        if(isCreateControllers && mTileSpecs.contains("controls")){
-            mTileSpecs.remove("controls");
-            try {
-               mTileSpecs.add(4,"controls");
-            } catch (IndexOutOfBoundsException e) {
-               Log.w(TAG, "mTileSpecs size is smaller than 4");
-            }
-        }
+        // if(isCreateControllers && mTileSpecs.contains("controls")){
+        //     mTileSpecs.remove("controls");
+        //     try {
+        //        mTileSpecs.add(4,"controls");
+        //     } catch (IndexOutOfBoundsException e) {
+        //        Log.w(TAG, "mTileSpecs size is smaller than 4");
+        //     }
+        // }
 
         mTiles.clear();
         mTiles.putAll(newTiles);
@@ -437,6 +438,8 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
         }
     }
 
+    
+
     //update wallet Title Position
     public void updateWalletTiles(){
         mMainExecutor.execute(() -> {
@@ -457,10 +460,61 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
 
     }
 
-     public boolean getDefaultPaymentApp() {
+
+    public boolean getDefaultPaymentApp() {
         String componentString = Settings.Secure.getStringForUser(mContext.getContentResolver(),
                 Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT, ActivityManager.getCurrentUser());
         return componentString != null;
+    }
+
+
+    //update controls Title Position
+    private void setupDeviceControlAppObserver() {
+        if (mDeviceControlAppObserver == null) {
+            mDeviceControlAppObserver = new ContentObserver(null /* handler */) {
+                @Override
+                public void onChange(boolean selfChange) {
+                    mMainExecutor.execute(() -> {
+                        updateControlsTiles();
+                    });
+                }
+            };
+
+            mSecureSettings.registerContentObserverForUser(
+                    Settings.Secure.getUriFor(Settings.Secure.CONTROLS_ENABLED),
+                    false /* notifyForDescendants */,
+                    mDeviceControlAppObserver,
+                    UserHandle.USER_ALL);
+        }
+    }
+
+    public void unregisterDeviceControlChangeObservers() {
+        if (mDeviceControlAppObserver != null) {
+            mSecureSettings.unregisterContentObserver(mDeviceControlAppObserver);
+        }
+    }
+
+    public void updateControlsTiles(){
+        mMainExecutor.execute(() -> {
+            List<String> newSpecs = new ArrayList<>(mTileSpecs);
+            if(getDeviceControlApp()){
+                if(newSpecs.size() >= 4 && ! newSpecs.contains("controls")){
+                    newSpecs.add(4,"controls");
+                    changeTilesByUser(mTileSpecs, newSpecs);
+                }
+            } else {
+                if (newSpecs.contains("controls")) {
+                    newSpecs.remove("controls");
+                    changeTilesByUser(mTileSpecs, newSpecs);
+                }
+            }
+        });
+    }
+
+    public boolean getDeviceControlApp() {
+        int deviceControls = Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                Settings.Secure.CONTROLS_ENABLED,-1,ActivityManager.getCurrentUser());
+        return deviceControls == 1 || deviceControls == 0;
     }
 
     /**
@@ -667,7 +721,7 @@ public class QSTileHost implements QSHost, Tunable, PluginListener<QSFactory>, P
 
         ArrayList<String> finalTiles = new ArrayList<String>();
         finalTiles = QSHost.replaceWifiOrCell(tiles);
-        finalTiles = QSHost.setControlsAndWalletPosition(tiles);
+        // finalTiles = QSHost.setControlsAndWalletPosition(tiles);
         return finalTiles;
     }
 

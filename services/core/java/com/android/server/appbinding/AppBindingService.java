@@ -286,6 +286,15 @@ public class AppBindingService extends Binder {
                         Slog.w(TAG, "something wrong with setDefaultPayment");
                     }
 
+                    try{
+                        if("com.google.android.apps.chromecast.app".equals(packageName)){
+                            setDefaultDeviceControl();
+                        }
+                       
+                    } catch (Exception e){
+                        Slog.w(TAG, "something wrong with setDefaultDeviceControl");
+                    }
+
                     if (replacing) {
                         handlePackageAddedReplacing(packageName, userId);
                     }
@@ -570,10 +579,12 @@ public class AppBindingService extends Binder {
         return mConstants;
     }
 
+
+
     public void setDefaultPaymentApp(){
             
         if(getDefaultPaymentApp() == null){
-            PackageManager pm = mContext.getPackageManager();
+            // PackageManager pm = mContext.getPackageManager();
             UserManager um = mContext.createContextAsUser(UserHandle.of(ActivityManager.getCurrentUser()), /*flags=*/0)
                     .getSystemService(UserManager.class);
             List<UserHandle> userHandles = um.getEnabledProfiles();
@@ -621,6 +632,20 @@ public class AppBindingService extends Binder {
     // public void setDefaultPaymentApp(ComponentName app) {
     //     setDefaultPaymentApp(app, UserHandle.myUserId());
     // }
+
+    public void setDefaultDeviceControl(){
+        UserManager um = mContext.createContextAsUser(
+                UserHandle.of(ActivityManager.getCurrentUser()), /*flags=*/0)
+                .getSystemService(UserManager.class);
+        List<UserHandle> userHandles = um.getEnabledProfiles();
+
+        for (UserHandle uh : userHandles) {
+            Settings.Secure.putIntForUser(mContext.getContentResolver(),
+                        Settings.Secure.CONTROLS_ENABLED,
+                        1, uh.getIdentifier());
+        }
+
+    }
 
     /**
      *  Set Nfc default payment application
