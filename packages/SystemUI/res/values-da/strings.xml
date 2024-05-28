@@ -1181,9 +1181,16 @@
     <string name="low_temp_message_20">Advarsel! Batteritemperaturen er for lav. Enheden slukkes</string>
     <string name="height_temp_message_55">Advarsel! Batteritemperaturen er for høj. Luk unødvendige applikationer</string>
     <string name="height_temp_message_60">Advarsel! Batteritemperaturen er for høj. Enheden slukkes</string>
-    <string name="face_unlocking">oplåsning med ansigtsgenkendelse i gang</string>
+    <string name="face_unlocking">"Ansigtsoplåsning er i gang"</string>
     <string name="proximity_top">Dæk ikke toppen af skærmen</string>
     <string name="proximity_mode">Lommetilstand</string>
     <string name="proximity_action">Stryg til venstre eller højre for at forlade denne tilstand</string>
-    
+    <string name="face_unlock_failed">"Intet match. Tryk på ikonet for at bruge ansigtslås."</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">"For mange forkerte forsøg. Brug pin til at låse op."</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">"For mange forkerte forsøg. Brug mønster til at låse op."</string>
+    <string name="too_many_face_unlock_failed_to_use_password">"For mange forkerte forsøg. Brug adgangskode til at låse op."</string>
+    <string name="required_to_use_pattern">"Mønster påkrævet for yderligere sikkerhed"</string>
+    <string name="required_to_use_password">"Adgangskode påkrævet for yderligere sikkerhed"</string>
+    <string name="required_to_use_pin">"PIN kræves for yderligere sikkerhed"</string>
+
 </resources>

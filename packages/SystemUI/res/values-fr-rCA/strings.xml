@@ -1158,4 +1158,12 @@
     <string name="assistant_attention_content_description" msgid="6830215897604642875">"Assistant à l\'écoute"</string>
     <string name="set_default_notes_app_toast_content" msgid="2812374329662610753">"Définir l\'application de prise de notes par défaut dans les Paramètres"</string>
     <string name="install_app" msgid="5066668100199613936">"Installer l\'application"</string>
+    <string name="face_unlock_failed">"Aucune concordance. Appuyez sur l'icône pour utiliser le déverrouillage par reconnaissance faciale."</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">"Trop de tentatives incorrectes. Utiliser le code PIN pour déverrouiller."</string>
+    <string name="face_unlocking">"Déverrouillage facial en cours"</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">"Trop de tentatives incorrectes. Utilisez le modèle pour déverrouiller."</string>
+    <string name="too_many_face_unlock_failed_to_use_password">"Trop de tentatives incorrectes. Utilisez un mot de passe pour déverrouiller."</string>
+    <string name="required_to_use_pattern">"Modèle requis pour plus de sécurité"</string>
+    <string name="required_to_use_password">"Mot de passe requis pour plus de sécurité"</string>
+    <string name="required_to_use_pin">"Code PIN requis pour plus de sécurité"</string>
 </resources>

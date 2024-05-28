@@ -1162,5 +1162,13 @@
         <item quantity="one">Incorrect SIM<xliff:g id="slotid">%d</xliff:g> PIN code, you have <xliff:g id="number">%d</xliff:g> remaining attempt before you must contact your carrier to unlock your device.</item>
         <item quantity="other">Código de pino Sim<xliff:g id="slotid">%d</xliff:g> incorreto. Você tem <xliff:g id="number">%d</xliff:g> tentativas restantes.</item>
     </plurals>
+    <string name="face_unlock_failed">"Nenhuma correspondência. Toque no ícone para usar o desbloqueio facial."</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">"Demasiadas tentativas incorretas. Use o seu código PIN para desbloquear."</string>
+    <string name="face_unlocking">"Desbloqueio facial a decorrer"</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">"Demasiadas tentativas incorretas. Use seu padrão pessoal para desbloquear."</string>
+    <string name="too_many_face_unlock_failed_to_use_password">"Demasiadas tentativas incorretas. Use a sua palavra passe para desbloquear."</string>
+    <string name="required_to_use_pattern">"Padrão pessoal necessário por motivos de segurança aditional"</string>
+    <string name="required_to_use_password">"Palavra passe necessária por motivos de segurança aditional"</string>
+    <string name="required_to_use_pin">"Código PIN necessário por motivos de segurança aditional"</string>
 
 </resources>

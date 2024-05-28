@@ -1182,8 +1182,15 @@ Navigera till batteriinställningar för att växla mellan lägen och lära dig 
     <string name="low_temp_message_20">Varning! Batteritemperaturen är för låg, din enhet kommer att stängas av</string>
     <string name="height_temp_message_55">Varning! Batteritemperaturen är för hög, stäng onödiga program</string>
     <string name="height_temp_message_60">Varning! Batteritemperaturen är för hög, din enhet kommer att stängas av</string>
-    <string name="face_unlocking">ansiktsupplåsning pågår</string>
+    <string name="face_unlocking">"Ansiktsupplåsning pågår"</string>
     <string name="proximity_top">Täck inte toppen av skärmen</string>
     <string name="proximity_mode">Fickläge</string>
     <string name="proximity_action">Dra åt vänster eller höger för att lämna detta läge</string>
+    <string name="face_unlock_failed">"Ingen match. Tryck på ikonen för att använda ansiktslås."</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">"För många felaktiga försök. Använd nål för att låsa upp."</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">"För många felaktiga försök. Använd mönster för att låsa upp."</string>
+    <string name="too_many_face_unlock_failed_to_use_password">"För många felaktiga försök. Använd lösenord för att låsa upp."</string>
+    <string name="required_to_use_pattern">"Mönster krävs för extra säkerhet"</string>
+    <string name="required_to_use_password">"Lösenord krävs för ytterligare säkerhet"</string>
+    <string name="required_to_use_pin">"PIN-kod krävs för extra säkerhet"</string>
 </resources>

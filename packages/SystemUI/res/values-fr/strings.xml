@@ -1182,8 +1182,15 @@ Accédez aux paramètres de la batterie pour basculer entre les modes et en savo
     <string name="low_temp_message_20">Attention ! La température de la batterie est trop faible ; votre appareil va s’éteindre</string>
     <string name="height_temp_message_55">Attention ! La température de la batterie est trop élevée ; veuillez fermer les apps inutiles</string>
     <string name="height_temp_message_60">Attention ! La température de la batterie est trop élevée ; votre appareil va s’éteindre</string>
-    <string name="face_unlocking">déverrouillage par reconnaissance faciale en cours</string>
+    <string name="face_unlocking">"Déverrouillage facial en cours"</string>
     <string name="proximity_top">Ne couvrez pas le haut de l\'écran</string>
     <string name="proximity_mode">Mode de poche</string>
     <string name="proximity_action">Balayez vers la gauche ou la droite pour quitter ce mode</string>
+    <string name="face_unlock_failed">"Aucune concordance. Appuyez sur l'icône pour utiliser le déverrouillage par reconnaissance faciale."</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">"Trop de tentatives incorrectes. Utiliser le code PIN pour déverrouiller."</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">"Trop de tentatives incorrectes. Utilisez le modèle pour déverrouiller."</string>
+    <string name="too_many_face_unlock_failed_to_use_password">"Trop de tentatives incorrectes. Utilisez un mot de passe pour déverrouiller."</string>
+    <string name="required_to_use_pattern">"Modèle requis pour plus de sécurité"</string>
+    <string name="required_to_use_password">"Mot de passe requis pour plus de sécurité"</string>
+    <string name="required_to_use_pin">"Code PIN requis pour plus de sécurité"</string>
 </resources>

@@ -1158,4 +1158,12 @@
     <string name="assistant_attention_content_description" msgid="6830215897604642875">"Asistente está prestando atención"</string>
     <string name="set_default_notes_app_toast_content" msgid="2812374329662610753">"Configura la app de notas predeterminada en Configuración"</string>
     <string name="install_app" msgid="5066668100199613936">"Instalar app"</string>
+    <string name="face_unlock_failed">"Huella no reconocida. Toca el ícono para usar el desbloqueo facial."</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">"Demasiados intentos incorrectos. Utiliza el pin para desbloquear."</string>
+    <string name="face_unlocking">"Desbloqueo facial en progreso"</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">"Demasiados intentos incorrectos. Utiliza el patrón para desbloquear."</string>
+    <string name="too_many_face_unlock_failed_to_use_password">"Demasiados intentos incorrectos. Utiliza la contraseña para desbloquear."</string>
+    <string name="required_to_use_pattern">"Patrón requerido para seguridad adicional"</string>
+    <string name="required_to_use_password">"Contraseña requerida para seguridad adicional"</string>
+    <string name="required_to_use_pin">"Se requiere código PIN para seguridad adicional"</string>
 </resources>

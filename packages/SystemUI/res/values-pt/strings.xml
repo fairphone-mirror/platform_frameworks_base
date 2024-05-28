@@ -1178,8 +1178,15 @@ Navegue até as configurações da bateria para alternar entre os modos e saber 
     <string name="low_temp_message_20">Aviso! A temperatura da bateria é demasiado baixa, o dispositivo será desligado</string>
     <string name="height_temp_message_55">Aviso! A temperatura da bateria é demasiado elevada, feche as aplicações desnecessárias</string>
     <string name="height_temp_message_60">Aviso! A temperatura da bateria é demasiado elevada, o dispositivo será desligado</string>
-    <string name="face_unlocking">desbloqueio facial em curso</string>
+    <string name="face_unlocking">"Desbloqueio facial a decorrer"</string>
     <string name="proximity_top">Não cubra a parte superior do ecrã</string>
     <string name="proximity_mode">Modo de bolso</string>
     <string name="proximity_action">Deslizar para a esquerda ou direita para sair deste modo</string>
+    <string name="face_unlock_failed">"Nenhuma correspondência. Toque no ícone para usar o desbloqueio facial."</string>
+    <string name="too_many_face_unlock_failed_to_use_pin">"Demasiadas tentativas incorretas. Use o seu código PIN para desbloquear."</string>
+    <string name="too_many_face_unlock_failed_to_use_pattern">"Demasiadas tentativas incorretas. Use seu padrão pessoal para desbloquear."</string>
+    <string name="too_many_face_unlock_failed_to_use_password">"Demasiadas tentativas incorretas. Use a sua palavra passe para desbloquear."</string>
+    <string name="required_to_use_pattern">"Padrão pessoal necessário por motivos de segurança aditional"</string>
+    <string name="required_to_use_password">"Palavra passe necessária por motivos de segurança aditional"</string>
+    <string name="required_to_use_pin">"Código PIN necessário por motivos de segurança aditional"</string>
 </resources>
