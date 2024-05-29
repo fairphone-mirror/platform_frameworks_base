@@ -303,19 +303,22 @@ public class Camera {
      *   cameras or an error was encountered enumerating them.
      */
     public static int getNumberOfCameras() {
-        boolean exposeAuxCamera = false;
+        boolean exposeAuxCamera = true;
         String packageName = ActivityThread.currentOpPackageName();
         /* Force to expose only two cameras
-         * if the package name does not falls in this bucket
+         * if is allowed
          */
+        boolean exposeAllCamera = false;
         for (String str : TctCameraPrivilegedAppList) {
             if (packageName.equals(str)) {
-                exposeAuxCamera = true;
+                exposeAllCamera = true;
                 break;
             }
         }
         int numberOfCameras = _getNumberOfCameras();
-        if (exposeAuxCamera == false && (numberOfCameras > 2)) {
+        if (!exposeAllCamera && exposeAuxCamera && (numberOfCameras > 3)) {
+            numberOfCameras = 3;
+        }else if (! exposeAllCamera && !exposeAuxCamera && (numberOfCameras > 2)) {
             numberOfCameras = 2;
         }
         return numberOfCameras;

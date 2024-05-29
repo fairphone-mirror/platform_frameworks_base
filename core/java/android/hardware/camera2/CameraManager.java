@@ -35,6 +35,8 @@ import android.hardware.CameraExtensionSessionStats;
 import android.hardware.CameraStatus;
 import android.hardware.ICameraService;
 import android.hardware.ICameraServiceListener;
+import android.hardware.camera2.CameraManager.AvailabilityCallback;
+import android.hardware.camera2.CameraManager.TorchCallback;
 import android.hardware.camera2.impl.CameraDeviceImpl;
 import android.hardware.camera2.impl.CameraInjectionSessionImpl;
 import android.hardware.camera2.impl.CameraMetadataNative;
@@ -1971,20 +1973,26 @@ public final class CameraManager {
             "com.android.mmi",
             "foundation.e.camera"
         };
+        private static final int I_CAMERA_NO_HIDDEN = 2;
+        private static final int I_CAMERA_EXP_WIDE  = 0;
+        private static final int I_CAMERA_EXP_TWO   = -1;
 
         private String[] extractCameraIdListLocked() {
             String[] cameraIds = null;
-            boolean exposeAuxCamera = false;
+            int exposeAuxCamera = I_CAMERA_EXP_WIDE;
             String packageName = ActivityThread.currentOpPackageName();
             for (String str : TctCameraPrivilegedAppList) {
                 if (packageName.equals(str)) {
-                    exposeAuxCamera = true;
+                    exposeAuxCamera = I_CAMERA_NO_HIDDEN;
                     break;
                 }
             }
             int idCount = 0;
             for (int i = 0; i < mDeviceStatus.size(); i++) {
-                if(!exposeAuxCamera && (i == 2)) break;
+                if(exposeAuxCamera == I_CAMERA_EXP_WIDE && (i == 3))
+                    break;
+                if(exposeAuxCamera == I_CAMERA_EXP_TWO && (i == 2))
+                    break; //exposure ultra camera
                 int status = mDeviceStatus.valueAt(i);
                 if (status == ICameraServiceListener.STATUS_NOT_PRESENT
                         || status == ICameraServiceListener.STATUS_ENUMERATING) continue;
@@ -1993,7 +2001,7 @@ public final class CameraManager {
             cameraIds = new String[idCount];
             idCount = 0;
             for (int i = 0; i < mDeviceStatus.size(); i++) {
-                if(!exposeAuxCamera && (i == 2)) break;
+                if(exposeAuxCamera == I_CAMERA_EXP_WIDE && (i == 3)) break; ////exposure ultra camera
                 int status = mDeviceStatus.valueAt(i);
                 if (status == ICameraServiceListener.STATUS_NOT_PRESENT
                         || status == ICameraServiceListener.STATUS_ENUMERATING) continue;
@@ -2258,18 +2266,18 @@ public final class CameraManager {
                     throw new IllegalArgumentException("cameraId was null");
                 }
 
-                /* Force to expose only two cameras
-                 * if the package name does not falls in this bucket
-                 */
-                boolean exposeAuxCamera = false;
+
+                /* Force to ignore the aux or composite camera torch status update
+                * if the package name does not falls in this bucket
+                */
+                boolean exposeMonoCamera = true;
                 String packageName = ActivityThread.currentOpPackageName();
-                for (String str : TctCameraPrivilegedAppList) {
-                    if (packageName.equals(str)) {
-                        exposeAuxCamera = true;
-                        break;
-                    }
+                //todo igonre camera 345
+                if (exposeMonoCamera == true && (Integer.parseInt(cameraId) > 2)) {
+                    throw new IllegalArgumentException("invalid cameraId");
                 }
-                if (exposeAuxCamera == false && (Integer.parseInt(cameraId) >= 2)) {
+
+                if (exposeMonoCamera == false && (Integer.parseInt(cameraId) >= 2)) {
                     throw new IllegalArgumentException("invalid cameraId");
                 }
 
@@ -2544,16 +2552,21 @@ public final class CameraManager {
             /* Force to ignore the last mono/aux camera status update
              * if the package name does not falls in this bucket
              */
-            boolean exposeMonoCamera = false;
+            int exposeCameraStrategy = I_CAMERA_EXP_WIDE;
             String packageName = ActivityThread.currentOpPackageName();
+
             for (String str : TctCameraPrivilegedAppList) {
                 if (packageName.equals(str)) {
-                    exposeMonoCamera = true;
+                    exposeCameraStrategy = I_CAMERA_NO_HIDDEN;
                     break;
                 }
             }
-
-            if (exposeMonoCamera == false) {
+            if (exposeCameraStrategy == I_CAMERA_EXP_WIDE) {
+                if (Integer.parseInt(id) > 2) {
+                    Log.w(TAG, "[soar.cts] ignore the status update of camera: " + id);
+                    return;
+                }
+            } else if (exposeCameraStrategy == I_CAMERA_EXP_TWO) {
                 if (Integer.parseInt(id) >= 2) {
                     Log.w(TAG, "[soar.cts] ignore the status update of camera: " + id);
                     return;
@@ -2709,16 +2722,21 @@ public final class CameraManager {
             /* Force to ignore the aux or composite camera torch status update
              * if the package name does not falls in this bucket
              */
-            boolean exposeMonoCamera = false;
             String packageName = ActivityThread.currentOpPackageName();
+            int exposeCameraStrategy = I_CAMERA_EXP_WIDE;
+
             for (String str : TctCameraPrivilegedAppList) {
                 if (packageName.equals(str)) {
-                    exposeMonoCamera = true;
+                    exposeCameraStrategy = I_CAMERA_NO_HIDDEN;
                     break;
                 }
             }
-
-            if (exposeMonoCamera == false) {
+            if (exposeCameraStrategy == I_CAMERA_EXP_WIDE) {
+                if (Integer.parseInt(id) > 2) {
+                    Log.w(TAG, "[soar.cts] ignore the status update of camera: " + id);
+                    return;
+                }
+            } else if (exposeCameraStrategy == I_CAMERA_EXP_TWO) {
                 if (Integer.parseInt(id) >= 2) {
                     Log.w(TAG, "ignore the torch status update of camera: " + id);
                     return;
