@@ -20,10 +20,13 @@ import static android.content.pm.PackageManager.ONLY_IF_NO_MATCH_FOUND;
 import static android.content.pm.PackageManager.SKIP_CURRENT_PROFILE;
 import static android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.Intent;
 import android.hardware.usb.UsbManager;
+import android.nfc.cardemulation.CardEmulation;
 import android.provider.AlarmClock;
 import android.provider.MediaStore;
+import android.provider.Settings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -366,6 +369,7 @@ public class DefaultCrossProfileIntentFiltersUtils {
                 EMERGENCY_CALL_DATA,
                 CALL_BUTTON,
                 SET_ALARM,
+                SETTINGS_TO_PARENT,
                 MEDIA_CAPTURE,
                 RECOGNIZE_SPEECH,
                 ACTION_PICK_RAW,
@@ -395,6 +399,63 @@ public class DefaultCrossProfileIntentFiltersUtils {
                     .addAction(Intent.ACTION_CALL)
                     .addCategory(Intent.CATEGORY_DEFAULT)
                     .addDataScheme("tel")
+                    .build();
+
+    /** These are the intents which can be forwarded to the primary profile. */
+    private static final DefaultCrossProfileIntentFilter SETTINGS_TO_PARENT =
+            new DefaultCrossProfileIntentFilter.Builder(
+                    DefaultCrossProfileIntentFilter.Direction.TO_PARENT,
+                    /* flags= */0,
+                    /* letsPersonalDataIntoProfile= */ false)
+                    .addAction(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                    .addAction(Settings.ACTION_AIRPLANE_MODE_SETTINGS)
+                    .addAction(Settings.ACTION_BATTERY_SAVER_SETTINGS)
+                    .addAction(Settings.ACTION_CAPTIONING_SETTINGS)
+                    .addAction(Settings.ACTION_DATE_SETTINGS)
+                    .addAction(Settings.ACTION_DREAM_SETTINGS)
+                    .addAction(Settings.ACTION_DEVICE_INFO_SETTINGS)
+                    .addAction(Settings.ACTION_DISPLAY_SETTINGS)
+                    .addAction(Settings.ACTION_INTERNAL_STORAGE_SETTINGS)
+                    .addAction(Settings.ACTION_LOCALE_SETTINGS)
+                    .addAction(Settings.ACTION_MEMORY_CARD_SETTINGS)
+                    .addAction(Settings.ACTION_NFC_PAYMENT_SETTINGS)
+                    .addAction(Settings.ACTION_NFCSHARING_SETTINGS)
+                    .addAction(Settings.ACTION_NFC_SETTINGS)
+                    .addAction(Settings.ACTION_PRIVACY_SETTINGS)
+                    .addAction(Settings.ACTION_SETTINGS)
+                    .addAction(Settings.ACTION_SOUND_SETTINGS)
+                    .addAction(Settings.ACTION_VPN_SETTINGS)
+                    .addAction(Settings.ACTION_WIRELESS_SETTINGS)
+                    .addAction(Settings.ACTION_WIFI_IP_SETTINGS)
+                    .addAction(Settings.ACTION_WIFI_SETTINGS)
+                    .addAction(CardEmulation.ACTION_CHANGE_DEFAULT)
+                    .addAction("android.net.vpn.SETTINGS")
+                    .addAction("android.settings.LICENSE")
+                    .addAction("android.settings.NOTIFICATION_SETTINGS")
+                    .addAction("android.settings.ZEN_MODE_SETTINGS")
+                    .addAction("android.settings.USER_SETTINGS")
+                    .addAction("android.settings.ACTION_OTHER_SOUND_SETTINGS")
+                    .addAction("com.android.settings.ACCESSIBILITY_COLOR_SPACE_SETTINGS")
+                    .addAction("com.android.settings.TTS_SETTINGS")
+                    .addAction(Settings.ACTION_SYNC_SETTINGS)
+                    .addAction(Settings.ACTION_ADD_ACCOUNT)
+                    .addAction(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS)
+                    .addAction(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS)
+                    .addAction(Settings.ACTION_APPLICATION_SETTINGS)
+                    .addAction(DevicePolicyManager.ACTION_SET_NEW_PASSWORD)
+                    .addAction("android.settings.ACCOUNT_SYNC_SETTINGS")
+                    .addAction(MediaStore.ACTION_IMAGE_CAPTURE)
+                    .addAction(MediaStore.ACTION_VIDEO_CAPTURE)
+                    .addAction(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA)
+                    .addAction(MediaStore.INTENT_ACTION_VIDEO_CAMERA)
+                    .addAction(MediaStore.ACTION_IMAGE_CAPTURE_SECURE)
+                    .addAction(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE)
+                    .addAction(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+                    .addAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    .addAction(Settings.ACTION_HOME_SETTINGS)
+                    .addAction(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)
+                    .addAction(Settings.ACTION_APN_SETTINGS)
+                    .addCategory(Intent.CATEGORY_DEFAULT)
                     .build();
 
     /**
