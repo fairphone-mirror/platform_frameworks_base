@@ -920,11 +920,11 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                             if (1 == dcDimmingEnabled) {
                                 if (currentBrightness <= TRANSITION_POINT) {
                                     if (DEBUG) {
-                                        android.util.Log.d(TAG, "iris :DCDimming opened and currentBrightness is lower than transition point set brightness to 105:" + currentBrightness+"    isUIfinished:"+isUIfinished);
+                                        android.util.Log.d(TAG, "iris :DCDimming opened and currentBrightness is lower than transition point set brightness to "+TRANSITION_POINT+":" + currentBrightness+"    isUIfinished:"+isUIfinished);
                                     }
                                     if (0 == isUIfinished) {
                                         if (DEBUG) {
-                                            android.util.Log.d(TAG, "iris :DCDimming opened and currentBrightness is lower than transition point slow set brightness to 105~~~~~~~:" + currentBrightness+"    isUIfinished:"+isUIfinished);
+                                            android.util.Log.d(TAG, "iris :DCDimming opened and currentBrightness is lower than transition point slow set brightness to "+TRANSITION_POINT+"~~~~~~~:" + currentBrightness+"    isUIfinished:"+isUIfinished);
                                         }
                                         mBacklightAdapter.setBacklight(sdrBacklight, sdrNits, backlight, nits);
                                     } else {
@@ -940,8 +940,8 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                                     if (DEBUG) {
                                         android.util.Log.d(TAG, "iris :DCDimming opened but currentBrightness is higher than transition point:" + currentBrightness);
                                     }
-                                    if (oldBrightness < TRANSITION_POINT && currentBrightness >TRANSITION_POINT) {
-                                        android.util.Log.d(TAG, "iris :DCDimming opened oldBrightness < TRANSITION_POINT && currentBrightness >TRANSITION_POINT,set brightness to transition point");
+                                    if (oldBrightness < TRANSITION_POINT && currentBrightness >TRANSITION_POINT && oldBrightness > 0) {
+                                        android.util.Log.d(TAG, "iris :DCDimming opened oldBrightness < "+TRANSITION_POINT+" && currentBrightness >"+TRANSITION_POINT+",set brightness to transition point");
                                         float transitionBrightnessStateDCDimmingOpened=  BrightnessSynchronizer.brightnessIntToFloat(TRANSITION_POINT);
                                         float transitionSdrBrightnessStateDCDimmingOpened =  BrightnessSynchronizer.brightnessIntToFloat(TRANSITION_POINT);
                                         float transitionBacklightDCDimmingOpened = brightnessToBacklight(transitionBrightnessStateDCDimmingOpened);
@@ -964,11 +964,11 @@ final class LocalDisplayAdapter extends DisplayAdapter {
                                     mBacklightAdapter.setBacklight(sdrBacklight, sdrNits, backlight, nits);
                                 } else {
                                     if (DEBUG) {
-                                        android.util.Log.d(TAG, "iris :other scenarios-DCDimming is closing, drop this brightness -currentBrightness:" + currentBrightness +"    oldBrightness:" +oldBrightness+"    isUIfinished:"+isUIfinished); 
+                                        android.util.Log.d(TAG, "iris :other scenarios-DCDimming is closing, drop this brightness -currentBrightness:" + currentBrightness +"    oldBrightness:" +oldBrightness+"    isUIfinished:"+isUIfinished);
                                     }
                                     if (currentBrightness < TRANSITION_POINT) {
                                         if (DEBUG) {
-                                            android.util.Log.d(TAG, "iris :other scenarios-DCDimming is closing, currentBrightness < 105 setBrightness to 105 -currentBrightness:" + currentBrightness +"    oldBrightness:" +oldBrightness+"    isUIfinished:"+isUIfinished);
+                                            android.util.Log.d(TAG, "iris :other scenarios-DCDimming is closing, currentBrightness < "+TRANSITION_POINT+" setBrightness to "+TRANSITION_POINT+" -currentBrightness:" + currentBrightness +"    oldBrightness:" +oldBrightness+"    isUIfinished:"+isUIfinished);
                                         }
                                         float transitionBrightnessStateDCDimmingOpened=  BrightnessSynchronizer.brightnessIntToFloat(TRANSITION_POINT);
                                         float transitionSdrBrightnessStateDCDimmingOpened =  BrightnessSynchronizer.brightnessIntToFloat(TRANSITION_POINT);
