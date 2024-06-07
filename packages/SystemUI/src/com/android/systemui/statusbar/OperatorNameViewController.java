@@ -87,7 +87,7 @@ public class OperatorNameViewController extends ViewController<OperatorNameView>
         boolean showOperatorName = (defaultSubInfo == null) ? false :
                 mCarrierConfigTracker
                         .getShowOperatorNameInStatusBarConfig(defaultSubInfo.getSubId())
-                        && (mTunerService.getValue(KEY_SHOW_OPERATOR_NAME, 1) != 0);
+                        && (mTunerService.getValue(KEY_SHOW_OPERATOR_NAME, 0) != 0);//[FEATURE]-Modify by shaopan.tang 2024-06-07 FP5U-593 Network name default off
         mView.update(showOperatorName, mTelephonyManager.isDataCapable(), getDefaultSubInfo());
     }
 

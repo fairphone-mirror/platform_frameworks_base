@@ -548,7 +548,7 @@ public class NotificationIconContainer extends ViewGroup {
     }
 
     private int getMaxVisibleIcons(int childCount) {
-        int showOperatorName = Settings.Secure.getInt(getContext().getContentResolver(),"show_operator_name", 1);
+        int showOperatorName = Settings.Secure.getInt(getContext().getContentResolver(),"show_operator_name", 0);//[FEATURE]-Modify by shaopan.tang 2024-06-07 FP5U-593 Network name default off
         TelephonyManager tm = (TelephonyManager)getContext().getSystemService("phone");
         String subscriptionId = tm.getSubscriberId();
         int maxStaticIcons = 6;
