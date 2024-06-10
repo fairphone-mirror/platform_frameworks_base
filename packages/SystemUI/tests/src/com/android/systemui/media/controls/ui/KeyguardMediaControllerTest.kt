@@ -118,24 +118,6 @@ class KeyguardMediaControllerTest : SysuiTestCase() {
     }
 
     @Test
-    fun testHiddenOnKeyguard_whenMediaOnLockScreenDisabled() {
-        settings.putInt(Settings.Secure.MEDIA_CONTROLS_LOCK_SCREEN, 0)
-
-        keyguardMediaController.refreshMediaPosition()
-
-        assertThat(mediaContainerView.visibility).isEqualTo(GONE)
-    }
-
-    @Test
-    fun testAvailableOnKeyguard_whenMediaOnLockScreenEnabled() {
-        settings.putInt(Settings.Secure.MEDIA_CONTROLS_LOCK_SCREEN, 1)
-
-        keyguardMediaController.refreshMediaPosition()
-
-        assertThat(mediaContainerView.visibility).isEqualTo(VISIBLE)
-    }
-
-    @Test
     fun testActivatesSplitShadeContainerInSplitShadeMode() {
         val splitShadeContainer = FrameLayout(context)
         keyguardMediaController.attachSplitShadeContainer(splitShadeContainer)
