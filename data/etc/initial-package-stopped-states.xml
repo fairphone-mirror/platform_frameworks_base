@@ -35,4 +35,6 @@ Example usage
         Invalid usage.
 -->
 
-<config></config>
+<config>
+    <initial-package-state package="de.telekom.tsc" stopped="false"/>
+</config>
