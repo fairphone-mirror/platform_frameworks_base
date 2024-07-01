@@ -28,6 +28,7 @@ import android.testing.AndroidTestingRunner
 import androidx.test.filters.SmallTest
 
 import com.android.systemui.SysuiTestCase
+import com.android.systemui.flags.FakeFeatureFlags
 import com.android.systemui.screenshot.ScreenshotController.SaveImageInBackgroundData
 import com.android.systemui.screenshot.ScreenshotNotificationSmartActionsProvider.ScreenshotSmartActionType
 import com.android.systemui.util.mockito.any
@@ -47,6 +48,7 @@ import org.mockito.Mockito
 class SaveImageInBackgroundTaskTest : SysuiTestCase() {
     private val imageExporter = mock<ImageExporter>()
     private val smartActions = mock<ScreenshotSmartActions>()
+    private val smartActionsProvider = mock<ScreenshotNotificationSmartActionsProvider>()
     private val saveImageData = SaveImageInBackgroundData()
     private val sharedTransitionSupplier =
         mock<Supplier<ScreenshotController.SavedImageData.ActionTransition>>()
@@ -55,6 +57,7 @@ class SaveImageInBackgroundTaskTest : SysuiTestCase() {
     private val testUser = UserHandle.getUserHandleForUid(0)
     private val testIcon = mock<Icon>()
     private val testImageTime = 1234.toLong()
+    private val flags = FakeFeatureFlags()
 
     private val smartActionsUriFuture = mock<CompletableFuture<List<Notification.Action>>>()
     private val smartActionsFuture = mock<CompletableFuture<List<Notification.Action>>>()
@@ -85,10 +88,12 @@ class SaveImageInBackgroundTaskTest : SysuiTestCase() {
     private val saveImageTask =
         SaveImageInBackgroundTask(
             mContext,
+            flags,
             imageExporter,
             smartActions,
             saveImageData,
             sharedTransitionSupplier,
+            smartActionsProvider,
         )
 
     @Before

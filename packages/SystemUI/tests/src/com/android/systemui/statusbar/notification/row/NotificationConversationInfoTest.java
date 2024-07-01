@@ -1173,6 +1173,7 @@ public class NotificationConversationInfoTest extends SysuiTestCase {
         mNotificationInfo.bindNotification(
                 mShortcutManager,
                 mMockPackageManager,
+                mUserManager,
                 mPeopleSpaceWidgetManager,
                 mMockINotificationManager,
                 mOnUserInteractionCallback,
@@ -1289,7 +1290,6 @@ public class NotificationConversationInfoTest extends SysuiTestCase {
         //WHEN channel is default importance
         mNotificationChannel.setImportantConversation(false);
         mNotificationInfo.bindNotification(
-                -1,
                 mShortcutManager,
                 mMockPackageManager,
                 mUserManager,

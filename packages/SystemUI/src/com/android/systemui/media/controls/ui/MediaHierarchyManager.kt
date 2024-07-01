@@ -462,6 +462,7 @@ constructor(
                     }
                     mediaCarouselController.mediaCarouselScrollHandler.visibleToUser =
                         isVisibleToUser()
+                    mediaCarouselController.updateHostVisibility()
                 }
 
                 override fun onDozeAmountChanged(linear: Float, eased: Float) {
