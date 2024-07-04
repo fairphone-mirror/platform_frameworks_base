@@ -1970,8 +1970,7 @@ public final class CameraManager {
             "com.fp5.camera",
             "com.fp5.mtf",
             "com.fp5.verifytool",
-            "com.android.mmi",
-            "foundation.e.camera"
+            "com.android.mmi"
         };
         private static final int I_CAMERA_NO_HIDDEN = 2;
         private static final int I_CAMERA_EXP_WIDE  = 0;

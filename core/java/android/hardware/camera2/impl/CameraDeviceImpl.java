@@ -1545,8 +1545,7 @@ public class CameraDeviceImpl extends CameraDevice
         "com.fp5.camera",
         "com.fp5.mtf",
         "com.fp5.verifytool",
-        "com.android.mmi",
-        "foundation.e.camera"
+        "com.android.mmi"
     };
 
     private boolean checkPrivilegedAppList() {
