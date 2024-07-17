@@ -358,16 +358,20 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
 
         int resId = 0;
         int voiceNetTye = mCurrentState.getVoiceNetworkType();
-        
+
+        //[BUG]-Modify Begin by shaopan.tang 2024-07-16 FP5U-648 VoLTE and VoWiFi shown at the same time
+        boolean imsRegistered = false;
         int regTech = ImsRegistrationImplBase.REGISTRATION_TECH_NONE;
         if (mPhone != null) {
             regTech = mPhone.getImsRegTechnologyForMmTel();
+            imsRegistered = mPhone.isImsRegistered();
         }
-        Log.d(mTag, "regTech: " + regTech);
+        Log.d(mTag, "regTech: " + regTech + " , imsRegistered: " + imsRegistered);
 
         if(!mCurrentState.airplaneMode && (ImsRegistrationImplBase.REGISTRATION_TECH_IWLAN != regTech)) {        // add by T2M.zhangrenjie for FP4-2003 2021-08-09 begin
         if ( (mCurrentState.voiceCapable || mCurrentState.videoCapable)
-                &&  mCurrentState.imsRegistered ) {
+                && imsRegistered ) {// mCurrentState.imsRegistered
+        //[BUG]-Modify End by shaopan.tang 2024-07-16 FP5U-648 VoLTE and VoWiFi shown at the same time
             resId = R.drawable.ic_volte;
         }else if ( (mCurrentState.telephonyDisplayInfo.getNetworkType() == TelephonyManager.NETWORK_TYPE_LTE
                     || mCurrentState.telephonyDisplayInfo.getNetworkType() ==
