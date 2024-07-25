@@ -68,7 +68,8 @@ public class ResolverListController {
 
     private static final String APP_SELECTOR_PACKAGENAME = "com.aura.oobe.deutsche";
     private static final String ORANGE_MANUAL_SELECTOR_PACKAGENAME = "com.orange.aura.oobe";
-    private static final String MCCMNC_ARRAY[] = {"20416", "21630", "23203", "23204", "23207", "26201", "26206", "20610", "20800", "20801", "20802", "21403"};
+    private static final String ORANGE_MCCMNC_ARRAY[] = {"21630", "20610", "20800", "20801", "20802"};
+    private static final String DT_MCCMNC_ARRAY[] = {"20416", "21630","23203", "23204", "23207", "26201", "26206", "21403"};
 
     public ResolverListController(
             Context context,
@@ -169,18 +170,25 @@ public class ResolverListController {
 
             int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);
             if(userId != 0){
-                List<String> list = Arrays.asList(MCCMNC_ARRAY);
+
                 String mccmnc = SystemProperties.get("persist.ril.sim.mcc.mnc");
-                if(mccmnc == null || !list.contains(mccmnc)){
-                    Iterator<ResolveInfo> iterator = infos.iterator();
-                    if(iterator != null){
-                        while (iterator.hasNext()) {
-                            ResolveInfo r =  iterator.next();
-                            if (r != null){
-                                ActivityInfo aci = r.activityInfo;
-                                if (aci != null){
-                                    String packageName = aci.packageName;
-                                    if(APP_SELECTOR_PACKAGENAME.equals(packageName) || ORANGE_MANUAL_SELECTOR_PACKAGENAME.equals(packageName)){
+                List<String> orangelist = Arrays.asList(ORANGE_MCCMNC_ARRAY);
+                List<String> dtlist = Arrays.asList(DT_MCCMNC_ARRAY);
+
+                Iterator<ResolveInfo> iterator = infos.iterator();
+                if(iterator != null){
+                    while (iterator.hasNext()) {
+                        ResolveInfo r =  iterator.next();
+                        if (r != null){
+                            ActivityInfo aci = r.activityInfo;
+                            if (aci != null){
+                                String packageName = aci.packageName;
+                                if(APP_SELECTOR_PACKAGENAME.equals(packageName)){
+                                    if(mccmnc == null || !dtlist.contains(mccmnc)){
+                                        iterator.remove();
+                                    }
+                                } else if(ORANGE_MANUAL_SELECTOR_PACKAGENAME.equals(packageName)){
+                                    if(mccmnc == null || !orangelist.contains(mccmnc)){
                                         iterator.remove();
                                     }
                                 }
