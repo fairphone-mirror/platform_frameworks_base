@@ -134,6 +134,7 @@ public class AppStateController {
         mIntentFilter.addAction(CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED);
         mIntentFilter.addAction(Intent.ACTION_USER_SWITCHED);
         mIntentFilter.addAction(Intent.ACTION_USER_REMOVED);
+        mIntentFilter.addAction(Intent.ACTION_USER_ADDED);
         mContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -147,6 +148,17 @@ public class AppStateController {
                     }
 
                 }
+
+                if (Intent.ACTION_USER_ADDED.equals(intent.getAction())) {
+                    int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, 0);
+                    if (userId != mUserId) {
+                        Log.d(TAG, "ACTION_USER_ADDED" + " old user id = " + userId + " new user id = " + mUserId);
+                        mUserId = userId;
+                        updateCarrierAppState();
+                        setPreInstallCarrierApkState_forOtherUser();
+                    }
+                }
+
                 if (TelephonyManager.ACTION_SIM_APPLICATION_STATE_CHANGED.equals(intent.getAction())) {
                     hasSimStateChanged = true;
                     int simStatus = intent.getIntExtra(TelephonyManager.EXTRA_SIM_STATE, -99);
@@ -211,6 +223,28 @@ public class AppStateController {
                         ipm.setApplicationEnabledSetting(pkg,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.UNINSTALL_REASON_UNKNOWN,uid,mContext.getBasePackageName());
                     }
                }
+
+            }
+        } catch (Exception e) {
+            Log.d(TAG, pkg + " updateInstallState error " + e.getMessage());
+        }
+
+    }
+
+    private void setPreInstallCarrierApkState_forOtherUser() {
+        IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
+        for (AppState appState : mAppStateArrayList) {
+            updateInstallState_forOtherUser(appState.pkgName, appState.installState, mIPm);
+        }
+    }
+
+    private void updateInstallState_forOtherUser(String pkg, boolean isSimAppropriate, IPackageManager ipm) {
+        try {
+            if (!isSimAppropriate){
+                if (mUserId != UserHandle.USER_SYSTEM){
+                    Log.d(TAG, pkg + " updateInstallState_forOtherUser  " + isSimAppropriate + " mUserId = " + mUserId);
+                    ipm.setApplicationEnabledSetting(pkg,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.UNINSTALL_REASON_UNKNOWN,mUserId,mContext.getBasePackageName());
+                }
 
             }
         } catch (Exception e) {
