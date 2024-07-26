@@ -37,4 +37,5 @@ Example usage
 
 <config>
     <initial-package-state package="de.telekom.tsc" stopped="false"/>
+    <initial-package-state package="com.orange.update" stopped="false"/>
 </config>
