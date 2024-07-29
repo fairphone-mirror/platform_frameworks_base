@@ -168,7 +168,7 @@ public class ResolverListController {
             final List<ResolveInfo> infos = mpm.queryIntentActivitiesAsUser(intent, flags,
                     userHandle);
 
-            int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, -1);
+            int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, 0);
             if(userId != 0){
 
                 String mccmnc = SystemProperties.get("persist.ril.sim.mcc.mnc");
