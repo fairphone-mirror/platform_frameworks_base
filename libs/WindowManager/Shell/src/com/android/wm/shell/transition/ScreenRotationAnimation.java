@@ -48,6 +48,8 @@ import com.android.internal.R;
 import com.android.internal.policy.TransitionAnimation;
 import com.android.wm.shell.common.ShellExecutor;
 import com.android.wm.shell.common.TransactionPool;
+import android.provider.Settings;
+import android.content.res.Resources;
 
 import java.util.ArrayList;
 
@@ -257,7 +259,8 @@ class ScreenRotationAnimation {
         // End luma value is very not stable so it will cause more flicker is we run background
         // color frame animation.
         //mEndLuma = getLumaOfSurfaceControl(mEndBounds, mSurfaceControl);
-
+        int exitDefaultTime = 0;
+        int enterDefaultTime = 0;
         final boolean customRotate = isCustomRotate();
         if (customRotate) {
             mRotateExitAnimation = AnimationUtils.loadAnimation(mContext,
@@ -276,26 +279,65 @@ class ScreenRotationAnimation {
                             R.anim.screen_rotate_0_exit);
                     mRotateEnterAnimation = AnimationUtils.loadAnimation(mContext,
                             R.anim.rotation_animation_enter);
+                    exitDefaultTime = mContext.getResources().getInteger(com.android.internal.R.integer.config_screen_rotation_fade_out);
                     break;
                 case Surface.ROTATION_90:
                     mRotateExitAnimation = AnimationUtils.loadAnimation(mContext,
                             R.anim.screen_rotate_plus_90_exit);
                     mRotateEnterAnimation = AnimationUtils.loadAnimation(mContext,
                             R.anim.screen_rotate_plus_90_enter);
+                    exitDefaultTime =  mContext.getResources().getInteger(com.android.internal.R.integer.config_screen_rotation_total_90);
+                    enterDefaultTime =  mContext.getResources().getInteger(com.android.internal.R.integer.config_screen_rotation_total_90);
                     break;
                 case Surface.ROTATION_180:
                     mRotateExitAnimation = AnimationUtils.loadAnimation(mContext,
                             R.anim.screen_rotate_180_exit);
                     mRotateEnterAnimation = AnimationUtils.loadAnimation(mContext,
                             R.anim.screen_rotate_180_enter);
+                    exitDefaultTime =  mContext.getResources().getInteger(com.android.internal.R.integer.config_screen_rotation_total_180);
+                    enterDefaultTime =  mContext.getResources().getInteger(com.android.internal.R.integer.config_screen_rotation_total_180);
                     break;
                 case Surface.ROTATION_270:
                     mRotateExitAnimation = AnimationUtils.loadAnimation(mContext,
                             R.anim.screen_rotate_minus_90_exit);
                     mRotateEnterAnimation = AnimationUtils.loadAnimation(mContext,
                             R.anim.screen_rotate_minus_90_enter);
+                    exitDefaultTime =  mContext.getResources().getInteger(com.android.internal.R.integer.config_screen_rotation_total_90);
+                    enterDefaultTime =  mContext.getResources().getInteger(com.android.internal.R.integer.config_screen_rotation_total_90);
                     break;
             }
+        }
+
+        int currentOrientationTiming = Settings.Secure.getInt(mContext.getContentResolver(),"def_orientation_timing",2);
+        switch (currentOrientationTiming){
+            case 0:
+                mRotateExitAnimation.setDuration(1000+exitDefaultTime);
+                mRotateEnterAnimation.setDuration(1000+enterDefaultTime);
+                break;
+            case 1:
+                mRotateExitAnimation.setDuration(500+exitDefaultTime);
+                mRotateEnterAnimation.setDuration(500+enterDefaultTime);
+                break;
+            case 2:
+                //mRotateExitAnimation.setDuration(exitDefaultTime);
+                //mRotateEnterAnimation.setDuration(enterDefaultTime);
+                break;
+            case 3:
+                if (exitDefaultTime > 500) {
+                    mRotateExitAnimation.setDuration(exitDefaultTime - 500);
+                }
+                if (enterDefaultTime > 500) {
+                    mRotateEnterAnimation.setDuration(enterDefaultTime - 500);
+                }
+                break;
+            case 4:
+                if (exitDefaultTime > 1000) {
+                    mRotateExitAnimation.setDuration(exitDefaultTime - 1000);
+                }
+                if (enterDefaultTime > 1000) {
+                    mRotateEnterAnimation.setDuration(enterDefaultTime - 1000);
+                }
+                break;
         }
 
         mRotateExitAnimation.initialize(mEndWidth, mEndHeight, mStartWidth, mStartHeight);
