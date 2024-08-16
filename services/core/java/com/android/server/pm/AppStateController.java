@@ -175,10 +175,16 @@ public class AppStateController {
 
                 if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
                     Log.d(TAG, "ACTION_BOOT_COMPLETED");
-//                    if (!mHasSetAppState && mIsCarrierConfigReveiver) {
-//                        setPreInstallCarrierApkState();
-//                        mHasSetAppState = true;
-//                    }
+                    int[] userIds = UserManagerService.getInstance().getUserIdsIncludingPreCreated();
+                    for (int uid : userIds){
+                        if (uid != UserHandle.USER_SYSTEM){
+                            mUserId = uid;
+                            Log.d(TAG, "disable preload app on user " + mUserId);
+                            updateCarrierAppState();
+                            setPreInstallCarrierApkState_forOtherUser();
+                            mUserId = 0;
+                        }
+                    }
                 }
 
                 if (CarrierConfigManager.ACTION_CARRIER_CONFIG_CHANGED.equals(intent.getAction())) {
