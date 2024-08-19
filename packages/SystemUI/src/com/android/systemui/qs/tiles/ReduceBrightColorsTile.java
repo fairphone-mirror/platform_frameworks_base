@@ -152,7 +152,10 @@ public class ReduceBrightColorsTile extends QSTileImpl<QSTile.BooleanState>
     };
 
     private String getButtonTargetsString() {
-        String mCurrentAccessibilityButtonTargets = Settings.Secure.getString(mContext.getContentResolver(),Secure.ACCESSIBILITY_BUTTON_TARGETS);
+        String mCurrentAccessibilityButtonTargets = "";
+        if (Settings.Secure.getString(mContext.getContentResolver(),Secure.ACCESSIBILITY_BUTTON_TARGETS) != null) {
+            mCurrentAccessibilityButtonTargets = Settings.Secure.getString(mContext.getContentResolver(),Secure.ACCESSIBILITY_BUTTON_TARGETS);
+        }
         String[] strings = mCurrentAccessibilityButtonTargets.split(":");
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < strings.length; i++) {
