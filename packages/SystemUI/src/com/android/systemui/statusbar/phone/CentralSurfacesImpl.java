@@ -708,8 +708,6 @@ public class CentralSurfacesImpl extends CoreStartable implements
         onBackPressed();
     };
 
-    private float[] mOldAnimationScales;
-
     /**
      * Public constructor for CentralSurfaces.
      *
@@ -3965,10 +3963,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
         @Override
         public void onScreenTurningOn(Runnable onDrawn) {
             mFalsingCollector.onScreenTurningOn();
-            float[] mNewAnimationScales = {2,2,2};
+            float[] mNewAnimationScales = new float[]{2,2,2};
             try {
                 if (mWindowManagerService != null) {
-                    mOldAnimationScales = mWindowManagerService.getAnimationScales();
                     mWindowManagerService.setAnimationScales(mNewAnimationScales);
                 }
             } catch (Exception e) {
@@ -3980,7 +3977,12 @@ public class CentralSurfacesImpl extends CoreStartable implements
         @Override
         public void onScreenTurnedOn() {
             try {
-                if (mWindowManagerService != null && mOldAnimationScales != null) {
+                if (mWindowManagerService != null) {
+                    String userWindownAnimationScale = SystemProperties.get("persist.sys.window.animation.scale","1");
+                    String userTransitionAnimationScale = SystemProperties.get("persist.sys.transition.animation.scale","1");
+                    String userAnimatorDurationScale = SystemProperties.get("persist.sys.animator.duration.scale","1");
+                    float[] mOldAnimationScales = new float[]{
+                        Float.parseFloat(userWindownAnimationScale),Float.parseFloat(userTransitionAnimationScale),Float.parseFloat(userAnimatorDurationScale)};
                     mWindowManagerService.setAnimationScales(mOldAnimationScales);
                 }
             } catch (Exception e) {
