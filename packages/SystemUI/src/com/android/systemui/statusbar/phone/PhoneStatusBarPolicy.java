@@ -19,7 +19,9 @@ package com.android.systemui.statusbar.phone;
 import static android.app.admin.DevicePolicyResources.Strings.SystemUi.STATUS_BAR_WORK_ICON_ACCESSIBILITY;
 
 import android.annotation.Nullable;
+import android.app.ActivityManager;
 import android.app.ActivityTaskManager;
+import android.app.ActivityThread;
 import android.app.AlarmManager;
 import android.app.AlarmManager.AlarmClockInfo;
 import android.app.IActivityManager;
@@ -533,7 +535,7 @@ public class PhoneStatusBarPolicy
                 boolean isManagedProfile = mUserManager.isManagedProfile(userId);
                 String accessibilityString = getManagedProfileAccessibilityString();
                 mHandler.post(() -> {
-                    final boolean showIcon;
+                    boolean showIcon;
                     if (isManagedProfile && (!mKeyguardStateController.isShowing()
                             || mKeyguardStateController.isOccluded())) {
                         showIcon = true;
@@ -543,6 +545,18 @@ public class PhoneStatusBarPolicy
                     } else {
                         showIcon = false;
                     }
+
+                    //add by sangui.zhang for SATURNT-616 start
+                    String topActivity = getTopActivity();
+                    if ("com.android.bedstead.testapp.DeviceAdminTestApp".equalsIgnoreCase(topActivity) && !showIcon) {
+                        Log.i(TAG, "=========gts==============: ");
+                        showIcon = true;
+                        mIconController.setIcon(mSlotManagedProfile,
+                                R.drawable.stat_sys_managed_profile_status,
+                                accessibilityString);
+                    }
+                    //SATURNT-616 end
+
                     if (mManagedProfileIconVisible != showIcon) {
                         mIconController.setIconVisibility(mSlotManagedProfile, showIcon);
                         mManagedProfileIconVisible = showIcon;
@@ -553,6 +567,19 @@ public class PhoneStatusBarPolicy
             }
         });
     }
+
+    //add by sangui.zhang for SATURNT-616 start
+    private String getTopActivity() {
+        ActivityManager mActivityManager = ActivityThread.currentApplication().getApplicationContext().getSystemService(ActivityManager.class);
+        List<ActivityManager.RunningTaskInfo> runningTasks = mActivityManager.getRunningTasks(1);
+        String packageName = "";
+        if (runningTasks != null && runningTasks.size() > 0) {
+            packageName =
+                    runningTasks.get(0).topActivity.getPackageName();
+        }
+        return packageName;
+    }
+    //SATURNT-616 end
 
     private final SynchronousUserSwitchObserver mUserSwitchListener =
             new SynchronousUserSwitchObserver() {
