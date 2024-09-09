@@ -246,7 +246,7 @@ public class PermissionManagerService extends IPermissionManager.Stub {
                 }
 
                 if ("com.fairphone.myfairphone".equalsIgnoreCase(pkgName)) {
-                    if (Manifest.permission.POST_NOTIFICATIONS.equalsIgnoreCase(permName)) {
+                    if (Manifest.permission.POST_NOTIFICATIONS.equalsIgnoreCase(permName) || Manifest.permission.SYSTEM_ALERT_WINDOW.equalsIgnoreCase(permName) ) {
                        return PackageManager.PERMISSION_DENIED;
                     }
                 }

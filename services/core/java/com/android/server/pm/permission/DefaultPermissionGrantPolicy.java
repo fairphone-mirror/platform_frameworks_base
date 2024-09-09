@@ -240,6 +240,13 @@ final class DefaultPermissionGrantPolicy {
         NOTIFICATION_PERMISSIONS.add(Manifest.permission.POST_NOTIFICATIONS);
     }
 
+    private static final Set<String> SYSTEM_ALERT_WINDOW_PERMISSIONS = new ArraySet<>();
+    static {
+        NOTIFICATION_PERMISSIONS.add(Manifest.permission.SYSTEM_ALERT_WINDOW);
+    }
+
+    
+
     private static final int MSG_READ_DEFAULT_PERMISSION_EXCEPTIONS = 1;
 
     private static final String ACTION_TRACK = "com.android.fitness.TRACK";
@@ -402,6 +409,7 @@ final class DefaultPermissionGrantPolicy {
         grantPermissionsToSysComponentsAndPrivApps(pm, userId);
         grantDefaultSystemHandlerPermissions(pm, userId);
         grantSignatureAppsNotificationPermissions(pm, userId);
+        grantSignatureAppsSystemAlertWindowPermissions(pm,userId);
         grantDefaultPermissionExceptions(pm, userId);
 
         // Apply delayed state
@@ -419,6 +427,21 @@ final class DefaultPermissionGrantPolicy {
                 continue;
             }
             grantRuntimePermissionsForSystemPackage(pm, userId, pkg, NOTIFICATION_PERMISSIONS);
+        }
+
+    }
+
+    private void grantSignatureAppsSystemAlertWindowPermissions(PackageManagerWrapper pm, int userId) {
+        Log.i(TAG, "Granting SYSTEM_ALERT_WINDOW permissions to platform signature apps for user "
+                + userId);
+        List<PackageInfo> packages = mContext.getPackageManager().getInstalledPackagesAsUser(
+                DEFAULT_PACKAGE_INFO_QUERY_FLAGS, UserHandle.USER_SYSTEM);
+        for (PackageInfo pkg : packages) {
+            if (pkg == null || !pkg.applicationInfo.isSystemApp()
+                    || !pkg.applicationInfo.isSignedWithPlatformKey()) {
+                continue;
+            }
+            grantRuntimePermissionsForSystemPackage(pm, userId, pkg, SYSTEM_ALERT_WINDOW_PERMISSIONS);
         }
 
     }
