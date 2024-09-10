@@ -240,10 +240,6 @@ final class DefaultPermissionGrantPolicy {
         NOTIFICATION_PERMISSIONS.add(Manifest.permission.POST_NOTIFICATIONS);
     }
 
-    private static final Set<String> SYSTEM_ALERT_WINDOW_PERMISSIONS = new ArraySet<>();
-    static {
-        NOTIFICATION_PERMISSIONS.add(Manifest.permission.SYSTEM_ALERT_WINDOW);
-    }
 
     
 
@@ -409,7 +405,6 @@ final class DefaultPermissionGrantPolicy {
         grantPermissionsToSysComponentsAndPrivApps(pm, userId);
         grantDefaultSystemHandlerPermissions(pm, userId);
         grantSignatureAppsNotificationPermissions(pm, userId);
-        grantSignatureAppsSystemAlertWindowPermissions(pm,userId);
         grantDefaultPermissionExceptions(pm, userId);
 
         // Apply delayed state
@@ -431,20 +426,6 @@ final class DefaultPermissionGrantPolicy {
 
     }
 
-    private void grantSignatureAppsSystemAlertWindowPermissions(PackageManagerWrapper pm, int userId) {
-        Log.i(TAG, "Granting SYSTEM_ALERT_WINDOW permissions to platform signature apps for user "
-                + userId);
-        List<PackageInfo> packages = mContext.getPackageManager().getInstalledPackagesAsUser(
-                DEFAULT_PACKAGE_INFO_QUERY_FLAGS, UserHandle.USER_SYSTEM);
-        for (PackageInfo pkg : packages) {
-            if (pkg == null || !pkg.applicationInfo.isSystemApp()
-                    || !pkg.applicationInfo.isSignedWithPlatformKey()) {
-                continue;
-            }
-            grantRuntimePermissionsForSystemPackage(pm, userId, pkg, SYSTEM_ALERT_WINDOW_PERMISSIONS);
-        }
-
-    }
 
     private void grantRuntimePermissionsForSystemPackage(PackageManagerWrapper pm,
             int userId, PackageInfo pkg) {
