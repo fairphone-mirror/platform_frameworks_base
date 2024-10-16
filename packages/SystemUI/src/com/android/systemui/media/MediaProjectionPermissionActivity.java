@@ -65,11 +65,11 @@ public class MediaProjectionPermissionActivity extends Activity
         super.onCreate(icicle);
 
         mFeatureFlags = Dependency.get(FeatureFlags.class);
-        mPackageName = getCallingPackage();
+        mPackageName = getLaunchedFromPackage();
         IBinder b = ServiceManager.getService(MEDIA_PROJECTION_SERVICE);
         mService = IMediaProjectionManager.Stub.asInterface(b);
 
-        if (mPackageName == null) {
+        if (getCallingPackage() == null) {
             finish();
             return;
         }
