@@ -138,13 +138,17 @@ public class FaceUnlockUtil {
         boolean isCounDown = getCountDownUnlock(context);
         boolean isRebootView = isRebootView(context);
         boolean isLockdown = false;
+        boolean isGmsActiveAdmin = false;
         if(mKeyguardUpdateMonitor != null){
             isLockdown = mKeyguardUpdateMonitor.isEncryptedOrLockdown(userId);
+            isGmsActiveAdmin = mKeyguardUpdateMonitor.isGmsAdminActive();
         }
         if(isLockdown) {
             mStartLockdown = false;
         }
-        return !isRebootView && faceUnlockSupported && hasFaceEnrolled && !isCounDown && mFailTimes < 3 && !isLockdown && !mStartLockdown;
+        Log.d(TAG,"isGmsActiveAdmin:"+isGmsActiveAdmin);
+        return !isRebootView && faceUnlockSupported && hasFaceEnrolled && !isCounDown
+                    && mFailTimes < 3 && !isLockdown && !mStartLockdown && !isGmsActiveAdmin ;
     }
 
     public boolean hasFaceUnlock(Context context){

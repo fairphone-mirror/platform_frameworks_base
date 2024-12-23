@@ -3057,6 +3057,12 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
                 && !mUserHasTrust.get(getCurrentUser(), false);
     }
 
+    public boolean isGmsAdminActive() {
+        return mDevicePolicyManager.isAdminActive(
+                new ComponentName("com.google.android.gms",
+                    "com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver"));
+    }
+
     @VisibleForTesting
     protected boolean shouldListenForFingerprint(boolean isUdfps) {
         final int user = getCurrentUser();
@@ -3105,7 +3111,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener, Dumpab
 
         boolean shouldListen = shouldListenKeyguardState && shouldListenUserState
                 && shouldListenBouncerState && shouldListenUdfpsState
-                && shouldListenSideFpsState;
+                && shouldListenSideFpsState && !isGmsAdminActive();
         logListenerModelData(
                 new KeyguardFingerprintListenModel(
                     System.currentTimeMillis(),
