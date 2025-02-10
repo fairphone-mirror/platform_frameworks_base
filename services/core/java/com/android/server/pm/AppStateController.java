@@ -19,6 +19,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.os.Process;
 import android.os.SystemProperties;
+import android.content.ComponentName;
 
 
 public class AppStateController {
@@ -47,6 +48,9 @@ public class AppStateController {
     private static final String DSDLOCKED_REBOOT = "persist.radio.dsd.locked.reboot";
 
     private int mUserId;
+
+    public static final String FILES_TARGET_PACKAGE = "com.google.android.documentsui";
+    public static final String FILES_TARGET_CLASS = "com.android.documentsui.LauncherActivity";
 
     /**
      * @param context
@@ -151,6 +155,9 @@ public class AppStateController {
 
                 if (Intent.ACTION_USER_ADDED.equals(intent.getAction())) {
                     int userId = intent.getIntExtra(Intent.EXTRA_USER_HANDLE, 0);
+                    if (userId != UserHandle.USER_SYSTEM){
+                        disableDocumentUI(userId);
+                    }
                     if (userId != mUserId) {
                         Log.d(TAG, "ACTION_USER_ADDED" + " old user id = " + userId + " new user id = " + mUserId);
                         mUserId = userId;
@@ -195,6 +202,16 @@ public class AppStateController {
                 }
             }
         }, mIntentFilter);
+    }
+
+    private void disableDocumentUI(int userId){
+        final ComponentName component = new ComponentName(FILES_TARGET_PACKAGE, FILES_TARGET_CLASS);
+        IPackageManager mIPm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
+        try{
+            mIPm.setComponentEnabledSetting(component,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP, userId, mContext.getBasePackageName());
+        } catch (Exception e) {
+            Log.d(TAG, " disableDocumentUI error " + e.getMessage());
+        }
     }
 
     private void judgeAndFireSetAppState() {
