@@ -7083,7 +7083,7 @@ public class NotificationManagerService extends SystemService {
 
     // modify Begin by T2M.zhangrenjie for FP5U-542 2024-05-14
     private boolean isCustomRequirePackage(String pkg) {
-        List<String> pkgList = Arrays.asList("com.android.phone");
+        List<String> pkgList = Arrays.asList("com.android.phone", "com.google.android.dialer");//Modify by shaopan.tang 2025-04-10 FP5U-541 Voicemail alert notification should not be dismissed
         return pkgList.contains(pkg);
     }
     // modify End by T2M.zhangrenjie for FP5U-542 2024-05-14
