@@ -190,7 +190,7 @@ class ActivityStartInterceptor {
 
     // TODO: consolidate this method with the one below since this is used for test only.
     boolean intercept(Intent intent, ResolveInfo rInfo, ActivityInfo aInfo, String resolvedType,
-            Task inTask, TaskFragment inTaskFragment, int callingUid, ActivityOptions activityOptions) {
+            Task inTask, TaskFragment inTaskFragment, int callingPid, int callingUid, ActivityOptions activityOptions) {
         return intercept(intent, rInfo, aInfo, resolvedType, inTask, inTaskFragment, callingPid,
                 callingUid, activityOptions, false);
     }
