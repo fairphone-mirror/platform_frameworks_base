@@ -2199,6 +2199,7 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
                 KeyguardUpdateMonitor.setCurrentUser(newUserId);
                 mHandler.removeMessages(DISMISS);
                 mHandler.removeMessages(HIDE);
+                mHandler.removeMessages(START_KEYGUARD_EXIT_ANIM);
                 notifyTrustedChangedLocked(mUpdateMonitor.getUserHasTrust(newUserId));
                 resetKeyguardDonePendingLocked();
                 adjustStatusBarLocked();
@@ -2969,6 +2970,12 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
         }
     }
 
+    // Allows the runnable to be controlled for tests by overriding this method
+    @VisibleForTesting
+    void postAfterTraversal(Runnable runnable) {
+        DejankUtils.postAfterTraversal(runnable);
+    }
+
     /**
      * Called when we're done running the keyguard exit animation, we should now end up unlocked.
      *
@@ -2999,13 +3006,7 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
         InteractionJankMonitor.getInstance().end(CUJ_LOCKSCREEN_UNLOCK_ANIMATION);
 
         // Post layout changes to the next frame, so we don't hang at the end of the animation.
-        DejankUtils.postAfterTraversal(() -> {
-            if (mIsKeyguardExitAnimationCanceled) {
-                Log.d(TAG, "Ignoring dejank exitKeyguardAndFinishSurfaceBehindRemoteAnimation. "
-                      + "mIsKeyguardExitAnimationCanceled==true");
-                return;
-            }
-
+        postAfterTraversal(() -> {
             if (!mPM.isInteractive() && !mPendingLock) {
                 Log.e(TAG, "exitKeyguardAndFinishSurfaceBehindRemoteAnimation#postAfterTraversal:"
                         + " mPM.isInteractive()=" + mPM.isInteractive()
@@ -3017,6 +3018,13 @@ public class KeyguardViewMediator implements CoreStartable, Dumpable,
                 // Ensure WM is notified that we made a decision to show
                 setShowingLocked(true /* showing */, true /* force */);
 
+                return;
+            }
+            if (mIsKeyguardExitAnimationCanceled) {
+                Log.d(TAG, "Ignoring exitKeyguardAndFinishSurfaceBehindRemoteAnimation. "
+                        + "mIsKeyguardExitAnimationCanceled==true");
+                finishSurfaceBehindRemoteAnimation(true /* showKeyguard */);
+                setShowingLocked(true /* showing */, true /* force */);
                 return;
             }
 
