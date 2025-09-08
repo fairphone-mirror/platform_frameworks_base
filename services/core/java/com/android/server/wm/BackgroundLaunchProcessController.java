@@ -21,7 +21,7 @@ import static com.android.server.wm.ActivityTaskManagerDebugConfig.TAG_ATM;
 import static com.android.server.wm.ActivityTaskManagerDebugConfig.TAG_WITH_CLASS_NAME;
 import static com.android.server.wm.ActivityTaskManagerService.ACTIVITY_BG_START_GRACE_PERIOD_MS;
 import static com.android.server.wm.ActivityTaskManagerService.APP_SWITCH_ALLOW;
-import static com.android.server.wm.ActivityTaskManagerService.APP_SWITCH_FG_ONLY;
+import static com.android.server.wm.ActivityTaskManagerService.APP_SWITCH_DISALLOW;
 import static com.android.server.wm.BackgroundActivityStartController.BAL_ALLOW_BAL_PERMISSION;
 import static com.android.server.wm.BackgroundActivityStartController.BAL_ALLOW_FOREGROUND;
 import static com.android.server.wm.BackgroundActivityStartController.BAL_ALLOW_GRACE_PERIOD;
@@ -80,7 +80,8 @@ class BackgroundLaunchProcessController {
     @BackgroundActivityStartController.BalCode
     int areBackgroundActivityStartsAllowed(int pid, int uid, String packageName,
             int appSwitchState, boolean isCheckingForFgsStart,
-            boolean hasActivityInVisibleTask, boolean hasBackgroundActivityStartPrivileges,
+            boolean hasActivityInVisibleTask, boolean inPinnedWindow,
+            boolean hasBackgroundActivityStartPrivileges,
             long lastStopAppSwitchesTime, long lastActivityLaunchTime,
             long lastActivityFinishTime) {
         // If app switching is not allowed, we ignore all the start activity grace period
@@ -116,8 +117,8 @@ class BackgroundLaunchProcessController {
                         + "activity starts privileges");
         }
         // Allow if the caller has an activity in any foreground task.
-        if (hasActivityInVisibleTask
-                && (appSwitchState == APP_SWITCH_ALLOW || appSwitchState == APP_SWITCH_FG_ONLY)) {
+        if ((isCheckingForFgsStart || !inPinnedWindow)
+                && hasActivityInVisibleTask && appSwitchState != APP_SWITCH_DISALLOW) {
             return BackgroundActivityStartController.logStartAllowedAndReturnCode(
                     BAL_ALLOW_FOREGROUND, /*background*/ false, uid, uid, /*intent*/ null,
                     pid, "Activity start allowed: process has activity in foreground task");
