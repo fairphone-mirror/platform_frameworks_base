@@ -2176,7 +2176,7 @@ public class ComputerEngine implements Computer {
     }
 
     private boolean hasPermission(String permission, int uid) {
-        return mContext.checkPermission(permission, Process.INVALID_PID, uid)
+        return mContext.checkPermission(permission, /* pid= */ -1, uid)
                 == PackageManager.PERMISSION_GRANTED;
     }
 

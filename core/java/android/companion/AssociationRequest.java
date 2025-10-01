@@ -233,6 +233,8 @@ public final class AssociationRequest implements Parcelable {
      */
     private boolean mSkipPrompt;
 
+    private static final int DISPLAY_NAME_LENGTH_LIMIT = 1024;
+
     /**
      * Creates a new AssociationRequest.
      *
@@ -419,9 +421,9 @@ public final class AssociationRequest implements Parcelable {
         public Builder setDisplayName(@NonNull CharSequence displayName) {
             checkNotUsed();
             mDisplayName = requireNonNull(displayName);
-            if (displayName.length() > 1024) {
+            if (displayName.length() > DISPLAY_NAME_LENGTH_LIMIT) {
                 throw new IllegalArgumentException("Length of the display name must be at most "
-                        + "1024 characters");
+                        + DISPLAY_NAME_LENGTH_LIMIT + " characters");
             }
 
             return this;
