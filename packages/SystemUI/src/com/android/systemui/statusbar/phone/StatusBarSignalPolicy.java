@@ -122,7 +122,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
         filter.addAction("arima.intent.action.VOWIFI_STATE_CHANGED");
-        context.registerReceiver(mVowifiChanged, filter, Context.RECEIVER_NOT_EXPORTED);
+        context.registerReceiver(mVowifiChanged, filter, Context.RECEIVER_EXPORTED);
     }
 
     /** Call to initilaize and register this classw with the system. */
@@ -664,8 +664,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     String action = intent.getAction();
-                    if (("arima.intent.action.VOWIFI_STATE_CHANGED".equals(action))
-                            && mIsAirplaneMode) {
+                    if (("arima.intent.action.VOWIFI_STATE_CHANGED".equals(action)) {
                         int wfcPhoneId =
                                 intent.getIntExtra(
                                         "phoneId", SubscriptionManager.INVALID_PHONE_INDEX);
