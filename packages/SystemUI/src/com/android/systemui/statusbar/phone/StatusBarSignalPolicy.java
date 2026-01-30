@@ -664,7 +664,7 @@ public class StatusBarSignalPolicy implements SignalCallback,
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     String action = intent.getAction();
-                    if (("arima.intent.action.VOWIFI_STATE_CHANGED".equals(action)) {
+                    if ("arima.intent.action.VOWIFI_STATE_CHANGED".equals(action)) {
                         int wfcPhoneId =
                                 intent.getIntExtra(
                                         "phoneId", SubscriptionManager.INVALID_PHONE_INDEX);
